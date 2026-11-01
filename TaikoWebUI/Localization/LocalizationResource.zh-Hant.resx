@@ -834,4 +834,19 @@
   <data name="Display SouUchi Songs" xml:space="preserve">
     <value>顯示雙打譜面</value>
   </data>
+  <data name="Access Local Mode" xml:space="preserve">
+    <value>Access rules apply in Server mode only. This server runs in Local mode, so everyone can open every page.</value>
+  </data>
+  <data name="Access Rules Hint" xml:space="preserve">
+    <value>Who can create an account and sign in to the Web UI.</value>
+  </data>
+  <data name="Register With Last Play Time Hint" xml:space="preserve">
+    <value>Players prove a card is theirs by entering when they last played it.</value>
+  </data>
+  <data name="Free Profile Editing Hint" xml:space="preserve">
+    <value>Players can pick any title and costume part, not only the ones they have unlocked.</value>
+  </data>
+  <data name="Save Failed" xml:space="preserve">
+    <value>Couldn’t save. Try again.</value>
+  </data>
 </root>

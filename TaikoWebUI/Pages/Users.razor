@@ -4,7 +4,7 @@
 @inject PageState Page
 
 <PageTitle>Users</PageTitle>
-<ComingSoon Title="@Localizer["Users"]" IconName="users">
+<ComingSoon Title="@Localizer["User Management"]" IconName="users">
     @* Until Users is redesigned: a plain way to reach each user's pages. *@
     @if (users is null)
     {
@@ -29,7 +29,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Page.Set(Localizer["Users"]);
+        Page.Set(Localizer["Admin"], Localizer["User Management"]);
         users = (await Client.GetFromJsonAsync<UsersResponse>("api/Users?page=1&limit=200"))?.Users ?? [];
     }
 }

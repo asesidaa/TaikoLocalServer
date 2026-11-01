@@ -12,10 +12,6 @@
 <nav class="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
     <p class="px-3 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@Localizer["Account"]</p>
     @Link("/", "dashboard", Localizer["Dashboard"])
-    @if (AuthService.IsAdmin || !AuthService.LoginRequired)
-    {
-        @Link("/Users", "users", Localizer["Users"])
-    }
     @if (Baid > 0)
     {
         @Link($"/Users/{Baid}/Profile", "profile", Localizer["Profile"])
@@ -24,6 +20,17 @@
              ($"/Users/{Baid}/HighScores", Localizer["High Scores"]), ($"/Users/{Baid}/PlayHistory", Localizer["Play History"]),
              ($"/Users/{Baid}/DaniDojo", Localizer["Dani Dojo"])])
         @Group("settings", Localizer["Settings"], settingsOpen, () => settingsOpen = !settingsOpen, SettingsLinks())
+    }
+    @* Local mode has no accounts: the admin pages are open to everyone, and Access (sign-in rules) doesn't apply. *@
+    @if (AuthService.IsAdmin || !AuthService.LoginRequired)
+    {
+        <p class="px-3 pb-1 pt-4 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@Localizer["Admin"]</p>
+        @Link("/Users", "users", Localizer["User Management"])
+        @Link("/Admin/Server", "server", Localizer["Server Management"], prefix: true)
+        @if (AuthService.LoginRequired)
+        {
+            @Link("/Admin/Access", "shield", Localizer["Access"], prefix: true)
+        }
     }
 </nav>
 @if (AuthService.IsLoggedIn)
@@ -77,12 +84,17 @@
         return links;
     }
 
-    private bool IsActive(string href) =>
-        string.Equals("/" + Nav.ToBaseRelativePath(Nav.Uri).Split('?', '#')[0].TrimEnd('/'), href, StringComparison.OrdinalIgnoreCase);
-
-    private RenderFragment Link(string href, string icon, string label) => __builder =>
+    // prefix: the link stays active on its sub-routes (a page's tabs).
+    private bool IsActive(string href, bool prefix = false)
     {
-        var active = IsActive(href);
+        var path = "/" + Nav.ToBaseRelativePath(Nav.Uri).Split('?', '#')[0].TrimEnd('/');
+        return string.Equals(path, href, StringComparison.OrdinalIgnoreCase)
+               || (prefix && path.StartsWith(href + "/", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private RenderFragment Link(string href, string icon, string label, bool prefix = false) => __builder =>
+    {
+        var active = IsActive(href, prefix);
         <a href="@href" aria-current="@(active ? "page" : null)"
            class="group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors @(active ? "bg-primary-500/10 font-medium text-primary-700 dark:text-primary-300" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/70 dark:hover:text-zinc-100")">
             <Icon Name="@icon" /><span class="truncate">@label</span>

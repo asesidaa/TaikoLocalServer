@@ -1,0 +1,39 @@
+@page "/Admin/Server"
+@page "/Admin/Server/{Tab}"
+@attribute [Authorize(Policy = AuthPolicies.Admin)]
+@inject NavigationManager Nav
+@inject PageState Page
+
+<PageTitle>Server Management</PageTitle>
+<Tabs Items="tabs" Selected="@Current" SelectedChanged="Go" Label="@Localizer["Server Management"]"
+      Columns="grid-cols-4 xl:inline-grid xl:grid-cols-7" />
+<div class="mt-4" role="tabpanel">
+    @{ var t = tabs.First(x => x.Id == Current); }
+    <ComingSoon Title="@t.Label" IconName="@t.Icon" />
+</div>
+
+@code {
+    [Parameter] public string? Tab { get; set; }
+
+    private IReadOnlyList<(string Id, string Label, string Icon)> tabs = [];
+
+    // Unknown or missing tab names land on Status, so old links still open the page.
+    private string Current => tabs.Any(x => x.Id == Tab?.ToLowerInvariant()) ? Tab!.ToLowerInvariant() : "status";
+
+    protected override void OnInitialized()
+    {
+        tabs =
+        [
+            ("status", Localizer["Status"], "server"),
+            ("cabinets", Localizer["Cabinets"], "monitor"),
+            ("data", Localizer["Game data"], "database"),
+            ("dan", Localizer["Dani Dojo"], "medal"),
+            ("announcements", Localizer["Announcements"], "megaphone"),
+            ("backups", Localizer["Backups"], "archive"),
+            ("logs", Localizer["Logs"], "chart"),
+        ];
+        Page.Set(Localizer["Admin"], Localizer["Server Management"]);
+    }
+
+    private void Go(string id) => Nav.NavigateTo($"/Admin/Server/{id}");
+}

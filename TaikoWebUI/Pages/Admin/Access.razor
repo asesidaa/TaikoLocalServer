@@ -1,0 +1,115 @@
+@page "/Admin/Access"
+@page "/Admin/Access/{Tab}"
+@attribute [Authorize(Policy = AuthPolicies.Admin)]
+@inject NavigationManager Nav
+@inject PageState Page
+@inject HttpClient Client
+@inject AuthService AuthService
+@inject ToastService Toast
+
+<PageTitle>Access</PageTitle>
+@if (!AuthService.LoginRequired)
+{
+    @* Local mode has no accounts, so there is nothing to control access to. *@
+    <div class="@Css.Card p-6 text-sm @Css.Muted">@Localizer["Access Local Mode"]</div>
+}
+else
+{
+    <Tabs Items="tabs" Selected="@Current" SelectedChanged="Go" Label="@Localizer["Access"]"
+          Columns="grid-cols-3 xl:inline-grid xl:grid-cols-6" />
+    <div class="mt-4" role="tabpanel">
+        @if (Current == "overview")
+        {
+            @Overview
+        }
+        else
+        {
+            var t = tabs.First(x => x.Id == Current);
+            <ComingSoon Title="@t.Label" IconName="@t.Icon" />
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public string? Tab { get; set; }
+
+    private IReadOnlyList<(string Id, string Label, string Icon)> tabs = [];
+    private AccessRulesSettings? saved, draft;
+    private bool saving;
+
+    private string Current => tabs.Any(x => x.Id == Tab?.ToLowerInvariant()) ? Tab!.ToLowerInvariant() : "overview";
+
+    private bool Changed => saved is not null && draft is not null &&
+        (saved.OnlyAdmin, saved.RegisterWithLastPlayTime, saved.AllowUserDelete, saved.AllowFreeProfileEditing, saved.AccessCodeLimit) !=
+        (draft.OnlyAdmin, draft.RegisterWithLastPlayTime, draft.AllowUserDelete, draft.AllowFreeProfileEditing, draft.AccessCodeLimit);
+
+    protected override async Task OnInitializedAsync()
+    {
+        tabs =
+        [
+            ("overview", Localizer["Overview"], "shield"),
+            ("bans", Localizer["Banned cards"], "ban"),
+            ("signins", Localizer["Sign-ins"], "logIn"),
+            ("sessions", Localizer["Sessions"], "laptop"),
+            ("tokens", Localizer["API tokens"], "key"),
+            ("activity", Localizer["Activity"], "list"),
+        ];
+        Page.Set(Localizer["Admin"], Localizer["Access"]);
+        if (!AuthService.LoginRequired) return;
+        saved = await Client.GetFromJsonAsync<AccessRulesSettings>("api/AccessRules");
+        draft = Copy(saved);
+    }
+
+    private void Go(string id) => Nav.NavigateTo($"/Admin/Access/{id}");
+
+    private static AccessRulesSettings? Copy(AccessRulesSettings? r) => r is null ? null : new()
+    {
+        OnlyAdmin = r.OnlyAdmin, RegisterWithLastPlayTime = r.RegisterWithLastPlayTime, AllowUserDelete = r.AllowUserDelete,
+        AllowFreeProfileEditing = r.AllowFreeProfileEditing, AccessCodeLimit = r.AccessCodeLimit,
+    };
+
+    private async Task Save()
+    {
+        saving = true;
+        var res = await Client.PutAsJsonAsync("api/AccessRules", draft);
+        saving = false;
+        if (!res.IsSuccessStatusCode)
+        {
+            Toast.Show(Localizer["Save Failed"], true);
+            return;
+        }
+        saved = Copy(draft);
+        Toast.Show(Localizer["Saved"]);
+    }
+
+    private RenderFragment Overview => __builder =>
+    {
+        if (draft is null)
+        {
+            <p class="text-sm @Css.Muted">@Localizer["Loading..."]</p>
+            return;
+        }
+        <section class="@Css.Card p-5 sm:p-6">
+            <h2 class="font-semibold">@Localizer["Sign-up and sign-in"]</h2>
+            <p class="text-sm @Css.Muted">@Localizer["Access Rules Hint"]</p>
+            <div class="mt-3 divide-y divide-zinc-100 dark:divide-zinc-800">
+                <Toggle Label="@Localizer["Only admins can sign in"]" Icon="lock" @bind-Value="draft.OnlyAdmin" />
+                <Toggle Label="@Localizer["Register with last play time"]" Description="@Localizer["Register With Last Play Time Hint"]" Icon="clock" @bind-Value="draft.RegisterWithLastPlayTime" />
+                <Toggle Label="@Localizer["Players can delete their account"]" Icon="users" @bind-Value="draft.AllowUserDelete" />
+                <Toggle Label="@Localizer["Free profile editing"]" Description="@Localizer["Free Profile Editing Hint"]" Icon="id" @bind-Value="draft.AllowFreeProfileEditing" />
+                <label class="flex items-center gap-3 py-2">
+                    <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"><Icon Name="card" Class="size-5" /></span>
+                    <span class="min-w-0 flex-1 text-sm font-medium">@Localizer["Access codes per player"]</span>
+                    <input type="number" min="1" max="99" class="@Css.Input !w-20 text-right" @bind="draft.AccessCodeLimit" />
+                </label>
+            </div>
+            <div class="mt-4 flex justify-end gap-2">
+                @if (Changed)
+                {
+                    <button class="@Css.GhostButton" @onclick="() => draft = Copy(saved)">@Localizer["Cancel"]</button>
+                }
+                <button class="@Css.PrimaryButton" disabled="@(!Changed || saving || draft.AccessCodeLimit < 1)" @onclick="Save">@Localizer["Save"]</button>
+            </div>
+        </section>
+    };
+}

@@ -1,0 +1,29 @@
+@* Segmented tab switcher. Switching tabs starts the new tab at the top of the page (re-renders within a tab keep their place). *@
+@inject IJSRuntime JS
+
+<div class="grid gap-1 rounded-2xl bg-zinc-100 p-1 dark:bg-zinc-900 @Columns" role="tablist" aria-label="@Label">
+    @foreach (var (id, label, icon) in Items)
+    {
+        var on = id == Selected;
+        <button role="tab" aria-selected="@Css.Aria(on)" @onclick="() => Pick(id)"
+                class="flex items-center justify-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-sm font-medium transition-colors @(on ? "bg-white shadow-sm dark:bg-zinc-800" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">
+            <Icon Name="@icon" Class="hidden size-4 xl:block" />@label
+        </button>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<(string Id, string Label, string Icon)> Items { get; set; } = [];
+    [Parameter, EditorRequired] public string Selected { get; set; } = "";
+    [Parameter] public EventCallback<string> SelectedChanged { get; set; }
+    [Parameter] public string Label { get; set; } = "";
+    /// <summary>Grid columns, e.g. "grid-cols-4 xl:inline-grid xl:grid-cols-7" (literal, so Tailwind sees it).</summary>
+    [Parameter] public string Columns { get; set; } = "grid-cols-2";
+
+    private async Task Pick(string id)
+    {
+        if (id == Selected) return;
+        await SelectedChanged.InvokeAsync(id);
+        await JS.InvokeVoidAsync("scrollTo", new { top = 0, behavior = "instant" });
+    }
+}
