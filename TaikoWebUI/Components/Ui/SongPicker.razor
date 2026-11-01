@@ -1,0 +1,113 @@
+@* Song picker: every place a song is chosen (event folders, intro sets, locked songs, the shop, Dani Dojo).
+   Search-first like the title picker: name or ID, genre chips, 100 rows at a time. *@
+@inject IGameDataService GameDataService
+
+<div class="fade fixed inset-0 z-[60] grid place-items-center bg-black/50 p-4" @onclick="Close" @onkeydown="OnKey">
+    <div role="dialog" aria-modal="true" aria-labelledby="pk-h" @onclick:stopPropagation style="--origin:center"
+         class="pop flex max-h-[min(680px,calc(100dvh-2rem))] w-full max-w-lg flex-col rounded-2xl bg-white shadow-2xl dark:bg-zinc-900">
+        <div class="flex shrink-0 items-center justify-between px-4 pt-4">
+            <h2 id="pk-h" class="font-semibold">@Title</h2>
+            <button class="@Css.IconButton" aria-label="@Localizer["Close"]" @onclick="Close"><Icon Name="x" /></button>
+        </div>
+        <div class="shrink-0 px-4 pt-3">
+            <label class="relative block">
+                <span class="sr-only">@Localizer["Search songs"]</span>
+                <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="search" /></span>
+                <input type="search" autofocus autocomplete="off" value="@query" class="@Css.Input pl-9"
+                       placeholder="@string.Format(Localizer["Search {0} songs by name or ID"], songs.Count.ToString("N0"))"
+                       @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
+            </label>
+        </div>
+        <div class="flex shrink-0 flex-wrap gap-1.5 px-4 pb-1 pt-3">
+            @Chip(null)
+            @foreach (var g in Enum.GetValues<SongGenre>())
+            {
+                @Chip(g)
+            }
+        </div>
+        <ul class="mt-1 min-h-0 flex-1 overflow-y-auto px-2 pb-2">
+            @{ var hits = Matches(); }
+            @if (hits.Count == 0)
+            {
+                <li class="px-3 py-8 text-center text-sm @Css.Muted">@Localizer["No songs match."]</li>
+            }
+            @foreach (var s in hits.Take(Shown))
+            {
+                var current = s.SongId == Current;
+                var taken = !current && Taken.Contains(s.SongId);
+                <li>
+                    <button disabled="@taken" @onclick="() => OnPick.InvokeAsync(s.SongId)"
+                            class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm hover:bg-zinc-100 focus-visible:bg-zinc-100 focus-visible:outline-none disabled:opacity-45 disabled:hover:bg-transparent dark:hover:bg-zinc-800 dark:focus-visible:bg-zinc-800">
+                        <SongLine Song="s" Class="min-w-0 flex-1" />
+                        @if (taken)
+                        {
+                            <span class="text-xs @Css.Muted">@TakenLabel</span>
+                        }
+                        <span class="font-mono text-xs tabular-nums text-zinc-400">#@s.SongId</span>
+                        @if (current)
+                        {
+                            <Icon Name="check" Class="size-4 text-primary-500" />
+                        }
+                        else
+                        {
+                            <span class="size-4"></span>
+                        }
+                    </button>
+                </li>
+            }
+            @if (hits.Count > Shown)
+            {
+                <li class="px-3 py-3 text-center text-xs @Css.Muted">@string.Format(Localizer["{0} more. Keep typing to narrow it down."], (hits.Count - Shown).ToString("N0"))</li>
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    private const int Shown = 100;   // rows rendered at once; typing narrows the rest
+
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    /// <summary>The song being changed, marked with a check (null when adding).</summary>
+    [Parameter] public uint? Current { get; set; }
+    /// <summary>Songs that can't be picked (already in the list, course or shop), labelled with <see cref="TakenLabel"/>.</summary>
+    [Parameter] public IReadOnlySet<uint> Taken { get; set; } = new HashSet<uint>();
+    [Parameter] public string TakenLabel { get; set; } = "";
+    [Parameter] public EventCallback<uint> OnPick { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private List<MusicDetail> songs = [];
+    private string query = "";
+    private SongGenre? genre;
+
+    protected override async Task OnInitializedAsync() =>
+        songs = (await GameDataService.GetMusicDetailDictionary()).Values.OrderBy(s => s.SongId).ToList();
+
+    private List<MusicDetail> Matches()
+    {
+        var q = query.Trim();
+        return songs.Where(s => (genre is null || s.Genre == genre) &&
+                                (q.Length == 0 || s.SongId.ToString() == q ||
+                                 s.SongName.Contains(q, StringComparison.OrdinalIgnoreCase) ||
+                                 s.SongNameEN.Contains(q, StringComparison.OrdinalIgnoreCase))).ToList();
+    }
+
+    private RenderFragment Chip(SongGenre? g) => __builder =>
+    {
+        var on = genre == g;
+        <button aria-pressed="@Css.Aria(on)" @onclick="() => genre = g"
+                class="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700")">
+            @if (g is { } genreValue)
+            {
+                var (name, bg, _) = GameData.Genre(genreValue);
+                <span class="size-2 rounded-full" style="background:@bg"></span>@name
+            }
+            else
+            {
+                @Localizer["All"]
+            }
+        </button>
+    };
+
+    private Task Close() => OnClose.InvokeAsync();
+    private Task OnKey(KeyboardEventArgs e) => e.Key == "Escape" ? Close() : Task.CompletedTask;
+}

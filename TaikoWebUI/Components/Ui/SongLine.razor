@@ -1,0 +1,17 @@
+@* A song as one line: genre dot, Japanese name, and the English name under it when there is one. *@
+@{ var (genreName, bg, _) = GameData.Genre(Song.Genre); }
+<span class="flex items-center gap-2 @Class">
+    <span class="size-2 shrink-0 rounded-full" style="background:@bg" title="@genreName"></span>
+    <span class="min-w-0">
+        <span class="block truncate">@Song.SongName</span>
+        @if (!string.IsNullOrEmpty(Song.SongNameEN) && Song.SongNameEN != Song.SongName)
+        {
+            <span class="block truncate text-xs @Css.Muted">@Song.SongNameEN</span>
+        }
+    </span>
+</span>
+
+@code {
+    [Parameter, EditorRequired] public MusicDetail Song { get; set; } = new();
+    [Parameter] public string Class { get; set; } = "";
+}
