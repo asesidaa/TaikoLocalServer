@@ -77,7 +77,7 @@
         <div class="min-w-0 space-y-4">
             @if (monthData is null)
             {
-                <p class="text-sm @Css.Muted">@Localizer["Loading..."]</p>
+                <Skeleton />
             }
             else if (selected is null)
             {
@@ -89,7 +89,7 @@
             {
                 @if (dayData is null)
                 {
-                    <p class="text-sm @Css.Muted">@Localizer["Loading..."]</p>
+                    <Skeleton />
                 }
                 else
                 {

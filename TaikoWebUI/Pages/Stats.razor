@@ -10,7 +10,7 @@
 <PlayDataPage Setting="setting" Dans="dans">
     @if (!loaded)
     {
-        <p class="text-sm @Css.Muted">@Localizer["Loading..."]</p>
+        <Skeleton />
     }
     else
     {

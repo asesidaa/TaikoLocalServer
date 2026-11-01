@@ -3198,6 +3198,108 @@
   <data name="best of {0} plays" xml:space="preserve">
     <value>{0} 次中的最佳</value>
   </data>
+  <data name="Page not found" xml:space="preserve">
+    <value>找不到页面</value>
+  </data>
+  <data name="This page doesn't exist" xml:space="preserve">
+    <value>此页面不存在</value>
+  </data>
+  <data name="The link may be old, or the song, player or page was removed." xml:space="preserve">
+    <value>链接可能已过期，或歌曲、玩家或页面已被删除。</value>
+  </data>
+  <data name="Couldn't load this page" xml:space="preserve">
+    <value>无法加载此页面</value>
+  </data>
+  <data name="The server didn't answer. Check your connection, then try again. Nothing you changed was lost." xml:space="preserve">
+    <value>服务器没有响应。请检查网络连接后重试。你的修改没有丢失。</value>
+  </data>
+  <data name="Something went wrong on the server. Try again. Nothing you changed was lost." xml:space="preserve">
+    <value>服务器出错了。请重试。你的修改没有丢失。</value>
+  </data>
+  <data name="Try again" xml:space="preserve">
+    <value>重试</value>
+  </data>
+  <data name="request" xml:space="preserve">
+    <value>请求</value>
+  </data>
+  <data name="No connection" xml:space="preserve">
+    <value>无连接</value>
+  </data>
+  <data name="Maintenance is coming." xml:space="preserve">
+    <value>即将进行维护。</value>
+  </data>
+  <data name="Maintenance from {0}." xml:space="preserve">
+    <value>{0} 起维护。</value>
+  </data>
+  <data name="Cabinets close during it. This site stays open." xml:space="preserve">
+    <value>维护期间机台关闭。本网站照常开放。</value>
+  </data>
+  <data name="Maintenance." xml:space="preserve">
+    <value>维护中。</value>
+  </data>
+  <data name="Maintenance until {0}." xml:space="preserve">
+    <value>维护至 {0}。</value>
+  </data>
+  <data name="Cabinets are closed." xml:space="preserve">
+    <value>机台已关闭。</value>
+  </data>
+  <data name="Cabinets are closed. You can browse; saving changes is paused until it ends." xml:space="preserve">
+    <value>机台已关闭。你可以浏览，但在维护结束前无法保存修改。</value>
+  </data>
+  <data name="The server is offline." xml:space="preserve">
+    <value>服务器已离线。</value>
+  </data>
+  <data name="Cabinets are refused and players see an offline page." xml:space="preserve">
+    <value>机台无法连接，玩家会看到离线页面。</value>
+  </data>
+  <data name="Change it in Server Management" xml:space="preserve">
+    <value>在服务器管理中更改</value>
+  </data>
+  <data name="The server is offline" xml:space="preserve">
+    <value>服务器已离线</value>
+  </data>
+  <data name="Cabinets can't connect right now and this site is paused. Your scores and settings are safe." xml:space="preserve">
+    <value>机台暂时无法连接，本网站也已暂停。你的成绩和设置都很安全。</value>
+  </data>
+  <data name="Expected back:" xml:space="preserve">
+    <value>预计恢复：</value>
+  </data>
+  <data name="Admins can still sign in and change the server state." xml:space="preserve">
+    <value>管理员仍可登录并更改服务器状态。</value>
+  </data>
+  <data name="You're offline. Trying again in {0} s; changes save when you're back." xml:space="preserve">
+    <value>你已离线。{0} 秒后重试；恢复连接后会保存修改。</value>
+  </data>
+  <data name="You're offline. Trying again…" xml:space="preserve">
+    <value>你已离线。正在重试…</value>
+  </data>
+  <data name="Retry now" xml:space="preserve">
+    <value>立即重试</value>
+  </data>
+  <data name="Back online. Your changes were saved." xml:space="preserve">
+    <value>已恢复在线。你的修改已保存。</value>
+  </data>
+  <data name="Back online." xml:space="preserve">
+    <value>已恢复在线。</value>
+  </data>
+  <data name="You've been signed out" xml:space="preserve">
+    <value>你已被登出</value>
+  </data>
+  <data name="Your session ended (it expired, or you signed out everywhere). Sign in again to carry on; this page and anything you were editing stay as they are." xml:space="preserve">
+    <value>你的会话已结束（已过期，或你在所有设备上登出）。请重新登录以继续；此页面和你正在编辑的内容都会保留。</value>
+  </data>
+  <data name="Use a different account" xml:space="preserve">
+    <value>使用其他账户</value>
+  </data>
+  <data name="Signed in again. You're back where you were." xml:space="preserve">
+    <value>已重新登录，回到了你刚才的位置。</value>
+  </data>
+  <data name="Couldn't sign in. Try again." xml:space="preserve">
+    <value>无法登录。请重试。</value>
+  </data>
+  <data name="Saving is paused during maintenance" xml:space="preserve">
+    <value>维护期间暂停保存</value>
+  </data>
   <data name="New" xml:space="preserve">
     <value>新曲</value>
   </data>

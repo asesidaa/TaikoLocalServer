@@ -67,7 +67,7 @@
             <p class="text-sm @Css.Muted">@((MarkupString)string.Format(Localizer["Config Card Hint"], "<code class=\"font-mono text-xs\">Host/Configurations</code>"))</p>
             @if (config is null)
             {
-                <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+                <div class="mt-4"><Skeleton /></div>
             }
             else
             {

@@ -122,7 +122,7 @@ else
             <p class="text-sm @Css.Muted">@Localizer["Activity Hint"]</p>
             @if (activity is null)
             {
-                <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+                <div class="mt-4"><Skeleton /></div>
             }
             else if (activity.Count == 0)
             {
@@ -194,7 +194,7 @@ else
     {
         if (draft is null)
         {
-            <p class="text-sm @Css.Muted">@Localizer["Loading..."]</p>
+            <Skeleton />
             return;
         }
         if (checklist is { Count: > 0 })

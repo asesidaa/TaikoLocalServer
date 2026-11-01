@@ -14,7 +14,7 @@
     <p class="text-sm @Css.Muted">@Localizer["Cabinets pick a change up on their next heartbeat, within about a minute."]</p>
     @if (saved is null)
     {
-        <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+        <div class="mt-4"><Skeleton /></div>
     }
     else
     {
@@ -29,7 +29,7 @@
                 </button>
             }
         </div>
-        @if (draft is ServerState.PreMaintenance or ServerState.Maintenance)
+        @if (draft is not ServerState.Operational)
         {
             <div class="mt-4 grid gap-3 sm:grid-cols-2">
                 <label class="text-sm">@Localizer["Start"] <span class="@Css.Muted">@Localizer["(empty: now)"]</span>
@@ -78,7 +78,8 @@
 
     private bool Dangerous => draft is ServerState.Maintenance or ServerState.Offline;
 
-    private bool Windowed => draft is ServerState.PreMaintenance or ServerState.Maintenance;
+    // Offline's end is when players are told to expect it back.
+    private bool Windowed => draft is not ServerState.Operational;
 
     private bool Dirty => saved is not null && (draft != saved.State || Windowed && (start != Local(saved.Start) || end != Local(saved.End)));
 

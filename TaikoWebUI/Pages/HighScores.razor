@@ -111,7 +111,7 @@
     <section class="@Css.Card overflow-hidden">
         @if (data is null)
         {
-            <p class="px-4 py-12 text-center text-sm @Css.Muted">@Localizer["Loading..."]</p>
+            <div class="p-4"><Skeleton Rows="8" /></div>
         }
         else if (data.Items.Count == 0)
         {

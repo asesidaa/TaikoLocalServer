@@ -79,7 +79,7 @@
 
         @if (draft is null || music is null)
         {
-            <p class="p-6 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+            <div class="p-6"><Skeleton /></div>
         }
         else
         {

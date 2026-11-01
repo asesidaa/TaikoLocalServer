@@ -3198,6 +3198,108 @@
   <data name="best of {0} plays" xml:space="preserve">
     <value>meilleure de {0} parties</value>
   </data>
+  <data name="Page not found" xml:space="preserve">
+    <value>Page introuvable</value>
+  </data>
+  <data name="This page doesn't exist" xml:space="preserve">
+    <value>Cette page n'existe pas</value>
+  </data>
+  <data name="The link may be old, or the song, player or page was removed." xml:space="preserve">
+    <value>Le lien est peut-être ancien, ou la chanson, le joueur ou la page a été supprimé.</value>
+  </data>
+  <data name="Couldn't load this page" xml:space="preserve">
+    <value>Impossible de charger cette page</value>
+  </data>
+  <data name="The server didn't answer. Check your connection, then try again. Nothing you changed was lost." xml:space="preserve">
+    <value>Le serveur n'a pas répondu. Vérifiez votre connexion, puis réessayez. Aucune de vos modifications n'a été perdue.</value>
+  </data>
+  <data name="Something went wrong on the server. Try again. Nothing you changed was lost." xml:space="preserve">
+    <value>Un problème est survenu sur le serveur. Réessayez. Aucune de vos modifications n'a été perdue.</value>
+  </data>
+  <data name="Try again" xml:space="preserve">
+    <value>Réessayer</value>
+  </data>
+  <data name="request" xml:space="preserve">
+    <value>requête</value>
+  </data>
+  <data name="No connection" xml:space="preserve">
+    <value>Pas de connexion</value>
+  </data>
+  <data name="Maintenance is coming." xml:space="preserve">
+    <value>Une maintenance approche.</value>
+  </data>
+  <data name="Maintenance from {0}." xml:space="preserve">
+    <value>Maintenance à partir de {0}.</value>
+  </data>
+  <data name="Cabinets close during it. This site stays open." xml:space="preserve">
+    <value>Les bornes ferment pendant ce temps. Ce site reste ouvert.</value>
+  </data>
+  <data name="Maintenance." xml:space="preserve">
+    <value>Maintenance.</value>
+  </data>
+  <data name="Maintenance until {0}." xml:space="preserve">
+    <value>Maintenance jusqu'à {0}.</value>
+  </data>
+  <data name="Cabinets are closed." xml:space="preserve">
+    <value>Les bornes sont fermées.</value>
+  </data>
+  <data name="Cabinets are closed. You can browse; saving changes is paused until it ends." xml:space="preserve">
+    <value>Les bornes sont fermées. Vous pouvez naviguer ; l'enregistrement des modifications est suspendu jusqu'à la fin.</value>
+  </data>
+  <data name="The server is offline." xml:space="preserve">
+    <value>Le serveur est hors ligne.</value>
+  </data>
+  <data name="Cabinets are refused and players see an offline page." xml:space="preserve">
+    <value>Les bornes sont refusées et les joueurs voient une page hors ligne.</value>
+  </data>
+  <data name="Change it in Server Management" xml:space="preserve">
+    <value>Le modifier dans Gestion du serveur</value>
+  </data>
+  <data name="The server is offline" xml:space="preserve">
+    <value>Le serveur est hors ligne</value>
+  </data>
+  <data name="Cabinets can't connect right now and this site is paused. Your scores and settings are safe." xml:space="preserve">
+    <value>Les bornes ne peuvent pas se connecter pour le moment et ce site est en pause. Vos scores et réglages sont en sécurité.</value>
+  </data>
+  <data name="Expected back:" xml:space="preserve">
+    <value>Retour prévu :</value>
+  </data>
+  <data name="Admins can still sign in and change the server state." xml:space="preserve">
+    <value>Les administrateurs peuvent toujours se connecter et changer l'état du serveur.</value>
+  </data>
+  <data name="You're offline. Trying again in {0} s; changes save when you're back." xml:space="preserve">
+    <value>Vous êtes hors ligne. Nouvel essai dans {0} s ; les modifications seront enregistrées à votre retour.</value>
+  </data>
+  <data name="You're offline. Trying again…" xml:space="preserve">
+    <value>Vous êtes hors ligne. Nouvel essai…</value>
+  </data>
+  <data name="Retry now" xml:space="preserve">
+    <value>Réessayer maintenant</value>
+  </data>
+  <data name="Back online. Your changes were saved." xml:space="preserve">
+    <value>De retour en ligne. Vos modifications ont été enregistrées.</value>
+  </data>
+  <data name="Back online." xml:space="preserve">
+    <value>De retour en ligne.</value>
+  </data>
+  <data name="You've been signed out" xml:space="preserve">
+    <value>Vous avez été déconnecté</value>
+  </data>
+  <data name="Your session ended (it expired, or you signed out everywhere). Sign in again to carry on; this page and anything you were editing stay as they are." xml:space="preserve">
+    <value>Votre session a pris fin (elle a expiré, ou vous vous êtes déconnecté partout). Reconnectez-vous pour continuer ; cette page et ce que vous modifiiez restent tels quels.</value>
+  </data>
+  <data name="Use a different account" xml:space="preserve">
+    <value>Utiliser un autre compte</value>
+  </data>
+  <data name="Signed in again. You're back where you were." xml:space="preserve">
+    <value>Reconnecté. Vous êtes revenu là où vous étiez.</value>
+  </data>
+  <data name="Couldn't sign in. Try again." xml:space="preserve">
+    <value>Connexion impossible. Réessayez.</value>
+  </data>
+  <data name="Saving is paused during maintenance" xml:space="preserve">
+    <value>L'enregistrement est suspendu pendant la maintenance</value>
+  </data>
   <data name="New" xml:space="preserve">
     <value>Nouveau</value>
   </data>

@@ -8,7 +8,7 @@
     <h2 class="font-semibold">@Localizer["Players"]</h2>
     @if (draft is null)
     {
-        <p class="mt-2 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+        <div class="mt-2"><Skeleton /></div>
     }
     else
     {

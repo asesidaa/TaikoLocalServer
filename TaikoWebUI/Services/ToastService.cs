@@ -9,9 +9,19 @@ public sealed class ToastService
     public event Action? Changed;
 
     private CancellationTokenSource? hide;
+    private DateTime keepUntil;
+
+    /// <summary>Shows a message that other toasts don't replace for a moment (e.g. the page's own "Save failed" after it).</summary>
+    public void ShowFirm(string message)
+    {
+        keepUntil = default;
+        Show(message);
+        keepUntil = DateTime.UtcNow.AddSeconds(2);
+    }
 
     public void Show(string message, bool isError = false)
     {
+        if (DateTime.UtcNow < keepUntil) return;
         Message = message;
         IsError = isError;
         Changed?.Invoke();

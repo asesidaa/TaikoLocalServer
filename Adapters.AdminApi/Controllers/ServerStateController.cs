@@ -5,8 +5,14 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Route("api/[controller]")]
 [Authorize(Policy = AuthPolicies.Admin)]
 [ApiScope(ApiScopes.AdminServer, ApiScopes.AdminServer)]
+[OpenInEveryServerState]
 public class ServerStateController(IServerAccess access, ITaikoDbContext context) : BaseAdminController<ServerStateController>
 {
+    /// <summary>For everyone, signed in or not: the Web UI's banners and offline page (and its connection check).</summary>
+    [HttpGet("Current")]
+    [AllowAnonymous]
+    public ServerStateSettings Current() => Get();
+
     [HttpGet]
     public ServerStateSettings Get()
     {

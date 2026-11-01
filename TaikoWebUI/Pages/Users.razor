@@ -63,7 +63,7 @@
         <ul class="mt-2 @(phone ? "max-h-[55dvh]" : "max-h-[calc(100dvh-16rem)]") space-y-0.5 overflow-y-auto">
             @if (users is null)
             {
-                <li class="px-3 py-6 text-center text-sm @Css.Muted">@Localizer["Loading..."]</li>
+                <li class="px-3 py-3"><Skeleton Rows="8" /></li>
             }
             else
             {

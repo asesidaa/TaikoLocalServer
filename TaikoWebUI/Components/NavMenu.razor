@@ -124,8 +124,8 @@ else if (!AuthService.LoginRequired)
 
     private async Task LoadUserName()
     {
-        var user = AuthService.IsLoggedIn ? await AuthService.GetLoggedInUser() : null;
-        me = user;
+        // Keeps the name it has if the server can't be reached.
+        me = AuthService.IsLoggedIn ? await AuthService.GetLoggedInUser() ?? me : null;
     }
 
     private async void OnAuthChanged(object? sender, EventArgs e)

@@ -1,0 +1,116 @@
+@* Signed out mid-session (expired, or "sign out everywhere"): sign in again over the page, not a redirect, so the page
+   and anything being edited stay as they are; the request that was refused is then sent again (AppStatusHandler).
+   It can't be dismissed: the other way out is a different account, at Log in. *@
+@inject AppStatus Status
+@inject AuthService AuthService
+@inject JwtAuthenticationStateProvider AuthState
+@inject NavigationManager Nav
+@inject ToastService Toast
+
+<div class="fade fixed inset-0 z-[70] grid place-items-center bg-black/50 p-4">
+    <div role="dialog" aria-modal="true" aria-labelledby="signin-again-h" class="pop w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl dark:bg-zinc-900" style="--origin:center">
+        <span class="grid size-10 place-items-center rounded-full bg-primary-500/10 text-primary-600 dark:text-primary-400"><Icon Name="key" Class="size-5" /></span>
+        <h2 id="signin-again-h" class="mt-3 font-semibold">@Localizer["You've been signed out"]</h2>
+        <p class="mt-1 text-sm @Css.Muted">@Localizer["Your session ended (it expired, or you signed out everywhere). Sign in again to carry on; this page and anything you were editing stay as they are."]</p>
+        @if (card is null)
+        {
+            <button class="@Css.PrimaryButton mt-4 w-full justify-center" @onclick="OtherAccount">@Localizer["Log In"]</button>
+        }
+        else
+        {
+            <form class="mt-4 space-y-3" @onsubmit="SignIn">
+                <div class="flex items-center gap-2 rounded-xl bg-zinc-100 px-3 py-2 text-sm dark:bg-zinc-800">
+                    <Icon Name="card" Class="size-5 text-zinc-500" />
+                    <span class="min-w-0 flex-1 truncate">@Localizer["Card"]</span>
+                    <span class="font-mono text-xs @Css.Muted">•••• @card[^4..]</span>
+                </div>
+                @if (codeStep)
+                {
+                    <label class="block"><span class="text-sm font-medium">@Localizer["Code from your authenticator app"]</span>
+                        <input @ref="field" type="text" inputmode="numeric" autocomplete="one-time-code" class="@Css.Input mt-1.5 text-center font-mono tracking-widest" @bind="code" required /></label>
+                }
+                else
+                {
+                    <label class="block"><span class="text-sm font-medium">@Localizer["Password"]</span>
+                        <input @ref="field" type="password" autocomplete="current-password" class="@Css.Input mt-1.5" @bind="password" required /></label>
+                }
+                @if (error is not null)
+                {
+                    <p class="text-sm text-red-600 dark:text-red-400" role="alert">@error</p>
+                }
+                <button class="@Css.PrimaryButton w-full justify-center" disabled="@busy">@Localizer["Log In"]</button>
+            </form>
+            <button class="mt-3 block w-full text-center text-sm font-medium @Css.Muted hover:underline" @onclick="OtherAccount">@Localizer["Use a different account"]</button>
+        }
+    </div>
+</div>
+
+@code {
+    private string? card;
+    private string password = "", code = "";
+    private bool codeStep, busy;
+    private string? error;
+    private ElementReference field;
+
+    protected override async Task OnInitializedAsync() => card = await AuthService.SignedInCard();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (card is not null && (firstRender || focusField))
+        {
+            focusField = false;
+            try { await field.FocusAsync(); } catch (InvalidOperationException) { }
+        }
+    }
+    private bool focusField;
+
+    private async Task SignIn()
+    {
+        busy = true;
+        error = null;
+        int result;
+        try
+        {
+            result = codeStep ? await AuthService.VerifyTwoFactor(code, false) : await AuthService.Login(card!, password);
+        }
+        catch (HttpRequestException)
+        {
+            result = 5;
+        }
+        busy = false;
+        switch (result)
+        {
+            case 1:
+                Status.SignedInAgain(AuthService.CurrentToken);
+                Toast.Show(Localizer["Signed in again. You're back where you were."]);
+                return;
+            case 8:
+                codeStep = true;
+                focusField = true;
+                return;
+            case 10:
+                codeStep = false;
+                code = "";
+                error = Localizer["That took too long. Enter your password again."];
+                return;
+            default:
+                error = result switch
+                {
+                    // Log in shows it as markup, on two lines.
+                    2 => Localizer["Login Wrong Password Error"].Value.Replace("<br />", " "),
+                    9 => Localizer["That code didn't work. Codes change every 30 seconds, so try the newest one."],
+                    6 => Localizer["Too many wrong passwords. This account is locked for a while: try again later, or ask an admin."],
+                    7 => Localizer["This card is banned on this server. Ask an admin."],
+                    _ => Localizer["Couldn't sign in. Try again."],
+                };
+                return;
+        }
+    }
+
+    private async Task OtherAccount()
+    {
+        await AuthState.MarkUserAsLoggedOutAsync();
+        Status.SignedInAgain(null);
+        Nav.NavigateTo("/Login", forceLoad: true);
+    }
+}

@@ -35,7 +35,11 @@ public static class DependencyInjection
                     : RateLimitPartition.GetNoLimiter(""));
         });
         // API tokens are limited to their scopes on every endpoint (see ApiScopeAttribute).
-        services.Configure<Microsoft.AspNetCore.Mvc.MvcOptions>(o => o.Filters.Add<ApiScopeFilter>());
+        services.Configure<Microsoft.AspNetCore.Mvc.MvcOptions>(o =>
+        {
+            o.Filters.Add<ApiScopeFilter>();
+            o.Filters.Add<ServerStateFilter>();
+        });
         return services;
     }
 

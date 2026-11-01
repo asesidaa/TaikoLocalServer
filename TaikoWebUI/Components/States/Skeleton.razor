@@ -1,0 +1,35 @@
+@* Loading: grey rows in the page's place, so nothing jumps when the data arrives. Shown only after about 300 ms, so
+   fast loads show nothing; pulses only when motion is welcome. *@
+@implements IDisposable
+
+@if (shown)
+{
+    <div class="space-y-3 motion-safe:animate-pulse" aria-busy="true">
+        @for (var i = 0; i < Rows; i++)
+        {
+            <div class="flex items-center gap-3">
+                <span class="size-8 shrink-0 rounded-lg bg-zinc-200/80 dark:bg-zinc-800"></span>
+                <span class="min-w-0 flex-1 space-y-1.5">
+                    <span class="block h-3.5 rounded-md bg-zinc-200/80 dark:bg-zinc-800" style="width: @(60 + i * 37 % 30)%"></span>
+                    <span class="block h-3 w-1/3 rounded-md bg-zinc-200/80 dark:bg-zinc-800"></span>
+                </span>
+            </div>
+        }
+        <p class="sr-only" role="status">@Localizer["Loading..."]</p>
+    </div>
+}
+
+@code {
+    [Parameter] public int Rows { get; set; } = 4;
+
+    private bool shown;
+    private readonly CancellationTokenSource delay = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try { await Task.Delay(300, delay.Token); } catch (TaskCanceledException) { return; }
+        shown = true;
+    }
+
+    public void Dispose() => delay.Cancel();
+}

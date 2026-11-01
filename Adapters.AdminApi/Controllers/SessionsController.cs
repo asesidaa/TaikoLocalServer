@@ -7,6 +7,8 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Route("api/[controller]")]
 [Authorize]
 [ApiScope(ApiScopes.AdminUsers, ApiScopes.AdminUsers)]
+// Signing out works whatever the server state.
+[OpenInEveryServerState]
 public class SessionsController(ITaikoDbContext context) : BaseAdminController<SessionsController>
 {
     private Guid? Current => Guid.TryParse(User.FindFirstValue(IJwtTokenService.SessionClaim), out var sid) ? sid : null;

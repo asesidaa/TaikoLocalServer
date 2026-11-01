@@ -8,6 +8,7 @@
 @inject NavigationManager Nav
 @inject IOptions<WebUiSettings> Settings
 @inject HttpClient Client
+@inject AppStatus Status
 @using Microsoft.Extensions.Options
 
 @if ((AuthService.LoginRequired && !AuthService.IsLoggedIn) || OnSetup)
@@ -71,7 +72,9 @@ else
                 <TopControls />
             </div>
         </header>
+        <ConnectionBar />
         <main class="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+            <ServerBanner Admin="Unaffected" />
             @if (AuthService.TwoFactorSetupRequired && !Nav.Uri.Contains("/Settings", StringComparison.OrdinalIgnoreCase))
             {
                 <div role="alert" class="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-200">
@@ -89,7 +92,14 @@ else
                     <a href="/Admin/Server/data" class="font-semibold underline underline-offset-2">@Localizer["Add them"]</a>
                 </div>
             }
-            @Body
+            @if (Status.Server?.Current == ServerState.Offline && !Unaffected)
+            {
+                <OfflinePage />
+            }
+            else
+            {
+                <PageErrorBoundary @ref="boundary">@Body</PageErrorBoundary>
+            }
         </main>
     </div>
 }
@@ -111,6 +121,11 @@ else
     <div @ref="overlayRoot" tabindex="-1" class="outline-none" @onkeydown="OnOverlayKey">@overlayContent</div>
 }
 
+@if (Status.SignInNeeded)
+{
+    <SignInAgainDialog />
+}
+
 @if (Toast.Message is { } message)
 {
     <div role="status" class="pop fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm shadow-lg @(Toast.IsError ? "bg-primary-600 text-white" : "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900")" style="--origin:bottom right">
@@ -120,6 +135,12 @@ else
 
 @code {
     private bool drawerOpen;
+    private PageErrorBoundary? boundary;
+
+    // Admins, and everyone in Local mode, keep working in every server state (ServerStateFilter).
+    private bool Unaffected => !AuthService.LoginRequired || AuthService.IsAdmin;
+
+    private void OnSavingPaused() => Toast.ShowFirm(Localizer["Saving is paused during maintenance"]);
     private ElementReference overlayRoot;
     private bool overlayFocused;
 
@@ -180,6 +201,8 @@ else
         Page.Changed += Refresh;
         Toast.Changed += Refresh;
         Overlay.Changed += Refresh;
+        Status.Changed += Refresh;
+        Status.SavingPaused += OnSavingPaused;
         Nav.LocationChanged += OnLocationChanged;
         await CheckAssets();
         await LoadServerState();
@@ -201,6 +224,9 @@ else
     private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
     {
         drawerOpen = false;
+        // A page that failed to load doesn't keep the next one from showing.
+        boundary?.Recover();
+        _ = Status.RefreshState(TimeSpan.FromSeconds(15));
         RequireSetup();
         _ = LoadServerState();
         Refresh();
@@ -212,6 +238,8 @@ else
         Page.Changed -= Refresh;
         Toast.Changed -= Refresh;
         Overlay.Changed -= Refresh;
+        Status.Changed -= Refresh;
+        Status.SavingPaused -= OnSavingPaused;
         Nav.LocationChanged -= OnLocationChanged;
     }
 }

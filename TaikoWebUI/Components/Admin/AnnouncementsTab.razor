@@ -15,7 +15,7 @@
     </div>
     @if (telops is null)
     {
-        <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+        <div class="mt-4"><Skeleton /></div>
     }
     else
     {
@@ -65,7 +65,7 @@
     <p class="text-sm @Css.Muted">@Localizer["A banner at the top of everyone's Dashboard in the Web UI."]</p>
     @if (notice is null)
     {
-        <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+        <div class="mt-4"><Skeleton /></div>
     }
     else
     {

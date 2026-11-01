@@ -16,8 +16,10 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// Single HttpClient reused for both bootstrap fetches and the registered DI singleton.
-var httpClient = new HttpClient(new SignedOutHandler { InnerHandler = new HttpClientHandler() })
+// Single HttpClient reused for both bootstrap fetches and the registered DI singleton. Every call reports the
+// connection, sign-outs and the server state to AppStatus (the System states).
+var appStatus = new AppStatus();
+var httpClient = new HttpClient(new AppStatusHandler(appStatus) { InnerHandler = new HttpClientHandler() })
 {
     BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
 };
@@ -27,7 +29,9 @@ var httpClient = new HttpClient(new SignedOutHandler { InnerHandler = new HttpCl
 // and rejects the synchronous reads AddJsonStream/Build performs internally.
 var configurationBytesTask = httpClient.GetByteArrayAsync("appsettings.json");
 var authConfigTask = httpClient.GetFromJsonAsync<ClientAuthConfigResponse>("api/Auth/Config");
-await Task.WhenAll(configurationBytesTask, authConfigTask);
+var serverStateTask = httpClient.GetFromJsonAsync<ServerStateSettings>("api/ServerState/Current");
+await Task.WhenAll(configurationBytesTask, authConfigTask, serverStateTask);
+appStatus.Start(httpClient, await serverStateTask);
 
 var configurationBytes = await configurationBytesTask;
 var authConfig = await authConfigTask
@@ -39,6 +43,7 @@ var configuration = new ConfigurationBuilder()
     .Build();
 
 builder.Services.AddSingleton(httpClient);
+builder.Services.AddSingleton(appStatus);
 builder.Services.AddSingleton(authConfig);
 builder.Services.AddSingleton<GameDataService>();
 

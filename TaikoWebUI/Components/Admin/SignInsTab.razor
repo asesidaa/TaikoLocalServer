@@ -44,7 +44,7 @@
     </div>
     @if (items is null)
     {
-        <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+        <div class="mt-4"><Skeleton /></div>
     }
     else if (items.Count == 0)
     {

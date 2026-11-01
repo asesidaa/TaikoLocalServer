@@ -10,6 +10,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[OpenInEveryServerState]
 public class AuthController(
     ITaikoDbContext context,
     IJwtTokenService jwtTokens,

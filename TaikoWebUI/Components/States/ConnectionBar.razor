@@ -1,0 +1,26 @@
+@* No connection: a bar under the header while requests fail, retrying with backoff (AppStatus); green for a moment
+   when it's back. Saves made meanwhile wait and are sent then (AppStatusHandler). *@
+@inject AppStatus Status
+@implements IDisposable
+
+@if (Status.Offline)
+{
+    <div class="sticky top-16 z-10 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 bg-zinc-900 px-4 py-2 text-sm text-white dark:bg-zinc-100 dark:text-zinc-900" role="status">
+        <Icon Name="rotate" Class="@(Status.RetryIn == 0 ? "size-4 animate-spin" : "size-4")" />
+        <span>@(Status.RetryIn > 0 ? string.Format(Localizer["You're offline. Trying again in {0} s; changes save when you're back."], Status.RetryIn) : Localizer["You're offline. Trying again…"])</span>
+        <button class="font-semibold underline" @onclick="Status.RetryNow">@Localizer["Retry now"]</button>
+    </div>
+}
+else if (Status.BackOnline is { } saved)
+{
+    <div class="sticky top-16 z-10 flex items-center justify-center gap-2 bg-emerald-600 px-4 py-2 text-sm text-white" role="status">
+        <Icon Name="check" Class="size-4" />
+        <span>@(saved ? Localizer["Back online. Your changes were saved."] : Localizer["Back online."])</span>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized() => Status.Changed += Refresh;
+    private void Refresh() => InvokeAsync(StateHasChanged);
+    public void Dispose() => Status.Changed -= Refresh;
+}

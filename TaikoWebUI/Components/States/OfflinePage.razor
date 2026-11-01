@@ -1,0 +1,20 @@
+@* Players while the server is Offline: the API refuses them (ServerStateFilter), so this replaces the page. *@
+@inject AppStatus Status
+@implements IDisposable
+
+<div class="mx-auto grid max-w-md place-items-center py-12 text-center">
+    <span class="grid size-14 place-items-center rounded-full bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"><Icon Name="settings" Class="size-7" /></span>
+    <h1 class="mt-4 text-xl font-semibold">@Localizer["The server is offline"]</h1>
+    <p class="mt-2 text-sm @Css.Muted">@Localizer["Cabinets can't connect right now and this site is paused. Your scores and settings are safe."]</p>
+    @if (Status.Server?.End is { } end)
+    {
+        <p class="mt-1 text-sm @Css.Muted">@Localizer["Expected back:"] <b class="text-zinc-700 dark:text-zinc-200">@ServerBanner.When(end)</b></p>
+    }
+    <p class="mt-6 text-xs @Css.Muted">@Localizer["Admins can still sign in and change the server state."]</p>
+</div>
+
+@code {
+    protected override void OnInitialized() => Status.Changed += Refresh;
+    private void Refresh() => InvokeAsync(StateHasChanged);
+    public void Dispose() => Status.Changed -= Refresh;
+}

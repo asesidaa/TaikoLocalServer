@@ -64,6 +64,8 @@ public sealed class AuthService : IDisposable
 
     // "Trust this browser": one per browser; the server ignores it for any other account.
     private const string TrustKey = "auth.trustedBrowser";
+    // The card this browser signed in with, so a signed-out session can sign in again with just the password.
+    private const string CardKey = "auth.card";
 
     private uint loggedInBaid;
     private string? sessionId;
@@ -129,6 +131,7 @@ public sealed class AuthService : IDisposable
         };
 
         var responseMessage = await client.PostAsJsonAsync("api/Auth/Login", request);
+        if (responseMessage.IsSuccessStatusCode) await localStorage.SetItemAsStringAsync(CardKey, request.AccessCode);
 
         if (!responseMessage.IsSuccessStatusCode)
         {
@@ -178,6 +181,12 @@ public sealed class AuthService : IDisposable
         await authStateProvider.MarkUserAsAuthenticatedAsync(authToken);
         return 1;
     }
+
+    /// <summary>The card the session signed in with, for signing in again (the System states' dialog); null if unknown.</summary>
+    public async Task<string?> SignedInCard() => await localStorage.GetItemAsStringAsync(CardKey) is { Length: > 0 } card ? card : null;
+
+    /// <summary>The token the API calls now carry.</summary>
+    public string? CurrentToken => client.DefaultRequestHeaders.Authorization?.Parameter;
 
     /// <summary>A new token from the server (turning on 2-step unlocked admin access).</summary>
     public Task UseToken(string authToken) => authStateProvider.MarkUserAsAuthenticatedAsync(authToken);
@@ -245,15 +254,24 @@ public sealed class AuthService : IDisposable
             try { await client.DeleteAsync($"api/Sessions/{sid}"); }
             catch (HttpRequestException) { /* offline: the browser still forgets the token */ }
         }
+        await localStorage.RemoveItemAsync(CardKey);
         await authStateProvider.MarkUserAsLoggedOutAsync();
     }
 
     public async Task<User?> GetLoggedInUser()
     {
         if (loggedInBaid == 0) return null;
-        // A 401 here means the session ended; SignedOutHandler is already sending the browser to Log in.
-        var res = await client.GetAsync($"api/Users/{loggedInBaid}");
-        return res.IsSuccessStatusCode ? await res.Content.ReadFromJsonAsync<User>() : null;
+        // A 401 here means the session ended; AppStatusHandler asks for the password and sends it again.
+        try
+        {
+            var res = await client.GetAsync($"api/Users/{loggedInBaid}");
+            return res.IsSuccessStatusCode ? await res.Content.ReadFromJsonAsync<User>() : null;
+        }
+        catch (HttpRequestException)
+        {
+            // No connection: the shell shows the bar; callers keep what they had.
+            return null;
+        }
     }
 
     public uint GetLoggedInBaid() => loggedInBaid;

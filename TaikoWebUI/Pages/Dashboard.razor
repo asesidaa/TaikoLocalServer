@@ -72,7 +72,7 @@
 
     @if (recent is null)
     {
-        <p class="text-sm @Css.Muted">@Localizer["Loading..."]</p>
+        <Skeleton />
     }
     else if (recent.Sessions.Count == 0)
     {

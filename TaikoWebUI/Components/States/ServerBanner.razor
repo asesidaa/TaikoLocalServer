@@ -1,0 +1,45 @@
+@* The server state on every page (the site itself stays up; the states are about cabinets): pre-maintenance (sky),
+   maintenance (amber: saving is paused), offline for admins (red; players get OfflinePage instead). *@
+@inject AppStatus Status
+@implements IDisposable
+
+@if (Status.Server is { } s)
+{
+    var until = s.End is { } end ? When(end) : null;
+    switch (s.Current)
+    {
+        case ServerState.PreMaintenance:
+            <div class="mb-4 flex items-start gap-3 rounded-2xl border border-sky-500/30 bg-sky-500/10 px-4 py-3 text-sm text-sky-900 dark:text-sky-200" role="status">
+                <Icon Name="clock" Class="mt-0.5 size-4 shrink-0" />
+                <span><b>@(until is null ? Localizer["Maintenance is coming."] : string.Format(Localizer["Maintenance from {0}."], until))</b> @Localizer["Cabinets close during it. This site stays open."]</span>
+            </div>
+            break;
+        case ServerState.Maintenance:
+            <div class="mb-4 flex items-start gap-3 rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-900 dark:text-amber-200" role="status">
+                <Icon Name="settings" Class="mt-0.5 size-4 shrink-0" />
+                <span><b>@(until is null ? Localizer["Maintenance."] : string.Format(Localizer["Maintenance until {0}."], until))</b> @(Admin ? Localizer["Cabinets are closed."] : Localizer["Cabinets are closed. You can browse; saving changes is paused until it ends."])</span>
+            </div>
+            break;
+        case ServerState.Offline when Admin:
+            <div class="mb-4 flex items-start gap-3 rounded-2xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-800 dark:text-red-200" role="status">
+                <Icon Name="alert" Class="mt-0.5 size-4 shrink-0" />
+                <span><b>@Localizer["The server is offline."]</b> @Localizer["Cabinets are refused and players see an offline page."] <a href="/Admin/Server/status" class="font-semibold underline">@Localizer["Change it in Server Management"]</a></span>
+            </div>
+            break;
+    }
+}
+
+@code {
+    protected override void OnInitialized() => Status.Changed += Refresh;
+    private void Refresh() => InvokeAsync(StateHasChanged);
+    public void Dispose() => Status.Changed -= Refresh;
+
+    /// <summary>Admins (and everyone in Local mode) keep working in every state.</summary>
+    [Parameter, EditorRequired] public bool Admin { get; set; }
+
+    public static string When(DateTime utc)
+    {
+        var local = utc.ToLocalTime();
+        return local.Date == DateTime.Today ? local.ToString("HH:mm") : local.ToString(local.Year == DateTime.Today.Year ? "ddd d MMM, HH:mm" : "ddd d MMM yyyy, HH:mm");
+    }
+}

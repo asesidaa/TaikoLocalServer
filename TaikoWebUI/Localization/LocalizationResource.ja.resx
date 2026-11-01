@@ -3198,6 +3198,108 @@
   <data name="best of {0} plays" xml:space="preserve">
     <value>{0}回中のベスト</value>
   </data>
+  <data name="Page not found" xml:space="preserve">
+    <value>ページが見つかりません</value>
+  </data>
+  <data name="This page doesn't exist" xml:space="preserve">
+    <value>このページは存在しません</value>
+  </data>
+  <data name="The link may be old, or the song, player or page was removed." xml:space="preserve">
+    <value>リンクが古いか、曲・プレイヤー・ページが削除された可能性があります。</value>
+  </data>
+  <data name="Couldn't load this page" xml:space="preserve">
+    <value>このページを読み込めませんでした</value>
+  </data>
+  <data name="The server didn't answer. Check your connection, then try again. Nothing you changed was lost." xml:space="preserve">
+    <value>サーバーから応答がありません。接続を確認してから、もう一度お試しください。変更した内容は失われていません。</value>
+  </data>
+  <data name="Something went wrong on the server. Try again. Nothing you changed was lost." xml:space="preserve">
+    <value>サーバーで問題が発生しました。もう一度お試しください。変更した内容は失われていません。</value>
+  </data>
+  <data name="Try again" xml:space="preserve">
+    <value>再試行</value>
+  </data>
+  <data name="request" xml:space="preserve">
+    <value>リクエスト</value>
+  </data>
+  <data name="No connection" xml:space="preserve">
+    <value>接続なし</value>
+  </data>
+  <data name="Maintenance is coming." xml:space="preserve">
+    <value>メンテナンスが予定されています。</value>
+  </data>
+  <data name="Maintenance from {0}." xml:space="preserve">
+    <value>{0} からメンテナンスです。</value>
+  </data>
+  <data name="Cabinets close during it. This site stays open." xml:space="preserve">
+    <value>その間、筐体は利用できません。このサイトは引き続き利用できます。</value>
+  </data>
+  <data name="Maintenance." xml:space="preserve">
+    <value>メンテナンス中です。</value>
+  </data>
+  <data name="Maintenance until {0}." xml:space="preserve">
+    <value>{0} までメンテナンス中です。</value>
+  </data>
+  <data name="Cabinets are closed." xml:space="preserve">
+    <value>筐体は利用できません。</value>
+  </data>
+  <data name="Cabinets are closed. You can browse; saving changes is paused until it ends." xml:space="preserve">
+    <value>筐体は利用できません。閲覧はできますが、終了するまで変更の保存は一時停止しています。</value>
+  </data>
+  <data name="The server is offline." xml:space="preserve">
+    <value>サーバーはオフラインです。</value>
+  </data>
+  <data name="Cabinets are refused and players see an offline page." xml:space="preserve">
+    <value>筐体は接続できず、プレイヤーにはオフラインページが表示されます。</value>
+  </data>
+  <data name="Change it in Server Management" xml:space="preserve">
+    <value>サーバー管理で変更</value>
+  </data>
+  <data name="The server is offline" xml:space="preserve">
+    <value>サーバーはオフラインです</value>
+  </data>
+  <data name="Cabinets can't connect right now and this site is paused. Your scores and settings are safe." xml:space="preserve">
+    <value>現在、筐体は接続できず、このサイトも一時停止中です。スコアと設定は安全です。</value>
+  </data>
+  <data name="Expected back:" xml:space="preserve">
+    <value>復旧予定：</value>
+  </data>
+  <data name="Admins can still sign in and change the server state." xml:space="preserve">
+    <value>管理者は引き続きサインインしてサーバーの状態を変更できます。</value>
+  </data>
+  <data name="You're offline. Trying again in {0} s; changes save when you're back." xml:space="preserve">
+    <value>オフラインです。{0} 秒後に再試行します。変更は接続が戻ると保存されます。</value>
+  </data>
+  <data name="You're offline. Trying again…" xml:space="preserve">
+    <value>オフラインです。再試行しています…</value>
+  </data>
+  <data name="Retry now" xml:space="preserve">
+    <value>今すぐ再試行</value>
+  </data>
+  <data name="Back online. Your changes were saved." xml:space="preserve">
+    <value>オンラインに戻りました。変更は保存されました。</value>
+  </data>
+  <data name="Back online." xml:space="preserve">
+    <value>オンラインに戻りました。</value>
+  </data>
+  <data name="You've been signed out" xml:space="preserve">
+    <value>サインアウトされました</value>
+  </data>
+  <data name="Your session ended (it expired, or you signed out everywhere). Sign in again to carry on; this page and anything you were editing stay as they are." xml:space="preserve">
+    <value>セッションが終了しました（期限切れ、またはすべての端末からサインアウト）。続けるにはもう一度サインインしてください。このページと編集中の内容はそのまま残ります。</value>
+  </data>
+  <data name="Use a different account" xml:space="preserve">
+    <value>別のアカウントを使う</value>
+  </data>
+  <data name="Signed in again. You're back where you were." xml:space="preserve">
+    <value>再度サインインしました。元の場所に戻りました。</value>
+  </data>
+  <data name="Couldn't sign in. Try again." xml:space="preserve">
+    <value>サインインできませんでした。もう一度お試しください。</value>
+  </data>
+  <data name="Saving is paused during maintenance" xml:space="preserve">
+    <value>メンテナンス中は保存が一時停止しています</value>
+  </data>
   <data name="New" xml:space="preserve">
     <value>新曲</value>
   </data>
