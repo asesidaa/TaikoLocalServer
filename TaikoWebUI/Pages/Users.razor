@@ -90,17 +90,10 @@
         await Reload();
     }
 
-    // Every user, 200 a page: the list is searched and filtered here.
+    // Every user: the list is searched and filtered here.
     private async Task Reload()
     {
-        var all = new List<User>();
-        for (var page = 1; ; page++)
-        {
-            var res = await Client.GetFromJsonAsync<UsersResponse>($"api/Users?page={page}&limit=200");
-            all.AddRange(res?.Users ?? []);
-            if (res is null || page >= res.TotalPages) break;
-        }
-        users = all;
+        users = await PlayerSelection.GetAllUsersAsync(Client);
         selected = users.FirstOrDefault(u => u.Baid == selected?.Baid) ?? users.FirstOrDefault();
     }
 

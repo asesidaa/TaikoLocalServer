@@ -57,6 +57,10 @@ else
                         }
                     </span>
                 }
+                @if (!AuthService.LoginRequired)
+                {
+                    <PlayerSwitcher />
+                }
                 <TopControls />
             </div>
         </header>

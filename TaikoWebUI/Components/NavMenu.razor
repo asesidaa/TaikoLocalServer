@@ -1,8 +1,8 @@
 @implements IDisposable
 @inject AuthService AuthService
 @inject NavigationManager Nav
+@inject PlayerSelection Players
 @inject IOptions<WebUiSettings> Settings
-@using System.Text.RegularExpressions
 @using Microsoft.Extensions.Options
 
 <div class="flex h-16 items-center gap-2.5 px-5">
@@ -10,7 +10,7 @@
     <span class="font-display text-[17px] tracking-wide">@Settings.Value.Title</span>
 </div>
 <nav class="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
-    <p class="px-3 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@Localizer["Account"]</p>
+    <p class="px-3 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@(AuthService.LoginRequired ? Localizer["Account"] : Localizer["Players"])</p>
     @Link("/", "dashboard", Localizer["Dashboard"])
     @if (Baid > 0)
     {
@@ -46,6 +46,10 @@
         </div>
     </div>
 }
+else if (!AuthService.LoginRequired)
+{
+    <p class="border-t border-zinc-200/80 px-5 py-4 text-xs @Css.Muted dark:border-zinc-800">@Localizer["Local mode"]</p>
+}
 
 @if (confirmLogout)
 {
@@ -67,15 +71,9 @@
     private bool confirmLogout;
     private string userName = "";
 
-    // The signed-in user, or (local mode, no login) the user whose pages are open.
-    private uint Baid => AuthService.IsLoggedIn ? AuthService.GetLoggedInBaid() : RouteBaid();
+    // The signed-in user, or (Local mode) the player picked in the top bar.
+    private uint Baid => AuthService.LoginRequired ? AuthService.GetLoggedInBaid() : Players.Baid;
     private string Initial => string.IsNullOrEmpty(userName) ? "?" : userName[..1].ToUpperInvariant();
-
-    private uint RouteBaid()
-    {
-        var m = Regex.Match(Nav.ToBaseRelativePath(Nav.Uri), @"^Users/(\d+)", RegexOptions.IgnoreCase);
-        return m.Success ? uint.Parse(m.Groups[1].Value) : 0;
-    }
 
     private List<(string, string)> SettingsLinks()
     {
@@ -135,7 +133,9 @@
     {
         AuthService.LoginStatusChanged += OnAuthChanged;
         Nav.LocationChanged += OnLocationChanged;
+        Players.Changed += OnPlayerChanged;
         await LoadUserName();
+        if (!AuthService.LoginRequired) await Players.LoadAsync();
     }
 
     private async Task LoadUserName()
@@ -152,6 +152,8 @@
 
     private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e) => InvokeAsync(StateHasChanged);
 
+    private void OnPlayerChanged() => InvokeAsync(StateHasChanged);
+
     private async Task Logout()
     {
         confirmLogout = false;
@@ -163,5 +165,6 @@
     {
         AuthService.LoginStatusChanged -= OnAuthChanged;
         Nav.LocationChanged -= OnLocationChanged;
+        Players.Changed -= OnPlayerChanged;
     }
 }

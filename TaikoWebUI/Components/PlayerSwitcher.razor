@@ -1,0 +1,89 @@
+@* Local mode top bar: whose data to show. Searchable; remembered on this device. *@
+@implements IDisposable
+@inject PlayerSelection Players
+
+<div class="relative" @onkeydown="OnKey">
+    <button class="flex h-9 max-w-48 items-center gap-2 rounded-xl px-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            aria-haspopup="dialog" aria-expanded="@Css.Aria(open)" aria-label="@Localizer["Player"]" @onclick="Toggle">
+        @if (Players.Current is { } current)
+        {
+            <Avatar Setting="current.UserSetting" Size="24" />
+            <span class="hidden truncate font-medium sm:inline">@current.UserSetting.MyDonName</span>
+        }
+        else
+        {
+            <span class="@Css.Muted">@Localizer["No players yet"]</span>
+        }
+        <Icon Name="chevDown" Class="size-4 text-zinc-400" />
+    </button>
+    @if (open)
+    {
+        <div class="fixed inset-0 z-40" @onclick="() => open = false"></div>
+        <div role="dialog" aria-label="@Localizer["Player"]" style="--origin:top right"
+             class="pop absolute right-0 top-11 z-50 w-72 rounded-xl border border-zinc-200 bg-white p-2 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+            <p class="px-1.5 pb-2 text-xs @Css.Muted">@Localizer["Whose data to show. Remembered on this device."]</p>
+            <label class="relative block">
+                <span class="sr-only">@Localizer["Search players"]</span>
+                <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="search" /></span>
+                <input type="search" autofocus value="@query" placeholder="@Localizer["Name or user ID"]" class="@Css.Input !py-2 pl-9"
+                       @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
+            </label>
+            <ul class="mt-1 max-h-80 overflow-y-auto">
+                @foreach (var u in Matches())
+                {
+                    var on = u.Baid == Players.Baid;
+                    <li>
+                        <button class="flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800" @onclick="() => Pick(u.Baid)">
+                            <Avatar Setting="u.UserSetting" Size="32" />
+                            <span class="min-w-0 flex-1">
+                                <span class="block truncate text-sm font-medium">@u.UserSetting.MyDonName</span>
+                                <span class="block truncate text-xs @Css.Muted">@Localizer["User ID"] @u.Baid</span>
+                            </span>
+                            @if (on)
+                            {
+                                <Icon Name="check" Class="size-4 text-primary-500" />
+                            }
+                        </button>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>
+
+@code {
+    private bool open;
+    private string query = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Players.Changed += Refresh;
+        await Players.LoadAsync();
+    }
+
+    private IEnumerable<User> Matches()
+    {
+        var q = query.Trim();
+        return Players.Users.Where(u => q.Length == 0 || u.UserSetting.MyDonName.Contains(q, StringComparison.OrdinalIgnoreCase) || u.Baid.ToString() == q);
+    }
+
+    private void Toggle()
+    {
+        open = !open;
+        query = "";
+    }
+
+    private async Task Pick(uint baid)
+    {
+        open = false;
+        await Players.SelectAsync(baid);
+    }
+
+    private void OnKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") open = false;
+    }
+
+    private void Refresh() => InvokeAsync(StateHasChanged);
+    public void Dispose() => Players.Changed -= Refresh;
+}
