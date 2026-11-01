@@ -42,7 +42,7 @@
                 <p class="truncate text-sm font-medium">@userName</p>
                 <p class="truncate text-xs @Css.Muted">Baid @Baid@(AuthService.IsAdmin ? $" · {Localizer["Admin"]}" : "")</p>
             </div>
-            <button class="@Css.IconButton hover:!text-primary-600" aria-label="@Localizer["Log Out"]" @onclick="() => confirmLogout = true"><Icon Name="logOut" /></button>
+            <button class="@Css.IconButton hover:!text-primary-600" aria-label="@Localizer["Log Out"]" @onclick="OnLogout"><Icon Name="logOut" /></button>
         </div>
     </div>
 }
@@ -51,24 +51,9 @@ else if (!AuthService.LoginRequired)
     <p class="border-t border-zinc-200/80 px-5 py-4 text-xs @Css.Muted dark:border-zinc-800">@Localizer["Local mode"]</p>
 }
 
-@if (confirmLogout)
-{
-    <div class="fade fixed inset-0 z-[60] grid place-items-center bg-black/50 p-4" @onclick="() => confirmLogout = false">
-        <div role="alertdialog" aria-modal="true" aria-labelledby="logout-h" class="pop w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl dark:bg-zinc-900" style="--origin:center" @onclick:stopPropagation>
-            <h2 id="logout-h" class="font-semibold">@Localizer["Log Out"]</h2>
-            <p class="mt-1 text-sm @Css.Muted">@Localizer["Log Out Confirm"]</p>
-            <div class="mt-6 flex justify-end gap-2">
-                <button class="@Css.GhostButton" @onclick="() => confirmLogout = false">@Localizer["Cancel"]</button>
-                <button class="@Css.PrimaryButton" @onclick="Logout">@Localizer["Log Out"]</button>
-            </div>
-        </div>
-    </div>
-}
-
 @code {
     private bool playDataOpen = true;
     private bool settingsOpen;
-    private bool confirmLogout;
     private string userName = "";
 
     // The signed-in user, or (Local mode) the player picked in the top bar.
@@ -154,12 +139,8 @@ else if (!AuthService.LoginRequired)
 
     private void OnPlayerChanged() => InvokeAsync(StateHasChanged);
 
-    private async Task Logout()
-    {
-        confirmLogout = false;
-        await AuthService.Logout();
-        Nav.NavigateTo("/");
-    }
+    /// <summary>The layout asks to confirm: a dialog inside the sidebar would only cover the sidebar (its slide-in transform).</summary>
+    [Parameter] public EventCallback OnLogout { get; set; }
 
     public void Dispose()
     {

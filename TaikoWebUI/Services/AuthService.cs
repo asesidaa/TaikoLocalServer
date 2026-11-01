@@ -184,7 +184,9 @@ public sealed class AuthService : IDisposable
     public async Task<User?> GetLoggedInUser()
     {
         if (loggedInBaid == 0) return null;
-        return await client.GetFromJsonAsync<User>($"api/Users/{loggedInBaid}");
+        // A 401 here means the session ended; SignedOutHandler is already sending the browser to Log in.
+        var res = await client.GetAsync($"api/Users/{loggedInBaid}");
+        return res.IsSuccessStatusCode ? await res.Content.ReadFromJsonAsync<User>() : null;
     }
 
     public uint GetLoggedInBaid() => loggedInBaid;

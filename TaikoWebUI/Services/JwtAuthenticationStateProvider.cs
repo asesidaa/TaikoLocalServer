@@ -23,15 +23,27 @@ public sealed class JwtAuthenticationStateProvider : AuthenticationStateProvider
     private readonly ClientAuthConfigResponse config;
     private readonly ILocalStorageService localStorage;
     private readonly HttpClient httpClient;
+    private readonly NavigationManager nav;
 
     public JwtAuthenticationStateProvider(
         ClientAuthConfigResponse config,
         ILocalStorageService localStorage,
-        HttpClient httpClient)
+        HttpClient httpClient,
+        NavigationManager nav)
     {
         this.config = config;
         this.localStorage = localStorage;
         this.httpClient = httpClient;
+        this.nav = nav;
+        SignedOutHandler.SignedOut += OnSignedOut;
+    }
+
+    // The server ended this session: forget the token and start over at Log in (a reload clears every page's state).
+    private async Task OnSignedOut()
+    {
+        if (httpClient.DefaultRequestHeaders.Authorization is null) return;
+        await MarkUserAsLoggedOutAsync();
+        nav.NavigateTo("/Login", forceLoad: true);
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -72,7 +84,8 @@ public sealed class JwtAuthenticationStateProvider : AuthenticationStateProvider
             return AnonymousState;
         }
 
-        if (jwt.ValidTo <= DateTime.UtcNow)
+        // No session id: from before sessions existed, and the server no longer accepts it.
+        if (jwt.ValidTo <= DateTime.UtcNow || jwt.Claims.All(c => c.Type != "sid"))
         {
             await localStorage.RemoveItemAsync(TokenStorageKey);
             httpClient.DefaultRequestHeaders.Authorization = null;

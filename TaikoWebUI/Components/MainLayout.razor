@@ -29,7 +29,7 @@ else
             <div class="fade fixed inset-0 z-30 bg-black/40 lg:hidden" @onclick="() => drawerOpen = false"></div>
         }
         <aside class="drawer fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-900 lg:translate-x-0 @(drawerOpen ? "translate-x-0" : "-translate-x-full")">
-            <NavMenu />
+            <NavMenu OnLogout="() => confirmLogout = true" />
         </aside>
         <header class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-zinc-200/80 bg-zinc-50/80 px-4 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/80 sm:px-6">
             <button class="@Css.IconButton lg:hidden" aria-label="@Localizer["Open navigation"]" @onclick="() => drawerOpen = true"><Icon Name="menu" /></button>
@@ -79,6 +79,17 @@ else
     </div>
 }
 
+@if (confirmLogout)
+{
+    <Dialog Title="@Localizer["Log Out"]" Alert OnClose="() => confirmLogout = false">
+        <ChildContent>@Localizer["Log Out Confirm"]</ChildContent>
+        <Footer>
+            <button class="@Css.GhostButton" @onclick="() => confirmLogout = false">@Localizer["Cancel"]</button>
+            <button class="@Css.PrimaryButton" @onclick="Logout">@Localizer["Log Out"]</button>
+        </Footer>
+    </Dialog>
+}
+
 @if (Toast.Message is { } message)
 {
     <div role="status" class="pop fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm shadow-lg @(Toast.IsError ? "bg-primary-600 text-white" : "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900")" style="--origin:bottom right">
@@ -88,6 +99,14 @@ else
 
 @code {
     private bool drawerOpen;
+    private bool confirmLogout;
+
+    private async Task Logout()
+    {
+        confirmLogout = false;
+        await AuthService.Logout();
+        Nav.NavigateTo("/");
+    }
     private bool assetsMissing;
 
     // Admins (or everyone when login is off) can run the extractor; api/Assets needs a logged-in user.

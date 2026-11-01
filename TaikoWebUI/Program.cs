@@ -16,7 +16,10 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 // Single HttpClient reused for both bootstrap fetches and the registered DI singleton.
-var httpClient = new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
+var httpClient = new HttpClient(new SignedOutHandler { InnerHandler = new HttpClientHandler() })
+{
+    BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+};
 
 // Bootstrap: fetch the local appsettings.json AND the server's auth policy concurrently.
 // Buffer appsettings.json into memory because Blazor WASM's HttpClient stream is fetch-API-backed
