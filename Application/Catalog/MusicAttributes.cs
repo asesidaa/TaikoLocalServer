@@ -17,4 +17,8 @@ public class MusicAttributeEntry
     /// <summary>The game marks the songs of its latest update as new.</summary>
     [JsonPropertyName("new")]
     public bool IsNew { get; set; }
+
+    /// <summary>A Sou-uchi (双打) chart: two players take turns on one drum. Its ids end in "xx" (souryuxx).</summary>
+    [JsonPropertyName("doublePlay")]
+    public bool IsSouUchi { get; set; }
 }

@@ -26,4 +26,6 @@ public class MusicDetail
     public bool IsFavorite { get; set; } = false;
     /// <summary>The game marks it new (music_attribute); false when that table isn't there.</summary>
     public bool IsNew { get; set; }
+    /// <summary>A Sou-uchi chart (music_attribute): listed only for players with "Show Sou-uchi songs" on, as in the game.</summary>
+    public bool IsSouUchi { get; set; }
 }

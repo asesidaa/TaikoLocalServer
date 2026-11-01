@@ -49,6 +49,8 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
             (genre < 0 || (int)s.Genre == genre) &&
             (!fav || favorites.Contains(s.SongId)) &&
             (!isNew || s.IsNew) &&
+            // Like the game: Sou-uchi charts only for players who turned them on (Profile › Show Sou-uchi songs).
+            (user.DisplaySouUchi || !s.IsSouUchi) &&
             (query.Length == 0 || s.SongId.ToString() == query ||
              s.SongName.Contains(query, StringComparison.OrdinalIgnoreCase) || s.SongNameEN.Contains(query, StringComparison.OrdinalIgnoreCase)));
         if (status != "all")

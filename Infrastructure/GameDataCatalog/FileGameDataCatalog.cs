@@ -357,7 +357,7 @@ public partial class FileGameDataCatalog : IGameDataCatalog
 
                 InitializeMusicInfos(musicInfo);
                 InitializeMusicDetails(musicInfo, musicOrder, wordlist);
-                MarkNewSongs(dir);
+                MarkSongAttributes(dir);
                 InitializeCostumes(donCos, wordlist);
                 InitializeTitles(shougou, wordlist);
                 InitializeToneFlagArraySize(neiro);
@@ -410,14 +410,14 @@ public partial class FileGameDataCatalog : IGameDataCatalog
         musicWithUraUniqueIdList.Sort();
     }
 
-    // Optional: an extract from before 2026-11 doesn't copy music_attribute, and then no song is marked new.
-    private void MarkNewSongs(string dir)
+    // Optional: an extract from before 2026-11 doesn't copy music_attribute, and then no song is marked new or Sou-uchi.
+    private void MarkSongAttributes(string dir)
     {
         var path = Path.Combine(dir, $"{CatalogConstants.MusicAttributeBaseName}.json");
         if (!File.Exists(path)) return;
         foreach (var entry in Parse<MusicAttributes>(File.ReadAllText(path)).Entries)
-            if (entry.IsNew && musicDetailDictionary.TryGetValue(entry.MusicId, out var song))
-                song.IsNew = true;
+            if (musicDetailDictionary.TryGetValue(entry.MusicId, out var song))
+                (song.IsNew, song.IsSouUchi) = (entry.IsNew, entry.IsSouUchi);
     }
 
     private void InitializeMusicDetails(MusicInfos musicInfoData, MusicOrder musicOrderData, WordList wordlistData)
