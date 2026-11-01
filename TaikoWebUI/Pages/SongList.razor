@@ -366,7 +366,7 @@
     private RenderFragment Chip(bool on, string label, string? color, Action pick, bool heart = false) => __builder =>
     {
         <button aria-pressed="@Css.Aria(on)" @onclick="() => Change(pick)"
-                class="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700")">
+                class="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium @Css.Chip(on)">
             @if (color is not null)
             {
                 <span class="size-2 rounded-full" style="background:@color"></span>

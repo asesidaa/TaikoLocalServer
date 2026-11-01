@@ -1,6 +1,6 @@
 @* Title picker: search-first over the game's ~1,000 titles. "Your own title"
    shows only when the server allows free profile editing (to become AuthSettings.AllowCustomTitles). *@
-@inject IGameDataService GameDataService
+@inject GameDataService GameDataService
 
 <div class="fade fixed inset-0 z-[60] grid place-items-center bg-black/50 p-4" @onclick="Close" @onkeydown="OnKey">
     <div role="dialog" aria-modal="true" aria-labelledby="title-h" @onclick:stopPropagation style="--origin:center"

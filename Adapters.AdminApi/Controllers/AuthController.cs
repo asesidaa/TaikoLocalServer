@@ -217,7 +217,7 @@ public class AuthController(
         var lastPlayDateTime = registerRequest.LastPlayDateTime;
         var signUp = withSetupCode ? SignUpMode.Open : access.Rules.SignUpMode;
         if (signUp == SignUpMode.Closed && !User.IsAdmin())
-            return Unauthorized(new { message = "Sign-up Closed" });
+            return BadRequest(new { message = "Sign-up Closed" });
         var inviteCode = registerRequest.InviteCode;
 
         var card = await context.Cards.FindAsync(new object?[] { accessCode }, HttpContext.RequestAborted);
@@ -227,36 +227,36 @@ public class AuthController(
             // The first admin's card doesn't have to have played here: create its user, as the game would on
             // its first scan. Only with a valid setup code, checked before anything is created.
             if (!withSetupCode)
-                return Unauthorized(new { message = "Access Code Not Found" });
+                return BadRequest(new { message = "Access Code Not Found" });
             if (accessCode.Length != 20 || !accessCode.All(char.IsAsciiDigit))
                 return BadRequest(new { message = "Invalid Access Code" });
             if (password.Length <= 0)
-                return Unauthorized(new { message = "Password Cannot Be Empty !" });
+                return BadRequest(new { message = "Password Cannot Be Empty !" });
             if (!access.TryUseSetupCode(registerRequest.SetupCode))
-                return Unauthorized(new { message = "Wrong Setup Code" });
+                return BadRequest(new { message = "Wrong Setup Code" });
             setupCodeUsed = true;
             await Mediator.Send(new AddMyDonEntryCommand(accessCode, "Admin", 0), HttpContext.RequestAborted);
             card = await context.Cards.FindAsync(new object?[] { accessCode }, HttpContext.RequestAborted);
             if (card == null)
-                return Unauthorized(new { message = "Access Code Not Found" });
+                return BadRequest(new { message = "Access Code Not Found" });
         }
 
         var credential = await context.Credentials.FindAsync(new object?[] { card.Baid }, HttpContext.RequestAborted);
         if (credential == null)
-            return Unauthorized(new { message = "Credential Not Found" });
+            return BadRequest(new { message = "Credential Not Found" });
 
         // With a setup code the operator may also pick a card that already has an account: it becomes the admin
         // and gets the new password (the setup code is the stronger proof).
         if (credential.Password != "" && !withSetupCode)
-            return Unauthorized(new { message = "User Already Registered" });
+            return BadRequest(new { message = "User Already Registered" });
 
         if (password.Length <= 0)
-            return Unauthorized(new { message = "Password Cannot Be Empty !" });
+            return BadRequest(new { message = "Password Cannot Be Empty !" });
 
         // Admins setting an account up skip the proof; everyone else proves the card as the sign-up mode says.
         var invited = inviteCode != "" && VerifyOtp(inviteCode, card.Baid);
         if (signUp == SignUpMode.InviteOnly && !invited && !User.IsAdmin())
-            return Unauthorized(new { message = "Invite Code Required" });
+            return BadRequest(new { message = "Invite Code Required" });
         if (signUp == SignUpMode.LastPlayTime && !User.IsAdmin())
         {
             if (!invited)
@@ -264,21 +264,21 @@ public class AuthController(
                 var user = await context.UserData
                     .FirstOrDefaultAsync(d => d.Baid == card.Baid, HttpContext.RequestAborted);
                 if (user == null)
-                    return Unauthorized(new { message = "User Does Not Exist" });
+                    return BadRequest(new { message = "User Does Not Exist" });
 
                 var diffMinutes = (lastPlayDateTime - user.LastPlayDatetime).Duration().TotalMinutes;
                 if (diffMinutes > 5)
-                    return Unauthorized(new { message = "Wrong Last Play Time" });
+                    return BadRequest(new { message = "Wrong Last Play Time" });
             }
         }
 
         if (withSetupCode)
         {
             if (!setupCodeUsed && !access.TryUseSetupCode(registerRequest.SetupCode))
-                return Unauthorized(new { message = "Wrong Setup Code" });
+                return BadRequest(new { message = "Wrong Setup Code" });
             var admin = await context.UserData.FirstOrDefaultAsync(d => d.Baid == card.Baid, HttpContext.RequestAborted);
             if (admin is null)
-                return Unauthorized(new { message = "User Does Not Exist" });
+                return BadRequest(new { message = "User Does Not Exist" });
             admin.IsAdmin = true;
         }
 
@@ -301,17 +301,17 @@ public class AuthController(
 
         // The account comes from the token, never from the request body.
         if (User.GetBaid() is not { } baid)
-            return Unauthorized(new { message = "User Not Registered" });
+            return BadRequest(new { message = "User Not Registered" });
 
         var credential = await context.Credentials.FindAsync(new object?[] { baid }, HttpContext.RequestAborted);
         if (credential == null || credential.Password == "")
-            return Unauthorized(new { message = "User Not Registered" });
+            return BadRequest(new { message = "User Not Registered" });
 
         if (!BCrypt.Net.BCrypt.Verify(changePasswordRequest.OldPassword, credential.Password))
-            return Unauthorized(new { message = "Wrong Old Password" });
+            return BadRequest(new { message = "Wrong Old Password" });
 
         if (changePasswordRequest.NewPassword.Length <= 0)
-            return Unauthorized(new { message = "Password Cannot Be Empty !" });
+            return BadRequest(new { message = "Password Cannot Be Empty !" });
 
         var salt = CreateSalt();
         credential.Password = ComputeHash(changePasswordRequest.NewPassword, salt);

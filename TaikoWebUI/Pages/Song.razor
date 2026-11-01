@@ -50,7 +50,7 @@ else
                         class="flex min-w-max flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-medium @(on ? "bg-white shadow-sm dark:bg-zinc-800" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">
                     <img data-asset="@GameData.DifficultyIcon(c.Difficulty)" alt="@GameData.DifficultyName(c.Difficulty)" class="size-6 object-contain" />
                     <span class="hidden sm:inline">@GameData.DifficultyName(c.Difficulty)</span>
-                    <span class="rounded-md px-1.5 py-0.5 text-xs font-semibold tabular-nums text-white" style="background:@GameData.DifficultyColor(c.Difficulty)">★@c.Stars</span>
+                    <StarPill Difficulty="c.Difficulty" Stars="c.Stars" />
                     @if (top is { } crown)
                     {
                         <img data-asset="@GameData.CrownIcon(crown)" alt="@Localizer[GameData.CrownName(crown)]" class="size-4" />
@@ -207,8 +207,8 @@ else
     private async Task LoadBoard(int page) =>
         board = await Client.GetFromJsonAsync<SongLeaderboardResponse>($"api/SongLeaderboard/{SongId}?baid={Baid}&difficulty={(int)difficulty}&page={page}&limit={BoardLimit}");
 
-    // The page your row is on: ranks are shared on ties, so the rank is the earliest it can be.
-    private static int YourPage(SongLeaderboard you) => Math.Max(1, (int)Math.Ceiling(you.Rank / (double)BoardLimit));
+    // The page your row is on, from its place in the list (a shared rank can put it a page later).
+    private static int YourPage(SongLeaderboard you) => Math.Max(1, (int)Math.Ceiling(Math.Max(you.Position, you.Rank) / (double)BoardLimit));
 
     private async Task ToggleFavorite()
     {

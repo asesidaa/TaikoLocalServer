@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Plain asserts over code that guards security, run: "dotnet run" with "project tests/SelfChecks"; exit code 1 = a check failed. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Adapters.AdminApi\Adapters.AdminApi.csproj" />
+  </ItemGroup>
+</Project>

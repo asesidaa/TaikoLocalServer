@@ -1,6 +1,6 @@
 @* Song picker: every place a song is chosen (event folders, intro sets, locked songs, the shop, Dani Dojo).
    Search-first like the title picker: name or ID, genre chips, 100 rows at a time. *@
-@inject IGameDataService GameDataService
+@inject GameDataService GameDataService
 
 <div class="fade fixed inset-0 z-[60] grid place-items-center bg-black/50 p-4" @onclick="Close" @onkeydown="OnKey">
     <div role="dialog" aria-modal="true" aria-labelledby="pk-h" @onclick:stopPropagation style="--origin:center"
@@ -95,7 +95,7 @@
     {
         var on = genre == g;
         <button aria-pressed="@Css.Aria(on)" @onclick="() => genre = g"
-                class="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700")">
+                class="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium @Css.Chip(on)">
             @if (g is { } genreValue)
             {
                 var (name, bg, _) = GameData.Genre(genreValue);

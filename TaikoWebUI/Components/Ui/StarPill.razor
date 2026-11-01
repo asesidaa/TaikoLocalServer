@@ -1,0 +1,7 @@
+@* A chart's star level as a pill in its difficulty's colour. *@
+<span class="inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-semibold tabular-nums text-white" style="background:@GameData.DifficultyColor(Difficulty)">★@Stars</span>
+
+@code {
+    [Parameter, EditorRequired] public Difficulty Difficulty { get; set; }
+    [Parameter, EditorRequired] public int Stars { get; set; }
+}

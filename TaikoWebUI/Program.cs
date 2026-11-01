@@ -9,7 +9,6 @@ using TaikoLocalServer.Contracts.AdminApi.Responses;
 using TaikoWebUI.Authorization;
 using TaikoWebUI.Services;
 using TaikoWebUI.Settings;
-using TaikoWebUI.Utilities;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -39,7 +38,7 @@ var configuration = new ConfigurationBuilder()
 
 builder.Services.AddSingleton(httpClient);
 builder.Services.AddSingleton(authConfig);
-builder.Services.AddSingleton<IGameDataService, GameDataService>();
+builder.Services.AddSingleton<GameDataService>();
 
 builder.Services.Configure<WebUiSettings>(configuration.GetSection(nameof(WebUiSettings)));
 
@@ -77,8 +76,6 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<SongListState>();
 builder.Services.AddScoped<OverlayHost>();
 builder.Services.AddLocalization();
-builder.Services.AddSingleton<ScoreUtils>();
-builder.Services.AddSingleton<StringUtil>();
 builder.Services.AddScoped<PageState>();
 builder.Services.AddScoped<ToastService>();
 builder.Services.AddScoped<AssetStatus>();

@@ -97,9 +97,16 @@ public class SongLeaderboardController(ITaikoDbContext context) : BaseAdminContr
                     .Where(x => x.SongId == songId && x.Difficulty == diff && x.BestScore > score.BestScore)
                     .CountAsync();
 
+                // The list orders by score, then accuracy, then crown: count the rows ahead of this one by that order.
+                var ahead = await context.SongBestData.CountAsync(x => x.SongId == songId && x.Difficulty == diff &&
+                    (x.BestScore > score.BestScore ||
+                     x.BestScore == score.BestScore && (x.BestRate > score.BestRate || x.BestRate == score.BestRate && x.BestCrown > score.BestCrown)),
+                    HttpContext.RequestAborted);
+
                 userScore = new SongLeaderboard
                 {
                     Rank = rank + 1,
+                    Position = ahead + 1,
                     Baid = score.Baid,
                     UserName = user?.MyDonName,
                     BestScore = score.BestScore,

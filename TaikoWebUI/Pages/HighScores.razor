@@ -129,7 +129,7 @@
                             <span class="min-w-0 flex-1">
                                 <span class="block truncate text-[15px]">@r.Name</span>
                                 <span class="mt-1 flex items-center gap-2">
-                                    @StarPill(r.Stars)
+                                    <StarPill Difficulty="(Difficulty)diff" Stars="r.Stars" />
                                     <span class="font-mono text-sm tabular-nums">@r.Score.ToString("N0")</span>
                                     <img data-asset="@GameData.CrownIcon(r.Crown)" alt="@Localizer[GameData.CrownName(r.Crown)]" class="size-4" />
                                     <span class="ml-auto">@(vs != 0 ? Delta(r) : Accuracy(r))</span>
@@ -176,7 +176,7 @@
                                         </span>
                                     </span>
                                 </td>
-                                <td class="px-2 text-center">@StarPill(r.Stars)</td>
+                                <td class="px-2 text-center"><StarPill Difficulty="(Difficulty)diff" Stars="r.Stars" /></td>
                                 <td class="px-2 text-right font-mono tabular-nums">@r.Score.ToString("N0")</td>
                                 <td class="px-2"><img data-asset="@GameData.CrownIcon(r.Crown)" alt="@Localizer[GameData.CrownName(r.Crown)]" title="@Localizer[GameData.CrownName(r.Crown)]" class="size-5" /></td>
                                 <td class="hidden px-2 lg:table-cell">
@@ -289,11 +289,6 @@
     }
 
     private void Open(HighScoreRow r) => Nav.NavigateTo($"/Users/{Baid}/Songs/{r.SongId}?diff={diff}");
-
-    private RenderFragment StarPill(int stars) => __builder =>
-    {
-        <span class="inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-semibold tabular-nums text-white" style="background:@GameData.DifficultyColor((Difficulty)diff)">★@stars</span>
-    };
 
     private static RenderFragment Accuracy(HighScoreRow r) => __builder =>
     {

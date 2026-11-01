@@ -2,7 +2,8 @@ namespace TaikoWebUI.Services;
 
 /// <summary>
 /// The server answers 401 to a signed-in request when that session was signed out (Access › Sessions, Sign out
-/// everywhere), the user is no longer an admin, or the token expired. Then this browser is signed out too.
+/// everywhere), the user is no longer an admin, or the token expired. Then this browser is signed out too. So an
+/// input mistake (wrong password, wrong code) must answer 400, never 401.
 /// </summary>
 public sealed class SignedOutHandler : DelegatingHandler
 {

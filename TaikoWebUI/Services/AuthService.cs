@@ -63,6 +63,7 @@ public sealed class AuthService : IDisposable
     private const string TrustKey = "auth.trustedBrowser";
 
     private uint loggedInBaid;
+    private string? sessionId;
 
     public AuthService(
         HttpClient client,
@@ -111,6 +112,7 @@ public sealed class AuthService : IDisposable
         IsLoggedIn = isAuthenticated;
         IsAdmin = isAuthenticated && user.IsAdmin();
         TwoFactorSetupRequired = isAuthenticated && user.FindFirst("tfa_setup") is not null;
+        sessionId = isAuthenticated ? user.FindFirst("sid")?.Value : null;
         loggedInBaid = isAuthenticated ? user.GetBaid() ?? 0u : 0u;
     }
 
@@ -232,7 +234,16 @@ public sealed class AuthService : IDisposable
         }, fallback: 6);
     }
 
-    public Task Logout() => authStateProvider.MarkUserAsLoggedOutAsync();
+    /// <summary>Ends this session on the server too, so the token stops working even if it was copied.</summary>
+    public async Task Logout()
+    {
+        if (sessionId is { } sid)
+        {
+            try { await client.DeleteAsync($"api/Sessions/{sid}"); }
+            catch (HttpRequestException) { /* offline: the browser still forgets the token */ }
+        }
+        await authStateProvider.MarkUserAsLoggedOutAsync();
+    }
 
     public async Task<User?> GetLoggedInUser()
     {
@@ -243,24 +254,6 @@ public sealed class AuthService : IDisposable
     }
 
     public uint GetLoggedInBaid() => loggedInBaid;
-
-    public async Task<int> BindAccessCode(string inputAccessCode, User user)
-    {
-        if (string.IsNullOrWhiteSpace(inputAccessCode)) return 4;
-        if (!IsLoggedIn && LoginRequired) return 0;
-        var loggedInUser = await GetLoggedInUser();
-        if (loggedInUser == null) return 0;
-        if (LoginRequired && !IsAdmin && user.Baid != loggedInUser.Baid) return 5;
-        if (user.AccessCodes.Count >= BoundAccessCodeUpperLimit) return 2;
-
-        var request = new BindAccessCodeRequest
-        {
-            AccessCode = inputAccessCode,
-            Baid = user.Baid
-        };
-        var responseMessage = await client.PostAsJsonAsync("api/Cards/BindAccessCode", request);
-        return responseMessage.IsSuccessStatusCode ? 1 : 3;
-    }
 
     public void Dispose()
     {

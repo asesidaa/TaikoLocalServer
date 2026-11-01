@@ -22,7 +22,7 @@
             @Chip(diff == (int)d, () => SetFilter((int)d, best), null, d)
         }
         <button aria-pressed="@Css.Aria(best)" @onclick="() => SetFilter(diff, !best)"
-                class="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium @ChipClass(best)">
+                class="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium @Css.Chip(best)">
             <Icon Name="medal" Class="size-3.5" />@Localizer["New bests only"]
         </button>
     </div>
@@ -179,15 +179,11 @@
 
     private static string DayName(DateTime d) => d.ToString(d.Year == DateTime.Today.Year ? "ddd d MMM" : "ddd d MMM yyyy");
 
-    private static string ChipClass(bool on) => on
-        ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
-        : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700";
-
     private RenderFragment Chip(bool on, Func<Task> pick, string? label, Difficulty? d) => __builder =>
     {
         var name = d is { } x ? GameData.DifficultyName(x) : label;
         <button aria-pressed="@Css.Aria(on)" aria-label="@name" title="@name" @onclick="pick"
-                class="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium @ChipClass(on)">
+                class="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium @Css.Chip(on)">
             @if (d is { } diffIcon)
             {
                 <img data-asset="@GameData.DifficultyIcon(diffIcon)" alt="" class="size-5 object-contain" />

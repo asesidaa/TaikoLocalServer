@@ -52,7 +52,7 @@ dotnet ef migrations add <Name> --project Infrastructure --startup-project Infra
 dotnet ef database update --project Infrastructure --startup-project Infrastructure
 ```
 
-There are no automated tests in this repository.
+There is no test framework. `tests/SelfChecks` is a console app of plain asserts over security code (2-step codes): `dotnet run --project tests/SelfChecks` exits 1 when a check fails.
 
 ## Configuration model
 

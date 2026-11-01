@@ -35,7 +35,7 @@
         @foreach (var (key, label) in new (bool?, string)[] { (null, Localizer["All"]), (true, Localizer["Failed"]), (false, Localizer["Successful"]) })
         {
             var on = filter == key;
-            <button class="rounded-full px-2.5 py-1 text-xs font-medium @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800")"
+            <button class="rounded-full px-2.5 py-1 text-xs font-medium @Css.Pill(on)"
                     aria-pressed="@Css.Aria(on)" @onclick="() => SetFilter(key)">@label</button>
         }
         <form @onsubmit="Reload" @onsubmit:preventDefault>

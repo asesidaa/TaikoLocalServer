@@ -22,7 +22,7 @@
                 {
                     var on = filter == key;
                     <button role="radio" aria-checked="@Css.Aria(on)" @onclick="() => filter = key"
-                            class="rounded-full px-2.5 py-1 text-xs font-medium @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800")">@label</button>
+                            class="rounded-full px-2.5 py-1 text-xs font-medium @Css.Pill(on)">@label</button>
                 }
             </div>
         }

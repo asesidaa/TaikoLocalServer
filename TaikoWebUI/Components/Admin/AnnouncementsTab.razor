@@ -77,7 +77,7 @@
                     {
                         var on = notice.Style == style;
                         <button role="radio" aria-checked="@Css.Aria(on)" @onclick="() => notice.Style = style"
-                                class="rounded-full px-3 py-1 text-xs font-medium @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300")">@name</button>
+                                class="rounded-full px-3 py-1 text-xs font-medium @Css.Chip(on)">@name</button>
                     }
                 </div>
                 <label class="block text-sm"><span class="font-medium">@Localizer["Title"]</span>

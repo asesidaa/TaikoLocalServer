@@ -10,4 +10,5 @@
   <Project Path="Host/Host.csproj" />
   <Project Path="Infrastructure/Infrastructure.csproj" />
   <Project Path="TaikoWebUI/TaikoWebUI.csproj" />
+  <Project Path="tests/SelfChecks/SelfChecks.csproj" />
 </Solution>

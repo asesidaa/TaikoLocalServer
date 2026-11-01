@@ -1,241 +1,90 @@
-using System.Collections.Immutable;
-
 namespace TaikoWebUI.Services;
 
-public class GameDataService : IGameDataService
+/// <summary>
+/// The game data the pages show (songs, costumes, titles), fetched once on first use: api/GameData needs a
+/// logged-in user, so it can't load at startup. Names come in the viewer's language.
+/// </summary>
+public class GameDataService(HttpClient client)
 {
-    private readonly HttpClient client;
-    private Task<ImmutableDictionary<uint, DanData>>? danMapTask;
-    private Dictionary<uint, MusicDetail>? musicDetailDictionary = new();
-    private List<Costume>? costumeList;
-    private Dictionary<uint,Title>? titleDictionary = new();
-    
-    private bool musicDetailInitialized;
-    private bool costumesInitialized;
-    private bool titlesInitialized;
-    
-    private Dictionary<string, List<uint>>? lockedCostumeDataDictionary = new();
-    private Dictionary<string, List<uint>>? lockedTitleDataDictionary = new();
+    private Dictionary<uint, MusicDetail>? musicDetails;
+    private List<Costume>? costumes;
+    private Dictionary<string, List<uint>>? lockedCostumes;
+    private Dictionary<uint, Title>? titles;
+    private Dictionary<string, List<uint>>? lockedTitles;
 
-    public GameDataService(HttpClient client)
-    {
-        this.client = client;
-    }
+    public async Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary() =>
+        musicDetails ??= await client.GetFromJsonAsync<Dictionary<uint, MusicDetail>>("api/GameData/MusicDetails") ?? [];
 
-    public async Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary()
-    {
-        if (!musicDetailInitialized)
-        {
-            await InitializeMusicDetailAsync();
-        }
-
-        return musicDetailDictionary ?? new Dictionary<uint, MusicDetail>();
-    }
-    
     public async Task<List<Costume>> GetCostumeList()
     {
-        if (!costumesInitialized)
-        {
-            await InitializeCostumesAsync();
-        }
+        await LoadCostumes();
+        return costumes!;
+    }
 
-        return costumeList ?? new List<Costume>();
-    }
-    
-    public async Task<Dictionary<uint, Title>> GetTitleDictionary()
-    {
-        if (!titlesInitialized)
-        {
-            await InitializeTitlesAsync();
-        }
-        
-        return titleDictionary ?? new Dictionary<uint, Title>();
-    }
-    
     public async Task<Dictionary<string, List<uint>>> GetLockedCostumeDataDictionary()
     {
-        if (!costumesInitialized)
-        {
-            await InitializeCostumesAsync();
-        }
-        
-        return lockedCostumeDataDictionary ?? new Dictionary<string, List<uint>>();
+        await LoadCostumes();
+        return lockedCostumes!;
     }
-    
+
+    public async Task<Dictionary<uint, Title>> GetTitleDictionary()
+    {
+        await LoadTitles();
+        return titles!;
+    }
+
     public async Task<Dictionary<string, List<uint>>> GetLockedTitleDataDictionary()
     {
-        if (!titlesInitialized)
-        {
-            await InitializeTitlesAsync();
-        }
-        
-        return lockedTitleDataDictionary ?? new Dictionary<string, List<uint>>();
+        await LoadTitles();
+        return lockedTitles!;
     }
 
-    public string GetMusicNameBySongId(Dictionary<uint, MusicDetail> musicDetails, uint songId, string? language = "ja")
-    {
-        return musicDetails.TryGetValue(songId, out var musicDetail) ? language switch
-        {
-            "ja" => musicDetail.SongName,
-            "en-US" => musicDetail.SongNameEN,
-            "fr-FR" => musicDetail.SongNameEN,
-            "zh-Hans" => musicDetail.SongNameCN,
-            "zh-Hant" => musicDetail.SongNameCN,
-            "ko" => musicDetail.SongNameKO,
-            _ => musicDetail.SongName
-        } : string.Empty;
-    }
+    public string GetMusicNameBySongId(Dictionary<uint, MusicDetail> musicDetails, uint songId, string? language) =>
+        musicDetails.TryGetValue(songId, out var m) ? Pick(language, m.SongName, m.SongNameEN, m.SongNameCN, m.SongNameKO) : string.Empty;
 
-    public string GetMusicArtistBySongId(Dictionary<uint, MusicDetail> musicDetails, uint songId, string? language = "ja")
-    {
-        return musicDetails.TryGetValue(songId, out var musicDetail) ? language switch
-        {
-            "jp" => musicDetail.ArtistName,
-            "en-US" => musicDetail.ArtistNameEN,
-            "fr-FR" => musicDetail.ArtistNameEN,
-            "zh-Hans" => musicDetail.ArtistNameCN,
-            "zh-Hant" => musicDetail.ArtistNameCN,
-            "ko" => musicDetail.ArtistNameKO,
-            _ => musicDetail.ArtistName
-        } : string.Empty;
-    }
+    public SongGenre GetMusicGenreBySongId(Dictionary<uint, MusicDetail> musicDetails, uint songId) =>
+        musicDetails.TryGetValue(songId, out var m) ? m.Genre : SongGenre.Variety;
 
-    public SongGenre GetMusicGenreBySongId(Dictionary<uint, MusicDetail> musicDetails, uint songId)
-    {
-        return musicDetails.TryGetValue(songId, out var musicDetail) ? musicDetail.Genre : SongGenre.Variety;
-    }
-
-    public int GetMusicIndexBySongId(Dictionary<uint, MusicDetail> musicDetails, uint songId)
-    {
-        return musicDetails.TryGetValue(songId, out var musicDetail) ? musicDetail.Index : int.MaxValue;
-    }
-
-    // Fetched on first use: api/GameData needs a logged-in user, so it can't load at startup.
-    public Task<ImmutableDictionary<uint, DanData>> GetDanMap() => danMapTask ??= LoadDanMapAsync();
-
-    private async Task<ImmutableDictionary<uint, DanData>> LoadDanMapAsync()
-    {
-        var danData = await client.GetFromJsonAsync<List<DanData>>("api/GameData/DanData");
-        danData.ThrowIfNull();
-        return danData.ToImmutableDictionary(data => data.DanId);
-    }
-    
     public int GetMusicStarLevel(Dictionary<uint, MusicDetail> musicDetails, uint songId, Difficulty difficulty)
     {
-        var success = musicDetails.TryGetValue(songId, out var musicDetail);
+        if (!musicDetails.TryGetValue(songId, out var m)) return 0;
         return difficulty switch
         {
-            Difficulty.None => throw new ArgumentException("Difficulty cannot be none"),
-            Difficulty.Easy => success ? musicDetail!.StarEasy : 0,
-            Difficulty.Normal => success ? musicDetail!.StarNormal : 0,
-            Difficulty.Hard => success ? musicDetail!.StarHard : 0,
-            Difficulty.Oni => success ? musicDetail!.StarOni : 0,
-            Difficulty.UraOni => success ? musicDetail!.StarUra : 0,
-            _ => throw new ArgumentOutOfRangeException(nameof(difficulty), difficulty, null)
+            Difficulty.Easy => m.StarEasy, Difficulty.Normal => m.StarNormal, Difficulty.Hard => m.StarHard,
+            Difficulty.Oni => m.StarOni, Difficulty.UraOni => m.StarUra,
+            _ => throw new ArgumentOutOfRangeException(nameof(difficulty), difficulty, null),
         };
     }
 
-    public string GetHeadTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja")
+    /// <summary>A costume part's name: <paramref name="type"/> is kigurumi, head, body, face or puchi.</summary>
+    public string GetCostumeName(IEnumerable<Costume> costumes, string type, uint id, string? language) =>
+        costumes.FirstOrDefault(c => c.CostumeType == type && c.CostumeId == id) is { } c
+            ? Pick(language, c.CostumeName, c.CostumeNameEN, c.CostumeNameCN, c.CostumeNameKO)
+            : string.Empty;
+
+    public string GetTitle(IEnumerable<Title> titles, uint id, string? language) =>
+        titles.FirstOrDefault(t => t.TitleId == id) is { } t ? Pick(language, t.TitleName, t.TitleNameEN, t.TitleNameCN, t.TitleNameKO) : string.Empty;
+
+    // The WebUI's languages (appsettings SupportedLanguages); Japanese is the default and the fallback.
+    private static string Pick(string? language, string ja, string en, string cn, string ko) => language switch
     {
-        return language switch
-        {
-            "jp" => costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeName ?? string.Empty,
-            "en-US" => costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
-            "fr-FR" => costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
-            "zh-Hans" => costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
-            "zh-Hant" => costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
-            "ko" => costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeNameKO ?? string.Empty,
-            _ => costumes.FirstOrDefault(costume => costume.CostumeType == "head" && costume.CostumeId == index)?.CostumeName ?? string.Empty
-        };
+        "en-US" or "fr-FR" => en,
+        "zh-Hans" or "zh-Hant" => cn,
+        "ko" => ko,
+        _ => ja,
+    };
+
+    private async Task LoadCostumes()
+    {
+        if (costumes is not null) return;
+        lockedCostumes = await client.GetFromJsonAsync<Dictionary<string, List<uint>>>("api/GameData/LockedCostumes") ?? [];
+        costumes = await client.GetFromJsonAsync<List<Costume>>("api/GameData/Costumes") ?? [];
     }
 
-    public string GetKigurumiTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja")
+    private async Task LoadTitles()
     {
-        return language switch
-        {
-            "jp" => costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeName ?? string.Empty,
-            "en-US" => costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
-            "fr-FR" => costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
-            "zh-Hans" => costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
-            "zh-Hant" => costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
-            "ko" => costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeNameKO ?? string.Empty,
-            _ => costumes.FirstOrDefault(costume => costume.CostumeType == "kigurumi" && costume.CostumeId == index)?.CostumeName ?? string.Empty
-        };
-    }
-
-    public string GetBodyTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja")
-    {
-        return language switch
-        {
-            "jp" => costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeName ?? string.Empty,
-            "en-US" => costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
-            "fr-FR" => costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
-            "zh-Hans" => costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
-            "zh-Hant" => costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
-            "ko" => costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeNameKO ?? string.Empty,
-            _ => costumes.FirstOrDefault(costume => costume.CostumeType == "body" && costume.CostumeId == index)?.CostumeName ?? string.Empty
-        };
-    }
-
-    public string GetFaceTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja")
-    {
-        return language switch
-        {
-            "jp" => costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeName ?? string.Empty,
-            "en-US" => costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
-            "fr-FR" => costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
-            "zh-Hans" => costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
-            "zh-Hant" => costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
-            "ko" => costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeNameKO ?? string.Empty,
-            _ => costumes.FirstOrDefault(costume => costume.CostumeType == "face" && costume.CostumeId == index)?.CostumeName ?? string.Empty
-        };
-    }
-
-    public string GetPuchiTitle(IEnumerable<Costume> costumes, uint index, string? language = "ja")
-    {
-        return language switch
-        {
-            "jp" => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeName ?? string.Empty,
-            "en-US" => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
-            "fr-FR" => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeNameEN ?? string.Empty,
-            "zh-Hans" => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
-            "zh-Hant" => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeNameCN ?? string.Empty,
-            "ko" => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeNameKO ?? string.Empty,
-            _ => costumes.FirstOrDefault(costume => costume.CostumeType == "puchi" && costume.CostumeId == index)?.CostumeName ?? string.Empty
-        };
-    }
-
-    public string GetTitle(IEnumerable<Title> titles, uint index, string? language = "ja")
-    {
-        return language switch
-        {
-            "jp" => titles.FirstOrDefault(title => title.TitleId == index)?.TitleName ?? string.Empty,
-            "en-US" => titles.FirstOrDefault(title => title.TitleId == index)?.TitleNameEN ?? string.Empty,
-            "fr-FR" => titles.FirstOrDefault(title => title.TitleId == index)?.TitleNameEN ?? string.Empty,
-            "zh-Hans" => titles.FirstOrDefault(title => title.TitleId == index)?.TitleNameCN ?? string.Empty,
-            "zh-Hant" => titles.FirstOrDefault(title => title.TitleId == index)?.TitleNameCN ?? string.Empty,
-            "ko" => titles.FirstOrDefault(title => title.TitleId == index)?.TitleNameKO ?? string.Empty,
-            _ => titles.FirstOrDefault(title => title.TitleId == index)?.TitleName ?? string.Empty,
-        };
-    }
-
-    private async Task InitializeMusicDetailAsync()
-    {
-        musicDetailDictionary = await client.GetFromJsonAsync<Dictionary<uint, MusicDetail>>("api/GameData/MusicDetails");
-        musicDetailInitialized = true;
-    }
-    
-    private async Task InitializeCostumesAsync()
-    {
-        costumeList = await client.GetFromJsonAsync<List<Costume>>("api/GameData/Costumes");
-        lockedCostumeDataDictionary = await client.GetFromJsonAsync<Dictionary<string, List<uint>>>("api/GameData/LockedCostumes");
-        costumesInitialized = true;
-    }
-    
-    private async Task InitializeTitlesAsync()
-    {
-        titleDictionary = await client.GetFromJsonAsync<Dictionary<uint, Title>>("api/GameData/Titles");
-        lockedTitleDataDictionary = await client.GetFromJsonAsync<Dictionary<string, List<uint>>>("api/GameData/LockedTitles");
-        titlesInitialized = true;
+        if (titles is not null) return;
+        lockedTitles = await client.GetFromJsonAsync<Dictionary<string, List<uint>>>("api/GameData/LockedTitles") ?? [];
+        titles = await client.GetFromJsonAsync<Dictionary<uint, Title>>("api/GameData/Titles") ?? [];
     }
 }

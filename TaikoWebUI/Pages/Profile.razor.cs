@@ -157,11 +157,7 @@ public partial class Profile : IDisposable
     private string CostumeName(string type, uint id) => type switch
     {
         "kigurumi" when id == 0 => Localizer["None (use head & body)"],
-        "kigurumi" => GameDataService.GetKigurumiTitle(costumeList, id, Culture),
-        "head" => GameDataService.GetHeadTitle(costumeList, id, Culture),
-        "body" => GameDataService.GetBodyTitle(costumeList, id, Culture),
-        "face" => GameDataService.GetFaceTitle(costumeList, id, Culture),
-        _ => GameDataService.GetPuchiTitle(costumeList, id, Culture),
+        _ => GameDataService.GetCostumeName(costumeList, type, id, Culture),
     } is { Length: > 0 } name ? name : $"#{id}";
 
     // Leaving mid-debounce: save now rather than drop the last edit.

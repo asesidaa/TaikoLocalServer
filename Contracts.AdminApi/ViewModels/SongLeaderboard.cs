@@ -3,6 +3,9 @@
 public class SongLeaderboard
 {
     public int Rank { get; set; }
+
+    /// <summary>Where the row sits in the list (1 = first), which differs from Rank on ties; set on UserScore.</summary>
+    public int Position { get; set; }
     
     public uint Baid { get; set; }
     

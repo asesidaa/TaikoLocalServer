@@ -13,6 +13,16 @@ public static class Css
 
     public const string IconButton = "grid size-9 place-items-center rounded-xl text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100";
 
+    /// <summary>A toggle chip's state (genre and filter chips): dark when on, grey when off.</summary>
+    public static string Chip(bool on) => on
+        ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+        : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700";
+
+    /// <summary>A plain filter pill's state (segmented filters): dark when on, no background when off.</summary>
+    public static string Pill(bool on) => on
+        ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+        : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800";
+
     public const string Muted = "text-zinc-500 dark:text-zinc-400";
 
     public const string Link = "font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300";
