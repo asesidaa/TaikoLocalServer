@@ -46,11 +46,11 @@ dotnet publish Host/Host.csproj
 # Run the server in dev (auto-applies migrations)
 dotnet run --project Host
 
-# Add an EF Core migration — note the split: Infrastructure owns the context, Host is the startup project
-dotnet ef migrations add <Name> --project Infrastructure --startup-project Host
+# Add an EF Core migration. Infrastructure owns the context and is also the startup project (it references EF Tools; Host doesn't have EF Design). Stop the dev server first: it locks the build output.
+dotnet ef migrations add <Name> --project Infrastructure --startup-project Infrastructure
 
 # Update database manually (normally not needed — server migrates on startup)
-dotnet ef database update --project Infrastructure --startup-project Host
+dotnet ef database update --project Infrastructure --startup-project Infrastructure
 
 # Run the score migrator
 dotnet run --project LocalSaveModScoreMigrator -- --save-file-path <path> --baid <id>
@@ -98,7 +98,7 @@ Controllers in `Adapters.GameProtocol.*` inherit `BaseProtocolController` (in `A
 ## Conventions to follow
 
 - **Don't add config to `Host/appsettings.json`.** Add a new section to one of the files in `Host/Configurations/`, register it in `Program.cs` (or in the relevant adapter's `DependencyInjection.cs`), and add a `<None Include="Configurations/Foo.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>` block to `Host/Host.csproj`.
-- **New persisted field?** Add it to the entity in `Domain/Entities/`, then `dotnet ef migrations add ...` against `Infrastructure` with `Host` as the startup project. Migrations live under `Infrastructure/Persistence/Migrations/`. Never edit existing migration files.
+- **New persisted field?** Add it to the entity in `Domain/Entities/`, then `dotnet ef migrations add ...` against `Infrastructure` (also the startup project). Migrations live under `Infrastructure/Persistence/Migrations/`. Never edit existing migration files.
 - **New game endpoint?** Implement both `_cn` and `_ww` route variants in their respective adapter projects (`Adapters.GameProtocol.CnR00` and `Adapters.GameProtocol.WwR08`), each mapping into the same `Common*` request via Mapperly. Send through Mediator; never query `ITaikoDbContext` directly from a controller — that's a handler's job.
 - **New admin API endpoint?** Add it to `Adapters.AdminApi/Controllers/`. The DTO types it accepts/returns live in `Contracts.AdminApi/{Requests,Responses,ViewModels}` so the WebUI can deserialize them. Apply `[AuthorizeIfRequired]`.
 - **New port?** Define the interface in `Application/Abstractions/`, implement it in `Infrastructure/`, and register both in `Infrastructure/DependencyInjection.cs`'s `AddInfrastructure(IConfiguration)`. Handlers depend on the port, never on the implementation.

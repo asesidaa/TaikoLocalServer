@@ -4,6 +4,11 @@
     <RootNamespace>TaikoLocalServer.Host</RootNamespace>
     <AssemblyName>TaikoLocalServer</AssemblyName>
     <Version>1.1.0</Version>
+  </PropertyGroup>
+
+  <!-- The published exe asks for admin (app.manifest: requireAdministrator). Debug builds run as the
+       developer, so the dev server can be restarted without a UAC prompt each time. -->
+  <PropertyGroup Condition="'$(Configuration)'!='Debug'">
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
