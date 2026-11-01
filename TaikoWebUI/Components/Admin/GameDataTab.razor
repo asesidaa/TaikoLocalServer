@@ -4,7 +4,7 @@
 @inject ToastService Toast
 
 <div class="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start">
-    <nav class="@Css.Card p-2 lg:sticky lg:top-24" aria-label="@Localizer["Game data"]">
+    <nav class="@Css.Card p-2 lg:sticky lg:top-24" aria-label="@Localizer["Game Data"]">
         @Item("overview", Localizer["Overview"], "database", files?.Count(f => f.Error is not null || f.Missing) ?? 0)
         @foreach (var (group, sets) in Groups)
         {
