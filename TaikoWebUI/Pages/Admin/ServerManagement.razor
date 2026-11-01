@@ -7,8 +7,7 @@
 @using TaikoWebUI.Components.Admin
 
 <PageTitle>Server Management</PageTitle>
-<Tabs Items="tabs" Selected="@Current" SelectedChanged="Go" Label="@Localizer["Server Management"]"
-      Columns="sm:grid-cols-4 xl:grid-cols-7" />
+<Tabs Items="tabs" Selected="@Current" SelectedChanged="Go" Label="@Localizer["Server Management"]" />
 <div class="mt-4" role="tabpanel">
     @if (Current == "status")
     {

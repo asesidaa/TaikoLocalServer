@@ -240,18 +240,31 @@
     prev.disabled = t.scrollLeft <= 1;
     next.disabled = t.scrollLeft >= t.scrollWidth - t.clientWidth - 1;
   };
-  const updateRails = () => document.querySelectorAll("[data-rail]").forEach(rail => {
+  // A rail's size, or one of its items' (the window, a sidebar, a web font loading, a count filling in), changed:
+  // recheck its arrows and re-centre the selection. Both observers batch their callbacks, so no frame scheduling.
+  const railSize = new ResizeObserver(entries => {
+    entries.forEach(e => e.target.closest("[data-rail] > div")._sel = null);
+    updateRails();
+  });
+  document.fonts?.addEventListener("loadingdone", () => updateRails(true));
+  const updateRails = (recenter = false) => document.querySelectorAll("[data-rail]").forEach(rail => {
     const t = railTrack(rail);
-    const sel = t?.querySelector('[aria-current="page"],[aria-current="true"],[aria-pressed="true"],[aria-selected="true"]');
-    if (sel && t._sel !== sel && t.scrollWidth > t.clientWidth) {
+    if (!t) return;
+    for (const el of [t, ...t.children]) if (!el._sized) { el._sized = true; railSize.observe(el); }
+    if (recenter) t._sel = null;
+    // Arrows first: showing them narrows the row, which would move a selection centred before it.
+    updateRail(rail);
+    const sel = t.querySelector('[aria-current="page"],[aria-current="true"],[aria-pressed="true"],[aria-selected="true"]');
+    // Also when the row's content width changed (labels filling in), which can push the selection out of view.
+    if (sel && (t._sel !== sel || t._sw !== t.scrollWidth) && t.scrollWidth > t.clientWidth) {
       t._sel = sel;
+      t._sw = t.scrollWidth;
       const r = t.getBoundingClientRect(), s = sel.getBoundingClientRect();
       t.scrollLeft += s.left + s.width / 2 - (r.left + r.width / 2);
     }
     updateRail(rail);
   });
   addEventListener("scroll", e => { const rail = e.target.parentElement?.closest?.("[data-rail]"); if (rail) updateRail(rail); }, true);
-  addEventListener("resize", updateRails);
   addEventListener("click", e => {
     const step = e.target.closest?.("[data-rail-step]");
     if (!step) return;
@@ -283,9 +296,8 @@
   };
   addEventListener("pointerup", endDrag);
   addEventListener("pointercancel", endDrag);
-  let railFrame = 0;
-  new MutationObserver(() => { cancelAnimationFrame(railFrame); railFrame = requestAnimationFrame(updateRails); })
-    .observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["aria-current", "aria-pressed", "aria-selected"] });
+  new MutationObserver(() => updateRails())
+    .observe(document.documentElement, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["aria-current", "aria-pressed", "aria-selected"] });
 
   window.ui = {
     setDark: on => { root.classList.toggle("dark", on); store.set("ui.dark", on ? "1" : "0"); },

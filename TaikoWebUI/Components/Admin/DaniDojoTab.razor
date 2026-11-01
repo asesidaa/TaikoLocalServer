@@ -86,13 +86,13 @@
             var courses = draft.OfType<JsonObject>().ToList();
             <div class="grid grid-cols-[minmax(0,1fr)] xl:grid-cols-[200px_minmax(0,1fr)]">
             <div class="border-b border-zinc-100 p-3 dark:border-zinc-800 xl:border-b-0 xl:border-r">
-                <Rail Label="@Localizer["Ranks"]" TrackClass="gap-1 sm:grid sm:grid-cols-3 xl:grid-cols-1">
+                <Rail Label="@Localizer["Ranks"]" TrackClass="gap-1 xl:grid xl:grid-cols-1">
                     @for (var i = 0; i < courses.Count; i++)
                     {
                         var index = i;
                         var on = index == selected;
                         var unknown = Songs(courses[index]).Any(x => !music.ContainsKey(x["songNo"]?.GetValue<uint>() ?? 0));
-                        <button aria-current="@(on ? "true" : null)" class="flex shrink-0 snap-start items-center gap-2 whitespace-nowrap rounded-xl px-2.5 py-1.5 sm:shrink text-left text-sm @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "hover:bg-zinc-100 dark:hover:bg-zinc-800/60")"
+                        <button aria-current="@(on ? "true" : null)" class="flex shrink-0 snap-start items-center gap-2 whitespace-nowrap rounded-xl px-2.5 py-1.5 text-left xl:shrink text-sm @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "hover:bg-zinc-100 dark:hover:bg-zinc-800/60")"
                                 @onclick="() => selected = index">
                             <span class="min-w-0 flex-1 truncate">@CourseName(courses[index])</span>
                             @if (unknown)

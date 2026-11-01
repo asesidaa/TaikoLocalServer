@@ -16,8 +16,7 @@
 }
 else
 {
-    <Tabs Items="tabs" Selected="@Current" SelectedChanged="Go" Label="@Localizer["Access"]"
-          Columns="sm:grid-cols-3 xl:grid-cols-6" />
+    <Tabs Items="tabs" Selected="@Current" SelectedChanged="Go" Label="@Localizer["Access"]" />
     <div class="mt-4" role="tabpanel">
         @if (Current == "overview")
         {

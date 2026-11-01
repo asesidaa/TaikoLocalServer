@@ -1,13 +1,14 @@
 @* Segmented tab switcher. Switching tabs starts the new tab at the top of the page (re-renders within a tab keep their place).
-   Phones: a Rail (swipe, drag or arrows); a grid again from sm. *@
+   One row at every width: the tabs share it evenly while they fit (none narrower than its label), and it scrolls
+   as a Rail (swipe, drag or arrows) when they don't. *@
 @inject IJSRuntime JS
 
-<Rail Role="tablist" Label="@Label" Class="rounded-2xl bg-zinc-100 p-1 xl:w-fit dark:bg-zinc-900" TrackClass="@("gap-1 sm:grid " + Columns)">
+<Rail Role="tablist" Label="@Label" Class="rounded-2xl bg-zinc-100 p-1 xl:w-fit dark:bg-zinc-900" TrackClass="gap-1">
     @foreach (var (id, label, icon) in Items)
     {
         var on = id == Selected;
         <button role="tab" aria-selected="@Css.Aria(on)" @onclick="() => Pick(id)"
-                class="flex shrink-0 snap-start items-center justify-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-sm font-medium transition-colors @(on ? "bg-white shadow-sm dark:bg-zinc-800" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">
+                class="flex min-w-max flex-1 shrink-0 snap-start items-center justify-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-sm font-medium transition-colors @(on ? "bg-white shadow-sm dark:bg-zinc-800" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">
             <Icon Name="@icon" Class="hidden size-4 xl:block" />@label
         </button>
     }
@@ -18,8 +19,6 @@
     [Parameter, EditorRequired] public string Selected { get; set; } = "";
     [Parameter] public EventCallback<string> SelectedChanged { get; set; }
     [Parameter] public string Label { get; set; } = "";
-    /// <summary>Grid columns from sm, e.g. "sm:grid-cols-4 xl:grid-cols-7" (literal, so Tailwind sees it).</summary>
-    [Parameter] public string Columns { get; set; } = "sm:grid-cols-2";
 
     private async Task Pick(string id)
     {
