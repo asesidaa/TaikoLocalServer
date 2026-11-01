@@ -1,0 +1,83 @@
+@* An ordered list of song IDs (a JSON array) in a game data file: move up/down, remove, Add song (song picker).
+   A song listed twice gets a Duplicate badge but isn't blocked: the shipped data already has one. *@
+@using System.Text.Json.Nodes
+
+<ul class="space-y-1">
+    @if (List.Count == 0)
+    {
+        <li class="rounded-xl border border-dashed border-zinc-200 px-3 py-4 text-center text-sm @Css.Muted dark:border-zinc-700">@Localizer["No songs yet."]</li>
+    }
+    @for (var i = 0; i < List.Count; i++)
+    {
+        var index = i;
+        var id = Id(index);
+        var dupe = Ids().Count(x => x == id) > 1;
+        <li class="flex items-center gap-2 rounded-xl border border-zinc-200 px-3 py-1.5 dark:border-zinc-700">
+            <span class="w-6 shrink-0 text-right text-xs tabular-nums @Css.Muted">@(index + 1)</span>
+            @if (Music.TryGetValue(id, out var song))
+            {
+                <SongLine Song="song" Class="min-w-0 flex-1 text-sm" />
+            }
+            else
+            {
+                <span class="min-w-0 flex-1 text-sm text-amber-700 dark:text-amber-300">@Localizer["Unknown song"]</span>
+            }
+            @if (dupe)
+            {
+                <span class="rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:text-amber-300" title="@Localizer["This song is in the list more than once."]">@Localizer["Duplicate"]</span>
+            }
+            <span class="font-mono text-xs tabular-nums text-zinc-400">#@id</span>
+            <button class="@SmallIcon" disabled="@(index == 0)" aria-label="@Localizer["Move up"]" @onclick="() => Move(index, -1)"><span class="rotate-180"><Icon Name="chevDown" /></span></button>
+            <button class="@SmallIcon" disabled="@(index == List.Count - 1)" aria-label="@Localizer["Move down"]" @onclick="() => Move(index, 1)"><Icon Name="chevDown" /></button>
+            <button class="@SmallIcon hover:!bg-red-500/10 hover:!text-red-600" aria-label="@Localizer["Remove"]" @onclick="() => Remove(index)"><Icon Name="x" /></button>
+        </li>
+    }
+</ul>
+@if (Max is null || List.Count < Max)
+{
+    <button class="@Css.GhostButton mt-2 !px-2" @onclick="() => picking = true"><Icon Name="plus" />@Localizer["Add song"]</button>
+}
+else
+{
+    <p class="mt-2 text-xs @Css.Muted">@string.Format(Localizer["At most {0} songs."], Max)</p>
+}
+@if (picking)
+{
+    <SongPicker Title="@Localizer["Add a song"]" Taken="Ids().ToHashSet()" TakenLabel="@Localizer["In the list"]"
+                OnPick="Add" OnClose="() => picking = false" />
+}
+
+@code {
+    [Parameter, EditorRequired] public JsonArray List { get; set; } = null!;
+    [Parameter, EditorRequired] public IReadOnlyDictionary<uint, MusicDetail> Music { get; set; } = null!;
+    [Parameter] public int? Max { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private const string SmallIcon = "grid size-7 shrink-0 place-items-center rounded-lg text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 disabled:hover:bg-transparent dark:hover:bg-zinc-800";
+
+    private bool picking;
+
+    private uint Id(int i) => List[i]?.GetValue<uint>() ?? 0;
+    private IEnumerable<uint> Ids() => Enumerable.Range(0, List.Count).Select(Id);
+
+    private Task Move(int i, int by)
+    {
+        var node = List[i];
+        List.RemoveAt(i);
+        List.Insert(i + by, node);
+        return OnChanged.InvokeAsync();
+    }
+
+    private Task Remove(int i)
+    {
+        List.RemoveAt(i);
+        return OnChanged.InvokeAsync();
+    }
+
+    private Task Add(uint id)
+    {
+        picking = false;
+        List.Add(id);
+        return OnChanged.InvokeAsync();
+    }
+}

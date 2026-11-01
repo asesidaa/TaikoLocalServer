@@ -1,0 +1,402 @@
+@* One game data file as a form. Edits a JSON draft; Save writes the file (the server validates it with the parser
+   it loads it with) and reloads the game data. *@
+@using System.Text.Json
+@using System.Text.Json.Nodes
+@inject HttpClient Client
+@inject IGameDataService GameDataService
+@inject ToastService Toast
+
+@if (Status is { Error: { } loadError })
+{
+    <div role="alert" class="mb-4 rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-300">
+        <p class="font-semibold">@Localizer["This file didn't load"]</p>
+        <p class="mt-1">@loadError</p>
+        <p class="mt-1 text-zinc-700 dark:text-zinc-300">@Localizer["The server still uses the previous contents. Saving here rewrites and fixes the file."]</p>
+    </div>
+}
+<section class="@Css.Card p-5 sm:p-6">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+        <div>
+            <h2 class="font-semibold">@Title</h2>
+            <p class="font-mono text-xs @Css.Muted">wwwroot/data/@Name</p>
+        </div>
+        <label class="flex items-center gap-2 text-xs @Css.Muted">
+            <input type="checkbox" class="accent-primary-500" @bind="showJson" />JSON
+        </label>
+    </div>
+    <div class="mt-4">
+        @if (draft is null || music is null)
+        {
+            <p class="text-sm @Css.Muted">@(missing ? Localizer["The file is missing."] : Localizer["Loading..."])</p>
+        }
+        else if (showJson)
+        {
+            <pre class="max-h-[60vh] overflow-auto rounded-lg bg-zinc-900 p-3 font-mono text-xs text-zinc-100">@draft.ToJsonString(Indented)</pre>
+        }
+        else
+        {
+            @Form
+        }
+    </div>
+</section>
+
+@if (Dirty)
+{
+    @* The save bar: only while there are unsaved changes. *@
+    <div class="pop fixed inset-x-4 bottom-4 z-30 mx-auto flex max-w-xl items-center gap-3 rounded-2xl bg-zinc-900 px-4 py-3 text-sm text-white shadow-2xl dark:bg-white dark:text-zinc-900 lg:left-64" style="--origin:bottom">
+        <span class="flex-1">@Localizer["Unsaved changes"]</span>
+        <button class="rounded-xl px-3 py-1.5 font-medium hover:bg-white/10 dark:hover:bg-zinc-900/10" @onclick="Discard">@Localizer["Discard"]</button>
+        <button class="rounded-xl bg-primary-500 px-4 py-1.5 font-medium text-white hover:bg-primary-600 disabled:opacity-50" disabled="@(saving || BlockReason is not null)"
+                title="@BlockReason" @onclick="Save">@Localizer["Save"]</button>
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired] public string Name { get; set; } = "";
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter] public GameDataFileStatus? Status { get; set; }
+    /// <summary>Unsaved changes (the list shows a dot), and saves (the page refreshes the file status).</summary>
+    [Parameter] public EventCallback<bool> OnDirtyChanged { get; set; }
+    [Parameter] public EventCallback OnSaved { get; set; }
+
+    private static readonly JsonSerializerOptions Indented = new() { WriteIndented = true };
+
+    private JsonNode? draft;
+    private string original = "";
+    private bool missing, showJson, saving, wasDirty;
+    private Dictionary<uint, MusicDetail>? music;
+    private List<Costume> costumes = [];
+    private Dictionary<uint, Title> titles = [];
+    private int selectedIndex;
+    private string qrQuery = "";
+    private string newSerial = "", newReward = "";
+    private bool pickingMain;
+    private readonly Dictionary<string, string> chipInput = [];
+    // folderId / setId → its entry when loaded, so changed entries get a new verupNo on save.
+    private Dictionary<uint, string> loadedEntries = [];
+
+    private bool Dirty => draft is not null && draft.ToJsonString() != original;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (draft is not null && original.Length > 0 && loadedName == Name) return;
+        loadedName = Name;
+        draft = null;
+        selectedIndex = 0;
+        showJson = false;
+        music ??= await GameDataService.GetMusicDetailDictionary();
+        if (Name is "locked_costume_data.json") costumes = await GameDataService.GetCostumeList();
+        if (Name is "locked_title_data.json") titles = await GameDataService.GetTitleDictionary();
+        await Load();
+    }
+
+    private string? loadedName;
+
+    private async Task Load()
+    {
+        var res = await Client.GetAsync($"api/GameData/Files/{Name}");
+        missing = !res.IsSuccessStatusCode;
+        if (missing) return;
+        draft = JsonNode.Parse(await res.Content.ReadAsStringAsync());
+        original = draft!.ToJsonString();
+        loadedEntries = Entries().ToDictionary(e => e.Id, e => e.Json);
+        await NotifyDirty();
+    }
+
+    private IEnumerable<(uint Id, string Json)> Entries() => draft is JsonArray a && Name is "event_folder_data.json" or "intro_data.json"
+        ? a.OfType<JsonObject>().Select(o => ((o[IdKey]?.GetValue<uint>() ?? 0), o.ToJsonString()))
+        : [];
+
+    private string IdKey => Name == "intro_data.json" ? "setId" : "folderId";
+
+    private async Task Changed()
+    {
+        StateHasChanged();
+        await NotifyDirty();
+    }
+
+    private async Task NotifyDirty()
+    {
+        if (Dirty == wasDirty) return;
+        wasDirty = Dirty;
+        await OnDirtyChanged.InvokeAsync(Dirty);
+    }
+
+    private async Task Discard()
+    {
+        draft = JsonNode.Parse(original);
+        await NotifyDirty();
+    }
+
+    // Why Save is disabled, or null.
+    private string? BlockReason => Name == "qrcode_data.json" && draft is JsonArray qr &&
+        qr.OfType<JsonObject>().GroupBy(o => o["serial"]?.ToString() ?? "").Any(g => g.Key.Length == 0 || g.Count() > 1)
+        ? Localizer["Every QR code needs its own serial."] : null;
+
+    private async Task Save()
+    {
+        // Cabinets fetch a folder or intro set again only when its verupNo goes up.
+        foreach (var o in (draft as JsonArray)?.OfType<JsonObject>() ?? [])
+        {
+            if (Name is not ("event_folder_data.json" or "intro_data.json")) break;
+            var id = o[IdKey]?.GetValue<uint>() ?? 0;
+            if (loadedEntries.GetValueOrDefault(id) != o.ToJsonString())
+                o["verupNo"] = (o["verupNo"]?.GetValue<uint>() ?? 0) + 1;
+        }
+        saving = true;
+        var res = await Client.PutAsync($"api/GameData/Files/{Name}", new StringContent(draft!.ToJsonString(Indented), System.Text.Encoding.UTF8, "application/json"));
+        saving = false;
+        if (!res.IsSuccessStatusCode)
+        {
+            var body = await res.Content.ReadAsStringAsync();
+            string? message = null;
+            try { message = JsonNode.Parse(body)?["message"]?.ToString(); } catch (JsonException) { }
+            Toast.Show(message ?? Localizer["Save Failed"], true);
+            return;
+        }
+        Toast.Show(Localizer["Saved. Game data reloaded."]);
+        original = draft.ToJsonString();
+        loadedEntries = Entries().ToDictionary(e => e.Id, e => e.Json);
+        await NotifyDirty();
+        await OnSaved.InvokeAsync();
+    }
+
+    // ---------- Forms ----------
+
+    private RenderFragment Form => __builder =>
+    {
+        switch (Name)
+        {
+            case "event_folder_data.json": @Folders("folderId", Localizer["Folder"], "songNo", null) break;
+            case "intro_data.json": @Folders("setId", Localizer["Set"], "subSongNo", 4) break;
+            case "special_songs_data.json": @Lists(("timeLimitedSongNo", Localizer["Time-limited songs"])) break;
+            case "locked_songs_data.json": @Lists(("songNo", Localizer["Locked songs"]), ("uraSongNo", Localizer["Locked Ura (inner) charts"])) break;
+            case "shop_folder_data.json": @Shop break;
+            case "locked_costume_data.json": @Chips(["kigurumi", "head", "body", "face", "puchi"], CostumeName) break;
+            case "locked_title_data.json": @Chips(["title", "titlePlate"], TitleName) break;
+            case "token_data.json": @Tokens break;
+            case "qrcode_data.json": @QrCodes break;
+            default: <p class="text-sm @Css.Muted">@Localizer["No form for this file yet; use JSON."]</p> break;
+        }
+    };
+
+    // Folders (event folders) and intro sets: pick one, then its songs (and an intro set's main song).
+    private RenderFragment Folders(string idKey, string label, string songsKey, int? max) => __builder =>
+    {
+        var items = ((JsonArray)draft!).OfType<JsonObject>().ToList();
+        if (items.Count == 0)
+        {
+            <p class="text-sm @Css.Muted">@Localizer["Empty."]</p>
+            return;
+        }
+        selectedIndex = Math.Clamp(selectedIndex, 0, items.Count - 1);
+        var item = items[selectedIndex];
+        <label class="flex items-center gap-2 text-sm">
+            <span class="font-medium">@label</span>
+            <select class="@Css.Input !w-auto !py-1.5" value="@selectedIndex" @onchange="e => selectedIndex = int.Parse(e.Value!.ToString()!)">
+                @for (var i = 0; i < items.Count; i++)
+                {
+                    <option value="@i">@label @items[i][idKey] · @string.Format(Localizer["{0} songs"], (items[i][songsKey] as JsonArray)?.Count ?? 0)</option>
+                }
+            </select>
+            <span class="text-xs @Css.Muted">verupNo @item["verupNo"]</span>
+        </label>
+        @if (idKey == "setId")
+        {
+            var main = item["mainSongNo"]?.GetValue<uint>() ?? 0;
+            <p class="mt-4 text-xs font-medium @Css.Muted">@Localizer["Main song"]</p>
+            <div class="mt-1 flex items-center gap-2 rounded-xl border border-zinc-200 px-3 py-1.5 dark:border-zinc-700">
+                @if (music!.TryGetValue(main, out var song))
+                {
+                    <SongLine Song="song" Class="min-w-0 flex-1 text-sm" />
+                }
+                else
+                {
+                    <span class="flex-1 text-sm text-amber-700 dark:text-amber-300">@Localizer["Unknown song"]</span>
+                }
+                <span class="font-mono text-xs text-zinc-400">#@main</span>
+                <button class="@Css.GhostButton !px-2 !py-1" @onclick="() => pickingMain = true">@Localizer["Change"]</button>
+            </div>
+            @if (pickingMain)
+            {
+                <SongPicker Title="@Localizer["Change main song"]" Current="main" OnClose="() => pickingMain = false"
+                            OnPick='async id => { item["mainSongNo"] = id; pickingMain = false; await Changed(); }' />
+            }
+            <p class="mt-4 text-xs font-medium @Css.Muted">@Localizer["Other songs"]</p>
+        }
+        else
+        {
+            <div class="mt-3"></div>
+        }
+        if (item[songsKey] is not JsonArray songs)
+        {
+            item[songsKey] = songs = [];
+        }
+        <div class="mt-1"><SongListEditor List="songs" Music="music!" Max="max" OnChanged="Changed" /></div>
+    };
+
+    private RenderFragment Lists(params (string Key, string Label)[] lists) => __builder =>
+    {
+        <div class="space-y-6">
+            @foreach (var (key, label) in lists)
+            {
+                if (draft![key] is not JsonArray list)
+                {
+                    draft[key] = list = [];
+                }
+                <div>
+                    <p class="mb-2 text-sm font-medium">@label</p>
+                    <SongListEditor List="list" Music="music!" OnChanged="Changed" />
+                </div>
+            }
+        </div>
+    };
+
+    private bool pickingShop;
+
+    // Shop: song / type / price rows. What "type" means isn't documented, so it passes 0/1 through.
+    private RenderFragment Shop => __builder =>
+    {
+        var rows = (JsonArray)draft!;
+        <div class="space-y-1">
+            @foreach (var row in rows.OfType<JsonObject>().ToList())
+            {
+                var id = row["songNo"]?.GetValue<uint>() ?? 0;
+                <div class="flex flex-wrap items-center gap-2 rounded-xl border border-zinc-200 px-3 py-1.5 dark:border-zinc-700">
+                    @if (music!.TryGetValue(id, out var song))
+                    {
+                        <SongLine Song="song" Class="min-w-0 flex-1 text-sm" />
+                    }
+                    else
+                    {
+                        <span class="min-w-0 flex-1 text-sm text-amber-700 dark:text-amber-300">@Localizer["Unknown song"]</span>
+                    }
+                    <span class="font-mono text-xs text-zinc-400">#@id</span>
+                    <label class="flex items-center gap-1 text-xs @Css.Muted">@Localizer["Type"]
+                        <select class="@Css.Input !w-auto !px-2 !py-1" value='@row["type"]' @onchange='async e => { row["type"] = uint.Parse(e.Value!.ToString()!); await Changed(); }'>
+                            <option value="0">0</option><option value="1">1</option>
+                        </select>
+                    </label>
+                    <label class="flex items-center gap-1 text-xs @Css.Muted">@Localizer["Price"]
+                        <input type="number" min="0" class="@Css.Input !w-20 !px-2 !py-1" value='@row["price"]'
+                               @onchange='async e => { row["price"] = uint.TryParse(e.Value?.ToString(), out var p) ? p : 0u; await Changed(); }' />
+                    </label>
+                    <button class="grid size-7 place-items-center rounded-lg text-zinc-400 hover:bg-red-500/10 hover:text-red-600" aria-label="@Localizer["Remove"]"
+                            @onclick="async () => { rows.Remove(row); await Changed(); }"><Icon Name="x" /></button>
+                </div>
+            }
+        </div>
+        <button class="@Css.GhostButton mt-2 !px-2" @onclick="() => pickingShop = true"><Icon Name="plus" />@Localizer["Add song"]</button>
+        @if (pickingShop)
+        {
+            <SongPicker Title="@Localizer["Add a song to the shop"]" TakenLabel="@Localizer["In the shop"]"
+                        Taken='rows.OfType<JsonObject>().Select(r => r["songNo"]?.GetValue<uint>() ?? 0).ToHashSet()'
+                        OnClose="() => pickingShop = false"
+                        OnPick='async id => { rows.Add(new JsonObject { ["songNo"] = id, ["type"] = 0u, ["price"] = 0u }); pickingShop = false; await Changed(); }' />
+        }
+    };
+
+    // Costume and title locks: ID chips per kind, with add and remove.
+    private RenderFragment Chips(string[] kinds, Func<string, uint, string> nameOf) => __builder =>
+    {
+        <div class="space-y-5">
+            @foreach (var kind in kinds)
+            {
+                if (draft![kind] is not JsonArray ids)
+                {
+                    draft[kind] = ids = [];
+                }
+                <div>
+                    <p class="mb-2 text-sm font-medium">@kind</p>
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        @foreach (var node in ids.ToList())
+                        {
+                            var id = node?.GetValue<uint>() ?? 0;
+                            <span class="inline-flex items-center gap-1 rounded-full bg-zinc-100 py-1 pl-2.5 pr-1 text-xs dark:bg-zinc-800" title="@nameOf(kind, id)">
+                                <span class="font-mono">@id</span>
+                                @if (nameOf(kind, id) is { Length: > 0 } n)
+                                {
+                                    <span class="max-w-40 truncate @Css.Muted">@n</span>
+                                }
+                                <button class="grid size-5 place-items-center rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700" aria-label="@Localizer["Remove"]"
+                                        @onclick="async () => { ids.Remove(node); await Changed(); }"><Icon Name="x" Class="size-3" /></button>
+                            </span>
+                        }
+                        <form class="inline-flex" @onsubmit="async () => await AddChip(kind, ids)" @onsubmit:preventDefault>
+                            <input inputmode="numeric" placeholder="@Localizer["Add ID"]" class="@Css.Input !w-24 !rounded-full !py-1 text-xs"
+                                   value="@chipInput.GetValueOrDefault(kind)" @oninput="e => chipInput[kind] = e.Value?.ToString() ?? string.Empty" />
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    };
+
+    private async Task AddChip(string kind, JsonArray ids)
+    {
+        if (!uint.TryParse(chipInput.GetValueOrDefault(kind), out var id) || ids.Any(n => n?.GetValue<uint>() == id)) return;
+        ids.Add(id);
+        chipInput[kind] = "";
+        await Changed();
+    }
+
+    private string CostumeName(string kind, uint id) =>
+        costumes.FirstOrDefault(c => c.CostumeType == kind && c.CostumeId == id) is { } c ? (c.CostumeNameEN.Length > 0 ? c.CostumeNameEN : c.CostumeName) : "";
+
+    private string TitleName(string kind, uint id) =>
+        kind == "title" && titles.TryGetValue(id, out var t) ? (t.TitleNameEN.Length > 0 ? t.TitleNameEN : t.TitleName) : "";
+
+    // Tokens: a name → ID grid; -1 turns a token off.
+    private RenderFragment Tokens => __builder =>
+    {
+        <p class="mb-3 text-xs @Css.Muted">@Localizer["Set a token to -1 to turn it off."]</p>
+        <div class="grid gap-2 sm:grid-cols-2">
+            @foreach (var (key, value) in ((JsonObject)draft!).ToList())
+            {
+                <label class="flex items-center justify-between gap-3 rounded-xl border border-zinc-200 px-3 py-1.5 text-sm dark:border-zinc-700">
+                    <span class="min-w-0 truncate font-mono text-xs">@key</span>
+                    <input type="number" class="@Css.Input !w-28 !px-2 !py-1 text-right" value="@value"
+                           @onchange="async e => { draft![key] = int.TryParse(e.Value?.ToString(), out var v) ? v : -1; await Changed(); }" />
+                </label>
+            }
+        </div>
+    };
+
+    // QR codes: a searchable serial / reward table and an add row. Duplicate serials block saving.
+    private RenderFragment QrCodes => __builder =>
+    {
+        var rows = (JsonArray)draft!;
+        var q = qrQuery.Trim();
+        var dupes = rows.OfType<JsonObject>().GroupBy(o => o["serial"]?.ToString() ?? "").Where(g => g.Count() > 1).Select(g => g.Key).ToHashSet();
+        <input type="search" class="@Css.Input" placeholder="@string.Format(Localizer["Search {0} QR codes"], rows.Count)" value="@qrQuery" @oninput="e => qrQuery = e.Value?.ToString() ?? string.Empty" />
+        <form class="mt-3 flex gap-2" @onsubmit="AddQr" @onsubmit:preventDefault>
+            <input class="@Css.Input font-mono text-xs" placeholder="@Localizer["Serial"]" value="@newSerial" @oninput="e => newSerial = e.Value?.ToString() ?? string.Empty" />
+            <input inputmode="numeric" class="@Css.Input !w-36 font-mono text-xs" placeholder="@Localizer["Reward ID"]" value="@newReward" @oninput="e => newReward = e.Value?.ToString() ?? string.Empty" />
+            <button class="@Css.PrimaryButton shrink-0 !px-3" disabled="@(newSerial.Trim().Length == 0 || !uint.TryParse(newReward, out _))"><Icon Name="plus" />@Localizer["Add"]</button>
+        </form>
+        <ul class="mt-3 max-h-[50vh] divide-y divide-zinc-100 overflow-y-auto dark:divide-zinc-800">
+            @foreach (var row in rows.OfType<JsonObject>().Where(o => q.Length == 0 || (o["serial"]?.ToString() ?? "").Contains(q, StringComparison.OrdinalIgnoreCase) || o["id"]?.ToString() == q).Take(200).ToList())
+            {
+                var serial = row["serial"]?.ToString() ?? "";
+                <li class="flex items-center gap-3 py-1.5 text-sm">
+                    <span class="min-w-0 flex-1 truncate font-mono text-xs">@serial</span>
+                    @if (dupes.Contains(serial))
+                    {
+                        <span class="rounded-full bg-red-500/10 px-2 py-0.5 text-[11px] font-medium text-red-700 dark:text-red-400">@Localizer["Duplicate"]</span>
+                    }
+                    <span class="font-mono text-xs tabular-nums @Css.Muted">@row["id"]</span>
+                    <button class="grid size-7 place-items-center rounded-lg text-zinc-400 hover:bg-red-500/10 hover:text-red-600" aria-label="@Localizer["Remove"]"
+                            @onclick="async () => { rows.Remove(row); await Changed(); }"><Icon Name="x" /></button>
+                </li>
+            }
+        </ul>
+    };
+
+    private async Task AddQr()
+    {
+        if (!uint.TryParse(newReward, out var id) || newSerial.Trim().Length == 0) return;
+        ((JsonArray)draft!).Add(new JsonObject { ["serial"] = newSerial.Trim(), ["id"] = id });
+        newSerial = newReward = "";
+        await Changed();
+    }
+}

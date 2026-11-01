@@ -6,6 +6,18 @@
 <div class="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start">
     <nav class="@Css.Card p-2 lg:sticky lg:top-24" aria-label="@Localizer["Game data"]">
         @Item("overview", Localizer["Overview"], "database", files?.Count(f => f.Error is not null || f.Missing) ?? 0)
+        @foreach (var (group, sets) in Groups)
+        {
+            <p class="px-3 pb-1 pt-3 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@group</p>
+            foreach (var (file, label, icon) in sets)
+            {
+                @Item(file, label, icon)
+            }
+        }
+        <p class="px-3 pb-1 pt-3 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@Localizer["Elsewhere"]</p>
+        <a href="/Admin/Server/dan" class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/70"><Icon Name="medal" />@Localizer["Dani Dojo"]<Icon Name="chevRight" Class="ml-auto size-4" /></a>
+        <a href="/Admin/Server/announcements" class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/70"><Icon Name="megaphone" />@Localizer["In-game messages"]<Icon Name="chevRight" Class="ml-auto size-4" /></a>
+        <a href="/Admin/Server/cabinets" class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/70"><Icon Name="monitor" />@Localizer["Movies"]<Icon Name="chevRight" Class="ml-auto size-4" /></a>
     </nav>
     <div class="min-w-0 space-y-4">
         @if (selected == "overview")
@@ -58,6 +70,12 @@
                 }
             </section>
         }
+        else
+        {
+            var (_, label, _) = Groups.SelectMany(g => g.Sets).First(x => x.File == selected);
+            <GameDataEditor @key="selected" Name="@selected" Title="@label" Status="files?.FirstOrDefault(f => f.Name == selected)"
+                            OnDirtyChanged="d => SetDirty(selected, d)" OnSaved="Reloaded" />
+        }
     </div>
 </div>
 
@@ -65,6 +83,29 @@
     private IReadOnlyList<GameDataFileStatus>? files;
     private string selected = "overview";
     private bool reloading;
+    private readonly HashSet<string> dirty = [];
+
+    private (string Group, (string File, string Label, string Icon)[] Sets)[] Groups =>
+    [
+        (Localizer["Songs"], [
+            ("event_folder_data.json", Localizer["Event folders"], "list"),
+            ("intro_data.json", Localizer["Song intros"], "music"),
+            ("special_songs_data.json", Localizer["Time-limited songs"], "clock"),
+            ("locked_songs_data.json", Localizer["Locked songs"], "lock"),
+            ("shop_folder_data.json", Localizer["Shop"], "ticket"),
+        ]),
+        (Localizer["Unlocks"], [
+            ("locked_costume_data.json", Localizer["Locked costumes"], "shirt"),
+            ("locked_title_data.json", Localizer["Locked titles"], "id"),
+            ("token_data.json", Localizer["Tokens"], "key"),
+            ("qrcode_data.json", Localizer["QR codes"], "qr"),
+        ]),
+    ];
+
+    private void SetDirty(string file, bool on)
+    {
+        if (on) dirty.Add(file); else dirty.Remove(file);
+    }
 
     protected override async Task OnInitializedAsync() =>
         files = await Client.GetFromJsonAsync<List<GameDataFileStatus>>("api/GameData/Files");
@@ -93,9 +134,18 @@
     private RenderFragment Item(string id, string label, string icon, int problems = 0) => __builder =>
     {
         var on = selected == id;
+        var status = files?.FirstOrDefault(f => f.Name == id);
         <button aria-current="@(on ? "true" : null)" @onclick="() => selected = id"
                 class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm @(on ? "bg-primary-500/10 font-medium text-primary-700 dark:text-primary-300" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/70")">
             <Icon Name="@icon" /><span class="min-w-0 flex-1 truncate">@label</span>
+            @if (dirty.Contains(id))
+            {
+                <span class="size-2 rounded-full bg-primary-500" title="@Localizer["Unsaved changes"]"></span>
+            }
+            else if (status is { Error: not null } or { Missing: true })
+            {
+                <span class="size-2 rounded-full bg-red-500" title="@Localizer["This file didn't load"]"></span>
+            }
             @if (problems > 0)
             {
                 <span class="rounded-full bg-red-500 px-1.5 text-[11px] font-semibold text-white" title="@Localizer["Files with problems"]">@problems</span>
