@@ -4,6 +4,11 @@
     {
         <img data-asset="@Image" alt="" class="size-8 shrink-0 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800" />
     }
+    else if (!string.IsNullOrEmpty(Icon))
+    {
+        @* Options the game has no icon for get a UI icon in the same tile, so rows line up. *@
+        <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"><TaikoWebUI.Components.Ui.Icon Name="@Icon" Class="size-5" /></span>
+    }
     <span class="min-w-0 flex-1">
         <span class="block text-sm font-medium">@Label</span>
         @if (!string.IsNullOrEmpty(Description))
@@ -19,6 +24,8 @@
     [Parameter, EditorRequired] public string Label { get; set; } = "";
     [Parameter] public string? Description { get; set; }
     [Parameter] public string? Image { get; set; }
+    /// <summary>A UI <see cref="TaikoWebUI.Components.Ui.Icon"/> name, used when there is no game <see cref="Image"/>.</summary>
+    [Parameter] public string? Icon { get; set; }
     [Parameter] public bool Value { get; set; }
     [Parameter] public EventCallback<bool> ValueChanged { get; set; }
 

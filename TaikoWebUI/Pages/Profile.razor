@@ -158,8 +158,8 @@ else
                     Value="s.PlaySetting.IsVanishOn" ValueChanged="v => Set(x => x.PlaySetting.IsVanishOn = v)" />
             <Toggle Label="@Localizer["Inverse"]" Description="@Localizer["Swap don and ka"]" Image="@GameData.OptionIcon("abekobe")"
                     Value="s.PlaySetting.IsInverseOn" ValueChanged="v => Set(x => x.PlaySetting.IsInverseOn = v)" />
-            <Toggle Label="@Localizer["Voice"]" Description="@Localizer["Announcer voice"]" Value="s.IsVoiceOn" ValueChanged="v => Set(x => x.IsVoiceOn = v)" />
-            <Toggle Label="@Localizer["Skip Song"]" Description="@Localizer["Allow skipping during play"]" Value="s.IsSkipOn" ValueChanged="v => Set(x => x.IsSkipOn = v)" />
+            <Toggle Label="@Localizer["Voice"]" Description="@Localizer["Announcer voice"]" Icon="volume" Value="s.IsVoiceOn" ValueChanged="v => Set(x => x.IsVoiceOn = v)" />
+            <Toggle Label="@Localizer["Skip Song"]" Description="@Localizer["Allow skipping during play"]" Icon="skip" Value="s.IsSkipOn" ValueChanged="v => Set(x => x.IsSkipOn = v)" />
         </div>
     };
 
