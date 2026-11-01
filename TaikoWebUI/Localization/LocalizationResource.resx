@@ -855,4 +855,31 @@
   <data name="Activity Hint" xml:space="preserve">
     <value />
   </data>
+  <data name="Invite Code Hint" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Move Code Hint" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Invite Dialog Hint" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Reset Password Confirm" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Make Admin Confirm" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Remove Admin Confirm" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Delete User Confirm" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Delete User Hint" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Remove Score Hint" xml:space="preserve">
+    <value />
+  </data>
 </root>

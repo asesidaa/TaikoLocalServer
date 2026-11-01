@@ -160,7 +160,7 @@ public class UserSettingsController(ITaikoDbContext context, IServerAccess acces
         return NoContent();
     }
 
-    private static UserSetting BuildUserSetting(UserDatum user, UserWebProfile? profile)
+    internal static UserSetting BuildUserSetting(UserDatum user, UserWebProfile? profile)
     {
         profile ??= new UserWebProfile();
         List<List<uint>> costumeUnlockData =

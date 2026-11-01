@@ -1,35 +1,132 @@
 @page "/Users"
 @attribute [Authorize(Policy = AuthPolicies.Admin)]
+@using TaikoWebUI.Components.Admin
 @inject HttpClient Client
 @inject PageState Page
+@inject AuthService AuthService
 
-<PageTitle>Users</PageTitle>
-<ComingSoon Title="@Localizer["User Management"]" IconName="users">
-    @* Until Users is redesigned: a plain way to reach each user's pages. *@
-    @if (users is null)
-    {
-        <p class="mt-6 text-sm @Css.Muted">@Localizer["Loading..."]</p>
-    }
-    else
-    {
-        <ul class="mx-auto mt-6 max-w-md divide-y divide-zinc-100 text-left dark:divide-zinc-800">
-            @foreach (var user in users)
+<PageTitle>User Management</PageTitle>
+@* Inspector: a sticky searchable list on the left, everything about the picked user on the right. *@
+<div class="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start">
+    <div class="@Css.Card p-3 lg:sticky lg:top-24">
+        <label class="relative block">
+            <span class="sr-only">@Localizer["Search users"]</span>
+            <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="search" /></span>
+            <input type="search" value="@query" placeholder="@Localizer["Name, user ID or access code"]" class="@Css.Input pl-9"
+                   @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
+        </label>
+        @if (AuthService.LoginRequired)
+        {
+            <div class="mt-2 flex flex-wrap gap-1" role="radiogroup" aria-label="@Localizer["Filter users"]">
+                @foreach (var (key, label) in Filters)
+                {
+                    var on = filter == key;
+                    <button role="radio" aria-checked="@Css.Aria(on)" @onclick="() => filter = key"
+                            class="rounded-full px-2.5 py-1 text-xs font-medium @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800")">@label</button>
+                }
+            </div>
+        }
+        <ul class="mt-2 max-h-[calc(100dvh-16rem)] space-y-0.5 overflow-y-auto">
+            @if (users is null)
             {
-                <li class="flex items-center justify-between gap-3 py-2 text-sm">
-                    <span class="min-w-0 truncate"><span class="font-medium">@user.UserSetting.MyDonName</span> <span class="@Css.Muted">· Baid @user.Baid</span></span>
-                    <a href="@($"/Users/{user.Baid}/Profile")" class="@Css.Link shrink-0">@Localizer["Profile"]</a>
-                </li>
+                <li class="px-3 py-6 text-center text-sm @Css.Muted">@Localizer["Loading..."]</li>
+            }
+            else
+            {
+                var list = Visible();
+                if (list.Count == 0)
+                {
+                    <li class="px-3 py-6 text-center text-sm @Css.Muted">@Localizer["No matches"]</li>
+                }
+                foreach (var u in list)
+                {
+                    var on = u.Baid == selected?.Baid;
+                    <li>
+                        <button aria-current="@(on ? "true" : null)" @onclick="() => selected = u"
+                                class="flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left @(on ? "bg-primary-500/10" : "hover:bg-zinc-100 dark:hover:bg-zinc-800/60")">
+                            <Avatar Setting="u.UserSetting" Size="40" />
+                            <span class="min-w-0 flex-1">
+                                <span class="block truncate text-sm font-medium">@u.UserSetting.MyDonName</span>
+                                <span class="block truncate text-xs @Css.Muted">@Localizer["User ID"] @u.Baid · @LastPlayed(u)</span>
+                            </span>
+                            @if (AuthService.LoginRequired && !u.IsRegistered)
+                            {
+                                <span class="size-2 rounded-full bg-amber-400" title="@Localizer["Not registered"]"></span>
+                            }
+                            @if (AuthService.LoginRequired && u.IsAdmin)
+                            {
+                                <span class="text-primary-600 dark:text-primary-400" title="@Localizer["Admin"]"><Icon Name="crown" Class="size-3.5" /></span>
+                            }
+                        </button>
+                    </li>
+                }
             }
         </ul>
-    }
-</ComingSoon>
+    </div>
+    <div class="@Css.Card">
+        @if (selected is null)
+        {
+            <div class="grid place-items-center p-10 text-sm @Css.Muted">@Localizer[users is { Count: 0 } ? "No users yet. A user appears the first time a card is played." : "Pick a user"]</div>
+        }
+        else
+        {
+            <UserDetail User="selected" Users="users!" OnChanged="Reload" OnDeleted="OnDeleted" />
+        }
+    </div>
+</div>
 
 @code {
     private List<User>? users;
+    private User? selected;
+    private string query = "";
+    private string filter = "all";
+
+    private (string Key, string Label)[] Filters =>
+        [("all", Localizer["All"]), ("registered", Localizer["Registered"]), ("unregistered", Localizer["Not registered"]), ("admins", Localizer["Admins"])];
 
     protected override async Task OnInitializedAsync()
     {
         Page.Set(Localizer["Admin"], Localizer["User Management"]);
-        users = (await Client.GetFromJsonAsync<UsersResponse>("api/Users?page=1&limit=200"))?.Users ?? [];
+        await Reload();
+    }
+
+    // Every user, 200 a page: the list is searched and filtered here.
+    private async Task Reload()
+    {
+        var all = new List<User>();
+        for (var page = 1; ; page++)
+        {
+            var res = await Client.GetFromJsonAsync<UsersResponse>($"api/Users?page={page}&limit=200");
+            all.AddRange(res?.Users ?? []);
+            if (res is null || page >= res.TotalPages) break;
+        }
+        users = all;
+        selected = users.FirstOrDefault(u => u.Baid == selected?.Baid) ?? users.FirstOrDefault();
+    }
+
+    private async Task OnDeleted()
+    {
+        selected = null;
+        await Reload();
+    }
+
+    private List<User> Visible()
+    {
+        var q = query.Trim();
+        var digits = new string(q.Where(char.IsAsciiDigit).ToArray());
+        return users!.Where(u =>
+                (filter == "all" || !AuthService.LoginRequired
+                 || (filter == "registered" && u.IsRegistered) || (filter == "unregistered" && !u.IsRegistered) || (filter == "admins" && u.IsAdmin)) &&
+                (q.Length == 0 || u.UserSetting.MyDonName.Contains(q, StringComparison.OrdinalIgnoreCase) || u.Baid.ToString() == q
+                 || (digits.Length >= 4 && u.AccessCodes.Any(c => c.Contains(digits)))))
+            .ToList();
+    }
+
+    private string LastPlayed(User u)
+    {
+        var t = u.UserSetting.LastPlayDateTime;
+        if (t == default) return Localizer["Never"];
+        var days = (int)(DateTime.Now - t).TotalDays;
+        return days <= 0 ? Localizer["Today"] : days == 1 ? Localizer["Yesterday"] : days < 30 ? string.Format(Localizer["{0} days ago"], days) : t.ToString("d");
     }
 }

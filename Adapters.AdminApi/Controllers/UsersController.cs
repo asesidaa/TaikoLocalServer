@@ -69,63 +69,24 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
             .Skip((page - 1) * limit)
             .Take(limit)
             .ToListAsync();
+        var pageBaids = userEntries.Select(user => user.Baid).ToList();
+        var profiles = await context.UserWebProfiles.Where(p => pageBaids.Contains(p.Baid)).ToDictionaryAsync(p => p.Baid);
+
+        var registered = await context.Credentials.Where(c => pageBaids.Contains(c.Baid) && c.Password != "")
+            .Select(c => c.Baid).ToListAsync(HttpContext.RequestAborted);
+        var plays = await context.SongPlayData.Where(p => pageBaids.Contains(p.Baid)).GroupBy(p => p.Baid)
+            .Select(g => new { g.Key, Count = g.Count() }).ToDictionaryAsync(g => g.Key, g => g.Count, HttpContext.RequestAborted);
 
         foreach (var user in userEntries)
         {
-            List<List<uint>> costumeUnlockData =
-                [user.UnlockedKigurumi, user.UnlockedHead, user.UnlockedBody, user.UnlockedFace, user.UnlockedPuchi];
-
-            var unlockedTitle = user.TitleFlgArray.ToList();
-
-            for (var i = 0; i < 5; i++)
-            {
-                if (!costumeUnlockData[i].Contains(0))
-                {
-                    costumeUnlockData[i].Add(0);
-                }
-            }
-
-            var userSetting = new UserSetting
-            {
-                Baid = user.Baid,
-                AchievementDisplayDifficulty = user.AchievementDisplayDifficulty,
-                IsDisplayAchievement = user.DisplayAchievement,
-                IsDisplayDanOnNamePlate = user.DisplayDan,
-                DifficultySettingCourse = user.DifficultySettingCourse,
-                DifficultySettingStar = user.DifficultySettingStar,
-                DifficultySettingSort = user.DifficultySettingSort,
-                IsVoiceOn = user.IsVoiceOn,
-                IsSkipOn = user.IsSkipOn,
-                NotesPosition = user.NotesPosition,
-                PlaySetting = PlaySettingConverter.ShortToPlaySetting(user.OptionSetting),
-                ToneId = user.SelectedToneId,
-                MyDonName = user.MyDonName,
-                MyDonNameLanguage = user.MyDonNameLanguage,
-                Title = user.Title,
-                TitlePlateId = user.TitlePlateId,
-                Kigurumi = user.CurrentKigurumi,
-                Head = user.CurrentHead,
-                Body = user.CurrentBody,
-                Face = user.CurrentFace,
-                Puchi = user.CurrentPuchi,
-                UnlockedKigurumi = costumeUnlockData[0],
-                UnlockedHead = costumeUnlockData[1],
-                UnlockedBody = costumeUnlockData[2],
-                UnlockedFace = costumeUnlockData[3],
-                UnlockedPuchi = costumeUnlockData[4],
-                UnlockedTitle = unlockedTitle,
-                BodyColor = user.ColorBody,
-                FaceColor = user.ColorFace,
-                LimbColor = user.ColorLimb,
-                LastPlayDateTime = user.LastPlayDatetime
-            };
-
             users.Add(new User
             {
                 Baid = user.Baid,
                 AccessCodes = cardEntries.Where(card => card.Baid == user.Baid).Select(card => card.AccessCode).ToList(),
                 IsAdmin = user.IsAdmin,
-                UserSetting = userSetting
+                IsRegistered = registered.Contains(user.Baid),
+                Plays = plays.GetValueOrDefault(user.Baid),
+                UserSetting = UserSettingsController.BuildUserSetting(user, profiles.GetValueOrDefault(user.Baid))
             });
         }
 

@@ -855,4 +855,31 @@
   <data name="Activity Hint" xml:space="preserve">
     <value>Admin actions on users, scores and access codes. Kept for a year.</value>
   </data>
+  <data name="Invite Code Hint" xml:space="preserve">
+    <value>6 digits, valid 24 h. Lets them register.</value>
+  </data>
+  <data name="Move Code Hint" xml:space="preserve">
+    <value>Move {0} to another user. Scores already played with it stay here.</value>
+  </data>
+  <data name="Invite Dialog Hint" xml:space="preserve">
+    <value>Give this code to the owner of {0}. They enter it when registering. It works for 24 hours.</value>
+  </data>
+  <data name="Reset Password Confirm" xml:space="preserve">
+    <value>{0} won’t be able to sign in until they register again. Their scores are kept.</value>
+  </data>
+  <data name="Make Admin Confirm" xml:space="preserve">
+    <value>{0} will be able to manage every user and the server.</value>
+  </data>
+  <data name="Remove Admin Confirm" xml:space="preserve">
+    <value>{0} will keep their account and scores, but lose access to the admin pages.</value>
+  </data>
+  <data name="Delete User Confirm" xml:space="preserve">
+    <value>This deletes {0}, their scores, play history, Dani Dojo results and access codes. Type their name to confirm.</value>
+  </data>
+  <data name="Delete User Hint" xml:space="preserve">
+    <value>Deletes the user, their scores, play history and access codes.</value>
+  </data>
+  <data name="Remove Score Hint" xml:space="preserve">
+    <value>Removes the best score and the plays behind it from play history.</value>
+  </data>
 </root>
