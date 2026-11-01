@@ -340,7 +340,7 @@
     {
         var diffName = GameData.DifficultyName((Difficulty)F.Difficulty);
         var statuses = F.AiBattle
-            ? new[] { ("all", Localizer["All songs"].Value), ("aiunplayed", Localizer["No AI battle yet"].Value), ("ailost", Localizer["Lost to the AI"].Value), ("aiwon", Localizer["Beat the AI"].Value) }
+            ? new[] { ("all", Localizer["All songs"].Value), ("aiunplayed", Localizer["No AI battle yet"].Value), ("ailost", Localizer["Lost to AI-DON"].Value), ("aiwon", Localizer["Beat AI-DON"].Value) }
             : new[] { ("all", Localizer["All songs"].Value), ("unplayed", Localizer["Not played"].Value), ("notcleared", Localizer["Not cleared"].Value), ("nofc", Localizer["No full combo"].Value) };
         <select aria-label="@Localizer["Your results"]" class="@Css.Input !w-auto !py-2" value="@F.Status" @onchange='e => Change(() => F.Status = e.Value?.ToString() ?? "all")'>
             @foreach (var (key, label) in statuses)

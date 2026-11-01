@@ -1170,8 +1170,8 @@
   <data name="Banned until {0}" xml:space="preserve">
     <value>封禁至{0}</value>
   </data>
-  <data name="Beat the AI" xml:space="preserve">
-    <value>擊敗AI</value>
+  <data name="Beat AI-DON" xml:space="preserve">
+    <value>擊敗AI-DON</value>
   </data>
   <data name="Best" xml:space="preserve">
     <value>最佳</value>
@@ -1782,8 +1782,8 @@
   <data name="AI-DON beat you!" xml:space="preserve">
     <value>AI-DON戰勝了你！</value>
   </data>
-  <data name="Lost to the AI" xml:space="preserve">
-    <value>輸給AI</value>
+  <data name="Lost to AI-DON" xml:space="preserve">
+    <value>輸給AI-DON</value>
   </data>
   <data name="Made admin" xml:space="preserve">
     <value>已設為管理員</value>
