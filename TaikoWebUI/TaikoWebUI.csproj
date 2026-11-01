@@ -36,6 +36,22 @@
     <Warning Text="Tailwind CLI not found at $(TailwindCli); using the committed wwwroot/css/app.css. Download tailwindcss v4.1.14 there to rebuild the styles." />
   </Target>
 
+  <!-- don-chan's 3D view (DonEmbed: React + three.js, built with Vite) → wwwroot/don-embed, the iframe the WebUI and the
+       avatar renderer load. Like Tailwind, the output is committed: the build runs only once `npm install` has been run
+       in DonEmbed, and only when its sources changed. -->
+  <ItemGroup>
+    <Content Remove="DonEmbed\**" />
+    <None Remove="DonEmbed\**" />
+    <DonEmbedSource Include="DonEmbed\src\**;DonEmbed\embed.html;DonEmbed\vite.config.ts;DonEmbed\tsconfig.json;DonEmbed\package.json" />
+  </ItemGroup>
+  <Target Name="DonEmbedBuild" BeforeTargets="BeforeBuild" Condition="Exists('DonEmbed\node_modules')"
+          Inputs="@(DonEmbedSource)" Outputs="wwwroot\don-embed\assets\embed.js">
+    <Exec Command="npm run build" WorkingDirectory="$(MSBuildThisFileDirectory)DonEmbed" />
+  </Target>
+  <Target Name="DonEmbedMissing" BeforeTargets="BeforeBuild" Condition="!Exists('DonEmbed\node_modules')">
+    <Message Importance="normal" Text="DonEmbed: no node_modules, using the committed wwwroot/don-embed. Run npm install in TaikoWebUI/DonEmbed to rebuild it." />
+  </Target>
+
   <ItemGroup>
     <!--Settings and Dashboard-->
     <Content Update="wwwroot\appsettings.json">

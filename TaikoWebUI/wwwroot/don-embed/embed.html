@@ -12,6 +12,10 @@
     .spin::after { content: ""; position: relative; width: 24px; height: 24px; box-sizing: border-box; border-radius: 50%; border: 3px solid rgba(255,255,255,.3); border-top-color: #fff; animation: r 800ms linear infinite; }
     @keyframes r { to { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce) { .spin::after { animation-duration: 2.4s; } }
+    /* The model fades in once dressed and posed (main.tsx), and hides at once while new parts load. */
+    .model { height: 100%; opacity: 0; }
+    .model.ready { opacity: 1; transition: opacity 300ms ease-out; }
+    @media (prefers-reduced-motion: reduce) { .model.ready { transition: none; } }
   </style>
   <script type="module" crossorigin src="./assets/embed.js"></script>
   <link rel="modulepreload" crossorigin href="./assets/rolldown-runtime.js">
