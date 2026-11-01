@@ -1,0 +1,169 @@
+@* Server Management › Logs: the live console. The backlog first, then new lines as the server logs them. *@
+@using System.Text.Json
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@implements IAsyncDisposable
+@inject HttpClient Client
+@inject IJSRuntime Js
+
+<section class="@Css.Card p-4 sm:p-5">
+    <div class="flex flex-wrap items-center gap-2">
+        @foreach (var (key, label) in new[] { ("all", Localizer["All"].Value), ("warn", string.Format(Localizer["Warnings {0}"], lines.Count(l => l.Level == "WRN"))), ("error", string.Format(Localizer["Errors {0}"], lines.Count(l => l.Level is "ERR" or "FTL"))) })
+        {
+            var on = level == key;
+            <button aria-pressed="@Css.Aria(on)" @onclick="() => SetLevel(key)"
+                    class="rounded-full px-2.5 py-1 text-xs font-medium @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800")">@label</button>
+        }
+        <input type="search" class="@Css.Input !w-48 !py-1.5" placeholder="@Localizer["Search"]" value="@query" @oninput="e => { query = e.Value?.ToString() ?? string.Empty; }" />
+        <span class="ml-auto rounded-full px-2 py-0.5 text-[11px] font-medium @(paused ? "bg-amber-500/15 text-amber-700 dark:text-amber-300" : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400")">
+            @(paused ? string.Format(Localizer["Paused · {0} new"], pending.Count) : connected ? Localizer["Live"] : Localizer["Connecting…"])
+        </span>
+        <button class="@Css.GhostButton !px-2.5 !py-1 text-xs" @onclick="TogglePause">@(paused ? Localizer["Resume"] : Localizer["Pause"])</button>
+        <button class="@Css.GhostButton !px-2.5 !py-1 text-xs" @onclick="Download"><Icon Name="archive" />@Localizer["Download"]</button>
+    </div>
+    <div @ref="box" role="log" aria-live="off" class="relative mt-3 h-[60vh] overflow-y-auto rounded-xl bg-zinc-950 p-3 font-mono text-xs leading-relaxed text-zinc-200">
+        @foreach (var l in Visible())
+        {
+            <div @key="l.Id" class="whitespace-pre-wrap break-words">
+                <span class="text-zinc-500">@l.Time.ToLocalTime().ToString("HH:mm:ss.fff")</span>
+                <span class="@LevelColor(l.Level)">@l.Level</span>
+                <span>@l.Message</span>
+                @if (l.Exception is not null)
+                {
+                    <div class="pl-6 text-zinc-500">@l.Exception</div>
+                }
+            </div>
+        }
+    </div>
+    @if (newBelow > 0)
+    {
+        <div class="mt-2 text-center"><button class="@Css.GhostButton !py-1 text-xs" @onclick="JumpToEnd">@string.Format(Localizer["{0} new lines ↓"], newBelow)</button></div>
+    }
+</section>
+
+@code {
+    private const int Keep = 2000;
+    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
+
+    private readonly List<LogLine> lines = [];
+    private readonly List<LogLine> pending = [];
+    private readonly CancellationTokenSource stop = new();
+    private ElementReference box;
+    private string level = "all", query = "";
+    private bool paused, connected, scrollPending;
+    private int newBelow;
+
+    protected override async Task OnInitializedAsync()
+    {
+        lines.AddRange(await Client.GetFromJsonAsync<List<LogLine>>("api/Logs") ?? []);
+        scrollPending = true;
+        _ = Stream();
+    }
+
+    // fetch with a streamed body (EventSource can't send the sign-in header).
+    private async Task Stream()
+    {
+        while (!stop.IsCancellationRequested)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, "api/Logs/Stream");
+                request.SetBrowserResponseStreamingEnabled(true);
+                using var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, stop.Token);
+                if (!response.IsSuccessStatusCode) return;
+                connected = true;
+                await InvokeAsync(StateHasChanged);
+                using var reader = new StreamReader(await response.Content.ReadAsStreamAsync(stop.Token));
+                while (await reader.ReadLineAsync(stop.Token) is { } raw)
+                {
+                    if (!raw.StartsWith("data: ")) continue;
+                    var line = JsonSerializer.Deserialize<LogLine>(raw[6..], Json);
+                    if (line is null || lines.Count > 0 && line.Id <= lines[^1].Id) continue;
+                    if (paused)
+                    {
+                        pending.Add(line);
+                    }
+                    else
+                    {
+                        // Follow only while the reader is at the bottom; otherwise count what arrived below.
+                        if (await Js.InvokeAsync<bool>("ui.atBottom", box)) scrollPending = true;
+                        else newBelow++;
+                        Add(line);
+                    }
+                    await InvokeAsync(StateHasChanged);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+            catch (HttpRequestException)
+            {
+                // The server restarted: try again shortly.
+            }
+            connected = false;
+            await InvokeAsync(StateHasChanged);
+            try { await Task.Delay(3000, stop.Token); } catch (OperationCanceledException) { return; }
+        }
+    }
+
+    private void Add(LogLine line)
+    {
+        lines.Add(line);
+        if (lines.Count > Keep) lines.RemoveAt(0);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!scrollPending) return;
+        scrollPending = false;
+        await Js.InvokeVoidAsync("ui.scrollToEnd", box);
+    }
+
+    private IEnumerable<LogLine> Visible()
+    {
+        var q = query.Trim();
+        return lines.Where(l => (level == "all" || (level == "warn" ? l.Level is "WRN" or "ERR" or "FTL" : l.Level is "ERR" or "FTL"))
+                                && (q.Length == 0 || l.Message.Contains(q, StringComparison.OrdinalIgnoreCase)));
+    }
+
+    private static string LevelColor(string level) => level switch
+    {
+        "INF" => "text-sky-400", "WRN" => "text-amber-400", "ERR" => "text-red-400", "FTL" => "font-bold text-red-500", _ => "text-zinc-500",
+    };
+
+    private void SetLevel(string key)
+    {
+        level = key;
+        scrollPending = true;
+    }
+
+    private void TogglePause()
+    {
+        paused = !paused;
+        if (paused) return;
+        pending.ForEach(Add);
+        pending.Clear();
+        newBelow = 0;
+        scrollPending = true;
+    }
+
+    private void JumpToEnd()
+    {
+        newBelow = 0;
+        scrollPending = true;
+    }
+
+    // The filtered lines in the log file's format.
+    private async Task Download()
+    {
+        var text = string.Join("\n", Visible().Select(l =>
+            $"{l.Time.ToLocalTime():yyyy-MM-dd HH:mm:ss.fff zzz} [{l.Level}] {l.Message}{(l.Exception is null ? "" : "\n" + l.Exception)}"));
+        await Js.InvokeVoidAsync("ui.saveText", $"log-{DateTime.Now:yyyyMMdd-HHmmss}.txt", text);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await stop.CancelAsync();
+        stop.Dispose();
+    }
+}

@@ -231,6 +231,14 @@
     setAccent: id => { root.dataset.accent = id; store.set("ui.accent", id); },
     getAccent: () => root.dataset.accent,
     copy: text => navigator.clipboard?.writeText(text).then(() => true, () => false) ?? false,
+    // Live log: it follows new lines only while the reader is at the bottom.
+    atBottom: el => !el || el.scrollHeight - el.scrollTop - el.clientHeight < 40,
+    scrollToEnd: el => { if (el) el.scrollTop = el.scrollHeight; },
+    saveText: (name, text) => {
+      const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(new Blob([text], { type: "text/plain" })), download: name });
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    },
     nameplate: renderNameplate,
     don: donFramed,
     hydrateAssets,

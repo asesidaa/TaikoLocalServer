@@ -57,10 +57,14 @@ try
     // database and to infer Mode when ServerSettings.json doesn't set it.
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/AuthSettings.json", optional: true, reloadOnChange: false);
 
+    // The live log (Server Management › Logs) reads the same events as the console and the log file.
+    var logBuffer = new LogBuffer();
+    builder.Services.AddSingleton<TaikoLocalServer.Application.Abstractions.ILogBuffer>(logBuffer);
     builder.Host.UseSerilog((context, configuration) =>
     {
         configuration
             .WriteTo.Console().ReadFrom.Configuration(context.Configuration)
+            .WriteTo.Sink(logBuffer)
             .WriteTo.Logger(x =>
             {
                 x.WriteTo.File(new CsvFormatter(),
