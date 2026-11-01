@@ -19,7 +19,7 @@ public partial class Stats
     private static readonly Difficulty[] Courses = [Difficulty.Easy, Difficulty.Normal, Difficulty.Hard, Difficulty.Oni, Difficulty.UraOni];
 
     // Sequential one-hue ramp (Taiko red) for magnitude; step 0 = no plays. Separate light / dark steps.
-    private static readonly string[] Seq =
+    internal static readonly string[] Seq =
     [
         "bg-[#f4f4f5] dark:bg-[#27272a]", "bg-[#ffd2c7] dark:bg-[#5c2416]", "bg-[#ff9f88] dark:bg-[#9a3216]",
         "bg-[#f84828] dark:bg-[#d8401f]", "bg-[#b92a13] dark:bg-[#ff7a5c]",

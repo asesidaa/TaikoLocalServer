@@ -1,12 +1,252 @@
 @page "/Users/{baid:int}/PlayHistory"
 @attribute [Authorize]
 @inject PageState Page
+@inject HttpClient Client
+@inject NavigationManager Nav
+@inject IJSRuntime Js
 
-<PageTitle>PlayHistory</PageTitle>
-<ComingSoon Title="@(Localizer["Play History"])" IconName="playHistory" />
+<PageTitle>@Localizer["Play History"]</PageTitle>
+
+<div class="mx-auto max-w-5xl space-y-4">
+    <div class="flex flex-wrap items-baseline justify-between gap-2">
+        <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Play History"]</h1>
+        @if (monthData is not null)
+        {
+            <span class="text-sm @Css.Muted">@string.Format(Localizer[monthData.Plays == 1 ? "{0} play" : "{0} plays"], monthData.Plays.ToString("N0"))</span>
+        }
+    </div>
+
+    <div class="flex flex-wrap items-center gap-1.5">
+        @Chip(diff == 0, () => SetFilter(0, best), Localizer["All difficulties"], null)
+        @foreach (var (d, name) in GameData.Difficulties)
+        {
+            @Chip(diff == (int)d, () => SetFilter((int)d, best), null, d)
+        }
+        <button aria-pressed="@Css.Aria(best)" @onclick="() => SetFilter(diff, !best)"
+                class="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium @ChipClass(best)">
+            <Icon Name="medal" Class="size-3.5" />@Localizer["New bests only"]
+        </button>
+    </div>
+
+    <div class="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start">
+        <section class="@Css.Card p-4 lg:sticky lg:top-24">
+            <div class="flex items-center justify-between">
+                <button aria-label="@Localizer["Previous month"]" class="grid size-8 place-items-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800" @onclick="() => Shift(-1)">
+                    <Icon Name="chevLeft" Class="size-4" />
+                </button>
+                <h2 class="font-semibold">@month.ToString("MMMM yyyy")</h2>
+                <button aria-label="@Localizer["Next month"]" disabled="@(month.AddMonths(1) > DateTime.Today)" @onclick="() => Shift(1)"
+                        class="grid size-8 place-items-center rounded-lg hover:bg-zinc-100 disabled:opacity-30 dark:hover:bg-zinc-800">
+                    <Icon Name="chevRight" Class="size-4" />
+                </button>
+            </div>
+            <div class="mt-3 grid grid-cols-7 gap-1 text-center text-[11px] @Css.Muted">
+                @foreach (var w in Weekdays)
+                {
+                    <span>@w</span>
+                }
+            </div>
+            <div class="mt-1 grid grid-cols-7 gap-1">
+                @for (var i = 0; i < Lead; i++)
+                {
+                    <span></span>
+                }
+                @for (var d = 1; d <= DateTime.DaysInMonth(month.Year, month.Month); d++)
+                {
+                    var dayNumber = d;
+                    var date = new DateTime(month.Year, month.Month, d);
+                    var n = monthData?.Days.GetValueOrDefault(d) ?? 0;
+                    var step = Step(n);
+                    var on = selected == date;
+                    <button disabled="@(n == 0)" aria-pressed="@Css.Aria(on)" @onclick="() => PickDay(date)"
+                            aria-label="@string.Format(Localizer[n == 1 ? "{0}: {1} play" : "{0}: {1} plays"], date.ToString("d MMMM"), n)"
+                            class="grid aspect-square place-items-center rounded-lg text-xs tabular-nums @Stats.Seq[step] @(step >= 3 ? "text-white" : "") @(on ? "ring-2 ring-zinc-900 dark:ring-white" : "") @(date > DateTime.Today ? "opacity-30" : "")">
+                        @dayNumber
+                    </button>
+                }
+            </div>
+            <div class="mt-3 flex items-center justify-end gap-1 text-xs @Css.Muted">
+                @Localizer["Fewer"]
+                @foreach (var c in Stats.Seq)
+                {
+                    <span class="size-3 rounded-[3px] @c"></span>
+                }
+                @Localizer["More"]
+            </div>
+        </section>
+
+        <div class="min-w-0 space-y-4">
+            @if (monthData is null)
+            {
+                <p class="text-sm @Css.Muted">@Localizer["Loading..."]</p>
+            }
+            else if (selected is null)
+            {
+                <section class="@Css.Card px-4 py-12 text-center text-sm @Css.Muted">
+                    @(monthData.Plays == 0 ? Localizer["No plays match. Try another difficulty."] : Localizer["Pick a day with plays."])
+                </section>
+            }
+            else
+            {
+                <h2 class="text-lg font-semibold">@DayName(selected.Value)</h2>
+                @if (dayData is null)
+                {
+                    <p class="text-sm @Css.Muted">@Localizer["Loading..."]</p>
+                }
+                else
+                {
+                    @foreach (var s in dayData.Sessions)
+                    {
+                        @SessionCard(s)
+                    }
+                }
+            }
+        </div>
+    </div>
+</div>
 
 @code {
     [Parameter] public int Baid { get; set; }
 
-    protected override void OnInitialized() => Page.Set(Localizer["Play Data"], Localizer["Play History"]);
+    private static readonly string[] Weekdays = ["M", "T", "W", "T", "F", "S", "S"];
+
+    private int diff;
+    private bool best;
+    private DateTime month = new(DateTime.Today.Year, DateTime.Today.Month, 1);
+    private DateTime? selected;
+    private bool opened;
+    private PlayHistoryMonth? monthData;
+    private PlayHistoryDay? dayData;
+    private readonly HashSet<DateTime> expanded = [];
+
+    // Monday-first: blank cells before the 1st.
+    private int Lead => ((int)month.DayOfWeek + 6) % 7;
+
+    // The Stats page's ramp: 0 / ≤4 / ≤8 / ≤12 / more.
+    private static int Step(int n) => n == 0 ? 0 : n <= 4 ? 1 : n <= 8 ? 2 : n <= 12 ? 3 : 4;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.Set(Localizer["Play Data"], Localizer["Play History"]);
+        await LoadMonth();
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
+
+    private async Task LoadMonth()
+    {
+        monthData = await Client.GetFromJsonAsync<PlayHistoryMonth>($"api/PlayHistory/{Baid}/Month?year={month.Year}&month={month.Month}&diff={diff}&best={(best ? "true" : "false")}");
+        // Opens on the month and day of the latest play.
+        if (!opened && monthData?.Latest is { } latest && (latest.Year != month.Year || latest.Month != month.Month))
+        {
+            opened = true;
+            month = new DateTime(latest.Year, latest.Month, 1);
+            await LoadMonth();
+            return;
+        }
+        opened = true;
+        // Keep the day when it still has plays; else the latest day of this month that does.
+        var days = monthData?.Days ?? [];
+        if (selected is not { } sel || sel.Year != month.Year || sel.Month != month.Month || !days.ContainsKey(sel.Day))
+            selected = days.Count == 0 ? null : new DateTime(month.Year, month.Month, days.Keys.Max());
+        await LoadDay();
+    }
+
+    private async Task LoadDay()
+    {
+        dayData = null;
+        if (selected is not { } d) return;
+        dayData = await Client.GetFromJsonAsync<PlayHistoryDay>($"api/PlayHistory/{Baid}/Day?date={d:yyyy-MM-dd}&diff={diff}&best={(best ? "true" : "false")}");
+    }
+
+    private async Task SetFilter(int d, bool b)
+    {
+        diff = d;
+        best = b;
+        await LoadMonth();
+    }
+
+    private async Task Shift(int months)
+    {
+        month = month.AddMonths(months);
+        selected = null;
+        await LoadMonth();
+    }
+
+    private async Task PickDay(DateTime d)
+    {
+        selected = d;
+        await LoadDay();
+    }
+
+    private static string DayName(DateTime d) => d.ToString(d.Year == DateTime.Today.Year ? "ddd d MMM" : "ddd d MMM yyyy");
+
+    private static string ChipClass(bool on) => on
+        ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+        : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700";
+
+    private RenderFragment Chip(bool on, Func<Task> pick, string? label, Difficulty? d) => __builder =>
+    {
+        var name = d is { } x ? GameData.DifficultyName(x) : label;
+        <button aria-pressed="@Css.Aria(on)" aria-label="@name" title="@name" @onclick="pick"
+                class="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium @ChipClass(on)">
+            @if (d is { } diffIcon)
+            {
+                <img data-asset="@GameData.DifficultyIcon(diffIcon)" alt="" class="size-5 object-contain" />
+            }
+            else
+            {
+                @label
+            }
+        </button>
+    };
+
+    private RenderFragment SessionCard(PlaySession s) => __builder =>
+    {
+        var open = expanded.Contains(s.Start);
+        var bests = s.Plays.Count(p => p.NewBest);
+        <section class="@Css.Card p-4 sm:p-5">
+            <h2 class="font-semibold">@DayName(s.Start) <span class="font-normal @Css.Muted">· @s.Start.ToString("HH:mm")–@s.End.ToString("HH:mm")</span></h2>
+            <p class="mt-0.5 text-xs @Css.Muted">
+                @string.Format(Localizer[s.Credits == 1 ? "{0} credit" : "{0} credits"], s.Credits) ·
+                @(s.Plays.Count < s.Songs ? string.Format(Localizer["{0} of {1} songs"], s.Plays.Count, s.Songs) : string.Format(Localizer[s.Songs == 1 ? "{0} song" : "{0} songs"], s.Songs))
+                @if (bests > 0)
+                {
+                    <span> · </span><span class="font-medium text-primary-600 dark:text-primary-400">@string.Format(Localizer[bests == 1 ? "{0} new best" : "{0} new bests"], bests)</span>
+                }
+            </p>
+            <ul class="mt-2 divide-y divide-zinc-100 dark:divide-zinc-800">
+                @foreach (var p in open ? s.Plays : s.Plays.Take(5))
+                {
+                    <li>
+                        <button class="flex w-full items-center gap-3 px-1 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
+                                @onclick='() => Nav.NavigateTo($"/Users/{Baid}/Songs/{p.SongId}?diff={(int)p.Difficulty}")'>
+                            <img data-asset="@GameData.DifficultyIcon(p.Difficulty)" alt="@GameData.DifficultyName(p.Difficulty)" class="size-7 object-contain" />
+                            <span class="min-w-0 flex-1">
+                                <span class="block truncate text-sm">@p.Name</span>
+                                <span class="block truncate text-xs @Css.Muted">@p.PlayTime.ToString("HH:mm") · ★@p.Stars@(p.NameEn.Length > 0 ? " · " + p.NameEn : "")</span>
+                            </span>
+                            @if (p.NewBest)
+                            {
+                                <span class="whitespace-nowrap rounded-full bg-primary-500/10 px-2 py-0.5 text-[11px] font-medium text-primary-700 dark:text-primary-300">@Localizer["New best"]</span>
+                            }
+                            <span class="font-mono text-sm tabular-nums">@p.Score.ToString("N0")</span>
+                            <img data-asset="@GameData.CrownIcon(p.Crown)" alt="@Localizer[GameData.CrownName(p.Crown)]" title="@Localizer[GameData.CrownName(p.Crown)]" class="size-5" />
+                            @if (GameData.RankIcon(p.Rank) is { } rank)
+                            {
+                                <img data-asset="@rank" alt="@string.Format(Localizer["Rank {0}"], p.Rank)" class="hidden h-5 w-auto sm:block" />
+                            }
+                        </button>
+                    </li>
+                }
+            </ul>
+            @if (s.Plays.Count > 5)
+            {
+                <button class="mt-1 text-sm font-medium text-primary-600 hover:underline dark:text-primary-400"
+                        @onclick="() => { if (!expanded.Remove(s.Start)) expanded.Add(s.Start); }">
+                    @(open ? Localizer["Show less"] : string.Format(Localizer["Show all {0} songs"], s.Plays.Count))
+                </button>
+            }
+        </section>
+    };
 }
