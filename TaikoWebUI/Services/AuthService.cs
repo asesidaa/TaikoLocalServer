@@ -50,6 +50,9 @@ public sealed class AuthService : IDisposable
 
     public TwoFactorMode TwoFactor => authConfig.TwoFactor;
 
+    /// <summary>The server draws avatars (as of this page load), so the player card doesn't make and upload one.</summary>
+    public bool ServerAvatars => authConfig.ServerAvatars;
+
     /// <summary>An admin whose server requires 2-step: they're a player until they turn it on in Settings › Security.</summary>
     public bool TwoFactorSetupRequired { get; private set; }
 

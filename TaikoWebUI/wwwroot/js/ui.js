@@ -153,8 +153,12 @@
   // <img data-avatar="api/Users/N/Avatar?v=key"> works the same way (see avatar below).
   const blobUrls = new Map();
   const blobUrl = url => {
-    if (!blobUrls.has(url)) blobUrls.set(url, authFetch(url)
-      .then(r => r.ok ? r.blob() : null).then(b => b && URL.createObjectURL(b)).catch(() => null));
+    if (!blobUrls.has(url)) {
+      const found = authFetch(url).then(r => r.ok ? r.blob() : null).then(b => b && URL.createObjectURL(b)).catch(() => null);
+      blobUrls.set(url, found);
+      // A miss is asked again on the next page: the server may draw that avatar in the meantime.
+      found.then(u => { if (!u) blobUrls.delete(url); });
+    }
     return blobUrls.get(url);
   };
   const assetUrl = path => blobUrl(`api/Assets/${path}`);

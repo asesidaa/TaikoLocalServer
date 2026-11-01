@@ -3,6 +3,7 @@ namespace TaikoLocalServer.Contracts.AdminApi.Responses;
 /// <param name="Mode">Local (no accounts) or Server.</param>
 /// <param name="AuthenticationRequired">Server mode: login is required.</param>
 /// <param name="SetupPending">Server mode with no admin yet: Register accepts the setup code from the console.</param>
+/// <param name="ServerAvatars">The server draws avatars itself (Server Management › Settings), so browsers don't.</param>
 public sealed record ClientAuthConfigResponse(
     ServerMode Mode,
     bool AuthenticationRequired,
@@ -12,4 +13,5 @@ public sealed record ClientAuthConfigResponse(
     bool AllowUserDelete,
     bool AllowFreeProfileEditing,
     bool SetupPending,
-    TwoFactorMode TwoFactor);
+    TwoFactorMode TwoFactor,
+    bool ServerAvatars);

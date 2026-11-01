@@ -6,6 +6,7 @@
 @inject IJSRuntime Js
 @inject OverlayHost Overlay
 @inject IOptions<WebUiSettings> Settings
+@inject AuthService Auth
 @using Microsoft.Extensions.Options
 
 <section class="relative overflow-hidden rounded-3xl shadow-[0_8px_24px_-12px_rgba(0,0,0,.4)] @(LightText ? "text-zinc-900" : "text-white")" aria-label="@Localizer["Player card"]"
@@ -145,8 +146,9 @@
     {
         if (!HasEmbed) return;
         await Js.InvokeVoidAsync("ui.don", frame, anchor, DonState(0.25, 0.2));
-        // The avatar shows the normal costume, so the Dani Dojo look never makes one.
-        if (!DanView)
+        // The avatar shows the normal costume, so the Dani Dojo look never makes one; nor does the browser when the
+        // server draws them.
+        if (!DanView && !Auth.ServerAvatars)
             await Js.InvokeVoidAsync("ui.avatar", frame, Setting.Baid, CardStyle.AvatarKey(Setting));
     }
 }
