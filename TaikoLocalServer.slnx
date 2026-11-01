@@ -9,6 +9,5 @@
   <Project Path="Domain/Domain.csproj" />
   <Project Path="Host/Host.csproj" />
   <Project Path="Infrastructure/Infrastructure.csproj" />
-  <Project Path="LocalSaveModScoreMigrator/LocalSaveModScoreMigrator.csproj" />
   <Project Path="TaikoWebUI/TaikoWebUI.csproj" />
 </Solution>

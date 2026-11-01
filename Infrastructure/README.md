@@ -13,8 +13,7 @@ automatically on startup.
 
 ## Dependencies
 
-- Inbound: `Adapters.AdminApi`, `Adapters.AllnetMucha`, `Host`,
-  `LocalSaveModScoreMigrator`.
+- Inbound: `Adapters.AdminApi`, `Adapters.AllnetMucha`, `Host`.
 - Outbound: `Domain`, `Contracts.AdminApi`, `Application`.
 - Notable packages: `Microsoft.EntityFrameworkCore.Sqlite`,
   `Microsoft.EntityFrameworkCore.Tools`, `BCrypt.Net-Next`,

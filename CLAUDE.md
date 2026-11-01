@@ -8,7 +8,7 @@ A private server emulator for Taiko no Tatsujin Nijiiro (CHN `v12r00_cn` and 39.
 
 ## Solution layout
 
-12 projects, all `net10.0` unless noted:
+11 projects, all `net10.0` unless noted:
 
 - **Domain** — pure entities, value objects, enums, domain constants. No package or project references. Namespace `TaikoLocalServer.Domain.*`.
 - **Contracts.AdminApi** — DTO-only project: ViewModels, Requests, Responses, the WebUI-shared ServerData JSON shapes (DanData, MusicDetail, IVerupNo), and the `PlaySettingConverter` that the admin REST API and TaikoWebUI both serialize/deserialize. References Domain only (for enums). No business logic.
@@ -21,7 +21,6 @@ A private server emulator for Taiko no Tatsujin Nijiiro (CHN `v12r00_cn` and 39.
 - **Adapters.GameProtocol.CnR00** — protobuf controllers + wire types + Mapperly mappers for the CHN client. Routes `/v12r00_cn/...`.
 - **Host** — ASP.NET Core 10 entry point. Owns `Program.cs`, `Configurations/`, `Certificates/`, `wwwroot/`, `Logging/CsvFormatter.cs`. Hosts the Blazor UI via `UseBlazorFrameworkFiles()` + `MapFallbackToFile("index.html")`. `<AssemblyName>TaikoLocalServer</AssemblyName>` preserves the published exe name (`TaikoLocalServer.exe`).
 - **TaikoWebUI** — Blazor WebAssembly admin UI (MudBlazor 9). References Contracts.AdminApi only. Referenced as a `<ProjectReference>` by Host so the WASM build artifacts are bundled into Host's publish output (then served via `UseBlazorFrameworkFiles()`).
-- **LocalSaveModScoreMigrator** — standalone CLI (System.CommandLine) for importing local-save-mod JSON dumps into `taiko.db3`. References Infrastructure to reuse the EF Core context. Not part of the runtime.
 
 Outside the .NET solution, `tools/extract/` is a Rust CLI (`cargo build --release --manifest-path tools/extract/Cargo.toml`) that copies the game files the server needs from an operator's Nijiiro install into `wwwroot/`. See its README.
 
@@ -51,9 +50,6 @@ dotnet ef migrations add <Name> --project Infrastructure --startup-project Infra
 
 # Update database manually (normally not needed — server migrates on startup)
 dotnet ef database update --project Infrastructure --startup-project Infrastructure
-
-# Run the score migrator
-dotnet run --project LocalSaveModScoreMigrator -- --save-file-path <path> --baid <id>
 ```
 
 There are no automated tests in this repository.
