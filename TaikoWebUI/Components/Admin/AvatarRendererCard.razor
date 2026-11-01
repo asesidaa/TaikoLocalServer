@@ -11,7 +11,7 @@
     else
     {
         <Toggle Label="@Localizer["Render avatars on the server"]" Icon="profile" Value="status.Enabled" ValueChanged="Set"
-                Description="@Localizer["A headless Edge or Chrome draws every player's avatar, including players who never open the Web UI. It opens only while there's work. Off: an avatar is drawn when the player's own browser shows their card."]" />
+                Description="@Localizer["Gives every player an avatar, even players who never open the Web UI. Edge or Chrome runs in the background only while avatars are waiting. When off, each avatar is drawn the next time its player views their card."]" />
         <dl class="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
             <div class="min-w-0">
                 <dt class="text-xs @Css.Muted">@Localizer["Browser"]</dt>

@@ -3117,8 +3117,8 @@
   <data name="Render avatars on the server" xml:space="preserve">
     <value>在服务器上绘制头像</value>
   </data>
-  <data name="A headless Edge or Chrome draws every player's avatar, including players who never open the Web UI. It opens only while there's work. Off: an avatar is drawn when the player's own browser shows their card." xml:space="preserve">
-    <value>无界面的 Edge 或 Chrome 会为每位玩家绘制头像，包括从不打开 Web UI 的玩家。仅在有任务时启动。关闭时，头像会在玩家自己的浏览器显示其卡片时绘制。</value>
+  <data name="Gives every player an avatar, even players who never open the Web UI. Edge or Chrome runs in the background only while avatars are waiting. When off, each avatar is drawn the next time its player views their card." xml:space="preserve">
+    <value>为每位玩家生成头像，包括从不打开 Web UI 的玩家。仅在有头像等待绘制时，Edge 或 Chrome 才会在后台运行。关闭时，头像会在玩家下次查看自己的卡片时绘制。</value>
   </data>
   <data name="Browser" xml:space="preserve">
     <value>浏览器</value>

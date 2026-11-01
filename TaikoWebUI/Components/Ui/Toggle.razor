@@ -13,7 +13,8 @@
         <span class="block text-sm font-medium">@Label</span>
         @if (!string.IsNullOrEmpty(Description))
         {
-            <span class="block text-xs text-zinc-500 dark:text-zinc-400">@Description</span>
+            @* A readable line length, however wide the card is. *@
+            <span class="block max-w-[60ch] text-xs text-zinc-500 dark:text-zinc-400">@Description</span>
         }
     </span>
     <input type="checkbox" class="peer sr-only" checked="@Value" @onchange="OnChange" />

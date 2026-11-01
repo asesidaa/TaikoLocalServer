@@ -3117,8 +3117,8 @@
   <data name="Render avatars on the server" xml:space="preserve">
     <value>サーバーでアバターを描画</value>
   </data>
-  <data name="A headless Edge or Chrome draws every player's avatar, including players who never open the Web UI. It opens only while there's work. Off: an avatar is drawn when the player's own browser shows their card." xml:space="preserve">
-    <value>ヘッドレスの Edge または Chrome が、Web UI を開かないプレイヤーも含め、全員のアバターを描画します。作業があるときだけ起動します。オフの場合、プレイヤー自身のブラウザーがカードを表示したときに描画されます。</value>
+  <data name="Gives every player an avatar, even players who never open the Web UI. Edge or Chrome runs in the background only while avatars are waiting. When off, each avatar is drawn the next time its player views their card." xml:space="preserve">
+    <value>Web UI を開かないプレイヤーも含め、全員にアバターを用意します。描画待ちのアバターがあるときだけ、Edge か Chrome がバックグラウンドで動きます。オフの場合は、プレイヤーが自分のカードを表示したときに描画されます。</value>
   </data>
   <data name="Browser" xml:space="preserve">
     <value>ブラウザー</value>

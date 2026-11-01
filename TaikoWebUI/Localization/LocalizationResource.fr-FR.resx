@@ -3117,8 +3117,8 @@
   <data name="Render avatars on the server" xml:space="preserve">
     <value>Générer les avatars sur le serveur</value>
   </data>
-  <data name="A headless Edge or Chrome draws every player's avatar, including players who never open the Web UI. It opens only while there's work. Off: an avatar is drawn when the player's own browser shows their card." xml:space="preserve">
-    <value>Un Edge ou Chrome sans interface dessine l'avatar de chaque joueur, y compris ceux qui n'ouvrent jamais l'interface web. Il ne s'ouvre que lorsqu'il y a du travail. Désactivé : un avatar est dessiné quand le navigateur du joueur affiche sa carte.</value>
+  <data name="Gives every player an avatar, even players who never open the Web UI. Edge or Chrome runs in the background only while avatars are waiting. When off, each avatar is drawn the next time its player views their card." xml:space="preserve">
+    <value>Donne un avatar à chaque joueur, même à ceux qui n'ouvrent jamais l'interface web. Edge ou Chrome tourne en arrière-plan seulement quand des avatars attendent. Désactivé : chaque avatar est dessiné la prochaine fois que son joueur affiche sa carte.</value>
   </data>
   <data name="Browser" xml:space="preserve">
     <value>Navigateur</value>
