@@ -17,10 +17,10 @@
   };
 
   // Game assets (api/Assets) need the user's bearer token; Blazored.LocalStorage stores it JSON-encoded.
-  const authFetch = url => {
+  const authFetch = (url, init) => {
     let token = null;
     try { token = JSON.parse(localStorage.getItem("authToken")); } catch { }
-    return fetch(url, token ? { headers: { Authorization: `Bearer ${token}` } } : undefined);
+    return fetch(url, token ? { ...init, headers: { ...init?.headers, Authorization: `Bearer ${token}` } } : init);
   };
 
   // ---- Game text: the game's glyph pages (extract: don-model/font/<sheet>/<page>.{png,json}) ----
@@ -141,24 +141,71 @@
     if (e.data?.type !== "don-status") return;
     for (const [frame, msg] of donLast) {
       if (!frame.isConnected) { donLast.delete(frame); continue; }
-      if (frame.contentWindow === e.source && !frame._ready) { frame._ready = true; donSend(frame, msg); }
+      if (frame.contentWindow !== e.source) continue;
+      if (!frame._ready) { frame._ready = true; donSend(frame, msg); }
+      frame._loading = e.data.loading || !!e.data.error;
+      avatarRun(frame);
     }
   });
 
   // <img data-asset="nameplate/dan_10dan_gold.png">: api/Assets needs the token, which <img src> can't send,
   // so fetch once and use a blob URL. A missing asset hides the element (any element: a button can depend on one).
-  const assetUrls = new Map();
-  const assetUrl = path => {
-    if (!assetUrls.has(path)) assetUrls.set(path, authFetch(`api/Assets/${path}`)
+  // <img data-avatar="api/Users/N/Avatar?v=key"> works the same way (see avatar below).
+  const blobUrls = new Map();
+  const blobUrl = url => {
+    if (!blobUrls.has(url)) blobUrls.set(url, authFetch(url)
       .then(r => r.ok ? r.blob() : null).then(b => b && URL.createObjectURL(b)).catch(() => null));
-    return assetUrls.get(path);
+    return blobUrls.get(url);
   };
-  const hydrateAssets = () => document.querySelectorAll("[data-asset]").forEach(el => {
-    const path = el.dataset.asset;
+  const assetUrl = path => blobUrl(`api/Assets/${path}`);
+  const hydrate = (attr, toUrl) => document.querySelectorAll(`[data-${attr}]`).forEach(el => {
+    const path = el.dataset[attr];
     if (el.dataset.loaded === path) return;
     el.dataset.loaded = path;
-    assetUrl(path).then(url => { if (el.dataset.asset !== path) return; el.hidden = !url; if (url && el.tagName === "IMG") el.src = url; });
+    toUrl(path).then(url => { if (el.dataset[attr] !== path) return; el.hidden = !url; if (url && el.tagName === "IMG") el.src = url; });
   });
+  const hydrateAssets = () => { hydrate("asset", assetUrl); hydrate("avatar", blobUrl); };
+
+  // Avatar: when the card's costume + pose (the key, CardStyle.AvatarKey) has no stored image, the embed renders a
+  // transparent face crop off-screen once the model has loaded, and it's uploaded as WebP. The circle colour is CSS.
+  const avatarSrc = (baid, key) => `api/Users/${baid}/Avatar?v=${encodeURIComponent(key)}`;
+  const avatar = (frame, baid, key) => {
+    if (!frame || frame._avatarKey === key) return;
+    frame._avatarKey = key;
+    clearTimeout(frame._avatarTimer);
+    frame._avatar = null;
+    // Debounced like the old Profile's: stepping through parts shouldn't upload each one.
+    frame._avatarTimer = setTimeout(async () => {
+      if (frame._avatarKey !== key || await blobUrl(avatarSrc(baid, key))) return;
+      frame._avatar = { baid, key };
+      avatarRun(frame);
+    }, 400);
+  };
+  const avatarRun = async frame => {
+    const job = frame._avatar;
+    if (!job || frame._loading !== false) return;
+    frame._avatar = null;
+    const dataUrl = await new Promise(resolve => {
+      const onMsg = e => { if (e.source === frame.contentWindow && e.data?.type === "don-snapshot") { removeEventListener("message", onMsg); resolve(e.data.dataUrl); } };
+      addEventListener("message", onMsg);
+      frame.contentWindow.postMessage({ type: "don-snapshot", zoom: 0.15, camY: 0.17, size: 256 }, new URL(frame.src).origin);
+    });
+    if (frame._avatarKey !== job.key) return;   // the costume changed while rendering; the newer job uploads
+    const img = new Image();
+    img.src = dataUrl;
+    await img.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = img.width; canvas.height = img.height;
+    canvas.getContext("2d").drawImage(img, 0, 0);
+    // Browsers without WebP encoding hand back PNG, which the server also takes.
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/webp", 0.9));
+    const src = avatarSrc(job.baid, job.key);
+    const r = await authFetch(`api/Users/${job.baid}/Avatar?key=${encodeURIComponent(job.key)}`, { method: "PUT", body: blob }).catch(() => null);
+    if (!r?.ok) return;
+    blobUrls.set(src, Promise.resolve(URL.createObjectURL(blob)));
+    document.querySelectorAll("[data-avatar]").forEach(el => { if (el.dataset.avatar === src) delete el.dataset.loaded; });
+    hydrateAssets();
+  };
 
   // Tone preview: the tone's don, then its ka (extract writes tone/NN_{don,ka}.wav).
   const playTone = async id => {
@@ -186,6 +233,7 @@
     nameplate: renderNameplate,
     don: donFramed,
     hydrateAssets,
+    avatar,
     playTone,
   };
 })();

@@ -28,6 +28,15 @@ public static class CardStyle
 
     public static string Clip(CardAnimation a) => Animations.FirstOrDefault(x => x.Value == a).Clip ?? "don_result_clear_loop";
 
+    /// <summary>
+    /// What an avatar shows: the costume, colours and pose (its animation's first frame). It's in the avatar's URL, so
+    /// any change, in game too, misses the stored image until the card renders a new one. Bump the "1" to re-render all.
+    /// </summary>
+    public static string AvatarKey(UserSetting s) =>
+        $"1-{s.Kigurumi}-{s.Head}-{s.Body}-{s.Face}-{s.Puchi}-{s.BodyColor}-{s.FaceColor}-{s.LimbColor}-{(int)s.CardAnimation}";
+
+    public static string AvatarSrc(UserSetting s) => $"api/Users/{s.Baid}/Avatar?v={AvatarKey(s)}";
+
     /// <summary>Relative luminance above 0.45 means dark text and dark pattern ink, so light cards stay readable.</summary>
     public static bool IsLight(string hex)
     {

@@ -1,0 +1,20 @@
+@* A user's avatar in a circle on their card colour. The image (rendered and uploaded by their player card, see
+   ui.js avatar) covers the initial; without one for their current costume, the initial shows. *@
+@inject IJSRuntime Js
+
+<span class="relative grid shrink-0 place-items-center overflow-hidden rounded-full font-display @(CardStyle.IsLight(Hex) ? "text-zinc-900" : "text-white")"
+      style="width:@(Size)px;height:@(Size)px;background:@Hex;font-size:@(Size / 2)px" aria-hidden="true">
+    @Initial
+    <img data-avatar="@CardStyle.AvatarSrc(Setting)" alt="" hidden class="absolute inset-0 size-full object-cover" style="background:@Hex" />
+</span>
+
+@code {
+    [Parameter, EditorRequired] public UserSetting Setting { get; set; } = null!;
+    /// <summary>In px; keep it on the 8px grid (docs/webui-design-decisions.md).</summary>
+    [Parameter] public int Size { get; set; } = 40;
+
+    private string Hex => GameData.Color(Setting.CardColor);
+    private string Initial => string.IsNullOrEmpty(Setting.MyDonName) ? "?" : char.ConvertFromUtf32(char.ConvertToUtf32(Setting.MyDonName, 0));
+
+    protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
+}

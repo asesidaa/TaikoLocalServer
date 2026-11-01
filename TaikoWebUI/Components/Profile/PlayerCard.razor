@@ -113,5 +113,8 @@
             cosFile = DanView ? DanCostume : "",
             zoom = 0.25, camY = 0.2,
         });
+        // The avatar shows the normal costume, so the Dani Dojo look never makes one.
+        if (!DanView)
+            await Js.InvokeVoidAsync("ui.avatar", frame, Setting.Baid, CardStyle.AvatarKey(Setting));
     }
 }
