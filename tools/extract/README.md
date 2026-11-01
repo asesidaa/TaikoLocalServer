@@ -28,6 +28,7 @@ It is safe to re-run, for example after a game update. Outputs that are already 
 | same | `don-model/nameplate/nameplate.scene.json` + `atlas.png` | The animated nameplate for the WebUI's Lumen player (`lumen-player.js`): plates, badges and the game's whole nameplate with its text boxes per layout |
 | `lumen/000_default/{common/option, common_songselect/common_song_select_{song_board_icon,main_diff_board}, enso_dani/dani_select/dani_select}.{nulm,nutexb}` | `don-model/ui/{option,difficulty,crown,rank,dani}_<label>.png` + one index per source | The WebUI's icons: song options (doron, abekobe, kimagure, detarame, note_pos, speedx…), difficulties (easy … ura), crowns (`badge_crown_1…3`), score ranks (`badge_rank_1…7`) and Dani Dojo pass stamps (`stamp_{red,gold}_01…03`) |
 | `font/{jp_30,en_30,tw_30,kr_30}.{xml,nutexb}` | `don-model/font/<sheet>/<page>.{png,json}` | The nameplate's glyph sheets (Lumen font slot 1, the 勘亭流 face) in 256-code-point pages, so name and title previews use the game's lettering |
+| `sound/se_neiro_{00…19}_v12a.nus3bank` | `don-model/tone/NN_{don,ka}.wav` | The drum tones' don and ka hits, the bank's two embedded PCM WAVs cut out as-is, for the Profile's tone preview |
 | `lumen/000_default/common/player_board.{nulm,nutexb}` | `don-model/scoreboard/panel_<difficulty>.png`, `digit_ns_0N.png`, `scoreboard.json` | The Profile achievement panel ("scoreboard") per difficulty, plus the game's counter digit glyphs |
 
 ## Game UI art (`src/lumen.rs`, `src/ui.rs`)

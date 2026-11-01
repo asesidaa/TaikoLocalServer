@@ -146,16 +146,27 @@
   });
 
   // <img data-asset="nameplate/dan_10dan_gold.png">: api/Assets needs the token, which <img src> can't send,
-  // so fetch once and use a blob URL. A missing asset hides the image.
+  // so fetch once and use a blob URL. A missing asset hides the element (any element: a button can depend on one).
   const assetUrls = new Map();
-  const hydrateAssets = () => document.querySelectorAll("img[data-asset]").forEach(img => {
-    const path = img.dataset.asset;
-    if (img.dataset.loaded === path) return;
-    img.dataset.loaded = path;
+  const assetUrl = path => {
     if (!assetUrls.has(path)) assetUrls.set(path, authFetch(`api/Assets/${path}`)
       .then(r => r.ok ? r.blob() : null).then(b => b && URL.createObjectURL(b)).catch(() => null));
-    assetUrls.get(path).then(url => { if (img.dataset.asset !== path) return; img.hidden = !url; if (url) img.src = url; });
+    return assetUrls.get(path);
+  };
+  const hydrateAssets = () => document.querySelectorAll("[data-asset]").forEach(el => {
+    const path = el.dataset.asset;
+    if (el.dataset.loaded === path) return;
+    el.dataset.loaded = path;
+    assetUrl(path).then(url => { if (el.dataset.asset !== path) return; el.hidden = !url; if (url && el.tagName === "IMG") el.src = url; });
   });
+
+  // Tone preview: the tone's don, then its ka (extract writes tone/NN_{don,ka}.wav).
+  const playTone = async id => {
+    const n = String(id).padStart(2, "0");
+    const [don, ka] = await Promise.all([assetUrl(`tone/${n}_don.wav`), assetUrl(`tone/${n}_ka.wav`)]);
+    if (don) new Audio(don).play();
+    if (ka) setTimeout(() => new Audio(ka).play(), 350);
+  };
 
   // The 3D canvas covers the whole card; `anchor` is the box (in px, relative to the iframe) that zoom/camY frame.
   const donFramed = (frame, anchorEl, msg) => {
@@ -175,5 +186,6 @@
     nameplate: renderNameplate,
     don: donFramed,
     hydrateAssets,
+    playTone,
   };
 })();

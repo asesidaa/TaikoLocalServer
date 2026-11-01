@@ -4,6 +4,7 @@ mod game;
 mod lumen;
 mod models;
 mod textures;
+mod tones;
 mod ui;
 mod v12;
 
@@ -125,6 +126,9 @@ fn run(args: Args) -> Result<Vec<Report>> {
     reports.push(report);
     let mut report = Report::new("font pages");
     font::convert(&game, &don_model.join("font"), &mut report)?;
+    reports.push(report);
+    let mut report = Report::new("tones");
+    tones::convert(&game, &don_model.join("tone"), &mut report)?;
     reports.push(report);
     fs::write(don_model.join(STAMP), serde_json::to_string(&serde_json::json!({ "mods": game.modded() }))?)?;
     Ok(reports)

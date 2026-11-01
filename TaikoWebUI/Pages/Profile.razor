@@ -174,7 +174,14 @@ else
             <SelectField Label="@Localizer["Random"]" Options="@Localized(["None", "Whimsical", "Messy"])"
                          Image="@(random == 0 ? null : GameData.OptionIcon(random == 1 ? "kimagure" : "detarame"))"
                          Value="random" ValueChanged="v => Set(x => x.PlaySetting.RandomType = (RandomType)v)" />
-            <SelectField Label="@Localizer["Tone"]" Options="@Localized(GameData.Tones)" Value="s.ToneId" ValueChanged="v => Set(x => x.ToneId = v)" />
+            <SelectField Label="@Localizer["Tone"]" Options="@Localized(GameData.Tones)" Value="s.ToneId" ValueChanged="v => Set(x => x.ToneId = v)">
+                @* Hidden until the tone's sound is found (hydrateAssets), i.e. when extract hasn't been run. *@
+                <button type="button" hidden data-asset="@($"tone/{s.ToneId:00}_don.wav")" title="@Localizer["Play tone"]" aria-label="@Localizer["Play tone"]"
+                        class="shrink-0 rounded-lg bg-zinc-100 p-2 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                        @onclick='() => Js.InvokeVoidAsync("ui.playTone", s.ToneId)'>
+                    <Icon Name="volume" />
+                </button>
+            </SelectField>
             <label class="block">
                 <span class="flex items-baseline justify-between text-sm">
                     <span class="font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Notes Position"]</span>

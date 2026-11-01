@@ -19,6 +19,7 @@
                 <option value="@index" selected="@(index == Value)">@Options[i]</option>
             }
         </select>
+        @ChildContent
     </span>
 </label>
 
@@ -29,6 +30,8 @@
     [Parameter] public EventCallback<uint> ValueChanged { get; set; }
     [Parameter] public string? Hint { get; set; }
     [Parameter] public string? Image { get; set; }
+    /// <summary>Shown after the select, e.g. a preview button.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
 
     private Task OnChange(ChangeEventArgs e) =>
         uint.TryParse(e.Value?.ToString(), out var v) ? ValueChanged.InvokeAsync(v) : Task.CompletedTask;

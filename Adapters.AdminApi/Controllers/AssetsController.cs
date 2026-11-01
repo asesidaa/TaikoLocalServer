@@ -23,6 +23,7 @@ public class AssetsController : BaseAdminController<AssetsController>
         [".glb"] = "model/gltf-binary",
         [".png"] = "image/png",
         [".json"] = "application/json",
+        [".wav"] = "audio/wav",
     });
 
     [HttpGet("{**path}")]
