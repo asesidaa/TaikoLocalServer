@@ -17,11 +17,14 @@
             {
                 <Toggle Label="@Localizer["Free profile editing"]" Description="@Localizer["Free Profile Editing Hint"]" Icon="id" @bind-Value="draft.AllowFreeProfileEditing" />
                 <Toggle Label="@Localizer["Custom player titles"]" Description="@Localizer["Players can type their own title instead of picking one of the game's. Admins always can."]" Icon="pencil" @bind-Value="draft.AllowCustomTitles" />
-                <Toggle Label="@Localizer["Players can delete their account"]" Icon="users" @bind-Value="draft.AllowUserDelete" />
+                <Toggle Label="@Localizer["Players can delete their account"]" Description="@Localizer["Players can delete their own account in Settings, with their password. Admins can always delete accounts in User Management."]" Icon="users" @bind-Value="draft.AllowUserDelete" />
             }
             <label class="flex items-center gap-3 py-2">
                 <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"><Icon Name="card" Class="size-5" /></span>
-                <span class="min-w-0 flex-1 text-sm font-medium">@Localizer["Access codes per player"]</span>
+                <span class="min-w-0 flex-1">
+                    <span class="block text-sm font-medium">@Localizer["Access codes per player"]</span>
+                    <span class="block text-xs text-zinc-500 dark:text-zinc-400">@Localizer["How many cards a player can add to their account in Settings. Admins adding cards for them aren't limited."]</span>
+                </span>
                 <input type="number" min="1" max="99" class="@Css.Input !w-20 text-right" @bind="draft.AccessCodeLimit" />
             </label>
         </div>

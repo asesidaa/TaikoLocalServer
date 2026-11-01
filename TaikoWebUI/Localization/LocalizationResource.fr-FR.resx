@@ -3483,4 +3483,10 @@
   <data name="Title pages" xml:space="preserve">
     <value>Pages de titres</value>
   </data>
+  <data name="Players can delete their own account in Settings, with their password. Admins can always delete accounts in User Management." xml:space="preserve">
+    <value>Les joueurs peuvent supprimer leur propre compte dans Paramètres, avec leur mot de passe. Les administrateurs peuvent toujours supprimer des comptes dans Gestion des utilisateurs.</value>
+  </data>
+  <data name="How many cards a player can add to their account in Settings. Admins adding cards for them aren't limited." xml:space="preserve">
+    <value>Nombre de cartes qu'un joueur peut ajouter à son compte dans Paramètres. Les administrateurs qui ajoutent des cartes pour lui ne sont pas limités.</value>
+  </data>
 </root>

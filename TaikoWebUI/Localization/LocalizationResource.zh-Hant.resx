@@ -3483,4 +3483,10 @@
   <data name="Title pages" xml:space="preserve">
     <value>稱號頁</value>
   </data>
+  <data name="Players can delete their own account in Settings, with their password. Admins can always delete accounts in User Management." xml:space="preserve">
+    <value>玩家可以在設定中輸入密碼刪除自己的帳戶。管理員隨時可以在使用者管理中刪除帳戶。</value>
+  </data>
+  <data name="How many cards a player can add to their account in Settings. Admins adding cards for them aren't limited." xml:space="preserve">
+    <value>玩家可以在設定中新增到自己帳戶的卡片數量。管理員代為新增時不受限制。</value>
+  </data>
 </root>
