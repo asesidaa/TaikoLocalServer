@@ -334,6 +334,62 @@ Anything the browser renders can be pulled out with dev tools or a GPU capture. 
 
 Not worth doing: disabling dev tools, right-click blockers, or watermarking. They're trivially bypassed and annoy legitimate users. The operator extracted these files from their own game install, so the realistic goal is "not freely hot-linkable from the server", which 1 achieves.
 
+### 3d. Nameplates and dan badges from the game (LMB)
+
+Prototyped 2026-10-31. A Node parser and software renderer, about 150 lines, renders all 21 title plates and all 38 dan badges straight from the game files. This replaces `TaikoWebUI/wwwroot/images/Nameplates/*.webp`, which is committed game art.
+
+**Source.** Everything is in `Data/x64/lumen/000_default/common/name_plate.*`. No collab folder has its own copy.
+- `name_plate.nutexb`: BC7, 512×512, 5 layers (one atlas per layer). It decodes with `extract`'s existing texture code.
+- `name_plate.nulm`: Lumen binary (`LMB\0`), the same UI format Smash Ultimate uses.
+- `name_plate.nulstb`: an SSBH `LNST`-style index naming the two files above (not needed).
+
+**LMB layout** (little-endian; a 0x40-byte header, then tags `u32 type, u32 size_in_words, payload`, ending at `0xFF00`):
+
+| Tag | Content |
+|---|---|
+| `F001` symbols | `count`, then `u32 len` + UTF-8 padded to 4 bytes (NUL included) |
+| `F002` colours | `count`, then RGBA as `u16 / 256` |
+| `F003` matrices | `count`, then `a b c d tx ty` as `f32` (2×3 affine) |
+| `F103` positions | `count`, then `x y` as `f32` |
+| `F004` bounds | `count`, then `x0 y0 x1 y1` as `f32` |
+| `F007` atlases | `count`, then `id, name_sym, w f32, h f32`. Atlas *i* = `.nutexb` layer *i* |
+| `F00C` properties | includes framerate (60) and stage size (1920×1080) |
+| `F022` shape | `id, ?, ?, ?, graphic_count`, followed by `graphic_count` × `F024` |
+| `F024` graphic | `atlas u32, fill u16 (always 0x41 = textured), nverts u16, nindices u32`, verts `x y u v` f32, indices u16 |
+| `0x27` sprite | `id, ?, ?, label_count, frame_count, keyframe_count, ?`, followed by `0x2B` labels, then `0x01` frames |
+| `0x2B` frame label | `name_sym, frame, ?` |
+| `0x01` / `F105` frame / keyframe | `frame_id, op_count`, followed by that many ops |
+| `0x04` place object | 12 words: `char, instance, ?, name_sym, mode\|blend<<16 (1 place, 2 move, 3 replace), depth\|?<<16, ?, transform, color_mult, color_add, ?, ?` |
+| `0x05` remove object | `?, depth` |
+| `0x25` text, `0x0C` action | ignored (the name and title text is drawn by the WebUI) |
+
+- `transform`: high 16 = `0x0000` → `matrices[low]`; `0x8000` → translate by `positions[low]`; `0xFFFF` → unchanged. `color_mult` and `color_add` of `-1` mean unchanged.
+- **Rendering:** play the sprite's frames from 0 to the label's frame, applying the ops to a depth-keyed display list. Then draw it in depth order: shapes as textured triangles from the atlas, nested sprites recursively at their frame 0, multiplying matrices and colours down the tree.
+
+**What renders:**
+- **Sprite 138, the title plates:** 21 labels `wood` … `aprilfool_6`, the same order as `TitlePlateStrings` / `TitlePlateId`. Collab character icons included.
+- **Sprites 225 and 227, the dan badges:** 38 labels, `5kyuu_red` … `14dan_red`, then `5kyuu_gold` … `14dan_gold`. Sprite 234 has the 19 labels without colour.
+- **Sprite 280, the complete in-game nameplate:** frame, 1P/2P/AI marker, dan badge and plate slot, with labels `1p`, `1p_dani`, `ai`, …. Useful for the base frame, and as a reference for layout.
+
+**Tested against ASB61 too** (the newest dump, from `S1220ASB61-003.7z`). The same parser works unchanged apart from two generalizations, now in the prototype:
+- **Atlas size** comes from `F007` (ASB61: 3 × 1024², 39.06: 5 × 512²), not hardcoded.
+- **Fill type 0 = solid colour** `colors[id]`, where the graphic's atlas field holds a colour index. It's used for vector outlines and mask shapes.
+
+ASB61 has **93 title plates** (sprite 541; the first 21 are unchanged from 39.06, then `million_y23_*`, `shiny_y23_*`, `toho_y23_*`, `sekaitaikai_*`, PlayX4 and more), the same 38 dan badges (sprites 628–630), and the full nameplate in sprite 708 (36 labels, adding `_chara` variants). All 93 plates, 38 badges and the full plate render with 0 errors. **Sprite ids differ between builds**, so the port must find sprites by their label sets (the one containing `wood` with the most labels = plates; `5kyuu_red`… = badges), never by id.
+
+**Clip masks (solved in the port).** The high 16 bits of the place op's depth word are Flash's `clipDepth`. The object at depth *d* with clip *c* is a mask for depths *d+1…c* and is never drawn. That explains every case: 39.06's `ai_3` scrolling pattern (shape 50 clips sprite 52), and ASB61's solid grey/white shapes 190 and 295 that the prototype drew as blocks. Mask bounds also clip each label's bounds, so masked-off content no longer widens the canvas.
+
+**Ported** into `tools/extract` as `src/lumen.rs` (parser and rasterizer with masks) plus `src/nameplates.rs`. The output is `don-model/nameplate/plate_<label>.png`, `dan_<label>.png` and `plates.json` (labels in order, index = `TitlePlateId`), served by `api/Assets/nameplate/...`.
+- **Canvases:** 39.06 plates 340×88, ASB61 plates 348×93, badges 64×32.
+- **Results:** 39.06 gives 21 plates and 38 badges; ASB61 gives 93 plates and 38 badges; both have 0 failures. `ai_3` now matches the WebUI's `nameplate_AI_3.webp`, and the prototype's black band was the unclipped pattern.
+- **Tests:** a hand-built LMB checks parsing, label lookup and mask clipping.
+
+**Left:**
+- **Animated plates** (rainbow shimmer, sparkles) are rendered at frame 0. That's fine for static images.
+- **No base frame yet.** The WebUI currently layers plates on `nameplate.webp`, the black capsule. That frame is part of the full-nameplate sprite (`1p` label), not a sprite of its own. Wait for the final Profile design before deciding whether to export the frame or the whole composite.
+- **WebUI switch:** point the Profile page at `api/Assets/nameplate/plate_{label}.png`, taking the labels from `plates.json` instead of the hardcoded `TitlePlateStrings`, so newer builds' extra plates show up. Then delete `wwwroot/images/Nameplates/`.
+- **The same parser should work for the rest of `lumen/`** (rank panels, crowns, difficulty icons), the other committed art under `wwwroot/images`.
+
 ---
 
 ## Phasing / PRs

@@ -1,5 +1,7 @@
 mod anims;
+mod lumen;
 mod models;
+mod nameplates;
 mod textures;
 mod v12;
 
@@ -98,6 +100,9 @@ fn run(args: Args) -> Result<Vec<Report>> {
     }
     let mut report = Report::new("animations");
     anims::convert(&x64, &out.join("don-model").join("animation"), &mut report)?;
+    reports.push(report);
+    let mut report = Report::new("nameplates");
+    nameplates::convert(&x64, &out.join("don-model").join("nameplate"), &mut report)?;
     reports.push(report);
     Ok(reports)
 }

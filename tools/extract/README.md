@@ -23,6 +23,16 @@ It is safe to re-run, for example after a game update. Outputs that are already 
 | `model/face/*.nutexb` (22) | `don-model/face/*.png` | Expression atlases: 12 layers stacked vertically |
 | `model/{body,head,cos}/<name>/<name>/<name>.numdlb` (483) | `don-model/{body,head,cos}/<name>.glb` | Skinned don-chan parts, textures embedded |
 | `animation/*.nuanmb` (54) | `don-model/animation/don.glb` + `facekeys.json` | One animation library (a clip per file) and the face-expression keys |
+| `lumen/000_default/common/name_plate.{nulm,nutexb}` | `don-model/nameplate/plate_<label>.png`, `dan_<label>.png`, `plates.json` | Title plates and dan badges rendered from the game's UI. `plates.json` lists the labels in order, and a plate's index is its `TitlePlateId` |
+
+## Nameplates (`src/lumen.rs`, `src/nameplates.rs`)
+
+The nameplate UI is a Lumen file (`.nulm`, magic `LMB\0`), the Flash-like format the game's 2D UI uses, with its texture atlas in the matching `.nutexb`. `lumen.rs` parses the shapes (textured or solid-colour triangles) and the sprite timelines. It renders a sprite at a frame label by playing its display list up to that frame: depth order, place/move/remove, matrix or position transforms, colour multiply/add, nested sprites at frame 0, and **clip masks** (a placement's clip depth hides deeper objects outside its shape). The tag layout is documented in `docs/webui-refactor-plan.md` §3d.
+
+- Sprites are found **by their frame labels**, not by id, because ids change between builds: `wood` → title plates, `5kyuu_red` → dan badges.
+- Each set renders on one shared canvas (the union of every label's mask-clipped bounds), so plates line up.
+- Tested on SBWY 39.06 (21 plates, 38 badges) and the newer ASB61 dump (93 plates, 38 badges), both with no failures. `ai_3` matches the WebUI's existing `nameplate_AI_3.webp`.
+- Animated plates (shimmer, sparkles) are rendered at their first frame.
 
 ## Animation export (`src/anims.rs`, `src/v12/`)
 
