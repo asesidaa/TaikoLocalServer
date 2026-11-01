@@ -903,4 +903,10 @@
   <data name="Delete Set Confirm" xml:space="preserve">
     <value />
   </data>
+  <data name="Ban Card Dialog Hint" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Ban Card Hint" xml:space="preserve">
+    <value />
+  </data>
 </root>

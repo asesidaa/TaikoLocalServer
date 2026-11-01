@@ -7,11 +7,12 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 public class SignInsController(ITaikoDbContext context, IServerAccess access) : BaseAdminController<SignInsController>
 {
     /// <param name="failed">true: only failures; false: only successful sign-ins; null: all.</param>
+    /// <param name="baid">Only this user's (User Management's recent failed sign-ins).</param>
     [HttpGet]
-    public async Task<SignInPage> Get(long? before = null, bool? failed = null, string? q = null, int limit = 50)
+    public async Task<SignInPage> Get(long? before = null, bool? failed = null, string? q = null, uint? baid = null, int limit = 50)
     {
         limit = Math.Clamp(limit, 1, 200);
-        var query = context.SignInAttempts.Where(a => a.Result != SignInOutcome.Unlocked && (before == null || a.Id < before));
+        var query = context.SignInAttempts.Where(a => a.Result != SignInOutcome.Unlocked && (before == null || a.Id < before) && (baid == null || a.Baid == baid));
         if (failed == true) query = query.Where(a => a.Result != SignInOutcome.SignedIn);
         if (failed == false) query = query.Where(a => a.Result == SignInOutcome.SignedIn);
         if (!string.IsNullOrWhiteSpace(q))
