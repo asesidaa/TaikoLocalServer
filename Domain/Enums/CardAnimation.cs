@@ -8,8 +8,8 @@ public enum CardAnimation
 {
     Clear = 0,
     Celebrate = 1,
-    Donderful = 2,
-    Drumming = 3,
-    Ready = 4,
+    Aggressive = 2,
+    Miss = 3,
+    FullCombo = 4,
     Pout = 5,
 }

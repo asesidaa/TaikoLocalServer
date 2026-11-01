@@ -6,22 +6,24 @@ namespace TaikoWebUI.Shared;
 public static class CardStyle
 {
     /// <summary>
-    /// Patterns offered in the picker. The nine traditional ones (Seigaiha … Yosegi) are in the enum but wait on the
-    /// licence of their source vectors (see docs/webui-design-decisions.md), so they aren't offered yet.
+    /// Patterns in picker order. The nine traditional ones are vector tiles in wwwroot/patterns (see TraditionalTiles).
     /// </summary>
     public static readonly (CardPattern Value, string Name)[] Patterns =
     [
         (CardPattern.Dots, "Dots"), (CardPattern.Stripes, "Stripes"), (CardPattern.Checker, "Checker"),
+        (CardPattern.Seigaiha, "Seigaiha"), (CardPattern.Asanoha, "Asanoha"), (CardPattern.Shippo, "Shippō"),
+        (CardPattern.Kikko, "Kikkō"), (CardPattern.Aranami, "Aranami"), (CardPattern.Kumo, "Kumo"),
+        (CardPattern.Sakura, "Sakura"), (CardPattern.Hanabishi, "Hanabishi"), (CardPattern.Yosegi, "Yosegi"),
         (CardPattern.Rings, "Rings"), (CardPattern.Notes, "Notes"), (CardPattern.Diamonds, "Diamonds"),
         (CardPattern.Zigzag, "Zigzag"), (CardPattern.Grid, "Grid"), (CardPattern.Sunburst, "Sunburst"), (CardPattern.None, "Plain"),
     ];
 
-    /// <summary>Animation presets and their looping clips (only clean *_loop clips; one-shots look chopped when looped).</summary>
+    /// <summary>Animation presets and the clips they loop (don_miss and don_full_combo are one-shot clips, looped on request).</summary>
     public static readonly (CardAnimation Value, string Name, string Clip)[] Animations =
     [
         (CardAnimation.Celebrate, "Celebrate", "don_result_full_loop"), (CardAnimation.Clear, "Clear", "don_result_clear_loop"),
-        (CardAnimation.Donderful, "Donderful", "don_result_percious_loop"), (CardAnimation.Drumming, "Drumming", "don_norm_loop"),
-        (CardAnimation.Ready, "Ready", "don_entry1P_select_loop"), (CardAnimation.Pout, "Pout", "don_result_failure_loop"),
+        (CardAnimation.Aggressive, "Aggressive", "don_wait_loop"), (CardAnimation.Miss, "Miss", "don_miss"),
+        (CardAnimation.FullCombo, "Full Combo", "don_full_combo"), (CardAnimation.Pout, "Pout", "don_result_failure_loop"),
     ];
 
     public static string Clip(CardAnimation a) => Animations.FirstOrDefault(x => x.Value == a).Clip ?? "don_result_clear_loop";
@@ -52,6 +54,8 @@ public static class CardStyle
             CardPattern.Notes => $"radial-gradient(circle at 25% 30%, {ink} 7px, transparent 7.5px) 0 0/48px 48px, radial-gradient(circle at 72% 75%, {ink} 4.5px, transparent 5px) 0 0/48px 48px",
             CardPattern.Diamonds => $"conic-gradient(from 45deg, {ink} 25%, transparent 0 50%, {ink} 0 75%, transparent 0) 0 0/32px 32px",
             CardPattern.Zigzag => Zigzag(light),
+            _ when TraditionalTiles.TryGetValue(pattern, out var t) =>
+                F($"url(patterns/{t.File}-{(light ? "dark" : "light")}.svg) 0 0/{t.W}px {t.H}px"),
             CardPattern.Grid => $"linear-gradient({ink} 2px, transparent 2px) 0 0/24px 24px, linear-gradient(90deg, {ink} 2px, transparent 2px) 0 0/24px 24px",
             CardPattern.Sunburst => $"repeating-conic-gradient(from 0deg at 50% 110%, {ink} 0deg 6deg, transparent 6deg 12deg)",
             _ => null,
@@ -59,11 +63,33 @@ public static class CardStyle
         return layer is null ? $"background:{hex}" : $"background:{layer}, {hex}";
     }
 
-    // A line pattern as an SVG tile: solid ink in a group with opacity, so crossing strokes don't double up.
-    private static string Zigzag(bool light)
+    // The traditional patterns: one repeat tile each from the supplied Japanese pattern vector set, as static SVGs in
+    // wwwroot/patterns (<file>-dark.svg = black ink for light cards, -light.svg = white ink for dark cards; ink only,
+    // as the set's base shapes are the card colour). Sizes are the tile in source units × 0.55, in CSS px.
+    private static readonly Dictionary<CardPattern, (string File, double W, double H)> TraditionalTiles = new()
     {
-        var (stroke, opacity) = light ? ("#000", ".1") : ("#fff", ".18");
-        var svg = $"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"20\" viewBox=\"0 0 32 20\"><g opacity=\"{opacity}\" fill=\"none\" stroke=\"{stroke}\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M-8 14 0 6 8 14 16 6 24 14 32 6 40 14\"/></g></svg>";
-        return $"url('data:image/svg+xml,{Uri.EscapeDataString(svg)}') 0 0/32px 20px";
-    }
+        [CardPattern.Seigaiha] = ("seigaiha", 72.606, 124.025), [CardPattern.Asanoha] = ("asanoha", 83.353, 48.12),
+        [CardPattern.Shippo] = ("shippo", 78.826, 78.832), [CardPattern.Kikko] = ("kikko", 76.593, 108.075),
+        [CardPattern.Aranami] = ("aranami", 37.532, 62.7), [CardPattern.Kumo] = ("kumo", 122.826, 39.842),
+        [CardPattern.Sakura] = ("sakura", 38.225, 154.743), [CardPattern.Hanabishi] = ("hanabishi", 66.842, 85.052),
+        [CardPattern.Yosegi] = ("yosegi", 84.309, 146.025),
+    };
+
+    // ---- SVG tiles drawn here. Ink is solid inside a group with opacity, so crossing strokes don't double up.
+
+    private static string Ink(bool light) => light ? "#000" : "#fff";
+    private static string Opacity(bool light) => light ? ".1" : ".18";
+
+    private static string Tile(double w, double h, string body) =>
+        $"url('data:image/svg+xml,{Uri.EscapeDataString(F($"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{w}\" height=\"{h}\" viewBox=\"0 0 {w} {h}\">{body}</svg>"))}') 0 0/{F(w)}px {F(h)}px";
+
+    private static string Lines(bool light, double width, string inner) =>
+        $"<g opacity=\"{Opacity(light)}\" fill=\"none\" stroke=\"{Ink(light)}\" stroke-width=\"{F(width)}\" stroke-linecap=\"round\" stroke-linejoin=\"round\">{inner}</g>";
+
+    // Invariant numbers with at most two decimals (also used on whole interpolated strings).
+    private static string F(double v) => Math.Round(v, 2).ToString(CultureInfo.InvariantCulture);
+    private static string F(FormattableString s) => s.ToString(CultureInfo.InvariantCulture);
+
+    private static string Zigzag(bool light) =>
+        Tile(32, 20, Lines(light, 2.5, "<path d=\"M-8 14 0 6 8 14 16 6 24 14 32 6 40 14\"/>"));
 }
