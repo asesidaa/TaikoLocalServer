@@ -29,6 +29,7 @@ namespace TaikoLocalServer.Infrastructure.Persistence
         public virtual DbSet<UserDatum> UserData { get; set; } = null!;
         public virtual DbSet<UserWebProfile> UserWebProfiles { get; set; } = null!;
         public virtual DbSet<UserAvatar> UserAvatars { get; set; } = null!;
+        public virtual DbSet<UserStill> UserStills { get; set; } = null!;
         public virtual DbSet<AccessRules> AccessRules { get; set; } = null!;
         public virtual DbSet<ServerSecrets> ServerSecrets { get; set; } = null!;
         public virtual DbSet<ActivityEntry> Activity { get; set; } = null!;
@@ -114,6 +115,19 @@ namespace TaikoLocalServer.Infrastructure.Persistence
                 entity.HasOne(d => d.Ba)
                     .WithOne()
                     .HasForeignKey<UserAvatar>(d => d.Baid)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<UserStill>(entity =>
+            {
+                entity.HasKey(e => e.Baid);
+
+                entity.Property(e => e.ContentType).HasMaxLength(16);
+                entity.Property(e => e.Key).HasMaxLength(UserStill.KeyMaxLength);
+
+                entity.HasOne(d => d.Ba)
+                    .WithOne()
+                    .HasForeignKey<UserStill>(d => d.Baid)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 

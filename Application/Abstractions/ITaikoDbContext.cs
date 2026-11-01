@@ -7,6 +7,7 @@ public interface ITaikoDbContext
     DbSet<Credential> Credentials { get; }
     DbSet<UserWebProfile> UserWebProfiles { get; }
     DbSet<UserAvatar> UserAvatars { get; }
+    DbSet<UserStill> UserStills { get; }
     DbSet<AccessRules> AccessRules { get; }
     DbSet<ServerSecrets> ServerSecrets { get; }
     DbSet<ActivityEntry> Activity { get; }

@@ -155,6 +155,26 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
         return File(avatar.Image, avatar.ContentType);
     }
 
+    /// <summary>
+    /// The 2D view's full-body don-chan for costume <paramref name="v"/> (AvatarKeys.StillKey), drawn by the server's
+    /// renderer. A miss asks the renderer for one and is a 404 until it's ready.
+    /// </summary>
+    [HttpGet("{baid}/Still")]
+    [ApiScope(ApiScopes.ReadAvatars)]
+    public async Task<IActionResult> GetStill(uint baid, [FromQuery] string v)
+    {
+        var still = await context.UserStills.FindAsync(baid);
+        if (still is null || still.Key != v)
+        {
+            avatars.Enqueue(baid);
+            return NotFound();
+        }
+
+        Response.Headers.CacheControl = "private, max-age=31536000, immutable";
+        Response.Headers.XContentTypeOptions = "nosniff";
+        return File(still.Image, still.ContentType);
+    }
+
     /// <summary>Stores the avatar (raw WebP or PNG body, at most <see cref="UserAvatar.MaxBytes"/>) for costume <paramref name="key"/>.</summary>
     [HttpPut("{baid}/Avatar")]
     [RequestSizeLimit(UserAvatar.MaxBytes)]

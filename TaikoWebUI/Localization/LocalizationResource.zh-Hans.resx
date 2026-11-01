@@ -3372,4 +3372,19 @@
   <data name="Too many tries. Wait a minute, then try again." xml:space="preserve">
     <value>尝试次数过多。请等一分钟后再试。</value>
   </data>
+  <data name="Enable 3D Renderer" xml:space="preserve">
+    <value>启用 3D 渲染</value>
+  </data>
+  <data name="Player cards show an animated 3D don-chan. When off, they show a still image the server draws: lighter for phones and older PCs, and it updates a few seconds after a costume change." xml:space="preserve">
+    <value>玩家卡片显示动态 3D 小咚。关闭时显示由服务器绘制的静态图片：在手机和旧电脑上更流畅，更换装扮几秒后更新。</value>
+  </data>
+  <data name="Player cards show an animated 3D don-chan. Turn on rendering avatars on the server to use still images instead." xml:space="preserve">
+    <value>玩家卡片显示动态 3D 小咚。要改用静态图片，请先开启在服务器上绘制头像。</value>
+  </data>
+  <data name="Player cards show 3D" xml:space="preserve">
+    <value>卡片显示 3D</value>
+  </data>
+  <data name="Player cards show still images" xml:space="preserve">
+    <value>卡片显示静态图片</value>
+  </data>
 </root>

@@ -3372,4 +3372,19 @@
   <data name="Too many tries. Wait a minute, then try again." xml:space="preserve">
     <value>試行回数が多すぎます。1分待ってから、もう一度お試しください。</value>
   </data>
+  <data name="Enable 3D Renderer" xml:space="preserve">
+    <value>3D描画を有効にする</value>
+  </data>
+  <data name="Player cards show an animated 3D don-chan. When off, they show a still image the server draws: lighter for phones and older PCs, and it updates a few seconds after a costume change." xml:space="preserve">
+    <value>プレイヤーカードに3Dのどんちゃんを動きつきで表示します。オフの場合はサーバーが描いた静止画を表示します。スマホや古いPCで軽く、着せ替えの数秒後に更新されます。</value>
+  </data>
+  <data name="Player cards show an animated 3D don-chan. Turn on rendering avatars on the server to use still images instead." xml:space="preserve">
+    <value>プレイヤーカードに3Dのどんちゃんを動きつきで表示します。静止画を使うには、サーバーでのアバター描画をオンにしてください。</value>
+  </data>
+  <data name="Player cards show 3D" xml:space="preserve">
+    <value>カードを3D表示にしました</value>
+  </data>
+  <data name="Player cards show still images" xml:space="preserve">
+    <value>カードを静止画表示にしました</value>
+  </data>
 </root>

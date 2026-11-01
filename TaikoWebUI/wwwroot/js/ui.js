@@ -202,16 +202,19 @@
     const dataUrl = await new Promise(resolve => {
       const onMsg = e => { if (e.source === frame.contentWindow && e.data?.type === "don-snapshot") { removeEventListener("message", onMsg); resolve(e.data.dataUrl); } };
       addEventListener("message", onMsg);
-      // Face centred (camX), without the puchi. Changing the framing means bumping CardStyle.AvatarKey's version.
-      frame.contentWindow.postMessage({ type: "don-snapshot", zoom: 0.14, camY: 0.165, camX: 0.04, puchi: false, size: 256 }, new URL(frame.src).origin);
+      // Face centred (camX), without the puchi, drawn at twice the size and scaled down below (smoother edges).
+      // Changing the framing means bumping AvatarKeys.Key's version (the server renderer draws the same).
+      frame.contentWindow.postMessage({ type: "don-snapshot", zoom: 0.14, camY: 0.165, camX: 0.04, puchi: false, size: 512 }, new URL(frame.src).origin);
     });
     if (frame._avatarKey !== job.key) return;   // the costume changed while rendering; the newer job uploads
     const img = new Image();
     img.src = dataUrl;
     await img.decode();
     const canvas = document.createElement("canvas");
-    canvas.width = img.width; canvas.height = img.height;
-    canvas.getContext("2d").drawImage(img, 0, 0);
+    canvas.width = canvas.height = 256;
+    const g = canvas.getContext("2d");
+    g.imageSmoothingQuality = "high";
+    g.drawImage(img, 0, 0, 256, 256);
     // Browsers without WebP encoding hand back PNG, which the server also takes.
     const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/webp", 0.9));
     const src = avatarSrc(job.baid, job.key);
@@ -313,7 +316,30 @@
   new MutationObserver(() => updateRails())
     .observe(document.documentElement, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["aria-current", "aria-pressed", "aria-selected"] });
 
+  // ---- Don-chan as a still image (PlayerCard, when an admin turns off "Enable 3D Renderer") ----
+  // The still for a costume: the server draws a missing one on request (404 meanwhile), so it's asked again every
+  // second for a while. The previous costume's image stays, dimmed, until the new one arrives.
+  const still = async (img, url) => {
+    if (!img || img._still === url) return;
+    img._still = url;
+    if (img.src) img.dataset.pending = "";
+    for (let i = 0; i < 90 && img._still === url; i++) {
+      const res = await authFetch(url).catch(() => null);
+      if (res?.ok) {
+        const src = URL.createObjectURL(await res.blob());
+        blobUrls.set(url, Promise.resolve(src));   // the large view's <img data-avatar> reuses it
+        if (img._still !== url) return;
+        img.src = src;
+        img.hidden = false;
+        delete img.dataset.pending;
+        return;
+      }
+      await new Promise(r => setTimeout(r, 1000));
+    }
+  };
+
   window.ui = {
+    still,
     setDark: on => { root.classList.toggle("dark", on); store.set("ui.dark", on ? "1" : "0"); },
     isDark: () => root.classList.contains("dark"),
     setAccent: id => { root.dataset.accent = id; store.set("ui.accent", id); },

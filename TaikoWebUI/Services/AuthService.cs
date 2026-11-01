@@ -52,6 +52,8 @@ public sealed class AuthService : IDisposable
 
     /// <summary>The server draws avatars (as of this page load), so the player card doesn't make and upload one.</summary>
     public bool ServerAvatars => authConfig.ServerAvatars;
+    /// <summary>Player cards show still images the server draws (Player Settings › Enable 3D Renderer off).</summary>
+    public bool ServerStills => authConfig.ServerStills;
 
     /// <summary>An admin whose server requires 2-step: they're a player until they turn it on in Settings › Security.</summary>
     public bool TwoFactorSetupRequired { get; private set; }

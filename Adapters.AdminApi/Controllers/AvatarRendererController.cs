@@ -21,6 +21,16 @@ public class AvatarRendererController(IAvatarRenderer renderer, ITaikoDbContext 
         return renderer.Status;
     }
 
+    /// <summary>"Enable 3D Renderer": player cards show the 3D model, or (off) still images the renderer draws.</summary>
+    [HttpPut("Cards3D")]
+    public async Task<AvatarRendererStatus> PutCards3D(SetRequest request)
+    {
+        await renderer.SetCards3DAsync(request.Enabled, HttpContext.RequestAborted);
+        this.LogActivity(context, "server.avatars", null, request.Enabled ? "3d cards" : "still cards");
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return renderer.Status;
+    }
+
     /// <summary>Every stored avatar, without the images.</summary>
     [HttpGet("Avatars")]
     public Task<List<StoredAvatar>> Avatars() =>
@@ -28,11 +38,12 @@ public class AvatarRendererController(IAvatarRenderer renderer, ITaikoDbContext 
                 context.UserData.Where(u => u.Baid == a.Baid).Select(u => u.MyDonName).FirstOrDefault() ?? "", a.Key, a.ContentType, a.Image.Length))
             .ToListAsync(HttpContext.RequestAborted);
 
-    /// <summary>Deletes every stored avatar; when the renderer is on it draws them all again, otherwise each player's browser does.</summary>
+    /// <summary>Deletes every stored avatar (and still image); when the renderer is on it draws them all again, otherwise each player's browser does.</summary>
     [HttpDelete("Avatars")]
     public async Task<int> Clear()
     {
         var deleted = await context.UserAvatars.ExecuteDeleteAsync(HttpContext.RequestAborted);
+        await context.UserStills.ExecuteDeleteAsync(HttpContext.RequestAborted);
         this.LogActivity(context, "server.avatars", null, $"cleared {deleted}");
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         foreach (var baid in await context.UserData.Select(u => u.Baid).ToListAsync(HttpContext.RequestAborted))

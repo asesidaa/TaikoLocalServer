@@ -23,5 +23,12 @@ public static class AvatarKeys
     /// all, e.g. after changing the framing (ui.js avatarRun and the server renderer).
     /// </summary>
     public static string Key(uint kigurumi, uint head, uint body, uint face, uint bodyColor, uint faceColor, uint limbColor, CardAnimation animation) =>
-        $"2-{kigurumi}-{head}-{body}-{face}-{bodyColor}-{faceColor}-{limbColor}-{(int)animation}";
+        $"3-{kigurumi}-{head}-{body}-{face}-{bodyColor}-{faceColor}-{limbColor}-{(int)animation}";
+
+    /// <summary>
+    /// The still image (the 2D view's full-body don-chan) for this costume, with its puchi. Same idea as <see cref="Key"/>:
+    /// bump the version after changing its framing (StillFraming in the server renderer).
+    /// </summary>
+    public static string StillKey(uint kigurumi, uint head, uint body, uint face, uint puchi, uint bodyColor, uint faceColor, uint limbColor, CardAnimation animation) =>
+        $"s3-{kigurumi}-{head}-{body}-{face}-{puchi}-{bodyColor}-{faceColor}-{limbColor}-{(int)animation}";
 }

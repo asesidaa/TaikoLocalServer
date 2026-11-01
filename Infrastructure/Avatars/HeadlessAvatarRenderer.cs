@@ -14,6 +14,7 @@ using TaikoLocalServer.Application.Settings;
 using TaikoLocalServer.Contracts.AdminApi;
 using TaikoLocalServer.Contracts.AdminApi.Authorization;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
+using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Infrastructure.Avatars;
 
@@ -35,7 +36,7 @@ public sealed class HeadlessAvatarRenderer(
     private static readonly TimeSpan RetryAfter = TimeSpan.FromMinutes(10);
     // A player is rendered once they've left their costume alone this long: clicking through parts on Profile (each
     // autosave queues them) gives one render, and their own browser's upload usually lands first, which skips it.
-    private static readonly TimeSpan Settle = TimeSpan.FromSeconds(10);
+    private static readonly TimeSpan Settle = TimeSpan.FromSeconds(3);
 
     private readonly Channel<uint> queue = Channel.CreateUnbounded<uint>();
     // Queued players, with when they were last queued.
@@ -45,6 +46,8 @@ public sealed class HeadlessAvatarRenderer(
     private readonly string token = ApiScopes.Prefix + "render_" + Convert.ToHexString(RandomNumberGenerator.GetBytes(24));
 
     private bool enabled;
+    // Stills are drawn only while cards use them (ServerOptions.Cards3D off).
+    private bool stills;
     private string? browserPath;
     private IBrowser? browser;
     private IPage? page;
@@ -53,17 +56,19 @@ public sealed class HeadlessAvatarRenderer(
     private DateTime? lastRenderedAt;
 
     public AvatarRendererStatus Status =>
-        new(enabled, browserPath, browser is { IsClosed: false }, queued.Count, rendered, failed, lastError, lastRenderedAt);
+        new(enabled, browserPath, browser is { IsClosed: false }, queued.Count, rendered, failed, lastError, lastRenderedAt, !stills);
 
     public bool IsRendererToken(string candidate) =>
         candidate.Length == token.Length && CryptographicOperations.FixedTimeEquals(
             System.Text.Encoding.ASCII.GetBytes(candidate), System.Text.Encoding.ASCII.GetBytes(token));
 
-    public void Enqueue(uint baid)
+    public void Enqueue(uint baid, bool changed = false)
     {
         if (!enabled || browserPath is null) return;
         var added = false;
-        queued.AddOrUpdate(baid, _ => { added = true; return DateTime.UtcNow; }, (_, _) => DateTime.UtcNow);
+        // The time of the last change: a request keeps it (or, with no change pending, needs no wait at all).
+        queued.AddOrUpdate(baid, _ => { added = true; return changed ? DateTime.UtcNow : DateTime.MinValue; },
+            (_, last) => changed ? DateTime.UtcNow : last);
         if (added) queue.Writer.TryWrite(baid);
     }
 
@@ -79,13 +84,26 @@ public sealed class HeadlessAvatarRenderer(
         else await CloseBrowserAsync();
     }
 
+    public async Task SetCards3DAsync(bool on, CancellationToken cancellationToken)
+    {
+        using var scope = scopes.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ITaikoDbContext>();
+        var row = await db.ServerOptions.FindAsync([1], cancellationToken) ?? db.ServerOptions.Add(new ServerOptions()).Entity;
+        row.Cards3D = on;
+        await db.SaveChangesAsync(cancellationToken);
+        stills = !on;
+        if (stills && enabled) await QueueStaleAsync(cancellationToken);
+    }
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         browserPath = FindBrowser();
         using (var scope = scopes.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<ITaikoDbContext>();
-            enabled = (await db.ServerOptions.AsNoTracking().FirstOrDefaultAsync(stoppingToken))?.RenderAvatars ?? true;
+            var options = await db.ServerOptions.AsNoTracking().FirstOrDefaultAsync(stoppingToken);
+            enabled = options?.RenderAvatars ?? true;
+            stills = !(options?.Cards3D ?? true);
         }
         if (browserPath is null)
         {
@@ -154,31 +172,99 @@ public sealed class HeadlessAvatarRenderer(
         var animation = profile?.CardAnimation ?? default;
         var key = AvatarKeys.Key(user.CurrentKigurumi, user.CurrentHead, user.CurrentBody, user.CurrentFace,
             user.ColorBody, user.ColorFace, user.ColorLimb, animation);
+        var stillKey = AvatarKeys.StillKey(user.CurrentKigurumi, user.CurrentHead, user.CurrentBody, user.CurrentFace, user.CurrentPuchi,
+            user.ColorBody, user.ColorFace, user.ColorLimb, animation);
         var stored = await db.UserAvatars.FindAsync([baid], cancellationToken);
-        if (stored?.Key == key) return;
-        if (failedKeys.TryGetValue(key, out var at) && DateTime.UtcNow - at < RetryAfter) return;
+        var storedStill = await db.UserStills.FindAsync([baid], cancellationToken);
+        bool needAvatar = stored?.Key != key, needStill = stills && storedStill?.Key != stillKey;
+        if (!needAvatar && !needStill) return;
+        var failKey = $"{key}|{stillKey}";
+        if (failedKeys.TryGetValue(failKey, out var at) && DateTime.UtcNow - at < RetryAfter) return;
 
         var p = await PageAsync();
-        var query = $"body={user.CurrentBody}&head={user.CurrentHead}&kigurumi={user.CurrentKigurumi}&face={user.CurrentFace}&puchi=0" +
-                    $"&bodyColor={user.ColorBody}&faceColor={user.ColorFace}&limbColor={user.ColorLimb}&anim={Uri.EscapeDataString(AvatarKeys.Clip(animation))}";
-        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        timeout.CancelAfter(RenderTimeout);
         try
         {
-            await p.GoToAsync($"{BaseUrl()}don-embed/embed.html?{query}", new NavigationOptions { Timeout = (int)RenderTimeout.TotalMilliseconds });
-            // The embed reports {loading:false} once the model is on screen, or an error (e.g. assets not extracted).
-            await p.WaitForFunctionAsync("() => window.__don && window.__don.loading === false",
-                new WaitForFunctionOptions { Timeout = (int)RenderTimeout.TotalMilliseconds });
-            var error = await p.EvaluateExpressionAsync<string>("window.__don.error || ''");
-            if (error.Length > 0) throw new InvalidOperationException($"The 3D model didn't load ({error}).");
-            // The same framing as the WebUI's (ui.js avatarRun): face centred, no puchi, 256px. Right after loading the
-            // pose isn't applied yet and the snapshot comes back empty, so let frames run and retry until it has pixels.
-            var dataUrl = await p.EvaluateFunctionAsync<string>("""
-                async () => {
+            // With the puchi (the still shows it; the avatar hides it). A puchi whose files are missing would stop the
+            // whole model loading, so that falls back to none.
+            if (!await LoadAsync(p, user, animation, user.CurrentPuchi) && user.CurrentPuchi != 0 && !await LoadAsync(p, user, animation, 0))
+                throw new InvalidOperationException("The 3D model didn't load.");
+            if (needAvatar)
+            {
+                var (image, contentType) = Decode(await SnapshotOrReloadAsync(p, user, animation, AvatarFraming));
+                if (image.Length > UserAvatar.MaxBytes) throw new InvalidOperationException("The avatar image is too big.");
+                stored = await db.UserAvatars.FindAsync([baid], cancellationToken);
+                if (stored is null) db.UserAvatars.Add(stored = new UserAvatar { Baid = baid });
+                stored.Image = image;
+                stored.ContentType = contentType;
+                stored.Key = key;
+            }
+            if (needStill)
+            {
+                var (image, contentType) = Decode(await SnapshotOrReloadAsync(p, user, animation, StillFraming));
+                if (image.Length > UserStill.MaxBytes) throw new InvalidOperationException("The still image is too big.");
+                storedStill = await db.UserStills.FindAsync([baid], cancellationToken);
+                if (storedStill is null) db.UserStills.Add(storedStill = new UserStill { Baid = baid });
+                storedStill.Image = image;
+                storedStill.ContentType = contentType;
+                storedStill.Key = stillKey;
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            rendered++;
+            lastRenderedAt = DateTime.UtcNow;
+            failedKeys.TryRemove(failKey, out _);
+        }
+        catch
+        {
+            failedKeys[failKey] = DateTime.UtcNow;
+            throw;
+        }
+    }
+
+    // The avatar: as the WebUI's (ui.js avatarRun), face centred, no puchi, 256px. Bump AvatarKeys.Key's version to change it.
+    // Every snapshot is drawn at twice its size and scaled down (SnapshotAsync), for smoother edges.
+    private static readonly object AvatarFraming = new { zoom = 0.14, camY = 0.165, camX = 0.04, puchi = false, size = 256 };
+    // The still: the whole figure with its puchi and some margin, 512px. Bump AvatarKeys.StillKey's version to change it.
+    private static readonly object StillFraming = new { zoom = 0.26, camY = 0.15, camX = 0.02, puchi = true, size = 512 };
+
+    // Opens the embed on this costume; false when the model didn't load (e.g. a part's files are missing).
+    private async Task<bool> LoadAsync(IPage p, UserDatum user, CardAnimation animation, uint puchi)
+    {
+        var query = $"body={user.CurrentBody}&head={user.CurrentHead}&kigurumi={user.CurrentKigurumi}&face={user.CurrentFace}&puchi={puchi}" +
+                    $"&bodyColor={user.ColorBody}&faceColor={user.ColorFace}&limbColor={user.ColorLimb}&anim={Uri.EscapeDataString(AvatarKeys.Clip(animation))}";
+        await p.GoToAsync($"{BaseUrl()}don-embed/embed.html?{query}", new NavigationOptions { Timeout = (int)RenderTimeout.TotalMilliseconds });
+        // The embed reports {loading:false} once the model is on screen, or an error (e.g. assets not extracted).
+        await p.WaitForFunctionAsync("() => window.__don && window.__don.loading === false",
+            new WaitForFunctionOptions { Timeout = (int)RenderTimeout.TotalMilliseconds });
+        var error = await p.EvaluateExpressionAsync<string>("window.__don.error || ''");
+        if (error.Length > 0) logger.LogInformation("Avatar renderer: player {Baid}'s model didn't load with puchi {Puchi} ({Error})", user.Baid, puchi, error);
+        return error.Length == 0;
+    }
+
+    // A snapshot that stays empty gets one more try on a freshly loaded page (the first snapshot after a load is the
+    // dependable one).
+    private async Task<string> SnapshotOrReloadAsync(IPage p, UserDatum user, CardAnimation animation, object framing)
+    {
+        try
+        {
+            return await SnapshotAsync(p, framing);
+        }
+        catch (EvaluationFailedException)
+        {
+            if (!await LoadAsync(p, user, animation, user.CurrentPuchi) && !await LoadAsync(p, user, animation, 0))
+                throw;
+            return await SnapshotAsync(p, framing);
+        }
+    }
+
+    // Right after loading (or after the last snapshot) the pose isn't applied yet and a snapshot can come back empty,
+    // so let frames run and retry until it has pixels.
+    private static Task<string> SnapshotAsync(IPage p, object framing) =>
+        p.EvaluateFunctionAsync<string>("""
+                async framing => {
                   const frame = () => new Promise(r => requestAnimationFrame(r));
                   const snap = () => new Promise((resolve, reject) => {
                     window.__snap = null;
-                    postMessage({ type: "don-snapshot", zoom: 0.14, camY: 0.165, camX: 0.04, puchi: false, size: 256 }, location.origin);
+                    postMessage({ type: "don-snapshot", ...framing, size: framing.size * 2 }, location.origin);
                     const start = Date.now();
                     (function poll() {
                       if (window.__snap) resolve(window.__snap);
@@ -193,33 +279,23 @@ public sealed class HeadlessAvatarRenderer(
                     for (let i = 3; i < d.length; i += 4) if (d[i]) return true;
                     return false;
                   };
-                  for (let attempt = 0; attempt < 20; attempt++) {
-                    for (let i = 0; i < 5; i++) await frame();
+                  // Supersampling: the 2x snapshot scaled down with high-quality smoothing antialiases the outlines.
+                  const shrink = async url => {
+                    const img = new Image(); img.src = url; await img.decode();
+                    const c = document.createElement("canvas"); c.width = c.height = framing.size;
+                    const g = c.getContext("2d"); g.imageSmoothingQuality = "high";
+                    g.drawImage(img, 0, 0, framing.size, framing.size);
+                    return c.toDataURL("image/png");
+                  };
+                  const start = Date.now();
+                  while (Date.now() - start < 8000) {
+                    for (let i = 0; i < 10; i++) await frame();
                     const url = await snap();
-                    if (await opaque(url)) return url;
+                    if (await opaque(url)) return await shrink(url);
                   }
                   throw new Error("the snapshot stayed empty");
                 }
-                """);
-            var (image, contentType) = Decode(dataUrl);
-            if (image.Length > UserAvatar.MaxBytes) throw new InvalidOperationException("The avatar image is too big.");
-
-            stored = await db.UserAvatars.FindAsync([baid], cancellationToken);
-            if (stored is null) db.UserAvatars.Add(stored = new UserAvatar { Baid = baid });
-            stored.Image = image;
-            stored.ContentType = contentType;
-            stored.Key = key;
-            await db.SaveChangesAsync(cancellationToken);
-            rendered++;
-            lastRenderedAt = DateTime.UtcNow;
-            failedKeys.TryRemove(key, out _);
-        }
-        catch
-        {
-            failedKeys[key] = DateTime.UtcNow;
-            throw;
-        }
-    }
+                """, framing);
 
     private static (byte[] Image, string ContentType) Decode(string dataUrl)
     {
@@ -236,15 +312,17 @@ public sealed class HeadlessAvatarRenderer(
         using var scope = scopes.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ITaikoDbContext>();
         var keys = await db.UserAvatars.AsNoTracking().ToDictionaryAsync(a => a.Baid, a => a.Key, cancellationToken);
+        var stills = await db.UserStills.AsNoTracking().ToDictionaryAsync(s => s.Baid, s => s.Key, cancellationToken);
         var animations = await db.UserWebProfiles.AsNoTracking().ToDictionaryAsync(p => p.Baid, p => p.CardAnimation, cancellationToken);
         var users = await db.UserData.AsNoTracking()
-            .Select(u => new { u.Baid, u.CurrentKigurumi, u.CurrentHead, u.CurrentBody, u.CurrentFace, u.ColorBody, u.ColorFace, u.ColorLimb })
+            .Select(u => new { u.Baid, u.CurrentKigurumi, u.CurrentHead, u.CurrentBody, u.CurrentFace, u.CurrentPuchi, u.ColorBody, u.ColorFace, u.ColorLimb })
             .ToListAsync(cancellationToken);
         foreach (var u in users)
         {
-            var key = AvatarKeys.Key(u.CurrentKigurumi, u.CurrentHead, u.CurrentBody, u.CurrentFace, u.ColorBody, u.ColorFace, u.ColorLimb,
-                animations.GetValueOrDefault(u.Baid));
-            if (keys.GetValueOrDefault(u.Baid) != key) Enqueue(u.Baid);
+            var animation = animations.GetValueOrDefault(u.Baid);
+            var key = AvatarKeys.Key(u.CurrentKigurumi, u.CurrentHead, u.CurrentBody, u.CurrentFace, u.ColorBody, u.ColorFace, u.ColorLimb, animation);
+            var stillKey = AvatarKeys.StillKey(u.CurrentKigurumi, u.CurrentHead, u.CurrentBody, u.CurrentFace, u.CurrentPuchi, u.ColorBody, u.ColorFace, u.ColorLimb, animation);
+            if (keys.GetValueOrDefault(u.Baid) != key || (this.stills && stills.GetValueOrDefault(u.Baid) != stillKey)) Enqueue(u.Baid);
         }
     }
 
@@ -252,6 +330,8 @@ public sealed class HeadlessAvatarRenderer(
     {
         if (page is { IsClosed: false } && browser is { IsClosed: false }) return page;
         await CloseBrowserAsync();
+        // A server that's killed rather than shut down can't close the browser itself; the job ends it instead.
+        KillWithServer.Enable();
         browser = await Puppeteer.LaunchAsync(new LaunchOptions
         {
             ExecutablePath = browserPath,

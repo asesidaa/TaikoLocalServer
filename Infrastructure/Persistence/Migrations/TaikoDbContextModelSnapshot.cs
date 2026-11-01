@@ -413,6 +413,9 @@ namespace TaikoLocalServer.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("Cards3D")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("RenderAvatars")
                         .HasColumnType("INTEGER");
 
@@ -805,6 +808,30 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("UserData");
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserStill", b =>
+                {
+                    b.Property<uint>("Baid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Image")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Baid");
+
+                    b.ToTable("UserStills");
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserWebProfile", b =>
                 {
                     b.Property<uint>("Baid")
@@ -981,6 +1008,17 @@ namespace TaikoLocalServer.Migrations
                     b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
                         .WithOne()
                         .HasForeignKey("TaikoLocalServer.Domain.Entities.UserAvatar", "Baid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ba");
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserStill", b =>
+                {
+                    b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
+                        .WithOne()
+                        .HasForeignKey("TaikoLocalServer.Domain.Entities.UserStill", "Baid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

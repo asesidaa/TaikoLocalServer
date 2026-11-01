@@ -159,7 +159,7 @@ public class UserSettingsController(ITaikoDbContext context, IServerAccess acces
 
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         // The costume or pose may have changed: render the avatar (it skips when it still matches).
-        avatars.Enqueue(baid);
+        avatars.Enqueue(baid, changed: true);
         return NoContent();
     }
 

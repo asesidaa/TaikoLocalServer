@@ -29,6 +29,9 @@ public static class CardStyle
     public static string Clip(CardAnimation a) => AvatarKeys.Clip(a);
 
     /// <summary>What an avatar shows (shared with the server renderer, see <see cref="AvatarKeys"/>).</summary>
+    /// <summary>The 2D view's still for this costume (AvatarKeys.StillKey), with the puchi.</summary>
+    public static string StillKey(UserSetting s) => AvatarKeys.StillKey(s.Kigurumi, s.Head, s.Body, s.Face, s.Puchi, s.BodyColor, s.FaceColor, s.LimbColor, s.CardAnimation);
+
     public static string AvatarKey(UserSetting s) =>
         AvatarKeys.Key(s.Kigurumi, s.Head, s.Body, s.Face, s.BodyColor, s.FaceColor, s.LimbColor, s.CardAnimation);
 

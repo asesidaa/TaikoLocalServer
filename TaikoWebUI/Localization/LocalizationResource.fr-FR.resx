@@ -3372,4 +3372,19 @@
   <data name="Too many tries. Wait a minute, then try again." xml:space="preserve">
     <value>Trop de tentatives. Attendez une minute, puis réessayez.</value>
   </data>
+  <data name="Enable 3D Renderer" xml:space="preserve">
+    <value>Activer le rendu 3D</value>
+  </data>
+  <data name="Player cards show an animated 3D don-chan. When off, they show a still image the server draws: lighter for phones and older PCs, and it updates a few seconds after a costume change." xml:space="preserve">
+    <value>Les cartes des joueurs montrent un don-chan animé en 3D. Désactivé : elles montrent une image fixe dessinée par le serveur, plus légère pour les téléphones et les PC anciens, mise à jour quelques secondes après un changement de costume.</value>
+  </data>
+  <data name="Player cards show an animated 3D don-chan. Turn on rendering avatars on the server to use still images instead." xml:space="preserve">
+    <value>Les cartes des joueurs montrent un don-chan animé en 3D. Activez le rendu des avatars sur le serveur pour utiliser des images fixes à la place.</value>
+  </data>
+  <data name="Player cards show 3D" xml:space="preserve">
+    <value>Les cartes montrent la 3D</value>
+  </data>
+  <data name="Player cards show still images" xml:space="preserve">
+    <value>Les cartes montrent des images fixes</value>
+  </data>
 </root>

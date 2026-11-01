@@ -1,5 +1,5 @@
 @* Switch with a label and optional hint; the whole row is the hit target. *@
-<label class="flex cursor-pointer items-center gap-3 py-2">
+<label class="flex items-center gap-3 py-2 @(Disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer")">
     @if (!string.IsNullOrEmpty(Image))
     {
         <img data-asset="@Image" alt="" class="size-8 shrink-0 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800" />
@@ -17,7 +17,7 @@
             <span class="block max-w-2xl text-xs text-zinc-500 dark:text-zinc-400">@Description</span>
         }
     </span>
-    <input type="checkbox" class="peer sr-only" checked="@Value" @onchange="OnChange" />
+    <input type="checkbox" class="peer sr-only" checked="@Value" disabled="@Disabled" @onchange="OnChange" />
     <span class="relative h-6 w-10 shrink-0 rounded-full bg-zinc-300 transition-colors after:absolute after:left-1 after:top-1 after:size-4 after:rounded-full after:bg-white after:shadow after:transition-transform after:duration-150 peer-checked:bg-primary-500 peer-checked:after:translate-x-4 peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500/40 dark:bg-zinc-700"></span>
 </label>
 
@@ -28,6 +28,8 @@
     /// <summary>A UI <see cref="TaikoWebUI.Components.Ui.Icon"/> name, used when there is no game <see cref="Image"/>.</summary>
     [Parameter] public string? Icon { get; set; }
     [Parameter] public bool Value { get; set; }
+    /// <summary>Shown but can't be changed (the reason belongs in the Description).</summary>
+    [Parameter] public bool Disabled { get; set; }
     [Parameter] public EventCallback<bool> ValueChanged { get; set; }
 
     private Task OnChange(ChangeEventArgs e) => ValueChanged.InvokeAsync(e.Value is true);
