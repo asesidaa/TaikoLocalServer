@@ -1,12 +1,317 @@
 @page "/Users/{baid:int}/HighScores"
 @attribute [Authorize]
+@implements IDisposable
 @inject PageState Page
+@inject HttpClient Client
+@inject NavigationManager Nav
+@inject AuthService AuthService
+@inject IJSRuntime Js
 
-<PageTitle>HighScores</PageTitle>
-<ComingSoon Title="@(Localizer["High Scores"])" IconName="highScores" />
+<PageTitle>@Localizer["High Scores"]</PageTitle>
+
+<div class="mx-auto max-w-6xl space-y-4">
+    <div class="flex flex-wrap items-baseline justify-between gap-2">
+        <h1 class="text-2xl font-semibold tracking-tight">@Localizer["High Scores"]</h1>
+        @if (data is not null)
+        {
+            <span class="text-sm @Css.Muted">@string.Format(Localizer["{0} of {1} {2} charts played"], data.PlayedPerDifficulty[diff - 1].ToString("N0"), data.Charts.ToString("N0"), GameData.DifficultyName((Difficulty)diff))</span>
+        }
+    </div>
+
+    <div class="space-y-3">
+        <div class="flex gap-1 overflow-x-auto rounded-2xl bg-zinc-100 p-1 dark:bg-zinc-900" role="tablist" aria-label="@Localizer["Difficulty"]">
+            @foreach (var (d, name) in GameData.Difficulties)
+            {
+                var on = diff == (int)d;
+                <button role="tab" aria-selected="@Css.Aria(on)" @onclick="() => Change(() => diff = (int)d)"
+                        class="flex min-w-max flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-medium @(on ? "bg-white shadow-sm dark:bg-zinc-800" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">
+                    <img data-asset="@GameData.DifficultyIcon(d)" alt="@name" class="size-6 object-contain" />
+                    <span class="hidden sm:inline">@name</span>
+                    @if (data is not null)
+                    {
+                        <span class="text-xs tabular-nums @Css.Muted">@data.PlayedPerDifficulty[(int)d - 1]</span>
+                    }
+                </button>
+            }
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+            <label class="relative w-full sm:w-auto sm:min-w-56 sm:flex-1">
+                <span class="sr-only">@Localizer["Search"]</span>
+                <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="search" Class="size-4" /></span>
+                <input type="search" value="@query" @oninput="OnSearch" placeholder="@Localizer["Search your scores"]" class="@Css.Input pl-9" />
+            </label>
+            <select aria-label="@Localizer["Genre"]" class="@Css.Input !w-auto !py-2" value="@genre" @onchange='e => Change(() => genre = int.Parse(e.Value?.ToString() ?? "-1"))'>
+                <option value="-1">@Localizer["All genres"]</option>
+                @foreach (var g in Enum.GetValues<SongGenre>())
+                {
+                    <option value="@((int)g)">@GameData.Genre(g).Name</option>
+                }
+            </select>
+            <select aria-label="@Localizer["Crown"]" class="@Css.Input !w-auto !py-2" value="@crown" @onchange='e => Change(() => crown = int.Parse(e.Value?.ToString() ?? "-1"))'>
+                <option value="-1">@Localizer["Any crown"]</option>
+                @for (var c = 0; c < 4; c++)
+                {
+                    <option value="@c">@Localizer[CrownLabels[c]]</option>
+                }
+            </select>
+            <select aria-label="@Localizer["Sort"]" class="@Css.Input !w-auto !py-2" value="@sort" @onchange='e => Change(() => sort = e.Value?.ToString() ?? "stars")'>
+                <option value="stars">@Localizer["Stars (high first)"]</option>
+                <option value="score">@Localizer["Score"]</option>
+                <option value="date">@Localizer["Recently set"]</option>
+                <option value="title">@Localizer["Title"]</option>
+            </select>
+            @if (others.Count > 0)
+            {
+                <span class="flex items-center gap-2 sm:ml-auto">
+                    <select aria-label="@Localizer["Compare with…"]" class="@Css.Input !w-auto !py-2 @(vs != 0 ? "!border-primary-500 ring-1 ring-primary-500" : "")" value="@vs"
+                            @onchange='e => Compare(uint.Parse(e.Value?.ToString() ?? "0"))'>
+                        <option value="0">@Localizer["Compare with…"]</option>
+                        @foreach (var o in others)
+                        {
+                            <option value="@o.Baid">@(string.IsNullOrEmpty(o.UserSetting.MyDonName) ? $"#{o.Baid}" : o.UserSetting.MyDonName)</option>
+                        }
+                    </select>
+                    @if (vs != 0)
+                    {
+                        <label class="flex cursor-pointer items-center gap-1.5 whitespace-nowrap text-sm">
+                            <input type="checkbox" class="size-4 accent-primary-500" checked="@behind" @onchange="e => Change(() => behind = e.Value is true)" />
+                            @string.Format(Localizer["Where {0} is ahead"], VsName)
+                        </label>
+                    }
+                </span>
+            }
+        </div>
+    </div>
+
+    @if (data is not null)
+    {
+        <div class="grid grid-cols-2 gap-2 lg:grid-cols-4">
+            @for (var c = 0; c < 4; c++)
+            {
+                var k = c;
+                var on = crown == k;
+                <button aria-pressed="@Css.Aria(on)" @onclick="() => Change(() => crown = crown == k ? -1 : k)"
+                        class="flex items-center gap-3 rounded-xl border p-3 text-left @(on ? "border-primary-500 bg-primary-500/5 ring-1 ring-primary-500" : "border-zinc-200 hover:border-zinc-300 dark:border-zinc-800")">
+                    <img data-asset="@GameData.CrownIcon((CrownType)k)" alt="" class="size-8 object-contain" />
+                    <span><span class="block text-lg font-semibold tabular-nums">@data.Crowns[k]</span><span class="block text-xs @Css.Muted">@Localizer[CrownTiles[k]]</span></span>
+                </button>
+            }
+        </div>
+
+        @if (vs != 0)
+        {
+            <div class="flex flex-wrap items-center gap-3 rounded-2xl border border-primary-500/30 bg-primary-500/10 px-4 py-3 text-sm">
+                <span class="font-medium">@string.Format(Localizer["You vs {0}"], VsName)</span>
+                <span>@((MarkupString)string.Format(Localizer["Ahead on <b>{0}</b> · behind on <b>{1}</b> of {2} charts you've both played"], data.VsAhead, data.VsBehind, data.VsBoth))</span>
+                <button class="ml-auto text-xs font-medium text-primary-700 hover:underline dark:text-primary-300" @onclick="() => Compare(0)">@Localizer["Stop comparing"]</button>
+            </div>
+        }
+    }
+
+    <section class="@Css.Card overflow-hidden">
+        @if (data is null)
+        {
+            <p class="px-4 py-12 text-center text-sm @Css.Muted">@Localizer["Loading..."]</p>
+        }
+        else if (data.Items.Count == 0)
+        {
+            <p class="px-4 py-12 text-center text-sm @Css.Muted">@(vs != 0 && behind ? string.Format(Localizer["{0} isn't ahead of you anywhere here."], VsName) : Localizer["No scores match."])</p>
+        }
+        else
+        {
+            var d = (Difficulty)diff;
+            <ul class="divide-y divide-zinc-100 px-3 md:hidden dark:divide-zinc-800">
+                @foreach (var r in data.Items)
+                {
+                    <li>
+                        <button class="flex w-full items-start gap-3 py-3 text-left" @onclick="() => Open(r)">
+                            <img data-asset="@GameData.DifficultyIcon(d)" alt="" class="size-7 object-contain" />
+                            <span class="min-w-0 flex-1">
+                                <span class="block truncate text-[15px]">@r.Name</span>
+                                <span class="mt-1 flex items-center gap-2">
+                                    @StarPill(r.Stars)
+                                    <span class="font-mono text-sm tabular-nums">@r.Score.ToString("N0")</span>
+                                    <img data-asset="@GameData.CrownIcon(r.Crown)" alt="@Localizer[GameData.CrownName(r.Crown)]" class="size-4" />
+                                    <span class="ml-auto">@(vs != 0 ? Delta(r) : Accuracy(r))</span>
+                                </span>
+                            </span>
+                        </button>
+                    </li>
+                }
+            </ul>
+            <div class="hidden overflow-x-auto md:block">
+                <table class="w-full text-sm [&_td_img]:max-w-none">
+                    <thead class="border-b border-zinc-100 text-left text-xs @Css.Muted dark:border-zinc-800">
+                        <tr>
+                            <th class="py-2.5 pl-4 pr-2 font-medium">@Localizer["Song"]</th>
+                            <th class="px-2 py-2.5 text-center font-medium">@Localizer["Stars"]</th>
+                            <th class="px-2 py-2.5 text-right font-medium">@Localizer["Score"]</th>
+                            <th class="w-8 px-2 py-2.5"></th>
+                            <th class="hidden px-2 py-2.5 font-medium lg:table-cell">@Localizer["Rank"]</th>
+                            @if (vs != 0)
+                            {
+                                <th class="px-2 py-2.5 text-right font-medium">@VsName</th>
+                                <th class="py-2.5 pl-2 pr-4 text-right font-medium">±</th>
+                            }
+                            else
+                            {
+                                <th class="hidden px-2 py-2.5 text-right font-medium lg:table-cell">@Localizer["Accuracy"]</th>
+                                <th class="hidden py-2.5 pl-2 pr-4 text-right font-medium xl:table-cell">@Localizer["Set on"]</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                        @foreach (var r in data.Items)
+                        {
+                            <tr class="cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/40" @onclick="() => Open(r)">
+                                <td class="w-full max-w-0 py-2 pl-4 pr-2">
+                                    <span class="flex items-center gap-2">
+                                        <span class="h-8 w-1 shrink-0 rounded-full" style="background:@GameData.Genre(r.Genre).Bg"></span>
+                                        <span class="min-w-0">
+                                            <span class="block truncate">@r.Name</span>
+                                            @if (r.NameEn.Length > 0)
+                                            {
+                                                <span class="block truncate text-xs @Css.Muted">@r.NameEn</span>
+                                            }
+                                        </span>
+                                    </span>
+                                </td>
+                                <td class="px-2 text-center">@StarPill(r.Stars)</td>
+                                <td class="px-2 text-right font-mono tabular-nums">@r.Score.ToString("N0")</td>
+                                <td class="px-2"><img data-asset="@GameData.CrownIcon(r.Crown)" alt="@Localizer[GameData.CrownName(r.Crown)]" title="@Localizer[GameData.CrownName(r.Crown)]" class="size-5" /></td>
+                                <td class="hidden px-2 lg:table-cell">
+                                    @if (GameData.RankIcon(r.Rank) is { } rank)
+                                    {
+                                        <img data-asset="@rank" alt="@string.Format(Localizer["Rank {0}"], r.Rank)" class="h-5 w-auto" />
+                                    }
+                                </td>
+                                @if (vs != 0)
+                                {
+                                    <td class="whitespace-nowrap px-2 text-right">
+                                        @if (r.VsScore is { } vsScore)
+                                        {
+                                            <span class="inline-flex items-center gap-1.5"><span class="font-mono tabular-nums @Css.Muted">@vsScore.ToString("N0")</span><img data-asset="@GameData.CrownIcon(r.VsCrown ?? CrownType.None)" alt="" class="size-4" /></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-xs @Css.Muted">@Localizer["Not played"]</span>
+                                        }
+                                    </td>
+                                    <td class="whitespace-nowrap py-2 pl-2 pr-4 text-right">@Delta(r)</td>
+                                }
+                                else
+                                {
+                                    <td class="hidden px-2 text-right tabular-nums lg:table-cell">@r.Accuracy.ToString("0.0")%</td>
+                                    <td class="hidden whitespace-nowrap pr-4 text-right text-xs xl:table-cell @Css.Muted">@(r.SetOn?.ToString("d MMM") ?? "–")</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-3 border-t border-zinc-100 px-4 py-3 dark:border-zinc-800">
+                <span class="text-xs tabular-nums @Css.Muted">@string.Format(Localizer["{0}–{1} of {2}"], ((data.Page - 1) * PageSize + 1).ToString("N0"), Math.Min(data.Page * PageSize, data.Total).ToString("N0"), data.Total.ToString("N0"))</span>
+                <Pager Current="data.Page" Total="data.TotalPages" OnPage="GoToPage" Label="@Localizer["Score pages"]" />
+            </div>
+        }
+    </section>
+</div>
 
 @code {
-    [Parameter] public int Baid { get; set; }
+    private const int PageSize = 50;
+    private static readonly string[] CrownLabels = ["Not cleared", "Cleared", "Full combo", "Donderful combo"];
+    private static readonly string[] CrownTiles = ["Not cleared", "Cleared", "Full combo", "Donderful"];
 
-    protected override void OnInitialized() => Page.Set(Localizer["Play Data"], Localizer["High Scores"]);
+    [Parameter] public int Baid { get; set; }
+    /// <summary>Opens already comparing (Friends › Compare scores).</summary>
+    [SupplyParameterFromQuery(Name = "vs")] public int? VsQuery { get; set; }
+
+    private HighScoresPage? data;
+    private int diff = 4, genre = -1, crown = -1, page = 1, request;
+    private string query = "", sort = "stars";
+    private bool behind;
+    private uint vs;
+    private List<User> others = [];
+    private CancellationTokenSource? typing;
+
+    private string VsName => string.IsNullOrEmpty(data?.VsName) ? $"#{vs}" : data!.VsName!;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.Set(Localizer["Play Data"], Localizer["High Scores"]);
+        if (VsQuery is > 0) { vs = (uint)VsQuery; crown = -1; query = ""; }
+        // Comparing needs access to the other player's scores: admins, or anyone in Local mode (friends later).
+        if (!AuthService.LoginRequired || AuthService.IsAdmin)
+            others = (await PlayerSelection.GetAllUsersAsync(Client)).Where(u => u.Baid != (uint)Baid).ToList();
+        await Load();
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
+
+    private async Task Load()
+    {
+        var mine = ++request;
+        var result = await Client.GetFromJsonAsync<HighScoresPage>(
+            $"api/HighScores/{Baid}?diff={diff}&q={Uri.EscapeDataString(query)}&genre={genre}&crown={crown}&sort={sort}&vs={vs}&behind={(behind ? "true" : "false")}&page={page}&limit={PageSize}");
+        if (mine != request) return;
+        data = result;
+        if (data is not null) page = data.Page;
+    }
+
+    private async Task Change(Action change)
+    {
+        change();
+        page = 1;
+        await Load();
+    }
+
+    private Task Compare(uint baid) => Change(() =>
+    {
+        vs = baid;
+        behind = false;
+    });
+
+    private async Task OnSearch(ChangeEventArgs e)
+    {
+        query = e.Value?.ToString() ?? "";
+        page = 1;
+        typing?.Cancel();
+        typing = new CancellationTokenSource();
+        try { await Task.Delay(200, typing.Token); } catch (TaskCanceledException) { return; }
+        await Load();
+    }
+
+    private async Task GoToPage(int p)
+    {
+        page = p;
+        await Load();
+        await Js.InvokeVoidAsync("scrollTo", new { top = 0, behavior = "instant" });
+    }
+
+    private void Open(HighScoreRow r) => Nav.NavigateTo($"/Users/{Baid}/Songs/{r.SongId}?diff={diff}");
+
+    private RenderFragment StarPill(int stars) => __builder =>
+    {
+        <span class="inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-semibold tabular-nums text-white" style="background:@GameData.DifficultyColor((Difficulty)diff)">★@stars</span>
+    };
+
+    private static RenderFragment Accuracy(HighScoreRow r) => __builder =>
+    {
+        <span class="text-xs @Css.Muted">@r.Accuracy.ToString("0.0")%</span>
+    };
+
+    private static RenderFragment Delta(HighScoreRow r) => __builder =>
+    {
+        if (r.VsScore is not { } other)
+        {
+            <span class="text-xs @Css.Muted">–</span>
+        }
+        else
+        {
+            var x = (long)r.Score - other;
+            <span class="font-mono text-xs font-semibold tabular-nums @(x > 0 ? "text-emerald-600 dark:text-emerald-400" : x < 0 ? "text-red-600 dark:text-red-400" : Css.Muted)">@(x > 0 ? "+" : x < 0 ? "−" : "±")@Math.Abs(x).ToString("N0")</span>
+        }
+    };
+
+    public void Dispose() => typing?.Cancel();
 }
