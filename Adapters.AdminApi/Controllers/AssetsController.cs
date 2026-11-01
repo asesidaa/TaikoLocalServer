@@ -6,7 +6,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 /// <summary>
 /// Serves the game assets written by <c>tools/extract</c> to the WebUI's own pages, for logged-in users only.
-/// They live in the exe's <c>wwwroot/don-model</c>, which the static-file middleware deliberately does not serve.
+/// They live in the exe's <c>wwwroot/game_data</c>, which the static-file middleware deliberately does not serve.
 /// A loose measure, not DRM: the WebUI holds them as blobs, and anything a browser renders can be dumped.
 /// </summary>
 [ApiController]
@@ -15,7 +15,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [EnableRateLimiting(DependencyInjection.AssetsRateLimitPolicy)]
 public class AssetsController : BaseAdminController<AssetsController>
 {
-    private static readonly string Root = Path.GetFullPath(Path.Combine(PathHelper.GetRootPath(), "don-model"));
+    private static readonly string Root = Path.GetFullPath(Path.Combine(PathHelper.GetRootPath(), PathHelper.GameDataFolder));
 
     // Only what extract writes; anything else 404s.
     private static readonly FileExtensionContentTypeProvider ContentTypes = new(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -38,7 +38,7 @@ public class AssetsController : BaseAdminController<AssetsController>
         }
 
         var fullPath = Path.GetFullPath(Path.Combine(Root, path));
-        // Rejects "..", rooted paths and anything outside don-model.
+        // Rejects "..", rooted paths and anything outside game_data.
         if (!fullPath.StartsWith(Root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
             || !System.IO.File.Exists(fullPath)
             || !ContentTypes.TryGetContentType(fullPath, out var contentType))

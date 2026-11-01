@@ -150,6 +150,7 @@ try
         };
     });
 
+    TaikoLocalServer.Infrastructure.GameDataCatalog.PathHelper.MoveLegacyGameDataFolder();
     var gameDataCatalog = app.Services.GetService<IGameDataCatalog>();
     gameDataCatalog.ThrowIfNull();
     await gameDataCatalog.InitializeAsync();
@@ -184,7 +185,8 @@ try
     app.Use(async (context, next) =>
     {
         var path = context.Request.Path;
-        if (path.StartsWithSegments("/data") || path.StartsWithSegments("/don-model")
+        // /don-model: the folder's old name, in case an install still has one.
+        if (path.StartsWithSegments("/data") || path.StartsWithSegments("/game_data") || path.StartsWithSegments("/don-model")
             || (path.Value?.Contains(".db3", StringComparison.OrdinalIgnoreCase) ?? false))
         {
             context.Response.StatusCode = StatusCodes.Status404NotFound;

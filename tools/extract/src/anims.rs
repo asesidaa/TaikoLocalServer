@@ -16,7 +16,7 @@ use ssbh_data::prelude::*;
 use crate::models::{decompose, push_bones, Gltf, FLOAT};
 use crate::v12::curve::Curve;
 
-/// Output names under `don-model/animation/`. The standalone previewer calls the library `Don_3D_Nij.glb`;
+/// Output names under `game_data/animation/`. The standalone previewer calls the library `Don_3D_Nij.glb`;
 /// the WebUI embed points at `don.glb` instead.
 pub const LIBRARY: &str = "don.glb";
 pub const FACE_KEYS: &str = "facekeys.json";

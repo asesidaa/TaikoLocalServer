@@ -54,6 +54,9 @@ struct Args {
 /// Records which layers the outputs came from, so switching `--mods` on or off rebuilds them.
 const STAMP: &str = "extract.json";
 
+/// The folder under `<out>` for everything but the datatables; the server serves it through `api/Assets`.
+const GAME_DATA: &str = "game_data";
+
 #[derive(Default, Debug, PartialEq)]
 pub struct Report {
     label: String,
@@ -98,46 +101,51 @@ fn run(args: Args) -> Result<Vec<Report>> {
     let game = game::Game::new(x64, args.mods)?;
     println!("game:   {}{}", game.base().display(), if game.modded() { " + Data_mods" } else { "" });
     println!("output: {}", out.display());
-    let don_model = out.join("don-model");
-    reset_if_layers_changed(&game, &out, &don_model)?;
+    let game_data = out.join(GAME_DATA);
+    // The folder used to be called don-model: keep what an older extract wrote.
+    let old = out.join("don-model");
+    if old.is_dir() && !game_data.exists() {
+        fs::rename(&old, &game_data).with_context(|| format!("renaming {} to {GAME_DATA}", old.display()))?;
+    }
+    reset_if_layers_changed(&game, &out, &game_data)?;
 
     let mut reports = vec![copy_datatables(&game, &out.join("data").join("datatable"))?];
     for dir in TEXTURE_DIRS {
         let mut report = Report::new(&format!("{dir} textures"));
-        textures::convert_dir(&game, &format!("model/{dir}"), &don_model.join(dir), &mut report)?;
+        textures::convert_dir(&game, &format!("model/{dir}"), &game_data.join(dir), &mut report)?;
         reports.push(report);
     }
     for dir in MODEL_DIRS {
         let mut report = Report::new(&format!("{dir} models"));
-        models::convert_category(&game, &format!("model/{dir}"), &don_model.join(dir), &mut report)?;
+        models::convert_category(&game, &format!("model/{dir}"), &game_data.join(dir), &mut report)?;
         reports.push(report);
     }
     let mut report = Report::new("animations");
-    anims::convert(&game, &don_model.join("animation"), &mut report)?;
+    anims::convert(&game, &game_data.join("animation"), &mut report)?;
     reports.push(report);
     let mut report = Report::new("nameplates");
-    ui::nameplates(&game, &don_model.join("nameplate"), &mut report)?;
+    ui::nameplates(&game, &game_data.join("nameplate"), &mut report)?;
     reports.push(report);
     let mut report = Report::new("scoreboard");
-    ui::scoreboard(&game, &don_model.join("scoreboard"), &mut report)?;
+    ui::scoreboard(&game, &game_data.join("scoreboard"), &mut report)?;
     reports.push(report);
     let mut report = Report::new("icons");
-    ui::icons(&game, &don_model.join("ui"), &mut report)?;
+    ui::icons(&game, &game_data.join("ui"), &mut report)?;
     reports.push(report);
     let mut report = Report::new("font pages");
-    font::convert(&game, &don_model.join("font"), &mut report)?;
+    font::convert(&game, &game_data.join("font"), &mut report)?;
     reports.push(report);
     let mut report = Report::new("tones");
-    tones::convert(&game, &don_model.join("tone"), &mut report)?;
+    tones::convert(&game, &game_data.join("tone"), &mut report)?;
     reports.push(report);
-    fs::write(don_model.join(STAMP), serde_json::to_string(&serde_json::json!({ "mods": game.modded() }))?)?;
+    fs::write(game_data.join(STAMP), serde_json::to_string(&serde_json::json!({ "mods": game.modded() }))?)?;
     Ok(reports)
 }
 
 /// Outputs are skipped when newer than their source, which can't tell a mod file from the original it
 /// replaced. So when `--mods` differs from the last run, everything extract wrote is rebuilt once.
-fn reset_if_layers_changed(game: &game::Game, out: &Path, don_model: &Path) -> Result<()> {
-    let last = fs::read_to_string(don_model.join(STAMP)).ok()
+fn reset_if_layers_changed(game: &game::Game, out: &Path, game_data: &Path) -> Result<()> {
+    let last = fs::read_to_string(game_data.join(STAMP)).ok()
         .and_then(|s| serde_json::from_str::<serde_json::Value>(&s).ok())
         .and_then(|v| v["mods"].as_bool());
     // No stamp: an older extract (base files only), or a first run.
@@ -145,8 +153,8 @@ fn reset_if_layers_changed(game: &game::Game, out: &Path, don_model: &Path) -> R
         return Ok(());
     }
     println!("{} Data_mods since the last run: rebuilding everything.", if game.modded() { "Using" } else { "No longer using" });
-    if don_model.is_dir() {
-        fs::remove_dir_all(don_model).with_context(|| format!("clearing {}", don_model.display()))?;
+    if game_data.is_dir() {
+        fs::remove_dir_all(game_data).with_context(|| format!("clearing {}", game_data.display()))?;
     }
     for name in DATATABLES {
         let _ = fs::remove_file(out.join("data").join("datatable").join(name));

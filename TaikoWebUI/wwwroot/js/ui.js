@@ -23,7 +23,7 @@
     return fetch(url, token ? { ...init, headers: { ...init?.headers, Authorization: `Bearer ${token}` } } : init);
   };
 
-  // ---- Game text: the game's glyph pages (extract: don-model/font/<sheet>/<page>.{png,json}) ----
+  // ---- Game text: the game's glyph pages (extract: game_data/font/<sheet>/<page>.{png,json}) ----
   // Pages hold 256 code points. Missing glyphs fall back along the sheet chain, then Zen Maru Gothic.
   // The nameplate's face is the game's *_30 sheets (Lumen font slot 1; see tools/extract/src/font.rs).
   const GT_LANG = ["jp_30", "en_30", "tw_30", "kr_30", "tw_30"];   // MyDonNameLanguage → sheet (no Simplified sheet)

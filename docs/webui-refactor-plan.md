@@ -138,8 +138,8 @@ All paths are relative to `Data/x64/`. `Data_mods/` is ignored.
 |---|---|---|---|
 | `datatable/{musicinfo,music_order,wordlist,don_cos_reward,shougou,neiro}.bin` | 6 files | copied as-is to `wwwroot/data/datatable/` (the server already decrypts them on startup) | server catalog |
 | `datatable/don_cos.bin`, `don_color.bin` | 2 files | copied as-is. The server decrypts them on startup like the other tables, so the CLI needs no keys, and exposes them via `api/GameData/...` | previewer: costume ID → model file map and the color palette (replaces the hardcoded `CostumeColors`) |
-| `model/{body,head,cos}/<name>/` (`.numdlb/.numshb/.nusktb/.numatb` + `textures/*.nutexb`) | 163 body, 140 head, 179 cos (~340 MB raw) | one `.glb` per part, to `wwwroot/don-model/{body,head,cos}/` | previewer |
-| `model/{face,paint,acce}/*.nutexb` | 22 face, 58 paint, 149 acce | `.png` (or `.webp`), to `wwwroot/don-model/{face,paint,acce}/` | previewer |
+| `model/{body,head,cos}/<name>/` (`.numdlb/.numshb/.nusktb/.numatb` + `textures/*.nutexb`) | 163 body, 140 head, 179 cos (~340 MB raw) | one `.glb` per part, to `wwwroot/game_data/{body,head,cos}/` | previewer |
+| `model/{face,paint,acce}/*.nutexb` | 22 face, 58 paint, 149 acce | `.png` (or `.webp`), to `wwwroot/game_data/{face,paint,acce}/` | previewer |
 | `animation/*.nuanmb` | 54 files | `don.glb` + `facekeys.json` (the existing `nuanmb_to_glb` tool) | previewer |
 | (later) `lumen/`, `textures/` | nameplates, rank panels | `.png` | Profile nameplate (replaces the committed `images/Nameplates`) |
 
@@ -162,7 +162,7 @@ The plan is one Rust CLI, `extract`, that grows out of `nuanmb_to_glb` and lives
 Then:
 
 - This repo's CI (`.github/workflows`) builds `tools/extract` with `cargo build --release` on the Windows runner, in the same publish job, and drops the exe next to `TaikoLocalServer.exe`. No cross-repo release fetching is needed.
-- **README:** the top-level `README.md` setup section swaps "copy 6 datatable files" for a "Run `extract`" section (what it needs, the exact command, what it writes, how to re-run it after a game update, and what to do when it reports a missing file). `tools/extract/README.md` holds the developer details (subcommands, building, format notes; it absorbs the current `nuanmb_to_glb` README). `Host/README.md` notes the new `wwwroot/don-model/` folder.
+- **README:** the top-level `README.md` setup section swaps "copy 6 datatable files" for a "Run `extract`" section (what it needs, the exact command, what it writes, how to re-run it after a game update, and what to do when it reports a missing file). `tools/extract/README.md` holds the developer details (subcommands, building, format notes; it absorbs the current `nuanmb_to_glb` README). `Host/README.md` notes the new `wwwroot/game_data/` folder.
 - No C# setup command is needed. The server keeps owning decryption and only needs `don_cos` + `don_color` added to `FileGameDataCatalog`.
 
 Rejected alternatives:
@@ -231,26 +231,26 @@ model/<cat>/<name>/
 - `data/*.json`: every operator table (QR codes, tokens, locked songs, events, …).
 - `data/datatable/*.bin`: the game's encrypted datatables.
 - `data/datatable/*.json`: the **decrypted** copies `FileGameDataCatalog` writes beside them (`musicinfo.json`, `wordlist.json`, …).
-- `don-model/**` once `extract` runs (if `.glb` gets a MIME type).
+- `game_data/**` once `extract` runs (if `.glb` gets a MIME type).
 - `taiko.db3` (+ `-wal`, `-shm`) is *not* served, only because `.db3` has no MIME mapping. That is one `ServeUnknownFileTypes` away from leaking every account.
 
 The WebUI itself reads one table raw: `GameDataService.InitializeAsync` fetches `data/dan_data.json`. Everything else already goes through `api/GameData/*`.
 
 **Fix (part of step 5):**
-1. **Stop serving server data as static files.** Short-circuit `/data/**`, `/don-model/**` and `*.db3*` with a 404 before `UseStaticFiles()`, so only the WebUI's own files stay public (`index.html`, `_framework`, `css`, `appsettings.json`, `Dashboard.md`). It's a path guard and not a folder move, so existing operator layouts keep working.
+1. **Stop serving server data as static files.** Short-circuit `/data/**`, `/game_data/**` and `*.db3*` with a 404 before `UseStaticFiles()`, so only the WebUI's own files stay public (`index.html`, `_framework`, `css`, `appsettings.json`, `Dashboard.md`). It's a path guard and not a folder move, so existing operator layouts keep working.
 2. **Dan data via the API:** add `GET api/GameData/DanData` (from `IGameDataCatalog`, which already loads it), and switch `GameDataService` to it, lazily, like the other catalogs (this also covers perf item P4).
-3. **Models and textures via an authenticated endpoint:** `GET api/Assets/{**path}` under `[Authorize]` (the policy-aware one, so local mode still works). It serves from `PathHelper.GetRootPath()/don-model` with an explicit content type (`.glb → model/gltf-binary`, `.png`, `.json`), rejects `..` or rooted paths, and sends `ETag`/`Cache-Control: private`. This fixes the MIME gap and the content-root mismatch in one place.
+3. **Models and textures via an authenticated endpoint:** `GET api/Assets/{**path}` under `[Authorize]` (the policy-aware one, so local mode still works). It serves from `PathHelper.GetRootPath()/game_data` with an explicit content type (`.glb → model/gltf-binary`, `.png`, `.json`), rejects `..` or rooted paths, and sends `ETag`/`Cache-Control: private`. This fixes the MIME gap and the content-root mismatch in one place.
 4. **The embed loads through `fetch()` → `ArrayBuffer` → `GLTFLoader.parse()`**, with blob URLs for PNGs, sending the bearer token. No asset URL appears in the DOM.
 5. Later, consider moving `taiko.db3` out of `wwwroot` (a `Database.json` path plus a one-time move on startup). It's not urgent once the guard exists.
 
-**Output and size.** About 230 MB under `<exe>/wwwroot/don-model/{body,head,cos,paint,acce,face,animation}/`. It's git-ignored and never included in the publish output. The extractor is idempotent: it skips any output newer than its source.
+**Output and size.** About 230 MB under `<exe>/wwwroot/game_data/{body,head,cos,paint,acce,face,animation}/`. It's git-ignored and never included in the publish output. The extractor is idempotent: it skips any output newer than its source.
 
 **Build order** (one PR each):
 1. `tools/extract` skeleton: CLI args, copying the datatables, the summary report.
 2. Textures: `.nutexb` → PNG, for `paint`, `acce` and `face`, and for embedding in GLBs.
 3. Models: MODL + MESH + SKEL + MATL (both) → GLB. Check `cos_001000` field-by-field against the `numd-exporter` output, then check every model loads in the previewer.
 4. Animations: port `nuanmb_to_glb`, building the skeleton from `.nusktb`.
-5. Server: block static access to `/data`, `/don-model` and `*.db3*`; add `api/GameData/DanData` and the authenticated `api/Assets/{**path}`; point the WebUI at them; README "Run extract"; CI `cargo build` + bundle the exe.
+5. Server: block static access to `/data`, `/game_data` and `*.db3*`; add `api/GameData/DanData` and the authenticated `api/Assets/{**path}`; point the WebUI at them; README "Run extract"; CI `cargo build` + bundle the exe.
 
 ### 2b. No game assets in the repo: `extract` for everything (2026-10-31)
 
@@ -280,7 +280,7 @@ The WebUI itself reads one table raw: `GameDataService.InitializeAsync` fetches 
   - `extract lumen-render <file.nulm> <selector> <out_dir>` renders a contact sheet.
 
   This is exactly what the prototype work used Node scripts for.
-- **Output layout:** `don-model/ui/<set>/<label>.png`, plus one `ui.json` index of every set and its labels in order. The WebUI resolves `api/Assets/ui/<set>/<label>.png` and never hardcodes lists. `TitlePlateStrings` and the difficulty and option string arrays come from the index.
+- **Output layout:** `game_data/ui/<set>/<label>.png`, plus one `ui.json` index of every set and its labels in order. The WebUI resolves `api/Assets/ui/<set>/<label>.png` and never hardcodes lists. `TitlePlateStrings` and the difficulty and option string arrays come from the index.
 
 **The "not extracted" warning.**
 - `extract` writes `wwwroot/extract.json`: the extract format version, the game build it came from (Data folder name and datatable hashes), a timestamp, and per-section counts.
@@ -308,7 +308,7 @@ The WebUI itself reads one table raw: `GameDataService.InitializeAsync` fetches 
   | Name | 30, or 24 in the dan/shougou variants | `#ffffff` | 3 px black | 190×60 or 260×60 |
 
   All are centred, and glyphs scale by `size / fontPoint`.
-- **`extract` output:** `don-model/font/<sheet>/<page>.png` + `<page>.json`, where a page is 256 code points (`cp >> 8`) holding only the glyphs present. Pages are cropped and repacked so each is small. A name needs 1–3 pages, never the 16–32 MB sheets. A `font/index.json` lists the sheets, `fontPoint` and the language map.
+- **`extract` output:** `game_data/font/<sheet>/<page>.png` + `<page>.json`, where a page is 256 code points (`cp >> 8`) holding only the glyphs present. Pages are cropped and repacked so each is small. A name needs 1–3 pages, never the 16–32 MB sheets. A `font/index.json` lists the sheets, `fontPoint` and the language map.
 - **WebUI:** a small `<GameText Text Lang Size Fill Outline Box>` component draws on a canvas from the pages, fetched through `api/Assets` and cached. Used only by the nameplate and scoreboard previews.
 - **Prototyped:** `Shibe` (en), `どんちゃん` (jp), `동동이` (kr) and `太鼓之達人` (tw) render in the game's style on the full in-game nameplate, with no missing glyphs.
 
@@ -407,7 +407,7 @@ The previewer is React 19 + react-three-fiber + Mantine + tweakpane. Embedding R
 1. In `don-chan-previewer`, add a second Vite entry, `embed.html`. It renders only `<DonCharacter>` on a transparent canvas (no Mantine, tweakpane, debug panel or stats) and reads its state from the URL plus `postMessage`: `{ body, head, kigurumi, face, puchi, bodyColor, faceColor, limbColor, anim }`.
 2. Its build output (`dist-embed/`, a few hundred KB of JS) is vendored into `TaikoWebUI/wwwroot/don-preview/` by a script, or pulled as a CI artifact.
 3. A Blazor `<DonPreview Setting="@userSetting" />` component renders the iframe and `postMessage`s on every change. That's about 20 lines of C# and one JS interop call, and the costume dropdowns update the model live.
-4. Model URLs point at `/don-model/...` produced by §2. If the assets are missing (extractor not run), the component shows a "run extract" notice instead of broken images.
+4. Model URLs point at `/game_data/...` produced by §2. If the assets are missing (extractor not run), the component shows a "run extract" notice instead of broken images.
 
 Why an iframe: it fully isolates the React/three.js runtime from Blazor's DOM diffing, needs no build coupling between the two repos beyond copying static files, and keeps the previewer independently developable.
 
@@ -417,7 +417,7 @@ Deletes: `wwwroot/images/Costumes/**`, the `Masks` list, `CostumeColors`, `Costu
 
 Anything the browser renders can be pulled out with dev tools or a GPU capture. No scheme makes the models undownloadable, so the aim is only to stop casual grabbing (right-click, guessable URLs, a browsable folder). In order of value for effort:
 
-1. **Serve `don-model/` through an authenticated endpoint**, not as public static files. Then only logged-in users can fetch, and there's no folder to browse or link to. This is a small controller plus the existing auth; it's also the fix for the `.glb` MIME gap and the exe-dir-vs-content-root mismatch from §2.
+1. **Serve `game_data/` through an authenticated endpoint**, not as public static files. Then only logged-in users can fetch, and there's no folder to browse or link to. This is a small controller plus the existing auth; it's also the fix for the `.glb` MIME gap and the exe-dir-vs-content-root mismatch from §2.
 2. **Load through `fetch()` → `ArrayBuffer` → `GLTFLoader.parse()` (and blob URLs for PNGs)**, so no asset URL ever appears in the DOM or as a right-clickable image. This is about 10 lines in the embed.
 3. **Optional light obfuscation:** for example, XOR or AES the bytes with a per-session key from the API, and decode in the embed before `parse()`. This defeats "save the network response" but costs CPU and HTTP caching, and the key is in the page anyway. Only do it if 1–2 prove insufficient.
 
@@ -468,7 +468,7 @@ ASB61 has **93 title plates** (sprite 541; the first 21 are unchanged from 39.06
 
 **Clip masks (solved in the port).** The high 16 bits of the place op's depth word are Flash's `clipDepth`. The object at depth *d* with clip *c* is a mask for depths *d+1…c* and is never drawn. That explains every case: 39.06's `ai_3` scrolling pattern (shape 50 clips sprite 52), and ASB61's solid grey/white shapes 190 and 295 that the prototype drew as blocks. Mask bounds also clip each label's bounds, so masked-off content no longer widens the canvas.
 
-**Ported** into `tools/extract` as `src/lumen.rs` (parser and rasterizer with masks) plus `src/nameplates.rs`. The output is `don-model/nameplate/plate_<label>.png`, `dan_<label>.png` and `plates.json` (labels in order, index = `TitlePlateId`), served by `api/Assets/nameplate/...`.
+**Ported** into `tools/extract` as `src/lumen.rs` (parser and rasterizer with masks) plus `src/nameplates.rs`. The output is `game_data/nameplate/plate_<label>.png`, `dan_<label>.png` and `plates.json` (labels in order, index = `TitlePlateId`), served by `api/Assets/nameplate/...`.
 - **Canvases:** 39.06 plates 340×88, ASB61 plates 348×93, badges 64×32.
 - **Results:** 39.06 gives 21 plates and 38 badges; ASB61 gives 93 plates and 38 badges; both have 0 failures. `ai_3` now matches the WebUI's `nameplate_AI_3.webp`, and the prototype's black band was the unclipped pattern.
 - **Tests:** a hand-built LMB checks parsing, label lookup and mask clipping.
@@ -485,7 +485,7 @@ ASB61 has **93 title plates** (sprite 541; the first 21 are unchanged from 39.06
 **Why not baked APNG/WebP:** one loop of `ai_3` at 340×88 is 2,400 frames. Cutting it short (e.g. 4 s) causes a visible seam on every multi-layer plate. Baking each layer separately would need each layer's own transform, mask and colour in the final coordinates, which is most of a renderer anyway.
 
 **Plan: ship the scene as data and play it in the browser.**
-- **`extract`** writes each UI set's **scene**: a JSON with only the sprites, shapes (verts/UVs/indices, fill), matrices, positions, colours and labels reachable from the set's sprite, plus its atlas PNG (the decoded `.nutexb` layers, one PNG per layer). Path: `don-model/ui/<set>/scene.json` + `atlas_<n>.png`. The static PNGs stay too, for lists, `<img>`, the card endpoint fallback, and browsers without WebGL.
+- **`extract`** writes each UI set's **scene**: a JSON with only the sprites, shapes (verts/UVs/indices, fill), matrices, positions, colours and labels reachable from the set's sprite, plus its atlas PNG (the decoded `.nutexb` layers, one PNG per layer). Path: `game_data/ui/<set>/scene.json` + `atlas_<n>.png`. The static PNGs stay too, for lists, `<img>`, the card endpoint fallback, and browsers without WebGL.
 - **WebUI `LumenPlayer`:** a small WebGL module (~300 lines, a direct port of `src/lumen.rs`, and the Node prototype already validates the semantics), wrapped as a Blazor component `<LumenPlayer Set="nameplate" Label="gold" />`. It draws textured or solid triangles with colour multiply/add, clip masks via the stencil buffer, and nested sprites each advancing their own playhead (`(t − placedAt) mod frameCount`), at 60 fps.
 - **Plays only while visible** (`IntersectionObserver`), and honours `prefers-reduced-motion` by showing frame 0, i.e. the static PNG.
 - **`extract` itself gains the same nested-playhead logic** (render at time *t*), so `lumen-render` can produce frame strips for checking, and the server's headless card renderer (§4b) can capture a chosen frame.
@@ -493,7 +493,7 @@ ASB61 has **93 title plates** (sprite 541; the first 21 are unchanged from 39.06
 - **Size (measured on 39.06):** the whole nameplate scene, before pruning to reachable sprites, is 412 KB of JSON, **34 KB gzipped**, plus the decoded atlas PNG at **406 KB** (5 × 512²). It's loaded once and cached.
 - **No base frame yet.** The WebUI currently layers plates on `nameplate.webp`, the black capsule. That frame is part of the full-nameplate sprite (`1p` label), not a sprite of its own. Wait for the final Profile design before deciding whether to export the frame or the whole composite.
 - **WebUI switch:** point the Profile page at `api/Assets/nameplate/plate_{label}.png`, taking the labels from `plates.json` instead of the hardcoded `TitlePlateStrings`, so newer builds' extra plates show up. Then delete `wwwroot/images/Nameplates/`.
-- **Scoreboard done (2026-10-31):** `common/player_board` → `don-model/scoreboard/panel_{easy,normal,hard,oni,oniura}.png` (these replace `rank_panel_*.webp`) plus the `digit_ns_00…09` glyphs, found by instance name (`num_kiwami_instance` → `bg_instance`, `n1_ins`). The rest of `lumen/` (crown and difficulty icons) can follow the same pattern, the remaining committed art under `wwwroot/images`.
+- **Scoreboard done (2026-10-31):** `common/player_board` → `game_data/scoreboard/panel_{easy,normal,hard,oni,oniura}.png` (these replace `rank_panel_*.webp`) plus the `digit_ns_00…09` glyphs, found by instance name (`num_kiwami_instance` → `bg_instance`, `n1_ins`). The rest of `lumen/` (crown and difficulty icons) can follow the same pattern, the remaining committed art under `wwwroot/images`.
 
 ---
 
@@ -591,7 +591,7 @@ The server runs in one of two modes, chosen by a single switch. The goal is an e
 | 2 | Client auth: A1–A8 | 1 (S5) |
 | 3 | Perf: P1–P5, P7, P11 (+ P6 bug fix) | none |
 | 4 | `tools/extract`: move `nuanmb_to_glb` in, add the open-source model exporter + texture export, its README | open questions answered |
-| 5 | Server: stop serving `/data`, `/don-model`, `*.db3*` statically; `api/GameData/DanData` + authenticated `api/Assets`; load `don_color`; bundle `extract.exe` in CI; README "Run extract" | 4 |
+| 5 | Server: stop serving `/data`, `/game_data`, `*.db3*` statically; `api/GameData/DanData` + authenticated `api/Assets`; load `don_color`; bundle `extract.exe` in CI; README "Run extract" | 4 |
 | 6 | Previewer `embed` entry (in `don-chan-previewer`) | none (can start now with existing GLBs) |
 | 7 | LumexUI spike: Tailwind CLI build, shell, Login, Users, HighScores | 2 |
 | 8+ | Remaining pages, Profile + `<DonPreview>` last; delete `images/Costumes`, remove MudBlazor | 5, 6, 7 |
