@@ -2,7 +2,7 @@
 <label class="flex cursor-pointer items-center gap-3 py-2">
     @if (!string.IsNullOrEmpty(Image))
     {
-        <img src="@Image" alt="" class="size-8 shrink-0 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800" />
+        <img data-asset="@Image" alt="" class="size-8 shrink-0 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800" />
     }
     <span class="min-w-0 flex-1">
         <span class="block text-sm font-medium">@Label</span>

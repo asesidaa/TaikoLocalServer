@@ -1,4 +1,5 @@
 using System.Globalization;
+using Microsoft.JSInterop;
 
 namespace TaikoWebUI.Pages;
 
@@ -126,6 +127,9 @@ public partial class Profile : IDisposable
             if (pick.Plate is { } plate) s.TitlePlateId = plate;
         });
     }
+
+    // Song option icons come from api/Assets (data-asset), which needs the token.
+    protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
 
     private string CostumeName(string type, uint id) => type switch
     {

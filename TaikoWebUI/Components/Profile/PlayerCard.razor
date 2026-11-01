@@ -36,7 +36,7 @@
                             <p class="font-display text-xl">@Localizer[GameData.Dans[top.DanId - 1].Key]</p>
                             <p class="text-xs text-zinc-300">@(GameData.IsGold(top.ClearState) ? Localizer["Gold pass"] : Localizer["Passed"])</p>
                         </div>
-                        <img src="@($"images/dani_{top.ClearState}.webp")" alt="" class="size-12" />
+                        <img data-asset="@GameData.DanStamp(top.ClearState)" alt="" class="size-12" />
                     }
                     else
                     {

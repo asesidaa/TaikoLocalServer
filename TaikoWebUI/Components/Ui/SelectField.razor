@@ -10,7 +10,7 @@
     <span class="mt-1.5 flex items-center gap-2">
         @if (!string.IsNullOrEmpty(Image))
         {
-            <img src="@Image" alt="" class="size-8 shrink-0 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800" />
+            <img data-asset="@Image" alt="" class="size-8 shrink-0 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800" />
         }
         <select class="@Css.Input dark:[&>option]:bg-zinc-900" @onchange="OnChange">
             @for (var i = 0; i < Options.Count; i++)

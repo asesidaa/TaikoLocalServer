@@ -153,7 +153,7 @@
     img.dataset.loaded = path;
     if (!assetUrls.has(path)) assetUrls.set(path, authFetch(`api/Assets/${path}`)
       .then(r => r.ok ? r.blob() : null).then(b => b && URL.createObjectURL(b)).catch(() => null));
-    assetUrls.get(path).then(url => { if (img.dataset.asset !== path) return; if (url) img.src = url; else img.hidden = true; });
+    assetUrls.get(path).then(url => { if (img.dataset.asset !== path) return; img.hidden = !url; if (url) img.src = url; });
   });
 
   // The 3D canvas covers the whole card; `anchor` is the box (in px, relative to the iframe) that zoom/camY frame.

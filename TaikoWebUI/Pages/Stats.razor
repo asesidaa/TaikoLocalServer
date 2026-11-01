@@ -50,9 +50,9 @@
                     <tr>
                         <th class="py-2 text-left font-medium">@Localizer["Difficulty"]</th>
                         <th class="px-2 py-2 text-right font-medium">@Localizer["Played"]</th>
-                        <th class="px-2 py-2 text-right font-medium"><img src="images/crown_Clear.webp" alt="@Localizer["Clear"]" title="@Localizer["Clear"]" class="ml-auto size-6" /></th>
-                        <th class="px-2 py-2 text-right font-medium"><img src="images/crown_Gold.webp" alt="@Localizer["Full combo"]" title="@Localizer["Full combo"]" class="ml-auto size-6" /></th>
-                        <th class="px-2 py-2 text-right font-medium"><img src="images/crown_Dondaful.webp" alt="@Localizer["Donderful"]" title="@Localizer["Donderful"]" class="ml-auto size-6" /></th>
+                        <th class="px-2 py-2 text-right font-medium"><img data-asset="@GameData.CrownIcon(1)" alt="@Localizer["Clear"]" title="@Localizer["Clear"]" class="ml-auto size-6" /></th>
+                        <th class="px-2 py-2 text-right font-medium"><img data-asset="@GameData.CrownIcon(2)" alt="@Localizer["Full combo"]" title="@Localizer["Full combo"]" class="ml-auto size-6" /></th>
+                        <th class="px-2 py-2 text-right font-medium"><img data-asset="@GameData.CrownIcon(3)" alt="@Localizer["Donderful"]" title="@Localizer["Donderful"]" class="ml-auto size-6" /></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -60,7 +60,7 @@
                     {
                         var c = Crowns(d);
                         <tr>
-                            <td class="py-2"><span class="inline-flex items-center gap-2"><img src="@($"images/difficulty_{d}.webp")" alt="" class="size-6" />@Localizer[name]</span></td>
+                            <td class="py-2"><span class="inline-flex items-center gap-2"><img data-asset="@GameData.DifficultyIcon(d)" alt="" class="size-6" />@Localizer[name]</span></td>
                             <td class="px-2 text-right">@c.Played</td>
                             <td class="px-2 text-right">@c.Clear</td>
                             <td class="px-2 text-right">@c.Full</td>

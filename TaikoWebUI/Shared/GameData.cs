@@ -70,6 +70,27 @@ public static class GameData
 
     public static readonly string[] Speeds = ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "2.0", "2.5", "3.0", "3.5", "4.0"];
 
+    // ---- Game icons, extracted by tools/extract into don-model/ui (served by api/Assets; see ui.js hydrateAssets) ----
+
+    /// <summary>A song option icon: doron, abekobe (inverse), kimagure / detarame (random), note_pos.</summary>
+    public static string OptionIcon(string label) => $"ui/option_{label}.png";
+
+    /// <summary>The speed icon for <see cref="Speeds"/>[index]; ×1.0 has none in the game.</summary>
+    public static string? SpeedIcon(uint index) =>
+        index is > 0 and < 15 ? OptionIcon($"speedx{Speeds[index].TrimEnd('0').TrimEnd('.')}") : null;
+
+    public static string DifficultyIcon(Difficulty d) => $"ui/difficulty_{d switch
+    {
+        Difficulty.Easy => "easy", Difficulty.Normal => "normal", Difficulty.Hard => "hard", Difficulty.Oni => "oni", _ => "ura",
+    }}.png";
+
+    /// <summary>1 = clear (silver), 2 = full combo (gold), 3 = donderful (rainbow).</summary>
+    public static string CrownIcon(int crown) => $"ui/crown_badge_crown_{crown}.png";
+
+    /// <summary>The Dani Dojo pass stamp (合格, red or gold; clear / full combo / perfect); null when not passed.</summary>
+    public static string? DanStamp(DanClearState s) => s == DanClearState.NotClear ? null
+        : $"ui/dani_stamp_{(IsGold(s) ? "gold" : "red")}_0{ClearType(s) + 1}.png";
+
     public static readonly string[] Tones =
     [
         "Taiko", "Matsuri", "Inuneko", "Wonderfultaiko", "Drum", "Tambourine", "Wadadon", "Clapping", "Conga", "8bittaiko",

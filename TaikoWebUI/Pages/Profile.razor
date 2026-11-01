@@ -5,6 +5,7 @@
 @inject AuthService AuthService
 @inject PageState Page
 @inject ToastService Toast
+@inject IJSRuntime Js
 @using TaikoWebUI.Components.Profile
 
 <PageTitle>@Localizer["Profile"]</PageTitle>
@@ -134,10 +135,10 @@ else
         var s = setting!;
         var random = (uint)s.PlaySetting.RandomType;
         <div class="grid gap-4 sm:grid-cols-2">
-            <SelectField Label="@Localizer["Speed"]" Options="@GameData.Speeds.Select(v => $"×{v}").ToList()" Image="@($"images/Speed/{s.PlaySetting.Speed}.png")"
+            <SelectField Label="@Localizer["Speed"]" Options="@GameData.Speeds.Select(v => $"×{v}").ToList()" Image="@GameData.SpeedIcon(s.PlaySetting.Speed)"
                          Value="s.PlaySetting.Speed" ValueChanged="v => Set(x => x.PlaySetting.Speed = v)" />
             <SelectField Label="@Localizer["Random"]" Options="@Localized(["None", "Whimsical", "Messy"])"
-                         Image="@(random == 0 ? null : $"images/Random_{(random == 1 ? "Whimsical" : "Messy")}.png")"
+                         Image="@(random == 0 ? null : GameData.OptionIcon(random == 1 ? "kimagure" : "detarame"))"
                          Value="random" ValueChanged="v => Set(x => x.PlaySetting.RandomType = (RandomType)v)" />
             <SelectField Label="@Localizer["Tone"]" Options="@Localized(GameData.Tones)" Value="s.ToneId" ValueChanged="v => Set(x => x.ToneId = v)" />
             <label class="block">
@@ -146,16 +147,16 @@ else
                     <span class="text-xs tabular-nums @Css.Muted">@(s.NotesPosition > 0 ? "+" : "")@s.NotesPosition</span>
                 </span>
                 <span class="mt-1.5 flex items-center gap-2">
-                    <img src="images/NotesAdj.png" alt="" class="size-8 shrink-0 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800" />
+                    <img data-asset="@GameData.OptionIcon("note_pos")" alt="" class="size-8 shrink-0 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800" />
                     <input type="range" min="-5" max="5" step="1" value="@s.NotesPosition" class="w-full accent-primary-500"
                            @onchange="e => Set(x => x.NotesPosition = int.Parse(e.Value!.ToString()!))" />
                 </span>
             </label>
         </div>
         <div class="mt-4 grid gap-x-6 sm:grid-cols-2">
-            <Toggle Label="@Localizer["Vanish"]" Description="@Localizer["Notes disappear before the judge mark"]" Image="images/Doron.png"
+            <Toggle Label="@Localizer["Vanish"]" Description="@Localizer["Notes disappear before the judge mark"]" Image="@GameData.OptionIcon("doron")"
                     Value="s.PlaySetting.IsVanishOn" ValueChanged="v => Set(x => x.PlaySetting.IsVanishOn = v)" />
-            <Toggle Label="@Localizer["Inverse"]" Description="@Localizer["Swap don and ka"]" Image="images/Mirror.png"
+            <Toggle Label="@Localizer["Inverse"]" Description="@Localizer["Swap don and ka"]" Image="@GameData.OptionIcon("abekobe")"
                     Value="s.PlaySetting.IsInverseOn" ValueChanged="v => Set(x => x.PlaySetting.IsInverseOn = v)" />
             <Toggle Label="@Localizer["Voice"]" Description="@Localizer["Announcer voice"]" Value="s.IsVoiceOn" ValueChanged="v => Set(x => x.IsVoiceOn = v)" />
             <Toggle Label="@Localizer["Skip Song"]" Description="@Localizer["Allow skipping during play"]" Value="s.IsSkipOn" ValueChanged="v => Set(x => x.IsSkipOn = v)" />
