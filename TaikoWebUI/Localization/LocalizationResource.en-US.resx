@@ -349,10 +349,10 @@
     <value>Success</value>
   </data>
   <data name="Ura Oni" xml:space="preserve">
-    <value>Ura</value>
+    <value>Ura Oni</value>
   </data>
   <data name="Oni" xml:space="preserve">
-    <value>Extreme</value>
+    <value>Oni</value>
   </data>
   <data name="Hard" xml:space="preserve">
     <value>Hard</value>
@@ -535,7 +535,7 @@
     <value>Electric Guitar</value>
   </data>
   <data name="UraOni" xml:space="preserve">
-    <value>Ura</value>
+    <value>Ura Oni</value>
   </data>
   <data name="Set Up Each Time" xml:space="preserve">
     <value>Set Up Each Time</value>
