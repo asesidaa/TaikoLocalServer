@@ -24,11 +24,14 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
         }
 
         var cardEntries = await context.Cards.Where(card => card.Baid == baid).ToListAsync();
+        var profile = await context.UserWebProfiles.FindAsync(baid);
         return new User
         {
             Baid = userDatum.Baid,
             AccessCodes = cardEntries.Select(card => card.AccessCode).ToList(),
-            IsAdmin = userDatum.IsAdmin
+            IsAdmin = userDatum.IsAdmin,
+            // The sidebar shows the name and avatar from this.
+            UserSetting = UserSettingsController.BuildUserSetting(userDatum, profile),
         };
     }
 

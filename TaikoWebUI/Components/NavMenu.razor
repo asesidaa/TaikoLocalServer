@@ -37,9 +37,16 @@
 {
     <div class="border-t border-zinc-200/80 p-3 dark:border-zinc-800">
         <div class="flex items-center gap-3 rounded-xl px-2 py-2">
-            <span class="grid size-10 place-items-center rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-sm font-semibold text-white">@Initial</span>
+            @if (me is not null)
+            {
+                <Avatar Setting="me.UserSetting" Size="40" />
+            }
+            else
+            {
+                <span class="grid size-10 place-items-center rounded-full bg-zinc-200 text-sm font-semibold text-zinc-500 dark:bg-zinc-800">?</span>
+            }
             <div class="min-w-0 flex-1">
-                <p class="truncate text-sm font-medium">@userName</p>
+                <p class="truncate text-sm font-medium">@me?.UserSetting.MyDonName</p>
                 <p class="truncate text-xs @Css.Muted">Baid @Baid@(AuthService.IsAdmin ? $" · {Localizer["Admin"]}" : "")</p>
             </div>
             <button class="@Css.IconButton hover:!text-primary-600" aria-label="@Localizer["Log Out"]" @onclick="OnLogout"><Icon Name="logOut" /></button>
@@ -54,11 +61,10 @@ else if (!AuthService.LoginRequired)
 @code {
     private bool playDataOpen = true;
     private bool settingsOpen;
-    private string userName = "";
+    private User? me;
 
     // The signed-in user, or (Local mode) the player picked in the top bar.
     private uint Baid => AuthService.LoginRequired ? AuthService.GetLoggedInBaid() : Players.Baid;
-    private string Initial => string.IsNullOrEmpty(userName) ? "?" : userName[..1].ToUpperInvariant();
 
     private List<(string, string)> SettingsLinks()
     {
@@ -126,7 +132,7 @@ else if (!AuthService.LoginRequired)
     private async Task LoadUserName()
     {
         var user = AuthService.IsLoggedIn ? await AuthService.GetLoggedInUser() : null;
-        userName = user?.UserSetting.MyDonName ?? "";
+        me = user;
     }
 
     private async void OnAuthChanged(object? sender, EventArgs e)
