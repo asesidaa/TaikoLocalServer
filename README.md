@@ -16,7 +16,11 @@ It is composed of two major components :
 ### Setup Steps
 
 1. Extract the Server's release anywhere
-2. From the game files (Data/x64/datatable), copy `music_order.bin`, `musicinfo.bin`, `wordlist.bin`, `don_cos_reward.bin`, `shougou.bin`,`neiro.bin` to [Host/wwwroot/data/datatable](./Host/wwwroot/data/datatable/)
+2. Run `extract.exe` from the server folder, pointing it at your game install (the folder that contains `Data`):
+   ```bash
+   extract.exe --game "C:\Games\Taiko no Tatsujin Nijiiro Version"
+   ```
+   This copies the datatables the server needs and converts the don-chan models, textures and animations for the web UI's 3D preview (about 175 MB, in a few seconds). It writes into the `wwwroot` folder next to it, never into your game folder. Run it again after a game update; files that are already up to date are skipped. If it reports anything as `MISSING` or `FAILED`, check that `--game` points at a complete install. See [tools/extract](./tools/extract/README.md) for details.
 3. (Optional) In `Certificates` folder, import `root.pfx` to trusted root store and `cert.pfx` to personal store. All the other import options can be kept default
 4. Visit [http://localhost](http://localhost). If the WebUI starts without errors, the config is fine
 5. Start your game! (First boot with the server will take a good minute, be patient!)

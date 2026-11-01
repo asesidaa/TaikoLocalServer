@@ -161,6 +161,19 @@ try
             await next();
         });
     }
+    // Server data shares wwwroot with the WebUI; only the WebUI's own files may be served statically.
+    // Datatables and models go through authenticated api/GameData and api/Assets instead.
+    app.Use(async (context, next) =>
+    {
+        var path = context.Request.Path;
+        if (path.StartsWithSegments("/data") || path.StartsWithSegments("/don-model")
+            || (path.Value?.Contains(".db3", StringComparison.OrdinalIgnoreCase) ?? false))
+        {
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            return;
+        }
+        await next();
+    });
     app.UseBlazorFrameworkFiles();
     app.UseStaticFiles();
     app.UseRouting();

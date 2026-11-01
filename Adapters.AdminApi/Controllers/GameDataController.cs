@@ -5,6 +5,9 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Authorize]
 public class GameDataController(IGameDataCatalog catalog) : BaseAdminController<GameDataController>
 {
+    [HttpGet("DanData")]
+    public IActionResult GetDanData() => Ok(catalog.GetCommonDanDataDictionary().Values);
+
     [HttpGet("MusicDetails")]
     public IActionResult GetMusicDetails() => Ok(catalog.GetMusicDetailDictionary());
 

@@ -32,7 +32,7 @@ public partial class DaniDojo
             .Sort((stageData, otherStageData) => stageData.SongNumber.CompareTo(otherStageData.SongNumber)));
         
         _bestDataMap = response.DanBestDataList.ToDictionary(data => data.DanId);
-        danMap = GameDataService.GetDanMap();
+        danMap = await GameDataService.GetDanMap();
 
         if (!UiSettings.Value.DisplayUnplayedDans)
         {

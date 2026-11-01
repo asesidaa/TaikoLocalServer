@@ -5,7 +5,7 @@ namespace TaikoWebUI.Services;
 public class GameDataService : IGameDataService
 {
     private readonly HttpClient client;
-    private ImmutableDictionary<uint, DanData> danMap = ImmutableDictionary<uint, DanData>.Empty;
+    private Task<ImmutableDictionary<uint, DanData>>? danMapTask;
     private Dictionary<uint, MusicDetail>? musicDetailDictionary = new();
     private List<Costume>? costumeList;
     private Dictionary<uint,Title>? titleDictionary = new();
@@ -22,14 +22,6 @@ public class GameDataService : IGameDataService
         this.client = client;
     }
 
-    public async Task InitializeAsync(string dataBaseUrl)
-    {
-        dataBaseUrl = dataBaseUrl.TrimEnd('/');
-        var danData = await client.GetFromJsonAsync<List<DanData>>($"{dataBaseUrl}/data/dan_data.json");
-        danData.ThrowIfNull();
-        danMap = danData.ToImmutableDictionary(data => data.DanId);
-    }
-    
     public async Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary()
     {
         if (!musicDetailInitialized)
@@ -118,9 +110,14 @@ public class GameDataService : IGameDataService
         return musicDetails.TryGetValue(songId, out var musicDetail) ? musicDetail.Index : int.MaxValue;
     }
 
-    public ImmutableDictionary<uint, DanData> GetDanMap()
+    // Fetched on first use: api/GameData needs a logged-in user, so it can't load at startup.
+    public Task<ImmutableDictionary<uint, DanData>> GetDanMap() => danMapTask ??= LoadDanMapAsync();
+
+    private async Task<ImmutableDictionary<uint, DanData>> LoadDanMapAsync()
     {
-        return danMap;
+        var danData = await client.GetFromJsonAsync<List<DanData>>("api/GameData/DanData");
+        danData.ThrowIfNull();
+        return danData.ToImmutableDictionary(data => data.DanId);
     }
     
     public int GetMusicStarLevel(Dictionary<uint, MusicDetail> musicDetails, uint songId, Difficulty difficulty)

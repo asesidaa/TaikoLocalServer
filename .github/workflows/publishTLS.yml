@@ -51,12 +51,24 @@ jobs:
             }
           }
 
+      # windows-latest ships a Rust toolchain. extract.exe goes next to
+      # TaikoLocalServer.exe so its default --out (<exe dir>/wwwroot) is right.
+      - name: Build and test extract
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          cargo test --release --locked --manifest-path tools/extract/Cargo.toml
+          if ($LASTEXITCODE -ne 0) { throw "cargo test exited $LASTEXITCODE" }
+          cargo build --release --locked --manifest-path tools/extract/Cargo.toml
+          if ($LASTEXITCODE -ne 0) { throw "cargo build exited $LASTEXITCODE" }
+
       - name: Locate publish output
         id: locate
         shell: pwsh
         run: |
           $path = "Host/bin/Release/net10.0/win-x64/publish"
           if (-not (Test-Path $path)) { throw "publish dir missing: $path" }
+          Copy-Item tools/extract/target/release/extract.exe $path
           "path=$path" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           "name=TLS-${{ env.Major_Version_Number }}.${{ env.Minor_Version_Number }}.${{ env.Build_Number }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
