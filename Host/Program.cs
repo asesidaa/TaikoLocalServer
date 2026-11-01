@@ -119,11 +119,12 @@ try
     {
         var db = scope.ServiceProvider.GetRequiredService<TaikoDbContext>();
         // A database update (pending migrations on an existing database) is backed up first, unless that's switched off.
-        if (db.Database.GetPendingMigrations().Any() && db.Database.GetAppliedMigrations().Any())
+        var applied = db.Database.GetAppliedMigrations().ToList();
+        if (applied.Count > 0 && db.Database.GetPendingMigrations().Any())
         {
-            bool beforeUpdates;
-            try { beforeUpdates = db.BackupSchedules.AsNoTracking().FirstOrDefault()?.BeforeUpdates ?? true; }
-            catch (Microsoft.Data.Sqlite.SqliteException) { beforeUpdates = true; }   // no schedule table yet
+            // The schedule's table exists once its migration has run; before that, back up.
+            var beforeUpdates = !applied.Any(m => m.EndsWith("_BackupSchedule"))
+                                || (db.BackupSchedules.AsNoTracking().FirstOrDefault()?.BeforeUpdates ?? true);
             if (beforeUpdates)
                 await app.Services.GetRequiredService<TaikoLocalServer.Application.Abstractions.IBackupService>().CreateAsync("update");
         }
@@ -196,7 +197,7 @@ try
         var path = context.Request.Path;
         // /don-model: the folder's old name, in case an install still has one.
         if (path.StartsWithSegments("/data") || path.StartsWithSegments("/game_data") || path.StartsWithSegments("/don-model")
-            || (path.Value?.Contains(".db3", StringComparison.OrdinalIgnoreCase) ?? false))
+            || (!path.StartsWithSegments("/api") && (path.Value?.Contains(".db3", StringComparison.OrdinalIgnoreCase) ?? false)))
         {
             context.Response.StatusCode = StatusCodes.Status404NotFound;
             return;

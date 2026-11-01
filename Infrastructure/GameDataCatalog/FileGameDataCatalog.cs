@@ -327,7 +327,18 @@ public partial class FileGameDataCatalog : IGameDataCatalog
         foreach (var name in DatatableNames)
         {
             var bin = Path.Combine(dir, $"{name}.bin");
-            if (File.Exists(bin)) DecryptDataTable(bin, Path.Combine(dir, $"{name}.json"));
+            var json = Path.Combine(dir, $"{name}.json");
+            // The .json carries its .bin's timestamp, so it's decrypted again only when extract brought a different .bin
+            // (saves time, and two servers sharing the folder don't write the same file at once).
+            if (File.Exists(bin) && (!File.Exists(json) || File.GetLastWriteTimeUtc(json) != File.GetLastWriteTimeUtc(bin)))
+            {
+                try
+                {
+                    DecryptDataTable(bin, json);
+                    File.SetLastWriteTimeUtc(json, File.GetLastWriteTimeUtc(bin));
+                }
+                catch (IOException) when (File.Exists(json)) { }   // being written by another process: use what's there
+            }
         }
 
         var missing = DatatableNames.Where(n => !File.Exists(Path.Combine(dir, $"{n}.json"))).ToHashSet();
