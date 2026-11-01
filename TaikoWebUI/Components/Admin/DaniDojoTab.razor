@@ -18,10 +18,11 @@
         @Item(GaidenFile, Localizer["Gaiden"], Localizer["Every cabinet"])
     </nav>
 
-    <div class="min-w-0 space-y-4">
+    @* One card per set, as in the prototype: the header, then the ranks beside the course editor (from xl). *@
+    <div class="@Css.Card min-w-0">
         @if (Set is { } current)
         {
-            <section class="@Css.Card flex flex-wrap items-center gap-3 p-5">
+            <section class="flex flex-wrap items-center gap-3 border-b border-zinc-100 p-5 dark:border-zinc-800">
                 <div class="min-w-0 flex-1">
                     @if (renaming)
                     {
@@ -50,22 +51,31 @@
                 }
             </section>
         }
+        else
+        {
+            <section class="border-b border-zinc-100 p-5 dark:border-zinc-800">
+                <h2 class="font-semibold">@Localizer["Gaiden"]</h2>
+                <p class="text-sm @Css.Muted">@Localizer["Extra dan-style courses, offered on every cabinet."]</p>
+                <p class="font-mono text-xs @Css.Muted">wwwroot/data/@file</p>
+            </section>
+        }
 
         @if (draft is null || music is null)
         {
-            <section class="@Css.Card p-6 text-sm @Css.Muted">@Localizer["Loading..."]</section>
+            <p class="p-6 text-sm @Css.Muted">@Localizer["Loading..."]</p>
         }
         else
         {
             var courses = draft.OfType<JsonObject>().ToList();
-            <section class="@Css.Card p-4">
-                <div class="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+            <div class="grid xl:grid-cols-[200px_minmax(0,1fr)]">
+            <div class="border-b border-zinc-100 p-3 dark:border-zinc-800 xl:border-b-0 xl:border-r">
+                <div class="grid grid-cols-2 gap-1 sm:grid-cols-3 xl:grid-cols-1">
                     @for (var i = 0; i < courses.Count; i++)
                     {
                         var index = i;
                         var on = index == selected;
                         var unknown = Songs(courses[index]).Any(x => !music.ContainsKey(x["songNo"]?.GetValue<uint>() ?? 0));
-                        <button class="flex items-center gap-2 rounded-xl px-3 py-2 text-left text-sm @(on ? "bg-primary-500/10 font-medium text-primary-700 dark:text-primary-300" : "hover:bg-zinc-100 dark:hover:bg-zinc-800")"
+                        <button aria-current="@(on ? "true" : null)" class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-left text-sm @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "hover:bg-zinc-100 dark:hover:bg-zinc-800/60")"
                                 @onclick="() => selected = index">
                             <span class="min-w-0 flex-1 truncate">@CourseName(courses[index])</span>
                             @if (unknown)
@@ -75,12 +85,15 @@
                         </button>
                     }
                 </div>
-            </section>
-            @if (courses.Count > 0)
-            {
-                selected = Math.Clamp(selected, 0, courses.Count - 1);
-                @CourseEditor(courses[selected])
-            }
+            </div>
+            <div class="min-w-0 p-5">
+                @if (courses.Count > 0)
+                {
+                    selected = Math.Clamp(selected, 0, courses.Count - 1);
+                    @CourseEditor(courses[selected])
+                }
+            </div>
+            </div>
         }
     </div>
 </div>
@@ -298,7 +311,7 @@
     {
         var songs = Songs(course);
         var borders = Borders(course);
-        <section class="@Css.Card p-5 sm:p-6">
+        <div>
             <div class="flex flex-wrap items-end justify-between gap-3">
                 <div>
                     <h2 class="font-display text-xl">@CourseName(course)</h2>
@@ -405,7 +418,7 @@
             {
                 <button class="@Css.GhostButton mt-2 !px-2" @onclick="() => AddCondition(borders)"><Icon Name="plus" />@Localizer["Add condition"]</button>
             }
-        </section>
+        </div>
     };
 
     private RenderFragment Pair(JsonObject b, string label, string red, string gold, uint type) => __builder =>

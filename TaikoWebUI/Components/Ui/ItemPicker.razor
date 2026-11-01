@@ -1,0 +1,65 @@
+@* Pick one item by name or ID (costumes, titles, plates). Like the song picker: search-first, 100 rows at a time,
+   items already in the list disabled. *@
+<div class="fade fixed inset-0 z-[60] grid place-items-center bg-black/50 p-4" @onclick="Close" @onkeydown="OnKey">
+    <div role="dialog" aria-modal="true" aria-labelledby="ip-h" @onclick:stopPropagation style="--origin:center"
+         class="pop flex max-h-[min(680px,calc(100dvh-2rem))] w-full max-w-md flex-col rounded-2xl bg-white shadow-2xl dark:bg-zinc-900">
+        <div class="flex shrink-0 items-center justify-between px-4 pt-4">
+            <h2 id="ip-h" class="font-semibold">@Title</h2>
+            <button class="@Css.IconButton" aria-label="@Localizer["Close"]" @onclick="Close"><Icon Name="x" /></button>
+        </div>
+        <div class="shrink-0 px-4 pt-3">
+            <label class="relative block">
+                <span class="sr-only">@Localizer["Search"]</span>
+                <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="search" /></span>
+                <input type="search" autofocus autocomplete="off" value="@query" class="@Css.Input pl-9"
+                       placeholder="@string.Format(Localizer["Search {0} by name or ID"], Items.Count.ToString("N0"))"
+                       @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
+            </label>
+        </div>
+        <ul class="mt-2 min-h-0 flex-1 overflow-y-auto px-2 pb-2">
+            @{
+                var q = query.Trim();
+                var hits = Items.Where(x => q.Length == 0 || x.Id.ToString() == q || x.Name.Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            @if (hits.Count == 0)
+            {
+                <li class="px-3 py-8 text-center text-sm @Css.Muted">@Localizer["Nothing matches."]</li>
+            }
+            @foreach (var (id, name) in hits.Take(Shown))
+            {
+                var taken = Taken.Contains(id);
+                <li>
+                    <button disabled="@taken" @onclick="() => OnPick.InvokeAsync(id)"
+                            class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm hover:bg-zinc-100 disabled:opacity-45 disabled:hover:bg-transparent dark:hover:bg-zinc-800">
+                        <span class="min-w-0 flex-1 truncate">@(name.Length > 0 ? name : Localizer["(no name)"])</span>
+                        @if (taken)
+                        {
+                            <span class="text-xs @Css.Muted">@TakenLabel</span>
+                        }
+                        <span class="font-mono text-xs tabular-nums text-zinc-400">#@id</span>
+                    </button>
+                </li>
+            }
+            @if (hits.Count > Shown)
+            {
+                <li class="px-3 py-3 text-center text-xs @Css.Muted">@string.Format(Localizer["{0} more. Keep typing to narrow it down."], (hits.Count - Shown).ToString("N0"))</li>
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    private const int Shown = 100;
+
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter, EditorRequired] public IReadOnlyList<(uint Id, string Name)> Items { get; set; } = [];
+    [Parameter] public IReadOnlySet<uint> Taken { get; set; } = new HashSet<uint>();
+    [Parameter] public string TakenLabel { get; set; } = "";
+    [Parameter] public EventCallback<uint> OnPick { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private string query = "";
+
+    private Task Close() => OnClose.InvokeAsync();
+    private Task OnKey(KeyboardEventArgs e) => e.Key == "Escape" ? Close() : Task.CompletedTask;
+}

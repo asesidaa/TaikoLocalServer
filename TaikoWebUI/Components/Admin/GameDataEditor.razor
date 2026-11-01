@@ -62,7 +62,7 @@
     private string qrQuery = "";
     private string newSerial = "", newReward = "";
     private bool pickingMain;
-    private readonly Dictionary<string, string> chipInput = [];
+    private string? pickingKind;
     // folderId / setId → its entry when loaded, so changed entries get a new verupNo on save.
     private Dictionary<uint, string> loadedEntries = [];
 
@@ -287,7 +287,7 @@
         }
     };
 
-    // Costume and title locks: ID chips per kind, with add and remove.
+    // Costume and title locks: chips per kind; Add opens a searchable list of that kind by name.
     private RenderFragment Chips(string[] kinds, Func<string, uint, string> nameOf) => __builder =>
     {
         <div class="space-y-5">
@@ -298,7 +298,7 @@
                     draft[kind] = ids = [];
                 }
                 <div>
-                    <p class="mb-2 text-sm font-medium">@kind</p>
+                    <p class="mb-2 text-sm font-medium">@KindLabel(kind)</p>
                     <div class="flex flex-wrap items-center gap-1.5">
                         @foreach (var node in ids.ToList())
                         {
@@ -313,29 +313,40 @@
                                         @onclick="async () => { ids.Remove(node); await Changed(); }"><Icon Name="x" Class="size-3" /></button>
                             </span>
                         }
-                        <form class="inline-flex" @onsubmit="async () => await AddChip(kind, ids)" @onsubmit:preventDefault>
-                            <input inputmode="numeric" placeholder="@Localizer["Add ID"]" class="@Css.Input !w-24 !rounded-full !py-1 text-xs"
-                                   value="@chipInput.GetValueOrDefault(kind)" @oninput="e => chipInput[kind] = e.Value?.ToString() ?? string.Empty" />
-                        </form>
+                        <button class="inline-flex items-center gap-1 rounded-full border border-dashed border-zinc-300 px-2.5 py-1 text-xs font-medium text-zinc-600 hover:border-primary-500 hover:text-primary-600 dark:border-zinc-600 dark:text-zinc-300"
+                                @onclick="() => pickingKind = kind"><Icon Name="plus" Class="size-3.5" />@Localizer["Add"]</button>
                     </div>
                 </div>
             }
         </div>
+        @if (pickingKind is { } picking && draft![picking] is JsonArray list)
+        {
+            <ItemPicker Title="@string.Format(Localizer["Lock: {0}"], KindLabel(picking))" Items="ChoicesFor(picking)"
+                        Taken="list.Select(n => n?.GetValue<uint>() ?? 0).ToHashSet()" TakenLabel="@Localizer["Locked"]"
+                        OnClose="() => pickingKind = null" OnPick="async id => { list.Add(id); pickingKind = null; await Changed(); }" />
+        }
     };
 
-    private async Task AddChip(string kind, JsonArray ids)
+    private string KindLabel(string kind) => kind switch
     {
-        if (!uint.TryParse(chipInput.GetValueOrDefault(kind), out var id) || ids.Any(n => n?.GetValue<uint>() == id)) return;
-        ids.Add(id);
-        chipInput[kind] = "";
-        await Changed();
-    }
+        "kigurumi" => Localizer["Kigurumi"], "head" => Localizer["Heads"], "body" => Localizer["Bodies"], "face" => Localizer["Face paint"],
+        "puchi" => Localizer["Puchi"], "title" => Localizer["Titles"], "titlePlate" => Localizer["Title plates"], _ => kind,
+    };
+
+    // Everything of that kind the game has, by name.
+    private List<(uint Id, string Name)> ChoicesFor(string kind) => kind switch
+    {
+        "title" => titles.Values.OrderBy(t => t.TitleId).Select(t => (t.TitleId, TitleName(kind, t.TitleId))).ToList(),
+        "titlePlate" => GameData.TitlePlates.Select((p, i) => ((uint)i, p.Name)).ToList(),
+        _ => costumes.Where(c => c.CostumeType == kind).OrderBy(c => c.CostumeId).Select(c => (c.CostumeId, CostumeName(kind, c.CostumeId))).ToList(),
+    };
 
     private string CostumeName(string kind, uint id) =>
         costumes.FirstOrDefault(c => c.CostumeType == kind && c.CostumeId == id) is { } c ? (c.CostumeNameEN.Length > 0 ? c.CostumeNameEN : c.CostumeName) : "";
 
     private string TitleName(string kind, uint id) =>
-        kind == "title" && titles.TryGetValue(id, out var t) ? (t.TitleNameEN.Length > 0 ? t.TitleNameEN : t.TitleName) : "";
+        kind == "title" && titles.TryGetValue(id, out var t) ? (t.TitleNameEN.Length > 0 ? t.TitleNameEN : t.TitleName)
+        : kind == "titlePlate" && id < GameData.TitlePlates.Length ? GameData.TitlePlates[id].Name : "";
 
     // Tokens: a name → ID grid; -1 turns a token off.
     private RenderFragment Tokens => __builder =>
