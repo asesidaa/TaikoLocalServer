@@ -61,13 +61,28 @@ public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog cat
             return forbid;
         if (month is < 1 or > 12 || year is < 2000 or > 9999) return BadRequest(new { message = "Bad month." });
 
-        var plays = (await Plays(baid)).Where(p => Matches(p, diff, best)).ToList();
-        var inMonth = plays.Where(p => p.PlayTime.Year == year && p.PlayTime.Month == month).ToList();
+        var start = new DateTime(year, month, 1);
+        var inMonth = (await Plays(baid, start, start.AddMonths(1))).Where(p => Matches(p, diff, best)).ToList();
+        int total;
+        DateTime? latest;
+        if (best)
+        {
+            // shortcut: an all-time count of new bests needs every play in order, so with that filter on the whole
+            // history is read (0.4 s at 100,000 plays); a window-function query would avoid it if that ever matters.
+            var all = (await Plays(baid, DateTime.MinValue, DateTime.MaxValue)).Where(p => Matches(p, diff, true)).ToList();
+            (total, latest) = (all.Count, all.Count == 0 ? null : all.Max(p => p.PlayTime));
+        }
+        else
+        {
+            var all = context.SongPlayData.Where(p => p.Baid == baid && !p.Skipped && (diff == 0 || p.Difficulty == (Difficulty)diff));
+            total = await all.CountAsync(HttpContext.RequestAborted);
+            latest = await all.MaxAsync(p => (DateTime?)p.PlayTime, HttpContext.RequestAborted);
+        }
         return new PlayHistoryMonth
         {
             Days = inMonth.GroupBy(p => p.PlayTime.Day).ToDictionary(g => g.Key, g => g.Count()),
-            Plays = plays.Count,
-            Latest = plays.Count == 0 ? null : plays.Max(p => p.PlayTime).Date,
+            Plays = total,
+            Latest = latest?.Date,
         };
     }
 
@@ -78,7 +93,7 @@ public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog cat
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
 
-        var day = (await Plays(baid)).Where(p => p.PlayTime.Date == date.Date).ToList();
+        var day = await Plays(baid, date.Date, date.Date.AddDays(1));
         return new PlayHistoryDay { Sessions = Sessions(day, diff, best) };
     }
 
@@ -89,7 +104,7 @@ public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog cat
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
         var since = DateTime.Today.AddDays(1 - Math.Clamp(days, 1, 31));
-        return new PlayHistoryDay { Sessions = Sessions((await Plays(baid)).Where(p => p.PlayTime >= since).ToList(), 0, false) };
+        return new PlayHistoryDay { Sessions = Sessions(await Plays(baid, since, DateTime.MaxValue), 0, false) };
     }
 
     // Groups plays into sessions (newest first), keeping the plays that match the filters; sessions left empty are dropped.
@@ -147,13 +162,22 @@ public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog cat
 
     private static bool Matches(Row p, int diff, bool best) => (diff == 0 || (int)p.Difficulty == diff) && (!best || p.Play.NewBest);
 
-    // Every play, oldest first, with "new best" worked out per chart. One user's plays are a few thousand rows at most.
-    private async Task<List<Row>> Plays(uint baid)
+    // The plays from `from` up to `to`, oldest first, with "new best" worked out per chart. Only those dates are read (a
+    // heavy player has 100,000 plays): each shown chart's best before `from` comes from one grouped query.
+    private async Task<List<Row>> Plays(uint baid, DateTime from, DateTime to)
     {
-        var rows = await context.SongPlayData.Where(p => p.Baid == baid && !p.Skipped).OrderBy(p => p.PlayTime)
+        var ct = HttpContext.RequestAborted;
+        var rows = await context.SongPlayData.Where(p => p.Baid == baid && !p.Skipped && p.PlayTime >= from && p.PlayTime < to)
+            // A credit's songs share one PlayTime (the game saves them together), so the save order (Id) keeps them in
+            // song order; without it the order depended on the index SQLite picked and credits were miscounted.
+            .OrderBy(p => p.PlayTime).ThenBy(p => p.Id)
             .Select(p => new { p.SongId, p.Difficulty, p.PlayTime, p.Score, p.Crown, p.ScoreRank, p.SongNumber })
-            .ToListAsync(HttpContext.RequestAborted);
-        var bestSoFar = new Dictionary<(uint, Difficulty), uint>();
+            .ToListAsync(ct);
+        var songs = rows.Select(p => p.SongId).Distinct().ToList();
+        var bestSoFar = songs.Count == 0 ? [] : await context.SongPlayData
+            .Where(p => p.Baid == baid && !p.Skipped && p.PlayTime < from && songs.Contains(p.SongId))
+            .GroupBy(p => new { p.SongId, p.Difficulty }).Select(g => new { g.Key.SongId, g.Key.Difficulty, Top = g.Max(p => p.Score) })
+            .ToDictionaryAsync(g => (g.SongId, g.Difficulty), g => g.Top, ct);
         return rows.Select(p =>
         {
             var key = (p.SongId, p.Difficulty);
