@@ -75,6 +75,7 @@ builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
 
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<SongListState>();
+builder.Services.AddScoped<OverlayHost>();
 builder.Services.AddLocalization();
 builder.Services.AddSingleton<ScoreUtils>();
 builder.Services.AddSingleton<StringUtil>();

@@ -2,7 +2,9 @@
    name, and the game nameplate. DanView = the Dani Dojo look (段位道場 outfit for the top rank, no puchi,
    Clear animation, and a dan panel under the nameplate). Colour, pattern, fade and animation come from the
    user's card settings (UserWebProfiles; see Shared/CardStyle.cs). *@
+@implements IDisposable
 @inject IJSRuntime Js
+@inject OverlayHost Overlay
 @inject IOptions<WebUiSettings> Settings
 @using Microsoft.Extensions.Options
 
@@ -16,6 +18,14 @@
     @if (HasEmbed)
     {
         <iframe @ref="frame" src="@EmbedSrc" title="@Localizer["3D preview"]" class="pointer-events-none absolute inset-0 size-full border-0" loading="lazy"></iframe>
+        @* The iframe is display-only (no pointer events), so the button above it gets the click. *@
+        @if (!DanView)
+        {
+            <button class="absolute right-3 top-3 z-10 grid size-8 place-items-center rounded-xl bg-black/25 text-white backdrop-blur transition-colors hover:bg-black/40"
+                    aria-label="@Localizer["View don-chan larger"]" title="@Localizer["View larger"]" @onclick="() => Overlay.Show(BigView)">
+                <Icon Name="expand" Class="size-4" />
+            </button>
+        }
     }
     <div class="relative grid grid-cols-[160px_minmax(0,1fr)] items-center gap-4 p-4 lg:grid-cols-1 lg:gap-2 lg:p-5">
         <div @ref="anchor" class="relative grid h-40 place-items-center lg:h-80">
@@ -101,18 +111,40 @@
     // Kigurumi 36 (段位道場) has one variant per rank: cos_036007 = 五級 … cos_036025 = 達人 (DanId 1…19).
     private string? DanCostume => TopDan is { } d ? $"{36006 + d.DanId:000000}" : "036000";
 
+    private object DonState(double zoom, double camY) => new
+    {
+        body = Setting.Body, head = Setting.Head, kigurumi = Setting.Kigurumi, face = Setting.Face,
+        puchi = DanView ? 0 : Setting.Puchi,
+        bodyColor = Setting.BodyColor, faceColor = Setting.FaceColor, limbColor = Setting.LimbColor,
+        anim = DanView ? CardStyle.Clip(CardAnimation.Clear) : CardStyle.Clip(Setting.CardAnimation),
+        cosFile = DanView ? DanCostume : "",
+        zoom, camY,
+    };
+
+    // The large 3D view (rendered by the layout): its own embed, configured by its URL, framed so the feet clear the bottom.
+    private RenderFragment BigView => __builder =>
+    {
+        var src = $"{EmbedSrc}?body={Setting.Body}&head={Setting.Head}&kigurumi={Setting.Kigurumi}&face={Setting.Face}&puchi={Setting.Puchi}" +
+                  $"&bodyColor={Setting.BodyColor}&faceColor={Setting.FaceColor}&limbColor={Setting.LimbColor}" +
+                  $"&anim={Uri.EscapeDataString(CardStyle.Clip(Setting.CardAnimation))}&zoom=0.22&camY=0.19";
+        <div class="fade fixed inset-0 z-[60] grid place-items-center bg-black/60 p-4" @onclick="Overlay.Hide">
+            <div role="dialog" aria-modal="true" aria-label="@Localizer["Don-chan"]" class="pop w-full max-w-3xl overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-zinc-900"
+                 @onclick:stopPropagation="true">
+                <div class="relative h-[480px] sm:h-[560px]" style="@CardStyle.Background(Setting.CardColor, Setting.CardPattern)">
+                    <iframe src="@src" title="@Localizer["3D preview"]" class="pointer-events-none absolute inset-0 size-full border-0"></iframe>
+                    <button class="absolute right-3 top-3 z-10 grid size-10 place-items-center rounded-xl bg-black/25 text-white backdrop-blur hover:bg-black/40"
+                            aria-label="@Localizer["Close"]" @onclick="Overlay.Hide"><Icon Name="x" Class="size-5" /></button>
+                </div>
+            </div>
+        </div>
+    };
+
+    public void Dispose() => Overlay.Hide();
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!HasEmbed) return;
-        await Js.InvokeVoidAsync("ui.don", frame, anchor, new
-        {
-            body = Setting.Body, head = Setting.Head, kigurumi = Setting.Kigurumi, face = Setting.Face,
-            puchi = DanView ? 0 : Setting.Puchi,
-            bodyColor = Setting.BodyColor, faceColor = Setting.FaceColor, limbColor = Setting.LimbColor,
-            anim = DanView ? CardStyle.Clip(CardAnimation.Clear) : CardStyle.Clip(Setting.CardAnimation),
-            cosFile = DanView ? DanCostume : "",
-            zoom = 0.25, camY = 0.2,
-        });
+        await Js.InvokeVoidAsync("ui.don", frame, anchor, DonState(0.25, 0.2));
         // The avatar shows the normal costume, so the Dani Dojo look never makes one.
         if (!DanView)
             await Js.InvokeVoidAsync("ui.avatar", frame, Setting.Baid, CardStyle.AvatarKey(Setting));

@@ -3,6 +3,7 @@
 @inject AuthService AuthService
 @inject PageState Page
 @inject ToastService Toast
+@inject OverlayHost Overlay
 @inject AssetStatus AssetStatus
 @inject NavigationManager Nav
 @inject IOptions<WebUiSettings> Settings
@@ -103,6 +104,12 @@ else
     </Dialog>
 }
 
+@if (Overlay.Content is { } overlayContent)
+{
+    @* Page-level overlays (OverlayHost): outside every column, so nothing on the page paints over them. *@
+    <div @ref="overlayRoot" tabindex="-1" class="outline-none" @onkeydown="OnOverlayKey">@overlayContent</div>
+}
+
 @if (Toast.Message is { } message)
 {
     <div role="status" class="pop fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm shadow-lg @(Toast.IsError ? "bg-primary-600 text-white" : "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900")" style="--origin:bottom right">
@@ -112,6 +119,22 @@ else
 
 @code {
     private bool drawerOpen;
+    private ElementReference overlayRoot;
+    private bool overlayFocused;
+
+    // Focus the overlay when it opens, so Escape reaches it.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Overlay.Content is null) { overlayFocused = false; return; }
+        if (overlayFocused) return;
+        overlayFocused = true;
+        await overlayRoot.FocusAsync();
+    }
+
+    private void OnOverlayKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") Overlay.Hide();
+    }
     private bool confirmLogout;
 
     private async Task Logout()
@@ -155,6 +178,7 @@ else
         AuthService.LoginStatusChanged += OnChanged;
         Page.Changed += Refresh;
         Toast.Changed += Refresh;
+        Overlay.Changed += Refresh;
         Nav.LocationChanged += OnLocationChanged;
         await CheckAssets();
         await LoadServerState();
@@ -186,6 +210,7 @@ else
         AuthService.LoginStatusChanged -= OnChanged;
         Page.Changed -= Refresh;
         Toast.Changed -= Refresh;
+        Overlay.Changed -= Refresh;
         Nav.LocationChanged -= OnLocationChanged;
     }
 }
