@@ -51,19 +51,15 @@ fn linear_dds(nutexb: &NutexbFile) -> Result<Dds> {
     Ok(dds)
 }
 
-/// Converts every `*.nutexb` in `src_dir` to `<dst_dir>/<name>.png`, skipping outputs that are current.
-pub fn convert_dir(src_dir: &Path, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
-    let Ok(entries) = fs::read_dir(src_dir) else {
-        report.missing.push(src_dir.display().to_string());
+/// Converts every `*.nutexb` in the game folder `rel` to `<dst_dir>/<name>.png`, skipping outputs that are current.
+pub fn convert_dir(game: &crate::game::Game, rel: &str, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
+    let Some(entries) = game.list(rel) else {
+        report.missing.push(game.file(rel).display().to_string());
         return Ok(());
     };
     fs::create_dir_all(dst_dir).with_context(|| format!("creating {}", dst_dir.display()))?;
 
-    let mut paths: Vec<_> = entries
-        .filter_map(|e| e.ok().map(|e| e.path()))
-        .filter(|p| p.extension().is_some_and(|e| e == "nutexb"))
-        .collect();
-    paths.sort();
+    let paths: Vec<_> = entries.into_iter().filter(|p| p.extension().is_some_and(|e| e == "nutexb")).collect();
 
     for src in paths {
         let name = src.file_stem().unwrap().to_string_lossy().into_owned();

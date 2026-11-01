@@ -13,9 +13,9 @@ use serde_json::{json, Map};
 pub const SHEETS: [&str; 4] = ["jp_32_DB", "en_32", "tw_32", "kr_32"];
 const PAGE_WIDTH: u32 = 1024;
 
-pub fn convert(x64: &Path, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
+pub fn convert(game: &crate::game::Game, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
     for sheet in SHEETS {
-        let (xml, tex) = (x64.join("font").join(format!("{sheet}.xml")), x64.join("font").join(format!("{sheet}.nutexb")));
+        let (xml, tex) = (game.file(format!("font/{sheet}.xml")), game.file(format!("font/{sheet}.nutexb")));
         if let Some(missing) = [&xml, &tex].into_iter().find(|p| !p.is_file()) {
             report.missing.push(missing.display().to_string());
             continue;

@@ -27,23 +27,18 @@ const FPS: f32 = 60.0;
 /// Any model's skeleton works (they share the don rig); the default body is always present.
 const RIG_MODEL: &str = "body_000000";
 
-pub fn convert(x64: &Path, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
-    let anim_dir = x64.join("animation");
-    let rig_dir = x64.join("model").join("body").join(RIG_MODEL).join(RIG_MODEL);
-    let rig = rig_dir.join(format!("{RIG_MODEL}.numdlb"));
-    let Ok(entries) = fs::read_dir(&anim_dir) else {
-        report.missing.push(anim_dir.display().to_string());
+pub fn convert(game: &crate::game::Game, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
+    let rig = game.file(format!("model/body/{RIG_MODEL}/{RIG_MODEL}/{RIG_MODEL}.numdlb"));
+    let rig_dir = rig.parent().unwrap().to_path_buf();
+    let Some(entries) = game.list("animation") else {
+        report.missing.push(game.file("animation").display().to_string());
         return Ok(());
     };
     if !rig.is_file() {
         report.missing.push(rig.display().to_string());
         return Ok(());
     }
-    let mut paths: Vec<PathBuf> = entries
-        .filter_map(|e| e.ok().map(|e| e.path()))
-        .filter(|p| p.extension().is_some_and(|e| e == "nuanmb"))
-        .collect();
-    paths.sort();
+    let paths: Vec<PathBuf> = entries.into_iter().filter(|p| p.extension().is_some_and(|e| e == "nuanmb")).collect();
 
     fs::create_dir_all(dst_dir).with_context(|| format!("creating {}", dst_dir.display()))?;
     let (glb_path, keys_path) = (dst_dir.join(LIBRARY), dst_dir.join(FACE_KEYS));
@@ -206,7 +201,7 @@ mod tests {
         fs::create_dir_all(&x64).unwrap();
         let mut report = crate::Report::default();
 
-        convert(&x64, &x64.join("out"), &mut report).unwrap();
+        convert(&crate::game::Game::new(x64.clone(), false).unwrap(), &x64.join("out"), &mut report).unwrap();
 
         assert_eq!(report.missing.len(), 1);
         assert!(report.copied.is_empty());

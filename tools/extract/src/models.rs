@@ -24,17 +24,17 @@ pub(crate) const FLOAT: u32 = 5126;
 const UNSIGNED_SHORT: u32 = 5123;
 const UNSIGNED_INT: u32 = 5125;
 
-/// Converts every model under `model/<category>` to `<dst_dir>/<name>.glb`.
+/// Converts every model under the game folder `rel` (`model/<category>`) to `<dst_dir>/<name>.glb`.
 /// A model folder normally holds one `<name>/<name>.numdlb`, but can hold variants (e.g. `head_102001`).
-pub fn convert_category(src_dir: &Path, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
-    let Ok(entries) = fs::read_dir(src_dir) else {
-        report.missing.push(src_dir.display().to_string());
+/// A modded model replaces the whole folder, textures included.
+pub fn convert_category(game: &crate::game::Game, rel: &str, dst_dir: &Path, report: &mut crate::Report) -> Result<()> {
+    let Some(entries) = game.list(rel) else {
+        report.missing.push(game.file(rel).display().to_string());
         return Ok(());
     };
     fs::create_dir_all(dst_dir).with_context(|| format!("creating {}", dst_dir.display()))?;
 
-    let mut model_dirs: Vec<PathBuf> = entries.filter_map(|e| e.ok().map(|e| e.path())).filter(|p| p.is_dir()).collect();
-    model_dirs.sort();
+    let model_dirs: Vec<PathBuf> = entries.into_iter().filter(|p| p.is_dir()).collect();
     for model_dir in model_dirs {
         let mut subs: Vec<PathBuf> = fs::read_dir(&model_dir)?.filter_map(|e| e.ok().map(|e| e.path())).collect();
         subs.sort();
