@@ -28,7 +28,8 @@
     @if (setup is not null)
     {
         <div class="rise mt-5 space-y-4 text-sm">
-            <p>@Localizer["1. In your authenticator app, add an account and type in this key:"]</p>
+            <p>@Localizer["1. In your authenticator app, add an account: scan this code, or type in the key below it."]</p>
+            <img src="@setup.QrCode" alt="@Localizer["QR code for your authenticator app"]" class="size-44 rounded-xl bg-white p-2" />
             <div class="flex flex-wrap items-center gap-2">
                 <code class="rounded-lg bg-zinc-100 px-3 py-2 font-mono tracking-wider dark:bg-zinc-800">@Grouped(setup.Secret)</code>
                 <button class="@Css.GhostButton !px-3 !py-1.5" @onclick="() => Copy(setup.Secret)"><Icon Name="copy" />@Localizer["Copy"]</button>

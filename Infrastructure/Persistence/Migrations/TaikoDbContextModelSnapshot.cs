@@ -578,6 +578,37 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("Tokens");
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.TrustedBrowser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("Baid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserAgent")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.ToTable("TrustedBrowsers");
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserAvatar", b =>
                 {
                     b.Property<uint>("Baid")

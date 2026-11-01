@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using TaikoLocalServer.Contracts.AdminApi.Authorization;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
@@ -56,14 +57,20 @@ public sealed class AuthService : IDisposable
     public string PendingLast4 { get; private set; } = "";
 
     private string pendingToken = "";
+    private readonly ILocalStorageService localStorage;
+
+    // "Trust this browser": one per browser; the server ignores it for any other account.
+    private const string TrustKey = "auth.trustedBrowser";
 
     private uint loggedInBaid;
 
     public AuthService(
         HttpClient client,
         JwtAuthenticationStateProvider authStateProvider,
-        ClientAuthConfigResponse authConfig)
+        ClientAuthConfigResponse authConfig,
+        ILocalStorageService localStorage)
     {
+        this.localStorage = localStorage;
         this.client = client;
         this.authStateProvider = authStateProvider;
         this.authConfig = authConfig;
@@ -112,7 +119,8 @@ public sealed class AuthService : IDisposable
         var request = new LoginRequest
         {
             AccessCode = NormalizeAccessCode(inputAccessCode),
-            Password = inputPassword
+            Password = inputPassword,
+            TrustToken = await localStorage.GetItemAsStringAsync(TrustKey),
         };
 
         var responseMessage = await client.PostAsJsonAsync("api/Auth/Login", request);
@@ -145,9 +153,9 @@ public sealed class AuthService : IDisposable
     }
 
     /// <summary>Login step 2. 1 signed in, 9 wrong code, 10 step 1 expired (start over), 6 locked, 5 other.</summary>
-    public async Task<int> VerifyTwoFactor(string code)
+    public async Task<int> VerifyTwoFactor(string code, bool trustBrowser)
     {
-        var response = await client.PostAsJsonAsync("api/Auth/Verify2fa", new VerifyTwoFactorRequest { PendingToken = pendingToken, Code = code });
+        var response = await client.PostAsJsonAsync("api/Auth/Verify2fa", new VerifyTwoFactorRequest { PendingToken = pendingToken, Code = code, TrustBrowser = trustBrowser });
         if (!response.IsSuccessStatusCode)
         {
             return MapErrorMessage(await response.Content.ReadAsStringAsync(), msg => msg switch
@@ -160,6 +168,7 @@ public sealed class AuthService : IDisposable
         }
         using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         if (json.RootElement.GetProperty("authToken").GetString() is not { } authToken) return 5;
+        if (json.RootElement.TryGetProperty("trustToken", out var trust)) await localStorage.SetItemAsStringAsync(TrustKey, trust.GetString() ?? "");
         pendingToken = "";
         await authStateProvider.MarkUserAsAuthenticatedAsync(authToken);
         return 1;

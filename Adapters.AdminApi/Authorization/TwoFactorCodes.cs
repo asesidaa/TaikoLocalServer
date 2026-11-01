@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using OtpNet;
+using QRCoder;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Authorization;
 
@@ -14,6 +15,16 @@ public static class TwoFactorCodes
 
     public static string Uri(string secret, string accountName) =>
         $"otpauth://totp/{System.Uri.EscapeDataString("TaikoLocalServer:" + accountName)}?secret={secret}&issuer=TaikoLocalServer";
+
+    /// <summary>The otpauth URI as a PNG QR code, for an img src.</summary>
+    public static string QrCode(string uri)
+    {
+        using var data = new QRCodeGenerator().CreateQrCode(uri, QRCodeGenerator.ECCLevel.M);
+        return "data:image/png;base64," + Convert.ToBase64String(new PngByteQRCode(data).GetGraphic(6));
+    }
+
+    /// <summary>SHA-256 hex, for tokens kept only by the browser.</summary>
+    public static string HashToken(string token) => Convert.ToHexString(SHA256.HashData(Encoding.ASCII.GetBytes(token)));
 
     /// <summary>A code from the app for <paramref name="secret"/>, one step either side for clock drift; the step it matched, or null.</summary>
     public static long? MatchTotp(string secret, string code)

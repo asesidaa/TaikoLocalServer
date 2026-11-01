@@ -32,7 +32,8 @@ public class TwoFactorController(ITaikoDbContext context, IServerAccess access, 
         if (access.Rules.TwoFactor == TwoFactorMode.Off) return BadRequest(new { message = "2-step verification is off on this server." });
         var card = await context.Cards.Where(c => c.Baid == User.GetBaid()).Select(c => c.AccessCode).FirstOrDefaultAsync(HttpContext.RequestAborted);
         var secret = TwoFactorCodes.NewSecret();
-        return new TwoFactorSetup { Secret = secret, Uri = TwoFactorCodes.Uri(secret, card is { Length: >= 4 } ? $"card {card[^4..]}" : $"player {User.GetBaid()}") };
+        var uri = TwoFactorCodes.Uri(secret, card is { Length: >= 4 } ? $"card {card[^4..]}" : $"player {User.GetBaid()}");
+        return new TwoFactorSetup { Secret = secret, Uri = uri, QrCode = TwoFactorCodes.QrCode(uri) };
     }
 
     [HttpPost("Enable")]
@@ -85,6 +86,7 @@ public class TwoFactorController(ITaikoDbContext context, IServerAccess access, 
             return BadRequest(new { message = "Required for admins." });
         if (!TwoFactorCodes.Verify(credential, request.Code)) return BadRequest(new { message = "Wrong Code" });
         TwoFactorCodes.Clear(credential);
+        await ForgetBrowsers(credential.Baid);
         this.LogActivity(context, "2fa.disable", credential.Baid);
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
@@ -98,10 +100,14 @@ public class TwoFactorController(ITaikoDbContext context, IServerAccess access, 
         var credential = await context.Credentials.FindAsync([baid], HttpContext.RequestAborted);
         if (credential?.TotpSecret is null) return NotFound();
         TwoFactorCodes.Clear(credential);
+        await ForgetBrowsers(baid);
         this.LogActivity(context, "2fa.reset", baid);
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }
+
+    private async Task ForgetBrowsers(uint baid) =>
+        context.TrustedBrowsers.RemoveRange(await context.TrustedBrowsers.Where(t => t.Baid == baid).ToListAsync(HttpContext.RequestAborted));
 
     private async Task<Credential?> Mine() => await context.Credentials.FindAsync([User.GetBaid()], HttpContext.RequestAborted);
 }

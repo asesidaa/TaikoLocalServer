@@ -15,6 +15,8 @@ public class TwoFactorSetup
     public string Secret { get; set; } = string.Empty;
     /// <summary>The otpauth:// URI a QR code would carry.</summary>
     public string Uri { get; set; } = string.Empty;
+    /// <summary>The URI as a QR code, a data: URI (PNG) for an img.</summary>
+    public string QrCode { get; set; } = string.Empty;
 }
 
 /// <summary>Enable: the key from Setup plus a code from the app. Disable / new recovery codes: a code (or a recovery code).</summary>
@@ -36,4 +38,6 @@ public class VerifyTwoFactorRequest
 {
     public string PendingToken { get; set; } = string.Empty;
     public string Code { get; set; } = string.Empty;
+    /// <summary>Skip the code on this browser for 30 days.</summary>
+    public bool TrustBrowser { get; set; }
 }

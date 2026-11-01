@@ -98,7 +98,7 @@ public class AuthController(
             return await Attempt(card.Baid, card.AccessCode, SignInOutcome.UnknownAccessCode, invalid);
 
         var mode = access.Rules.TwoFactor;
-        if (mode != TwoFactorMode.Off && credential.TotpSecret is not null)
+        if (mode != TwoFactorMode.Off && credential.TotpSecret is not null && !await IsTrustedAsync(card.Baid, loginRequest.TrustToken, now))
         {
             // Step 2 next: nothing is signed in until the code checks out. The last 4 digits name the card on that step.
             var pendingToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
@@ -131,12 +131,32 @@ public class AuthController(
             return await Attempt(p.Baid, p.AccessCode, SignInOutcome.WrongTwoFactorCode, Unauthorized(new { message = "Wrong Code" }));
         }
         pending.Remove(PendingKey(request.PendingToken));
-        return await SignIn(p.Baid, p.AccessCode, p.IsAdmin, false);
+
+        string? trustToken = null;
+        if (request.TrustBrowser)
+        {
+            trustToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+            context.TrustedBrowsers.Add(new TrustedBrowser
+            {
+                Baid = p.Baid, TokenHash = TwoFactorCodes.HashToken(trustToken), CreatedAt = DateTime.UtcNow,
+                ExpiresAt = DateTime.UtcNow.Add(TrustLifetime), UserAgent = UserAgent,
+            });
+        }
+        return await SignIn(p.Baid, p.AccessCode, p.IsAdmin, false, trustToken);
+    }
+
+    private static readonly TimeSpan TrustLifetime = TimeSpan.FromDays(30);
+
+    private async Task<bool> IsTrustedAsync(uint baid, string? token, DateTime now)
+    {
+        if (string.IsNullOrEmpty(token) || token.Length > 128) return false;
+        var hash = TwoFactorCodes.HashToken(token);
+        return await context.TrustedBrowsers.AnyAsync(t => t.Baid == baid && t.TokenHash == hash && t.ExpiresAt > now, HttpContext.RequestAborted);
     }
 
     private static string PendingKey(string token) => "2fa-pending:" + token;
 
-    private async Task<IActionResult> SignIn(uint baid, string accessCode, bool isAdmin, bool twoFactorSetupRequired)
+    private async Task<IActionResult> SignIn(uint baid, string accessCode, bool isAdmin, bool twoFactorSetupRequired, string? trustToken = null)
     {
         var now = DateTime.UtcNow;
         var session = new WebSession
@@ -146,7 +166,7 @@ public class AuthController(
         };
         context.WebSessions.Add(session);
         var authToken = jwtTokens.IssueToken(baid, isAdmin, session.Id, twoFactorSetupRequired);
-        return await Attempt(baid, accessCode, SignInOutcome.SignedIn, Ok(new { authToken }));
+        return await Attempt(baid, accessCode, SignInOutcome.SignedIn, trustToken is null ? Ok(new { authToken }) : Ok(new { authToken, trustToken }));
     }
 
     private string Ip => HttpContext.Connection.RemoteIpAddress?.ToString() ?? "";

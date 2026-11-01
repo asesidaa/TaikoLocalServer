@@ -53,6 +53,7 @@
                            class="@Css.Input mt-1 font-mono uppercase tracking-widest" />
                 </label>
             }
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="size-4 accent-primary-500" @bind="trust" />@Localizer["Trust this browser for 30 days"]</label>
             <ErrorBox Message="@error" />
             <div class="flex items-center justify-between gap-2 pt-2">
                 <button type="button" class="text-sm @Css.Link" @onclick="ToggleRecovery">
@@ -69,7 +70,7 @@
     private string password = "";
     private string otp = "";
     private string? error;
-    private bool busy, verifying, recovery, focusCode;
+    private bool busy, verifying, recovery, focusCode, trust;
     private ElementReference codeBox;
 
     protected override void OnInitialized()
@@ -124,7 +125,7 @@
     {
         if (otp.Trim().Length == 0) return;
         busy = true;
-        var result = await AuthService.VerifyTwoFactor(otp);
+        var result = await AuthService.VerifyTwoFactor(otp, trust);
         busy = false;
         if (result == 1)
         {

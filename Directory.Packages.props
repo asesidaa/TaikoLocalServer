@@ -41,6 +41,7 @@
     <PackageVersion Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageVersion Include="DotNetZip" Version="1.16.0" />
     <PackageVersion Include="Otp.NET" Version="1.4.1" />
+    <PackageVersion Include="QRCoder" Version="1.7.0" />
     <PackageVersion Include="SharpZipLib" Version="1.4.2" />
     <PackageVersion Include="Swan.Core" Version="7.0.0-beta.2" />
     <PackageVersion Include="Throw" Version="1.4.0" />

@@ -16,6 +16,7 @@ public interface ITaikoDbContext
     DbSet<ApiToken> ApiTokens { get; }
     DbSet<DashboardNotice> DashboardNotices { get; }
     DbSet<ServerStatus> ServerStatuses { get; }
+    DbSet<TrustedBrowser> TrustedBrowsers { get; }
     DbSet<Cabinet> Cabinets { get; }
     DbSet<Token> Tokens { get; }
     DbSet<SongBestDatum> SongBestData { get; }
