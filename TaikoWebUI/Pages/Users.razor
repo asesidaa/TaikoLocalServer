@@ -6,16 +6,50 @@
 @inject AuthService AuthService
 
 <PageTitle>User Management</PageTitle>
-@* Inspector: a sticky searchable list on the left, everything about the picked user on the right. *@
+@* Inspector: a sticky searchable list on the left, everything about the picked user on the right.
+   Phones: the list moves into a picker above the user (PhonePicker). *@
 <div class="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start">
-    <div class="@Css.Card p-3 lg:sticky lg:top-24">
+    <div class="@Css.Card hidden p-3 lg:sticky lg:top-24 lg:block">@List(false)</div>
+    <div class="min-w-0">
+        @if (selected is { } current)
+        {
+            <PhonePicker @bind-Open="picking" Label="@Localizer["Find a user"]">
+                <Summary>
+                    <Avatar Setting="current.UserSetting" Size="36" />
+                    <span class="min-w-0 flex-1">
+                        <span class="block truncate text-sm font-medium">@current.UserSetting.MyDonName</span>
+                        <span class="block truncate text-xs @Css.Muted">@Localizer["User ID"] @current.Baid · @Localizer["tap to switch user"]</span>
+                    </span>
+                </Summary>
+                <ChildContent>@List(true)</ChildContent>
+            </PhonePicker>
+        }
+        <div class="@Css.Card">
+            @if (selected is null)
+            {
+                <div class="grid place-items-center p-10 text-sm @Css.Muted">@Localizer[users is { Count: 0 } ? "No users yet. A user appears the first time a card is played." : "Pick a user"]</div>
+            }
+            else
+            {
+                <UserDetail User="selected" Users="users!" OnChanged="Reload" OnDeleted="OnDeleted" />
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool picking;
+
+    // The search, filters and rows: in the desktop side card, and in the phone picker (its own search box, so focus stays).
+    private RenderFragment List(bool phone) => __builder =>
+    {
         <label class="relative block">
             <span class="sr-only">@Localizer["Search users"]</span>
             <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="search" /></span>
             <input type="search" value="@query" placeholder="@Localizer["Name, user ID or access code"]" class="@Css.Input pl-9"
                    @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
         </label>
-        @if (AuthService.LoginRequired)
+        if (AuthService.LoginRequired)
         {
             <div class="mt-2 flex flex-wrap gap-1" role="radiogroup" aria-label="@Localizer["Filter users"]">
                 @foreach (var (key, label) in Filters)
@@ -26,7 +60,7 @@
                 }
             </div>
         }
-        <ul class="mt-2 max-h-[calc(100dvh-16rem)] space-y-0.5 overflow-y-auto">
+        <ul class="mt-2 @(phone ? "max-h-[55dvh]" : "max-h-[calc(100dvh-16rem)]") space-y-0.5 overflow-y-auto">
             @if (users is null)
             {
                 <li class="px-3 py-6 text-center text-sm @Css.Muted">@Localizer["Loading..."]</li>
@@ -42,7 +76,7 @@
                 {
                     var on = u.Baid == selected?.Baid;
                     <li>
-                        <button aria-current="@(on ? "true" : null)" @onclick="() => selected = u"
+                        <button aria-current="@(on ? "true" : null)" @onclick="() => { selected = u; picking = false; }"
                                 class="flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left @(on ? "bg-primary-500/10" : "hover:bg-zinc-100 dark:hover:bg-zinc-800/60")">
                             <Avatar Setting="u.UserSetting" Size="40" />
                             <span class="min-w-0 flex-1">
@@ -62,20 +96,8 @@
                 }
             }
         </ul>
-    </div>
-    <div class="@Css.Card">
-        @if (selected is null)
-        {
-            <div class="grid place-items-center p-10 text-sm @Css.Muted">@Localizer[users is { Count: 0 } ? "No users yet. A user appears the first time a card is played." : "Pick a user"]</div>
-        }
-        else
-        {
-            <UserDetail User="selected" Users="users!" OnChanged="Reload" OnDeleted="OnDeleted" />
-        }
-    </div>
-</div>
+    };
 
-@code {
     private List<User>? users;
     private User? selected;
     private string query = "";

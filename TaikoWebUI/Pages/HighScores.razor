@@ -19,12 +19,12 @@
     </div>
 
     <div class="space-y-3">
-        <div class="flex gap-1 overflow-x-auto rounded-2xl bg-zinc-100 p-1 dark:bg-zinc-900" role="tablist" aria-label="@Localizer["Difficulty"]">
+        <Rail Role="tablist" Label="@Localizer["Difficulty"]" Class="rounded-2xl bg-zinc-100 p-1 dark:bg-zinc-900" TrackClass="gap-1">
             @foreach (var (d, name) in GameData.Difficulties)
             {
                 var on = diff == (int)d;
                 <button role="tab" aria-selected="@Css.Aria(on)" @onclick="() => Change(() => diff = (int)d)"
-                        class="flex min-w-max flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-medium @(on ? "bg-white shadow-sm dark:bg-zinc-800" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">
+                        class="flex min-w-max flex-1 shrink-0 snap-start items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-medium @(on ? "bg-white shadow-sm dark:bg-zinc-800" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">
                     <img data-asset="@GameData.DifficultyIcon(d)" alt="@name" class="size-6 object-contain" />
                     <span class="hidden sm:inline">@name</span>
                     @if (data is not null)
@@ -33,7 +33,7 @@
                     }
                 </button>
             }
-        </div>
+        </Rail>
         <div class="flex flex-wrap items-center gap-2">
             <label class="relative w-full sm:w-auto sm:min-w-56 sm:flex-1">
                 <span class="sr-only">@Localizer["Search"]</span>

@@ -3141,4 +3141,22 @@
   <data name="Avatar renderer off" xml:space="preserve">
     <value>Rendu des avatars désactivé</value>
   </data>
+  <data name="Find a user" xml:space="preserve">
+    <value>Trouver un utilisateur</value>
+  </data>
+  <data name="Find a cabinet" xml:space="preserve">
+    <value>Trouver une borne</value>
+  </data>
+  <data name="tap to switch user" xml:space="preserve">
+    <value>touchez pour changer d'utilisateur</value>
+  </data>
+  <data name="tap to switch cabinet" xml:space="preserve">
+    <value>touchez pour changer de borne</value>
+  </data>
+  <data name="Scroll left" xml:space="preserve">
+    <value>Défiler vers la gauche</value>
+  </data>
+  <data name="Scroll right" xml:space="preserve">
+    <value>Défiler vers la droite</value>
+  </data>
 </root>

@@ -3141,4 +3141,22 @@
   <data name="Avatar renderer off" xml:space="preserve">
     <value>アバター描画をオフにしました</value>
   </data>
+  <data name="Find a user" xml:space="preserve">
+    <value>ユーザーを探す</value>
+  </data>
+  <data name="Find a cabinet" xml:space="preserve">
+    <value>筐体を探す</value>
+  </data>
+  <data name="tap to switch user" xml:space="preserve">
+    <value>タップしてユーザーを切り替え</value>
+  </data>
+  <data name="tap to switch cabinet" xml:space="preserve">
+    <value>タップして筐体を切り替え</value>
+  </data>
+  <data name="Scroll left" xml:space="preserve">
+    <value>左へスクロール</value>
+  </data>
+  <data name="Scroll right" xml:space="preserve">
+    <value>右へスクロール</value>
+  </data>
 </root>

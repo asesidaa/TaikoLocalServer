@@ -225,11 +225,74 @@
     donSend(frame, { type: "don", ...msg, anchor });
   };
 
+  // Phone menu (MainLayout): Escape closes it, and so does growing past lg, where the sidebar is always shown.
+  const closeDrawer = () => document.querySelector("[data-drawer-close]")?.click();
+  addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
+  matchMedia("(min-width: 1024px)").addEventListener("change", m => { if (m.matches) closeDrawer(); });
+
+  // Rails (Rail.razor): sideways rows of chips or tabs. When the selected item changes it's centred (so 5th Dan stays
+  // in view); arrows show while the row overflows, each disabled at its end; a mouse can drag the row.
+  const railTrack = rail => rail.querySelector(":scope > div");
+  const updateRail = rail => {
+    const t = railTrack(rail), [prev, next] = rail.querySelectorAll(":scope > button");
+    if (!t || !next) return;
+    prev.hidden = next.hidden = t.scrollWidth <= t.clientWidth + 1;
+    prev.disabled = t.scrollLeft <= 1;
+    next.disabled = t.scrollLeft >= t.scrollWidth - t.clientWidth - 1;
+  };
+  const updateRails = () => document.querySelectorAll("[data-rail]").forEach(rail => {
+    const t = railTrack(rail);
+    const sel = t?.querySelector('[aria-current="page"],[aria-current="true"],[aria-pressed="true"],[aria-selected="true"]');
+    if (sel && t._sel !== sel && t.scrollWidth > t.clientWidth) {
+      t._sel = sel;
+      const r = t.getBoundingClientRect(), s = sel.getBoundingClientRect();
+      t.scrollLeft += s.left + s.width / 2 - (r.left + r.width / 2);
+    }
+    updateRail(rail);
+  });
+  addEventListener("scroll", e => { const rail = e.target.parentElement?.closest?.("[data-rail]"); if (rail) updateRail(rail); }, true);
+  addEventListener("resize", updateRails);
+  addEventListener("click", e => {
+    const step = e.target.closest?.("[data-rail-step]");
+    if (!step) return;
+    const t = railTrack(step.closest("[data-rail]"));
+    t.scrollBy({ left: Math.sign(+step.dataset.railStep) * t.clientWidth * 0.75, behavior: "smooth" });
+  });
+  let drag = null;
+  addEventListener("pointerdown", e => {
+    if (e.pointerType !== "mouse" || e.button !== 0) return;
+    const t = e.target.closest?.("[data-rail] > div");
+    if (t && t.scrollWidth > t.clientWidth) drag = { t, x: e.clientX, left: t.scrollLeft, moved: false };
+  });
+  addEventListener("pointermove", e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    if (!drag.moved && Math.abs(dx) < 5) return;
+    if (!drag.moved) { drag.moved = true; drag.t.style.scrollSnapType = "none"; drag.t.style.cursor = "grabbing"; }
+    drag.t.scrollLeft = drag.left - dx;
+  });
+  const endDrag = () => {
+    const d = drag;
+    drag = null;
+    if (!d?.moved) return;
+    d.t.style.scrollSnapType = d.t.style.cursor = "";
+    // A drag isn't a click on the chip it ends on (that click, if any, comes right after pointerup).
+    const eat = e => { e.stopPropagation(); e.preventDefault(); };
+    addEventListener("click", eat, { capture: true, once: true });
+    setTimeout(() => removeEventListener("click", eat, { capture: true }));
+  };
+  addEventListener("pointerup", endDrag);
+  addEventListener("pointercancel", endDrag);
+  let railFrame = 0;
+  new MutationObserver(() => { cancelAnimationFrame(railFrame); railFrame = requestAnimationFrame(updateRails); })
+    .observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["aria-current", "aria-pressed", "aria-selected"] });
+
   window.ui = {
     setDark: on => { root.classList.toggle("dark", on); store.set("ui.dark", on ? "1" : "0"); },
     isDark: () => root.classList.contains("dark"),
     setAccent: id => { root.dataset.accent = id; store.set("ui.accent", id); },
     getAccent: () => root.dataset.accent,
+    focusIn: el => el?.querySelector("input, button")?.focus(),
     copy: text => navigator.clipboard?.writeText(text).then(() => true, () => false) ?? false,
     // Live log: it follows new lines only while the reader is at the bottom.
     atBottom: el => !el || el.scrollHeight - el.scrollTop - el.clientHeight < 40,

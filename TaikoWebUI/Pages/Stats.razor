@@ -161,8 +161,8 @@
                 var (gName, bg, fg) = GameData.Genre(GameDataService.GetMusicGenreBySongId(music, songId));
                 <li class="flex items-center gap-3 py-2 text-sm">
                     <span class="w-4 text-right tabular-nums text-zinc-400">@(i + 1)</span>
-                    <span class="flex min-w-0 flex-1 items-center gap-2 truncate font-medium">@SongName(songId)
-                        <span class="rounded-md px-1.5 py-0.5 text-[10px] font-semibold" style="background:@bg;color:@fg">@gName</span></span>
+                    <span class="flex min-w-0 flex-1 items-center gap-2 font-medium"><span class="truncate">@SongName(songId)</span>
+                        <span class="shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold" style="background:@bg;color:@fg">@gName</span></span>
                     <span class="tabular-nums">@string.Format(Localizer["{0} plays"], plays)</span>
                 </li>
             }

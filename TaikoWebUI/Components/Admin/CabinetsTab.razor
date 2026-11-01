@@ -17,27 +17,10 @@
     <span class="@Css.Muted"> · <code class="font-mono text-xs">ServerSettings.RestrictChassisIds</code></span>
 </div>
 
+@* Phones: the list moves into a picker above the detail (PhonePicker). *@
 <div class="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start">
-    <div class="@Css.Card p-3 lg:sticky lg:top-24">
-        <input type="search" class="@Css.Input" placeholder="@Localizer["Chassis ID or shop"]" value="@query" @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
-        <ul class="mt-2 max-h-[calc(100dvh-18rem)] space-y-0.5 overflow-y-auto">
-            <li>@Row(null)</li>
-            @if (list is not null)
-            {
-                foreach (var (title, cabinets) in Groups())
-                {
-                    <li class="px-2.5 pb-1 pt-3 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@title · @cabinets.Count</li>
-                    foreach (var c in cabinets)
-                    {
-                        <li>@Row(c)</li>
-                    }
-                }
-                if (list.Cabinets.Count == 0)
-                {
-                    <li class="px-3 py-4 text-sm @Css.Muted">@Localizer["No cabinet has connected yet."]</li>
-                }
-            }
-        </ul>
+    <div class="@Css.Card hidden p-3 lg:sticky lg:top-24 lg:block">
+        @List(false)
         @if (list?.Restricted == true)
         {
             <form class="mt-3 flex gap-2 border-t border-zinc-100 pt-3 dark:border-zinc-800" @onsubmit="PreApprove" @onsubmit:preventDefault>
@@ -47,15 +30,21 @@
         }
     </div>
 
-    <div class="@Css.Card min-w-0">
-        @if (selected is null)
-        {
-            @Defaults
-        }
-        else if (list?.Cabinets.FirstOrDefault(c => c.ChassisId == selected) is { } cabinet)
-        {
-            @Detail(cabinet)
-        }
+    <div class="min-w-0">
+        <PhonePicker @bind-Open="picking" Label="@Localizer["Find a cabinet"]">
+            <Summary>@Row(list?.Cabinets.FirstOrDefault(c => c.ChassisId == selected), true)</Summary>
+            <ChildContent>@List(true)</ChildContent>
+        </PhonePicker>
+        <div class="@Css.Card">
+            @if (selected is null)
+            {
+                @Defaults
+            }
+            else if (list?.Cabinets.FirstOrDefault(c => c.ChassisId == selected) is { } cabinet)
+            {
+                @Detail(cabinet)
+            }
+        </div>
     </div>
 </div>
 
@@ -92,6 +81,32 @@
 
     private async Task Load() => list = await Client.GetFromJsonAsync<CabinetList>("api/Cabinets");
 
+    private bool picking;
+
+    // The search and grouped rows: in the desktop side card, and in the phone picker (its own search box, so focus stays).
+    private RenderFragment List(bool phone) => __builder =>
+    {
+        <input type="search" class="@Css.Input" placeholder="@Localizer["Chassis ID or shop"]" value="@query" @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
+        <ul class="mt-2 @(phone ? "max-h-[55dvh]" : "max-h-[calc(100dvh-18rem)]") space-y-0.5 overflow-y-auto">
+            <li>@Row(null)</li>
+            @if (list is not null)
+            {
+                foreach (var (title, cabinets) in Groups())
+                {
+                    <li class="px-2.5 pb-1 pt-3 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@title · @cabinets.Count</li>
+                    foreach (var c in cabinets)
+                    {
+                        <li>@Row(c)</li>
+                    }
+                }
+                if (list.Cabinets.Count == 0)
+                {
+                    <li class="px-3 py-4 text-sm @Css.Muted">@Localizer["No cabinet has connected yet."]</li>
+                }
+            }
+        </ul>
+    };
+
     private IEnumerable<(string, List<CabinetItem>)> Groups()
     {
         var q = query.Trim();
@@ -107,26 +122,39 @@
         }
     }
 
-    private RenderFragment Row(CabinetItem? c) => __builder =>
+    private RenderFragment Row(CabinetItem? c) => Row(c, false);
+
+    // summary: the picker button's content (the button is the picker's), with a hint to tap it.
+    private RenderFragment Row(CabinetItem? c, bool summary) => __builder =>
     {
+        if (summary)
+        {
+            @RowBody(c, summary)
+            return;
+        }
         var on = selected == c?.ChassisId;
-        <button aria-current="@(on ? "true" : null)" @onclick="() => Pick(c?.ChassisId)"
+        <button aria-current="@(on ? "true" : null)" @onclick="async () => { picking = false; await Pick(c?.ChassisId); }"
                 class="flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left @(on ? "bg-primary-500/10" : "hover:bg-zinc-100 dark:hover:bg-zinc-800/60")">
-            @if (c is null)
+            @RowBody(c, summary)
+        </button>
+    };
+
+    private RenderFragment RowBody(CabinetItem? c, bool summary) => __builder =>
+    {
+            if (c is null)
             {
                 <Icon Name="settings" Class="size-4 text-zinc-400" />
                 <span class="min-w-0 flex-1"><span class="block text-sm font-medium">@Localizer["Defaults"]</span>
-                    <span class="block text-xs @Css.Muted">@Localizer["Every cabinet without its own settings"]</span></span>
+                    <span class="block text-xs @Css.Muted">@(summary ? Localizer["tap to switch cabinet"] : Localizer["Every cabinet without its own settings"])</span></span>
             }
             else
             {
                 <span class="size-2 shrink-0 rounded-full @Dot(c)"></span>
                 <span class="min-w-0 flex-1">
                     <span class="block truncate font-mono text-sm">@c.ChassisId</span>
-                    <span class="block truncate text-xs @Css.Muted">@(c.ShopId.Length > 0 ? c.ShopId : "–") · @(c.OwnSettings ? Localizer["Own settings"] : Localizer["Defaults"])</span>
+                    <span class="block truncate text-xs @Css.Muted">@(c.ShopId.Length > 0 ? c.ShopId : "–") · @(summary ? Localizer["tap to switch cabinet"] : c.OwnSettings ? Localizer["Own settings"] : Localizer["Defaults"])</span>
                 </span>
             }
-        </button>
     };
 
     private static string Dot(CabinetItem c) => c.Access switch

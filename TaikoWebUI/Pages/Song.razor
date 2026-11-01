@@ -41,13 +41,13 @@ else
             </button>
         </section>
 
-        <div class="flex gap-1 overflow-x-auto rounded-2xl bg-zinc-100 p-1 dark:bg-zinc-900" role="tablist" aria-label="@Localizer["Difficulty"]">
+        <Rail Role="tablist" Label="@Localizer["Difficulty"]" Class="rounded-2xl bg-zinc-100 p-1 dark:bg-zinc-900" TrackClass="gap-1">
             @foreach (var c in song.Charts)
             {
                 var on = c.Difficulty == difficulty;
                 var top = c.Plays.Count == 0 ? (CrownType?)null : c.Plays.Max(p => p.Crown);
                 <button role="tab" aria-selected="@Css.Aria(on)" @onclick="() => Pick(c.Difficulty)"
-                        class="flex min-w-max flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-medium @(on ? "bg-white shadow-sm dark:bg-zinc-800" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">
+                        class="flex min-w-max flex-1 shrink-0 snap-start items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-medium @(on ? "bg-white shadow-sm dark:bg-zinc-800" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">
                     <img data-asset="@GameData.DifficultyIcon(c.Difficulty)" alt="@GameData.DifficultyName(c.Difficulty)" class="size-6 object-contain" />
                     <span class="hidden sm:inline">@GameData.DifficultyName(c.Difficulty)</span>
                     <StarPill Difficulty="c.Difficulty" Stars="c.Stars" />
@@ -57,7 +57,7 @@ else
                     }
                 </button>
             }
-        </div>
+        </Rail>
 
         <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
             <div class="min-w-0 space-y-4">

@@ -1,0 +1,23 @@
+@* A row of chips or tabs that scrolls sideways inside its own box. When it overflows, ‹ › arrows step through it
+   (the side that can't move is disabled) and a mouse can drag it; ui.js does both and keeps the selected item in
+   view. Where everything fits (e.g. a TrackClass grid from sm) the arrows stay hidden. *@
+
+<div data-rail class="flex items-center gap-1 @Class">
+    <button type="button" hidden data-rail-step="-1" aria-label="@Localizer["Scroll left"]" class="@Arrow"><Icon Name="chevLeft" Class="size-4" /></button>
+    <div role="@Role" aria-label="@Label" class="-m-1 flex min-w-0 flex-1 snap-x scroll-px-1 overflow-x-auto p-1 overscroll-x-contain select-none [scrollbar-width:none] @TrackClass">
+        @ChildContent
+    </div>
+    <button type="button" hidden data-rail-step="1" aria-label="@Localizer["Scroll right"]" class="@Arrow"><Icon Name="chevRight" Class="size-4" /></button>
+</div>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public string? Role { get; set; }
+    /// <summary>The outer box (background, padding, breakpoints), e.g. "lg:hidden".</summary>
+    [Parameter] public string Class { get; set; } = "";
+    /// <summary>The scrolling row: its gap, and e.g. a grid from sm (literal, so Tailwind sees it).</summary>
+    [Parameter] public string TrackClass { get; set; } = "";
+
+    private const string Arrow = "grid size-8 shrink-0 place-items-center rounded-full text-zinc-500 hover:bg-zinc-200/70 hover:text-zinc-900 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-zinc-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100";
+}

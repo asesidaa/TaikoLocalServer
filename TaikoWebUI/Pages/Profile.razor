@@ -20,12 +20,12 @@ else
     <div class="lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-6">
         <aside class="lg:sticky lg:top-24"><PlayerCard Setting="setting" Dans="dans" /></aside>
         <div class="min-w-0">
-            <div class="mt-4 grid grid-cols-2 gap-1 rounded-2xl bg-zinc-100 p-1 dark:bg-zinc-900 lg:mt-0 xl:grid-cols-4" role="tablist">
+            <Rail Role="tablist" Label="@Localizer["Profile"]" Class="mt-4 rounded-2xl bg-zinc-100 p-1 lg:mt-0 dark:bg-zinc-900" TrackClass="gap-1 sm:grid sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
                 @Tab(Section.Profile, Localizer["Profile"], "id")
                 @Tab(Section.Costume, Localizer["Costume"], "shirt")
                 @Tab(Section.SongOptions, Localizer["Song Options"], "drum")
                 @Tab(Section.Card, Localizer["Card"], "palette")
-            </div>
+            </Rail>
             <section class="@Css.Card mt-4 p-5 sm:p-6" role="tabpanel">
                 @switch (section)
                 {
@@ -49,7 +49,7 @@ else
     {
         var on = section == s;
         <button role="tab" aria-selected="@Css.Aria(on)" @onclick="() => section = s"
-                class="flex items-center justify-center gap-2 whitespace-nowrap rounded-xl px-2 py-2 text-sm font-medium transition-colors @(on ? "bg-white shadow-sm dark:bg-zinc-800" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">
+                class="flex shrink-0 snap-start items-center justify-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-sm font-medium transition-colors @(on ? "bg-white shadow-sm dark:bg-zinc-800" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">
             <Icon Name="@icon" Class="hidden size-4 xl:block" />@label
         </button>
     };

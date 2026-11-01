@@ -7,7 +7,7 @@
 @inject ToastService Toast
 
 <div class="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start">
-    <nav class="@Css.Card p-2 lg:sticky lg:top-24" aria-label="@Localizer["Course sets"]">
+    <nav class="@Css.Card hidden p-2 lg:sticky lg:top-24 lg:block" aria-label="@Localizer["Course sets"]">
         <p class="px-3 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@Localizer["Course sets"]</p>
         @foreach (var set in sets)
         {
@@ -18,8 +18,25 @@
         @Item(GaidenFile, Localizer["Gaiden"], Localizer["Every cabinet"])
     </nav>
 
-    @* One card per set, as in the prototype: the header, then the ranks beside the course editor (from xl). *@
-    <div class="@Css.Card min-w-0">
+    @* One card per set, as in the prototype: the header, then the ranks beside the course editor (from xl).
+       Phones: the sets are a chip row above it, and the ranks a chip row inside it. *@
+    <div class="min-w-0">
+    <Rail Label="@Localizer["Course sets"]" Class="mb-3 lg:hidden" TrackClass="gap-2">
+        @foreach (var set in sets)
+        {
+            var f = set.File;
+            <button aria-pressed="@Css.Aria(f == file)" @onclick="() => Open(f)" class="@Css.RailChip(f == file)">
+                @set.Name
+                @if (f == file && Dirty)
+                {
+                    <span class="size-1.5 rounded-full bg-primary-500" title="@Localizer["Unsaved changes"]"></span>
+                }
+            </button>
+        }
+        <button class="flex shrink-0 snap-start items-center gap-1 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium text-primary-600 ring-1 ring-primary-500/50 dark:text-primary-400" @onclick="OpenNew"><Icon Name="plus" Class="size-4" />@Localizer["New set"]</button>
+        <button aria-pressed="@Css.Aria(GaidenFile == file)" @onclick="() => Open(GaidenFile)" class="@Css.RailChip(GaidenFile == file)">@Localizer["Gaiden"]</button>
+    </Rail>
+    <div class="@Css.Card">
         @if (Set is { } current)
         {
             <section class="flex flex-wrap items-center gap-3 border-b border-zinc-100 p-5 dark:border-zinc-800">
@@ -67,15 +84,15 @@
         else
         {
             var courses = draft.OfType<JsonObject>().ToList();
-            <div class="grid xl:grid-cols-[200px_minmax(0,1fr)]">
+            <div class="grid grid-cols-[minmax(0,1fr)] xl:grid-cols-[200px_minmax(0,1fr)]">
             <div class="border-b border-zinc-100 p-3 dark:border-zinc-800 xl:border-b-0 xl:border-r">
-                <div class="grid grid-cols-2 gap-1 sm:grid-cols-3 xl:grid-cols-1">
+                <Rail Label="@Localizer["Ranks"]" TrackClass="gap-1 sm:grid sm:grid-cols-3 xl:grid-cols-1">
                     @for (var i = 0; i < courses.Count; i++)
                     {
                         var index = i;
                         var on = index == selected;
                         var unknown = Songs(courses[index]).Any(x => !music.ContainsKey(x["songNo"]?.GetValue<uint>() ?? 0));
-                        <button aria-current="@(on ? "true" : null)" class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-left text-sm @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "hover:bg-zinc-100 dark:hover:bg-zinc-800/60")"
+                        <button aria-current="@(on ? "true" : null)" class="flex shrink-0 snap-start items-center gap-2 whitespace-nowrap rounded-xl px-2.5 py-1.5 sm:shrink text-left text-sm @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "hover:bg-zinc-100 dark:hover:bg-zinc-800/60")"
                                 @onclick="() => selected = index">
                             <span class="min-w-0 flex-1 truncate">@CourseName(courses[index])</span>
                             @if (unknown)
@@ -84,7 +101,7 @@
                             }
                         </button>
                     }
-                </div>
+                </Rail>
             </div>
             <div class="min-w-0 p-5">
                 @if (courses.Count > 0)
@@ -95,6 +112,7 @@
             </div>
             </div>
         }
+    </div>
     </div>
 </div>
 

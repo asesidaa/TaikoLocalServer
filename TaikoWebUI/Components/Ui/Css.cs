@@ -23,6 +23,11 @@ public static class Css
         ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
         : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800";
 
+    /// <summary>A chip in a phone Rail that stands in for a side list (Game data files, Dani Dojo sets).</summary>
+    public static string RailChip(bool on) => "flex shrink-0 snap-start items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium " + (on
+        ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+        : "bg-white text-zinc-600 ring-1 ring-zinc-200 dark:bg-zinc-900 dark:text-zinc-300 dark:ring-zinc-700");
+
     public const string Muted = "text-zinc-500 dark:text-zinc-400";
 
     public const string Link = "font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300";

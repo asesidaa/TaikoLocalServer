@@ -4,7 +4,7 @@
 @inject ToastService Toast
 
 <div class="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start">
-    <nav class="@Css.Card p-2 lg:sticky lg:top-24" aria-label="@Localizer["Game Data"]">
+    <nav class="@Css.Card hidden p-2 lg:sticky lg:top-24 lg:block" aria-label="@Localizer["Game Data"]">
         @Item("overview", Localizer["Overview"], "database", files?.Count(f => f.Error is not null || f.Missing) ?? 0)
         @foreach (var (group, sets) in Groups)
         {
@@ -20,6 +20,16 @@
         <a href="/Admin/Server/cabinets" class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/70"><Icon Name="monitor" />@Localizer["Movies"]<Icon Name="chevRight" Class="ml-auto size-4" /></a>
     </nav>
     <div class="min-w-0 space-y-4">
+        <Rail Label="@Localizer["Game Data"]" Class="lg:hidden" TrackClass="gap-2">
+            @Chip("overview", Localizer["Overview"], files?.Count(f => f.Error is not null || f.Missing) ?? 0)
+            @foreach (var (_, sets) in Groups)
+            {
+                foreach (var (file, label, _) in sets)
+                {
+                    @Chip(file, label)
+                }
+            }
+        </Rail>
         @if (selected == "overview")
         {
             <section class="@Css.Card p-5 sm:p-6">
@@ -130,6 +140,24 @@
         files = await Client.GetFromJsonAsync<List<GameDataFileStatus>>("api/GameData/Files");
         await AssetStatus.IsMissingAsync(refresh: true);
     }
+
+    // Phones: the same list as a chip row, with the same unsaved / didn't load dots.
+    private RenderFragment Chip(string id, string label, int problems = 0) => __builder =>
+    {
+        var on = selected == id;
+        var status = files?.FirstOrDefault(f => f.Name == id);
+        <button aria-pressed="@Css.Aria(on)" @onclick="() => selected = id" class="@Css.RailChip(on)">
+            @label
+            @if (dirty.Contains(id))
+            {
+                <span class="size-1.5 rounded-full bg-primary-500" title="@Localizer["Unsaved changes"]"></span>
+            }
+            else if (status is { Error: not null } or { Missing: true } || problems > 0)
+            {
+                <span class="size-1.5 rounded-full bg-red-500" title="@Localizer["This file didn't load"]"></span>
+            }
+        </button>
+    };
 
     private RenderFragment Item(string id, string label, string icon, int problems = 0) => __builder =>
     {

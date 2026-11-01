@@ -3141,4 +3141,22 @@
   <data name="Avatar renderer off" xml:space="preserve">
     <value>头像绘制已关闭</value>
   </data>
+  <data name="Find a user" xml:space="preserve">
+    <value>查找用户</value>
+  </data>
+  <data name="Find a cabinet" xml:space="preserve">
+    <value>查找机台</value>
+  </data>
+  <data name="tap to switch user" xml:space="preserve">
+    <value>点按以切换用户</value>
+  </data>
+  <data name="tap to switch cabinet" xml:space="preserve">
+    <value>点按以切换机台</value>
+  </data>
+  <data name="Scroll left" xml:space="preserve">
+    <value>向左滚动</value>
+  </data>
+  <data name="Scroll right" xml:space="preserve">
+    <value>向右滚动</value>
+  </data>
 </root>

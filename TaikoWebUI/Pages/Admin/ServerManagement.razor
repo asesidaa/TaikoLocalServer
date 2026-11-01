@@ -8,7 +8,7 @@
 
 <PageTitle>Server Management</PageTitle>
 <Tabs Items="tabs" Selected="@Current" SelectedChanged="Go" Label="@Localizer["Server Management"]"
-      Columns="grid-cols-3 xl:inline-grid xl:grid-cols-6" />
+      Columns="sm:grid-cols-3 xl:grid-cols-6" />
 <div class="mt-4" role="tabpanel">
     @if (Current == "status")
     {
@@ -67,7 +67,7 @@
             }
             else
             {
-            <div class="mt-4 grid gap-x-8 gap-y-5 md:grid-cols-2">
+            <div class="mt-4 grid grid-cols-[minmax(0,1fr)] gap-x-8 gap-y-5 md:grid-cols-2">
                 @Group(Localizer["Server"],
                 [
                     ("ServerSettings:Mode", Localizer["Mode"], config.Mode == ServerMode.Server ? Localizer["Server"] : Localizer["Local"]),
