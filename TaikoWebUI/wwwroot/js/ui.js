@@ -154,13 +154,12 @@
       if (frame.contentWindow !== e.source) continue;
       if (!frame._ready) { frame._ready = true; donSend(frame, msg); }
       frame._loading = e.data.loading || !!e.data.error;
-      avatarRun(frame);
     }
   });
 
   // <img data-asset="nameplate/dan_10dan_gold.png">: api/Assets needs the token, which <img src> can't send,
   // so fetch once and use a blob URL. A missing asset hides the element (any element: a button can depend on one).
-  // <img data-avatar="api/Users/N/Avatar?v=key"> works the same way (see avatar below).
+  // <img data-avatar="api/Users/N/Avatar?v=key"> works the same way (the server's renderer draws those).
   const blobUrls = new Map();
   const blobUrl = url => {
     if (!blobUrls.has(url)) {
@@ -181,51 +180,6 @@
       .then(url => { if (el.dataset[attr] !== path) return; el.hidden = !url; if (url && el.tagName === "IMG") el.src = url; });
   });
   const hydrateAssets = () => { hydrate("asset", assetUrl); hydrate("avatar", blobUrl); };
-
-  // Avatar: when the card's costume + pose (the key, CardStyle.AvatarKey) has no stored image, the embed renders a
-  // transparent face crop off-screen once the model has loaded, and it's uploaded as WebP. The circle colour is CSS.
-  const avatarSrc = (baid, key) => `api/Users/${baid}/Avatar?v=${encodeURIComponent(key)}`;
-  const avatar = (frame, baid, key) => {
-    if (!frame || frame._avatarKey === key) return;
-    frame._avatarKey = key;
-    clearTimeout(frame._avatarTimer);
-    frame._avatar = null;
-    // Debounced like the old Profile's: stepping through parts shouldn't upload each one.
-    frame._avatarTimer = setTimeout(async () => {
-      if (frame._avatarKey !== key || await blobUrl(avatarSrc(baid, key))) return;
-      frame._avatar = { baid, key };
-      avatarRun(frame);
-    }, 400);
-  };
-  const avatarRun = async frame => {
-    const job = frame._avatar;
-    if (!job || frame._loading !== false) return;
-    frame._avatar = null;
-    const dataUrl = await new Promise(resolve => {
-      const onMsg = e => { if (e.source === frame.contentWindow && e.data?.type === "don-snapshot") { removeEventListener("message", onMsg); resolve(e.data.dataUrl); } };
-      addEventListener("message", onMsg);
-      // Face centred (camX), without the puchi, drawn at twice the size and scaled down below (smoother edges).
-      // Changing the framing means bumping AvatarKeys.Key's version (the server renderer draws the same).
-      frame.contentWindow.postMessage({ type: "don-snapshot", zoom: 0.14, camY: 0.165, camX: 0.04, puchi: false, size: 512 }, new URL(frame.src).origin);
-    });
-    if (frame._avatarKey !== job.key) return;   // the costume changed while rendering; the newer job uploads
-    const img = new Image();
-    img.src = dataUrl;
-    await img.decode();
-    const canvas = document.createElement("canvas");
-    canvas.width = canvas.height = 256;
-    const g = canvas.getContext("2d");
-    g.imageSmoothingQuality = "high";
-    g.drawImage(img, 0, 0, 256, 256);
-    // Browsers without WebP encoding hand back PNG, which the server also takes.
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/webp", 0.9));
-    const src = avatarSrc(job.baid, job.key);
-    const r = await authFetch(`api/Users/${job.baid}/Avatar?key=${encodeURIComponent(job.key)}`, { method: "PUT", body: blob }).catch(() => null);
-    if (!r?.ok) return;
-    blobUrls.set(src, Promise.resolve(URL.createObjectURL(blob)));
-    document.querySelectorAll("[data-avatar]").forEach(el => { if (el.dataset.avatar === src) delete el.dataset.loaded; });
-    hydrateAssets();
-  };
 
   // Tone preview: the tone's don, then its ka (extract writes tone/NN_{don,ka}.wav).
   const playTone = async id => {
@@ -362,7 +316,6 @@
     nameplate: renderNameplate,
     don: donFramed,
     hydrateAssets,
-    avatar,
     playTone,
   };
 })();

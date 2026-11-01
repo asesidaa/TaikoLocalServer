@@ -1,5 +1,4 @@
 
-using Microsoft.AspNetCore.RateLimiting;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
@@ -147,7 +146,7 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
     }
 
     /// <summary>
-    /// The avatar (rendered by the server, or uploaded by the WebUI) for costume <paramref name="v"/>. Any other key
+    /// The avatar (drawn by the server's renderer) for costume <paramref name="v"/>. Any other key
     /// 404s and queues a render; the URL changes with the key, so it caches forever.
     /// </summary>
     [HttpGet("{baid}/Avatar")]
@@ -185,51 +184,6 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
         Response.Headers.CacheControl = "private, max-age=31536000, immutable";
         Response.Headers.XContentTypeOptions = "nosniff";
         return File(still.Image, still.ContentType);
-    }
-
-    /// <summary>Stores the avatar (raw WebP or PNG body, at most <see cref="UserAvatar.MaxBytes"/>) for costume <paramref name="key"/>.</summary>
-    [HttpPut("{baid}/Avatar")]
-    [RequestSizeLimit(UserAvatar.MaxBytes)]
-    [EnableRateLimiting(DependencyInjection.AssetsRateLimitPolicy)]
-    public async Task<IActionResult> PutAvatar(uint baid, [FromQuery] string key)
-    {
-        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
-            return forbid;
-
-        if (key.Length is 0 or > UserAvatar.KeyMaxLength || !key.All(c => char.IsAsciiLetterOrDigit(c) || c == '-'))
-        {
-            return BadRequest();
-        }
-
-        using var body = new MemoryStream();
-        await Request.Body.CopyToAsync(body, HttpContext.RequestAborted);
-        var image = body.ToArray();
-        // Only the two formats the WebUI sends, by their magic bytes (never the client's Content-Type).
-        var contentType = image.AsSpan().StartsWith((byte[])[0x89, (byte)'P', (byte)'N', (byte)'G', 0x0D, 0x0A, 0x1A, 0x0A]) ? "image/png"
-            : image.Length > 12 && image.AsSpan(0, 4).SequenceEqual("RIFF"u8) && image.AsSpan(8, 4).SequenceEqual("WEBP"u8) ? "image/webp"
-            : null;
-        if (contentType is null)
-        {
-            return BadRequest();
-        }
-
-        if (!await context.UserData.AnyAsync(u => u.Baid == baid, HttpContext.RequestAborted))
-        {
-            return NotFound();
-        }
-
-        var avatar = await context.UserAvatars.FindAsync(baid);
-        if (avatar is null)
-        {
-            avatar = new UserAvatar { Baid = baid };
-            context.UserAvatars.Add(avatar);
-        }
-
-        avatar.Image = image;
-        avatar.ContentType = contentType;
-        avatar.Key = key;
-        await context.SaveChangesAsync(HttpContext.RequestAborted);
-        return NoContent();
     }
 
     [HttpDelete("{baid}")]

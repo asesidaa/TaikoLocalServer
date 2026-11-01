@@ -1,11 +1,15 @@
-@* A user's avatar in a circle on their card colour. The image (rendered and uploaded by their player card, see
-   ui.js avatar) covers the initial; without one for their current costume, the initial shows. *@
+@* A user's avatar in a circle on their card colour. While the server's renderer is on (Server Management › Status),
+   its image covers the initial; while it's off, or before it has drawn their current costume, the initial shows. *@
 @inject IJSRuntime Js
+@inject AuthService Auth
 
 <span class="relative grid shrink-0 place-items-center overflow-hidden rounded-full font-display @(CardStyle.IsLight(Hex) ? "text-zinc-900" : "text-white")"
       style="width:@(Size)px;height:@(Size)px;background:@Hex;font-size:@(Size / 2)px" aria-hidden="true">
     @Initial
-    <img data-avatar="@CardStyle.AvatarSrc(Setting)" alt="" hidden class="absolute inset-0 size-full object-cover" style="background:@Hex" />
+    @if (Auth.ServerAvatars)
+    {
+        <img data-avatar="@CardStyle.AvatarSrc(Setting)" alt="" hidden class="absolute inset-0 size-full object-cover" style="background:@Hex" />
+    }
 </span>
 
 @code {

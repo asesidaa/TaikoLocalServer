@@ -183,9 +183,5 @@
             return;
         }
         await Js.InvokeVoidAsync("ui.don", frame, anchor, DonState(0.25, 0.2));
-        // The avatar shows the normal costume, so the Dani Dojo look never makes one; nor does the browser when the
-        // server draws them.
-        if (!DanView && !Auth.ServerAvatars)
-            await Js.InvokeVoidAsync("ui.avatar", frame, Setting.Baid, CardStyle.AvatarKey(Setting));
     }
 }
