@@ -21,4 +21,9 @@ public class AccessRules
 
     /// <summary>How many access codes a non-admin may bind to their account.</summary>
     public int AccessCodeLimit { get; set; } = 3;
+
+    /// <summary>Failed Web UI sign-ins in a row that lock the account for <see cref="LockoutMinutes"/>.</summary>
+    public int LockoutAttempts { get; set; } = 10;
+
+    public int LockoutMinutes { get; set; } = 15;
 }

@@ -112,6 +112,8 @@ public sealed class AuthService : IDisposable
             {
                 "Invalid Credentials" => 2,
                 "User Not Registered" => 4,
+                "Account Locked" => 6,
+                "Card Banned" => 7,
                 _ => 5
             }, fallback: 5);
         }

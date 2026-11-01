@@ -1,0 +1,91 @@
+@* Access › Banned cards: cards refused at the cabinet and at sign-in. The account and scores stay. *@
+@inject HttpClient Client
+@inject ToastService Toast
+
+<section class="@Css.Card p-5 sm:p-6">
+    <h2 class="font-semibold">@Localizer["Ban a card"]</h2>
+    <p class="text-sm @Css.Muted">@Localizer["Ban Card Hint"]</p>
+    <form class="mt-3 grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] sm:items-end" @onsubmit="Ban" @onsubmit:preventDefault>
+        <AccessCodeField @bind-Value="code" />
+        <label class="block text-sm"><span class="font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Reason"]</span>
+            <input class="@Css.Input mt-1.5" maxlength="200" value="@reason" @oninput="e => reason = e.Value?.ToString() ?? string.Empty" /></label>
+        <label class="block text-sm"><span class="font-medium text-zinc-700 dark:text-zinc-300">@Localizer["For"]</span>
+            <select class="@Css.Input mt-1.5" @bind="days">@DurationOptions</select></label>
+        <button class="@Css.PrimaryButton" disabled="@(code.Length != 20 || busy)"><Icon Name="ban" />@Localizer["Ban"]</button>
+    </form>
+</section>
+
+<section class="@Css.Card mt-4 p-5 sm:p-6">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <h2 class="font-semibold">@Localizer["Banned cards"] <span class="font-normal @Css.Muted">· @(bans?.Count ?? 0)</span></h2>
+        <input type="search" inputmode="numeric" class="@Css.Input !w-48 !py-1.5" placeholder="@Localizer["Search digits"]" value="@query" @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
+    </div>
+    @if (bans is null)
+    {
+        <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+    }
+    else if (bans.Count == 0)
+    {
+        <p class="mt-4 text-sm @Css.Muted">@Localizer["No banned cards."]</p>
+    }
+    else
+    {
+        <ul class="mt-3 divide-y divide-zinc-100 dark:divide-zinc-800">
+            @foreach (var b in bans.Where(b => query.Trim().Length == 0 || b.AccessCode.Contains(query.Trim())))
+            {
+                var expired = b.Until is { } u && u < DateTime.UtcNow;
+                <li class="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5 text-sm">
+                    <span class="font-mono">@b.MaskedCode</span>
+                    <span class="@Css.Muted">@(b.Name ?? Localizer["No account"])</span>
+                    <span class="rounded-full px-2 py-0.5 text-[11px] font-medium @(expired ? "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400" : "bg-red-500/10 text-red-700 dark:text-red-400")">
+                        @(expired ? Localizer["Expired"] : b.Until is { } until ? string.Format(Localizer["Until {0}"], until.ToLocalTime().ToString("d")) : Localizer["Permanent"])
+                    </span>
+                    @if (b.Reason.Length > 0)
+                    {
+                        <span class="min-w-0 truncate @Css.Muted" title="@b.Reason">“@b.Reason”</span>
+                    }
+                    <span class="ml-auto text-xs @Css.Muted">@string.Format(Localizer["By {0}, {1} · refused {2}×"], b.BannedByName ?? Localizer["Server"], b.BannedAt.ToLocalTime().ToString("d"), b.RefusedCount)</span>
+                    <button class="@Css.GhostButton !px-2.5 !py-1 text-xs" @onclick="() => Unban(b)">@(expired ? Localizer["Remove"] : Localizer["Unban"])</button>
+                </li>
+            }
+        </ul>
+    }
+</section>
+
+@code {
+    private List<BanItem>? bans;
+    private string code = "", reason = "", query = "";
+    private int days = 7;
+    private bool busy;
+
+    // 0 = permanently.
+    public RenderFragment DurationOptions => __builder =>
+    {
+        <option value="1">@Localizer["1 day"]</option>
+        <option value="7">@Localizer["7 days"]</option>
+        <option value="30">@Localizer["30 days"]</option>
+        <option value="0">@Localizer["Permanently"]</option>
+    };
+
+    protected override Task OnInitializedAsync() => Load();
+
+    private async Task Load() => bans = await Client.GetFromJsonAsync<List<BanItem>>("api/Bans");
+
+    private async Task Ban()
+    {
+        busy = true;
+        var res = await Client.PostAsJsonAsync("api/Bans", new BanRequest { AccessCode = code, Reason = reason, Days = days == 0 ? null : days });
+        busy = false;
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        code = reason = "";
+        Toast.Show(Localizer["Card banned"]);
+        await Load();
+    }
+
+    private async Task Unban(BanItem b)
+    {
+        var res = await Client.DeleteAsync($"api/Bans/{b.AccessCode}");
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        await Load();
+    }
+}

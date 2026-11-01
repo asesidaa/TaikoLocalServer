@@ -10,6 +10,10 @@ public interface ITaikoDbContext
     DbSet<AccessRules> AccessRules { get; }
     DbSet<ServerSecrets> ServerSecrets { get; }
     DbSet<ActivityEntry> Activity { get; }
+    DbSet<SignInAttempt> SignInAttempts { get; }
+    DbSet<BannedCard> BannedCards { get; }
+    DbSet<WebSession> WebSessions { get; }
+    DbSet<ApiToken> ApiTokens { get; }
     DbSet<Token> Tokens { get; }
     DbSet<SongBestDatum> SongBestData { get; }
     DbSet<SongPlayDatum> SongPlayData { get; }

@@ -119,8 +119,10 @@ try
     {
         var db = scope.ServiceProvider.GetRequiredService<TaikoDbContext>();
         db.Database.Migrate();
-        // Access › Activity keeps a year.
+        // Access › Activity keeps a year, Sign-ins 90 days; sessions go a week after their last use (the token lifetime).
         db.Activity.Where(e => e.Time < DateTime.UtcNow.AddDays(-365)).ExecuteDelete();
+        db.SignInAttempts.Where(e => e.Time < DateTime.UtcNow.AddDays(-90)).ExecuteDelete();
+        db.WebSessions.Where(e => e.LastSeenAt < DateTime.UtcNow.AddDays(-7)).ExecuteDelete();
 
         if (AdminCli.IsAdminCommand(args))
             return await AdminCli.RunAsync(args, db);

@@ -1,0 +1,134 @@
+@* Access › Sign-ins: failures in the last day, locked accounts (Unlock), and the log (90 days). *@
+@inject HttpClient Client
+@inject ToastService Toast
+
+<div class="grid gap-4 sm:grid-cols-2">
+    <section class="@Css.Card p-5">
+        <p class="text-sm @Css.Muted">@Localizer["Failed sign-ins, last 24 hours"]</p>
+        <p class="mt-1 text-3xl font-semibold tabular-nums">@(summary?.FailedLastDay.ToString() ?? "–")</p>
+    </section>
+    <section class="@Css.Card p-5">
+        <p class="text-sm @Css.Muted">@Localizer["Locked accounts"]</p>
+        @if (summary is { Locked.Count: > 0 })
+        {
+            <ul class="mt-2 space-y-1.5">
+                @foreach (var l in summary.Locked)
+                {
+                    <li class="flex items-center gap-2 text-sm">
+                        <span class="min-w-0 flex-1 truncate font-medium">@l.Name</span>
+                        <span class="text-xs @Css.Muted">@string.Format(Localizer["until {0}"], l.Until.ToLocalTime().ToString("t"))</span>
+                        <button class="@Css.GhostButton !px-2.5 !py-1 text-xs" @onclick="() => Unlock(l.Baid)">@Localizer["Unlock"]</button>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p class="mt-1 text-3xl font-semibold tabular-nums">@(summary is null ? "–" : "0")</p>
+        }
+    </section>
+</div>
+
+<section class="@Css.Card mt-4 p-5 sm:p-6">
+    <div class="flex flex-wrap items-center gap-2">
+        <h2 class="mr-auto font-semibold">@Localizer["Sign-ins"]</h2>
+        @foreach (var (key, label) in new (bool?, string)[] { (null, Localizer["All"]), (true, Localizer["Failed"]), (false, Localizer["Successful"]) })
+        {
+            var on = filter == key;
+            <button class="rounded-full px-2.5 py-1 text-xs font-medium @(on ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800")"
+                    aria-pressed="@Css.Aria(on)" @onclick="() => SetFilter(key)">@label</button>
+        }
+        <form @onsubmit="Reload" @onsubmit:preventDefault>
+            <input type="search" class="@Css.Input !w-48 !py-1.5" placeholder="@Localizer["Name or IP"]" value="@query" @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
+        </form>
+    </div>
+    @if (items is null)
+    {
+        <p class="mt-4 text-sm @Css.Muted">@Localizer["Loading..."]</p>
+    }
+    else if (items.Count == 0)
+    {
+        <p class="mt-4 text-sm @Css.Muted">@Localizer["Nothing yet."]</p>
+    }
+    else
+    {
+        <ul class="mt-3 divide-y divide-zinc-100 dark:divide-zinc-800">
+            @foreach (var a in items)
+            {
+                var ok = a.Result == SignInOutcome.SignedIn;
+                <li class="flex flex-wrap items-center gap-x-3 gap-y-0.5 py-2 text-sm">
+                    <time class="w-32 shrink-0 text-xs tabular-nums @Css.Muted">@a.Time.ToLocalTime().ToString("g")</time>
+                    <span class="min-w-0 font-medium">@(a.Name ?? Localizer["Unknown"])</span>
+                    <span class="font-mono text-xs @Css.Muted">@a.AccessCode</span>
+                    <span class="rounded-full px-2 py-0.5 text-[11px] font-medium @(ok ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "bg-red-500/10 text-red-700 dark:text-red-400")">@ResultText(a.Result)</span>
+                    <span class="ml-auto min-w-0 truncate text-xs @Css.Muted" title="@a.UserAgent">@a.Ip · @Device(a.UserAgent)</span>
+                </li>
+            }
+        </ul>
+        @if (next is not null)
+        {
+            <div class="mt-3 text-center"><button class="@Css.GhostButton" @onclick="More">@Localizer["Show older"]</button></div>
+        }
+    }
+</section>
+
+@code {
+    private SignInSummary? summary;
+    private List<SignInItem>? items;
+    private long? next;
+    private bool? filter;
+    private string query = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        summary = await Client.GetFromJsonAsync<SignInSummary>("api/SignIns/Summary");
+        await Reload();
+    }
+
+    private string Url(long? before) =>
+        $"api/SignIns?limit=50{(before is { } b ? $"&before={b}" : "")}{(filter is { } f ? $"&failed={(f ? "true" : "false")}" : "")}{(query.Trim().Length > 0 ? $"&q={Uri.EscapeDataString(query.Trim())}" : "")}";
+
+    private async Task Reload()
+    {
+        var page = await Client.GetFromJsonAsync<SignInPage>(Url(null));
+        items = page?.Items.ToList() ?? [];
+        next = page?.NextBefore;
+    }
+
+    private async Task More()
+    {
+        var page = await Client.GetFromJsonAsync<SignInPage>(Url(next));
+        items!.AddRange(page?.Items ?? []);
+        next = page?.NextBefore;
+    }
+
+    private Task SetFilter(bool? f)
+    {
+        filter = f;
+        return Reload();
+    }
+
+    private async Task Unlock(uint baid)
+    {
+        var res = await Client.PostAsync($"api/SignIns/Unlock/{baid}", null);
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        summary = await Client.GetFromJsonAsync<SignInSummary>("api/SignIns/Summary");
+        Toast.Show(Localizer["Unlocked"]);
+    }
+
+    private string ResultText(SignInOutcome r) => r switch
+    {
+        SignInOutcome.SignedIn => Localizer["Signed in"],
+        SignInOutcome.WrongPassword => Localizer["Wrong password"],
+        SignInOutcome.UnknownAccessCode => Localizer["Unknown access code"],
+        SignInOutcome.NotRegistered => Localizer["Not registered"],
+        SignInOutcome.AccountLocked => Localizer["Account locked"],
+        SignInOutcome.CardBanned => Localizer["Card banned"],
+        _ => r.ToString(),
+    };
+
+    // A short device name from the user agent; the full one is on hover.
+    public static string Device(string ua) =>
+        ua.Contains("Edg/") ? "Edge" : ua.Contains("Firefox/") ? "Firefox" : ua.Contains("Chrome/") ? "Chrome" : ua.Contains("Safari/") ? "Safari"
+        : ua.Length == 0 ? "?" : ua.Length > 24 ? ua[..24] + "…" : ua;
+}

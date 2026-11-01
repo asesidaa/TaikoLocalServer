@@ -96,6 +96,8 @@ public sealed class ServerAccess(
         row.AllowUserDelete = updated.AllowUserDelete;
         row.AllowFreeProfileEditing = updated.AllowFreeProfileEditing;
         row.AccessCodeLimit = Math.Max(1, updated.AccessCodeLimit);
+        row.LockoutAttempts = Math.Max(1, updated.LockoutAttempts);
+        row.LockoutMinutes = Math.Max(1, updated.LockoutMinutes);
         await db.SaveChangesAsync(cancellationToken);
         rules = Copy(row);
     }
@@ -131,5 +133,6 @@ public sealed class ServerAccess(
     {
         OnlyAdmin = r.OnlyAdmin, RegisterWithLastPlayTime = r.RegisterWithLastPlayTime, AllowUserDelete = r.AllowUserDelete,
         AllowFreeProfileEditing = r.AllowFreeProfileEditing, AccessCodeLimit = r.AccessCodeLimit,
+        LockoutAttempts = r.LockoutAttempts, LockoutMinutes = r.LockoutMinutes,
     };
 }

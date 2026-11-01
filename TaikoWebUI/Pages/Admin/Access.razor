@@ -6,6 +6,7 @@
 @inject HttpClient Client
 @inject AuthService AuthService
 @inject ToastService Toast
+@using TaikoWebUI.Components.Admin
 
 <PageTitle>Access</PageTitle>
 @if (!AuthService.LoginRequired)
@@ -26,6 +27,18 @@ else
         {
             @ActivityLog
         }
+        else if (Current == "bans")
+        {
+            <BansTab />
+        }
+        else if (Current == "signins")
+        {
+            <SignInsTab />
+        }
+        else if (Current == "sessions")
+        {
+            <SessionsTab />
+        }
         else
         {
             var t = tabs.First(x => x.Id == Current);
@@ -44,8 +57,8 @@ else
     private string Current => tabs.Any(x => x.Id == Tab?.ToLowerInvariant()) ? Tab!.ToLowerInvariant() : "overview";
 
     private bool Changed => saved is not null && draft is not null &&
-        (saved.OnlyAdmin, saved.RegisterWithLastPlayTime, saved.AllowUserDelete, saved.AllowFreeProfileEditing, saved.AccessCodeLimit) !=
-        (draft.OnlyAdmin, draft.RegisterWithLastPlayTime, draft.AllowUserDelete, draft.AllowFreeProfileEditing, draft.AccessCodeLimit);
+        (saved.OnlyAdmin, saved.RegisterWithLastPlayTime, saved.AllowUserDelete, saved.AllowFreeProfileEditing, saved.AccessCodeLimit, saved.LockoutAttempts, saved.LockoutMinutes) !=
+        (draft.OnlyAdmin, draft.RegisterWithLastPlayTime, draft.AllowUserDelete, draft.AllowFreeProfileEditing, draft.AccessCodeLimit, draft.LockoutAttempts, draft.LockoutMinutes);
 
     protected override async Task OnInitializedAsync()
     {
@@ -141,6 +154,7 @@ else
     {
         OnlyAdmin = r.OnlyAdmin, RegisterWithLastPlayTime = r.RegisterWithLastPlayTime, AllowUserDelete = r.AllowUserDelete,
         AllowFreeProfileEditing = r.AllowFreeProfileEditing, AccessCodeLimit = r.AccessCodeLimit,
+        LockoutAttempts = r.LockoutAttempts, LockoutMinutes = r.LockoutMinutes,
     };
 
     private async Task Save()
@@ -177,6 +191,20 @@ else
                     <span class="min-w-0 flex-1 text-sm font-medium">@Localizer["Access codes per player"]</span>
                     <input type="number" min="1" max="99" class="@Css.Input !w-20 text-right" @bind="draft.AccessCodeLimit" />
                 </label>
+                <div class="flex flex-wrap items-center gap-3 py-2">
+                    <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"><Icon Name="lock" Class="size-5" /></span>
+                    <span class="min-w-0 flex-1 text-sm font-medium">@Localizer["Lock an account after failed sign-ins"]</span>
+                    <select class="@Css.Input !w-auto !py-1.5" aria-label="@Localizer["Failed sign-ins"]" @bind="draft.LockoutAttempts">
+                        <option value="5">@string.Format(Localizer["{0} tries"], 5)</option>
+                        <option value="10">@string.Format(Localizer["{0} tries"], 10)</option>
+                        <option value="20">@string.Format(Localizer["{0} tries"], 20)</option>
+                    </select>
+                    <select class="@Css.Input !w-auto !py-1.5" aria-label="@Localizer["Locked for"]" @bind="draft.LockoutMinutes">
+                        <option value="15">@Localizer["for 15 min"]</option>
+                        <option value="60">@Localizer["for 1 hour"]</option>
+                        <option value="1440">@Localizer["for 1 day"]</option>
+                    </select>
+                </div>
             </div>
             <div class="mt-4 flex justify-end gap-2">
                 @if (Changed)

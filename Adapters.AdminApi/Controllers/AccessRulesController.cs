@@ -14,20 +14,22 @@ public class AccessRulesController(IServerAccess access) : BaseAdminController<A
         {
             OnlyAdmin = r.OnlyAdmin, RegisterWithLastPlayTime = r.RegisterWithLastPlayTime,
             AllowUserDelete = r.AllowUserDelete, AllowFreeProfileEditing = r.AllowFreeProfileEditing, AccessCodeLimit = r.AccessCodeLimit,
+            LockoutAttempts = r.LockoutAttempts, LockoutMinutes = r.LockoutMinutes,
         });
     }
 
     [HttpPut]
     public async Task<IActionResult> Put(AccessRulesSettings settings)
     {
-        if (settings.AccessCodeLimit < 1)
-            return BadRequest(new { message = "The access-code limit must be at least 1." });
+        if (settings.AccessCodeLimit < 1 || settings.LockoutAttempts < 1 || settings.LockoutMinutes < 1)
+            return BadRequest(new { message = "The access-code limit and the lockout values must be at least 1." });
 
         await access.UpdateRulesAsync(new AccessRules
         {
             OnlyAdmin = settings.OnlyAdmin, RegisterWithLastPlayTime = settings.RegisterWithLastPlayTime,
             AllowUserDelete = settings.AllowUserDelete, AllowFreeProfileEditing = settings.AllowFreeProfileEditing,
             AccessCodeLimit = settings.AccessCodeLimit,
+            LockoutAttempts = settings.LockoutAttempts, LockoutMinutes = settings.LockoutMinutes,
         }, HttpContext.RequestAborted);
         return NoContent();
     }

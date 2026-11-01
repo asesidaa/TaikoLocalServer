@@ -12,6 +12,17 @@ public class BaidQueryHandler(
 {
     public async ValueTask<CommonBaidResponse> Handle(BaidQuery request, CancellationToken cancellationToken)
     {
+        // A banned card is refused before anything else, so it can't become a new user either.
+        var ban = await context.BannedCards.FindAsync([request.AccessCode], cancellationToken);
+        if (ban is not null && (ban.Until is null || ban.Until > DateTime.UtcNow))
+        {
+            ban.RefusedCount++;
+            await context.SaveChangesAsync(cancellationToken);
+            logger.LogWarning("Refused banned card {AccessCode}", request.AccessCode);
+            // shortcut: Result 0 is assumed to make the cabinet refuse the card; not yet checked on a cabinet or in Taiko.exe.
+            return new CommonBaidResponse { Result = 0 };
+        }
+
         var card = await context.Cards.FindAsync([request.AccessCode], cancellationToken);
         if (card is null)
         {

@@ -59,29 +59,78 @@ public class AuthController(
     {
         // One message for unknown card / wrong password so login can't be used to probe access codes.
         var invalid = Unauthorized(new { message = "Invalid Credentials" });
+        var ct = HttpContext.RequestAborted;
 
-        var card = await context.Cards.FindAsync(new object?[] { loginRequest.AccessCode }, HttpContext.RequestAborted);
+        var card = await context.Cards.FindAsync(new object?[] { loginRequest.AccessCode }, ct);
         if (card == null)
-            return invalid;
+            return await Attempt(null, loginRequest.AccessCode, SignInOutcome.UnknownAccessCode, invalid);
 
-        var credential = await context.Credentials.FindAsync(new object?[] { card.Baid }, HttpContext.RequestAborted);
+        var now = DateTime.UtcNow;
+        var ban = await context.BannedCards.FindAsync(new object?[] { card.AccessCode }, ct);
+        if (ban is not null && (ban.Until is null || ban.Until > now))
+        {
+            ban.RefusedCount++;
+            return await Attempt(card.Baid, card.AccessCode, SignInOutcome.CardBanned, Unauthorized(new { message = "Card Banned" }));
+        }
+
+        if (await IsLockedAsync(card.Baid, now))
+            return await Attempt(card.Baid, card.AccessCode, SignInOutcome.AccountLocked, Unauthorized(new { message = "Account Locked" }));
+
+        var credential = await context.Credentials.FindAsync(new object?[] { card.Baid }, ct);
         if (credential == null)
-            return invalid;
+            return await Attempt(card.Baid, card.AccessCode, SignInOutcome.UnknownAccessCode, invalid);
 
         if (credential.Password == "")
-            return Unauthorized(new { message = "User Not Registered" });
+            return await Attempt(card.Baid, card.AccessCode, SignInOutcome.NotRegistered, Unauthorized(new { message = "User Not Registered" }));
 
         if (!BCrypt.Net.BCrypt.Verify(loginRequest.Password, credential.Password))
-            return invalid;
+            return await Attempt(card.Baid, card.AccessCode, SignInOutcome.WrongPassword, invalid);
 
         var user = await context.UserData
-            .FirstOrDefaultAsync(d => d.Baid == card.Baid, HttpContext.RequestAborted);
+            .FirstOrDefaultAsync(d => d.Baid == card.Baid, ct);
         if (user == null)
-            return invalid;
+            return await Attempt(card.Baid, card.AccessCode, SignInOutcome.UnknownAccessCode, invalid);
 
-        var authToken = jwtTokens.IssueToken(card.Baid, user.IsAdmin);
+        var session = new WebSession
+        {
+            Id = Guid.NewGuid(), Baid = card.Baid, CreatedAt = now, LastSeenAt = now,
+            Ip = Ip, UserAgent = UserAgent,
+        };
+        context.WebSessions.Add(session);
+        var authToken = jwtTokens.IssueToken(card.Baid, user.IsAdmin, session.Id);
+        return await Attempt(card.Baid, card.AccessCode, SignInOutcome.SignedIn, Ok(new { authToken }));
+    }
 
-        return Ok(new { authToken });
+    private string Ip => HttpContext.Connection.RemoteIpAddress?.ToString() ?? "";
+    private string UserAgent => Request.Headers.UserAgent.ToString() is { Length: > 200 } ua ? ua[..200] : Request.Headers.UserAgent.ToString();
+
+    // Logs the attempt for Access › Sign-ins (and the lockout count), then answers with result.
+    private async Task<IActionResult> Attempt(uint? baid, string accessCode, SignInOutcome outcome, IActionResult result)
+    {
+        context.SignInAttempts.Add(new SignInAttempt
+        {
+            Time = DateTime.UtcNow, Baid = baid, AccessCode = ActivityExtensions.MaskAccessCode(accessCode),
+            Result = outcome, Ip = Ip, UserAgent = UserAgent,
+        });
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return result;
+    }
+
+    /// <summary>
+    /// Locked: LockoutAttempts wrong passwords within the last LockoutMinutes, none of them before the last
+    /// successful sign-in or an admin's unlock.
+    /// </summary>
+    private async Task<bool> IsLockedAsync(uint baid, DateTime now)
+    {
+        var rules = access.Rules;
+        var since = now.AddMinutes(-rules.LockoutMinutes);
+        var reset = await context.SignInAttempts
+            .Where(a => a.Baid == baid && (a.Result == SignInOutcome.SignedIn || a.Result == SignInOutcome.Unlocked))
+            .MaxAsync(a => (DateTime?)a.Time, HttpContext.RequestAborted);
+        if (reset > since) since = reset.Value;
+        var failures = await context.SignInAttempts
+            .CountAsync(a => a.Baid == baid && a.Result == SignInOutcome.WrongPassword && a.Time > since, HttpContext.RequestAborted);
+        return failures >= rules.LockoutAttempts;
     }
 
     [HttpPost("Register")]

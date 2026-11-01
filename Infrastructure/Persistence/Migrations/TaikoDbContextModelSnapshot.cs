@@ -31,6 +31,12 @@ namespace TaikoLocalServer.Migrations
                     b.Property<bool>("AllowUserDelete")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("LockoutAttempts")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LockoutMinutes")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("OnlyAdmin")
                         .HasColumnType("INTEGER");
 
@@ -129,6 +135,80 @@ namespace TaikoLocalServer.Migrations
                     b.HasKey("Baid", "SongId", "Difficulty", "SectionIndex");
 
                     b.ToTable("AiSectionScoreData");
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.ApiToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<uint>("CreatedByBaid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("LastUsedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastUsedIp")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Prefix")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Scopes")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Hash")
+                        .IsUnique();
+
+                    b.ToTable("ApiTokens");
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.BannedCard", b =>
+                {
+                    b.Property<string>("AccessCode")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("BannedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<uint?>("BannedBy")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RefusedCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("Until")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("AccessCode");
+
+                    b.ToTable("BannedCards");
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.Card", b =>
@@ -253,6 +333,42 @@ namespace TaikoLocalServer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ServerSecrets");
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SignInAttempt", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AccessCode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<uint?>("Baid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Ip")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Result")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserAgent")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Time");
+
+                    b.HasIndex("Baid", "Time");
+
+                    b.ToTable("SignInAttempts");
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SongBestDatum", b =>
@@ -565,6 +681,39 @@ namespace TaikoLocalServer.Migrations
                         .IsUnique();
 
                     b.ToTable("UserWebProfiles");
+                });
+
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.WebSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<uint>("Baid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Ip")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LastSeenAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserAgent")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Baid");
+
+                    b.ToTable("WebSessions");
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.AiScoreDatum", b =>

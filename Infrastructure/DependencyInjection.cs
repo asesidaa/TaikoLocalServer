@@ -74,6 +74,7 @@ public static class DependencyInjection
                 NameClaimType = ClaimTypes.Name,
                 RoleClaimType = ClaimTypes.Role,
             };
+            options.Events = new JwtBearerEvents { OnTokenValidated = SessionValidation.OnTokenValidated };
         });
         // The signing key is generated and stored by ServerAccess; options are built on first use, after it has loaded.
         services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)

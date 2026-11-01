@@ -54,6 +54,8 @@
             2 => Localizer["Login Wrong Password Error"],
             3 => Localizer["Unknown Access Code Error"],
             4 => Localizer["Access Code Not Registered Error"],
+            6 => Localizer["Too many wrong passwords. This account is locked for a while: try again later, or ask an admin."],
+            7 => Localizer["This card is banned on this server. Ask an admin."],
             _ => Localizer["Unknown Error"],
         };
         if (result == 1) Nav.NavigateTo("/");
