@@ -32,18 +32,21 @@
                 <span class="sr-only">@Localizer["Search titles"]</span>
                 <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="search" /></span>
                 <input type="search" autofocus value="@query" placeholder="@string.Format(Localizer["Search {0} titles"], Titles.Count)" class="@Css.Input pl-9"
-                       @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
+                       @oninput="e => { query = e.Value?.ToString() ?? string.Empty; page = 1; }" />
             </label>
         </div>
-        <div class="mt-2 min-h-0 flex-1 overflow-y-auto px-2 pb-2">
-            @{
-                var hits = Matches();
-            }
+        @{
+            var hits = Matches();
+            var pages = Math.Max(1, (hits.Count + PageSize - 1) / PageSize);
+            page = Math.Min(page, pages);
+        }
+        @* Keyed by page, so turning one starts at the top of the list. *@
+        <div @key="page" class="mt-2 min-h-0 flex-1 overflow-y-auto px-2 pb-2">
             @if (hits.Count == 0)
             {
                 <p class="px-3 py-8 text-center text-sm @Css.Muted">@Localizer["No titles match."]</p>
             }
-            @foreach (var (title, name) in hits.Take(Shown))
+            @foreach (var (title, name) in hits.Skip((page - 1) * PageSize).Take(PageSize))
             {
                 <button class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm hover:bg-zinc-100 focus-visible:bg-zinc-100 focus-visible:outline-none dark:hover:bg-zinc-800 dark:focus-visible:bg-zinc-800"
                         @onclick="() => Pick(name, title.TitleRarity)">
@@ -59,17 +62,20 @@
                     }
                 </button>
             }
-            @if (hits.Count > Shown)
-            {
-                <p class="px-3 py-3 text-center text-xs @Css.Muted">@string.Format(Localizer["{0} more. Keep typing to narrow it down."], hits.Count - Shown)</p>
-            }
         </div>
+        @if (pages > 1)
+        {
+            <div class="flex flex-wrap items-center justify-between gap-2 border-t border-zinc-100 px-4 py-2 dark:border-zinc-800">
+                <span class="text-xs tabular-nums @Css.Muted">@string.Format(Localizer["{0}–{1} of {2}"], ((page - 1) * PageSize + 1).ToString("N0"), Math.Min(page * PageSize, hits.Count).ToString("N0"), hits.Count.ToString("N0"))</span>
+                <Pager Current="page" Total="pages" OnPage="p => page = p" Label="@Localizer["Title pages"]" />
+            </div>
+        }
     </div>
 </div>
 
 @code {
     private const int MaxLength = 20;   // the longest game title
-    private const int Shown = 150;      // rows rendered at once; typing narrows the rest
+    private const int PageSize = 50;
 
     [Parameter, EditorRequired] public UserSetting Setting { get; set; } = new();
     [Parameter, EditorRequired] public IReadOnlyList<Title> Titles { get; set; } = [];
@@ -79,6 +85,7 @@
     [Parameter] public EventCallback OnClose { get; set; }
 
     private string query = "";
+    private int page = 1;
     private string custom = "";
     private string Culture => CultureInfo.CurrentCulture.ToString();
 
