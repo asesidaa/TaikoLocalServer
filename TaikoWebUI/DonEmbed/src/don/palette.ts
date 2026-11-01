@@ -63,12 +63,3 @@ export const NUMBER_TO_COLOUR_MAP: Record<number, string> = {
   61: '#FFB3DF',
   62: '#000000',
 }
-
-export function paletteOptions() {
-  return Object.entries(NUMBER_TO_COLOUR_MAP)
-    .map(([k, hex]) => ({
-      value: hex,
-      label: `${String(k).padStart(2, '0')}  ${hex}`,
-    }))
-    .sort((a, b) => a.label.localeCompare(b.label))
-}

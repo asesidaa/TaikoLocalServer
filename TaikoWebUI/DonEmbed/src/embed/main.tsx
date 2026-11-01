@@ -1,11 +1,12 @@
-// Display-only don-chan for TaikoLocalServer's WebUI (built with `npm run build:embed`, hosted by the server
+// Display-only don-chan for TaikoLocalServer's WebUI (built by TaikoWebUI.csproj into wwwroot/don-embed, served
 // at /don-embed/). State comes from the URL query and from postMessage({ type: "don", ...fields }) sent by the
 // host page. Game files are not public: every part is fetched from the server's authenticated api/Assets with
 // the WebUI's login token and handed to three.js as a blob: URL, so no asset URL exists outside this page.
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { Canvas, useThree } from '@react-three/fiber'
+import { Canvas, useLoader, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
+import { GLTFLoader } from 'three-stdlib'
 import { DonCharacter } from '../don/DonCharacter'
 import { NUMBER_TO_COLOUR_MAP } from '../don/palette'
 import type { AnimProgress } from '../don/types'
@@ -45,7 +46,10 @@ const token = () => {
   try { return JSON.parse(localStorage.getItem('authToken') ?? 'null') as string | null } catch { return null }
 }
 const blobs = new Map<string, Promise<string | null>>()
-/** A blob: URL for `path`, or null if the server doesn't have it. Cached for the page's lifetime. */
+/**
+ * A blob: URL for `path`, or null if the server doesn't have it. Kept until the part is replaced (forget); a failure
+ * isn't kept, so an expired token or a network blip is tried again on the next change instead of sticking.
+ */
 function asset(path: string): Promise<string | null> {
   let p = blobs.get(path)
   if (!p) {
@@ -54,8 +58,18 @@ function asset(path: string): Promise<string | null> {
       .then(async (r) => (r.ok ? URL.createObjectURL(await r.blob()) : null))
       .catch(() => null)
     blobs.set(path, p)
+    p.then((url) => { if (!url) blobs.delete(path) })
   }
   return p
+}
+/** Frees a part's download and drops it from three.js's loader cache, once nothing shows it any more. */
+async function forget(url: string) {
+  for (const [path, p] of blobs) if ((await p) === url) blobs.delete(path)
+  if (url.length) {
+    useLoader.clear(GLTFLoader, url)
+    useLoader.clear(THREE.TextureLoader, url)
+    URL.revokeObjectURL(url)
+  }
 }
 /** A costume part, falling back to part 0 when the operator's extract doesn't have that id. */
 const part = async (prefix: string, file: string, ext: string) =>
@@ -63,8 +77,10 @@ const part = async (prefix: string, file: string, ext: string) =>
 
 type Urls = { kig: boolean; body: string; head: string; cos: string; face: string; paint: string; acce: string; anim: string; faceKeys: string }
 
-function useUrls(s: State): Urls | null {
+/** The parts' blob URLs, or null until they're in; `failed` when one is missing (missing-assets is posted). */
+function useUrls(s: State): { urls: Urls | null; failed: boolean } {
   const [urls, setUrls] = useState<Urls | null>(null)
+  const [failed, setFailed] = useState(false)
   useEffect(() => {
     let cancelled = false
     const kig = s.kigurumi > 0 || !!s.cosFile
@@ -79,13 +95,22 @@ function useUrls(s: State): Urls | null {
       if (cancelled) return
       if (!body || !head || !cos || !face || !paint || !acce || !anim || !faceKeys) {
         parent.postMessage({ type: 'don-status', loading: false, error: 'missing-assets' }, location.origin)
+        setFailed(true)
         return
       }
-      setUrls({ kig, body, head, cos, face, paint, acce, anim, faceKeys })
+      setFailed(false)
+      setUrls((old) => {
+        // The parts this change replaced: nothing shows them now (Suspense has swapped to the new ones by the
+        // time they're freed, a frame later).
+        const keep = new Set([body, head, cos, face, paint, acce, anim, faceKeys])
+        const gone = old ? [old.body, old.head, old.cos, old.face, old.paint, old.acce].filter((u) => !keep.has(u)) : []
+        if (gone.length) setTimeout(() => gone.forEach(forget), 1000)
+        return { kig, body, head, cos, face, paint, acce, anim, faceKeys }
+      })
     })()
     return () => { cancelled = true }
   }, [s.kigurumi, s.cosFile, s.body, s.head, s.face, s.puchi])
-  return urls
+  return { urls, failed }
 }
 
 // Framing: smaller zoom = bigger don. The host sends zoom/camY per layout, and `anchor` so don-chan keeps
@@ -102,6 +127,9 @@ function Camera({ zoom, camY, anchor }: { zoom: number; camY: number; anchor?: [
   }, [camera, size, zoom, camY, anchor?.join()])
   return null
 }
+
+// One object, so the parts aren't re-dressed on every render.
+const OUTLINE = { visible: true, thickness: 0.0025 }
 
 type SnapshotRequest = { zoom: number; camY: number; camX?: number; size?: number; poseT?: number; puchi?: boolean }
 
@@ -155,7 +183,7 @@ function Snapshotter({ apiRef, seekRef, progRef }: {
 function App() {
   const [s, setS] = useState(fromQuery)
   const [loading, setLoading] = useState(true)
-  const urls = useUrls(s)
+  const { urls, failed } = useUrls(s)
   const snapRef = useRef<((r: SnapshotRequest) => string) | null>(null)
   const seekRef = useRef<((t: number) => void) | null>(null)
   const progRef = useRef<AnimProgress>({ time: 0, duration: 0 })
@@ -173,6 +201,8 @@ function App() {
   // Only parts that rebuild the model fire onPartsReady; puchi (acce) is just a texture swap,
   // so it must not turn the spinner on or it would never turn off.
   useEffect(() => { if (urls) setLoading(true) }, [urls?.body, urls?.head, urls?.cos, urls?.face, urls?.paint, urls?.kig])
+  // A missing part ends loading (the host shows its fallback); without this the spinner would never stop.
+  useEffect(() => { if (failed) setLoading(false) }, [failed])
   useEffect(() => { parent.postMessage({ type: 'don-status', loading }, location.origin) }, [loading])
   // The model's first frame after mounting is the bind pose with raw materials (colours and the first animation pose
   // land a frame later). So it stays hidden while parts load and fades in two frames after onPartsReady.
@@ -208,11 +238,8 @@ function App() {
               bodyUrl={urls.body} headUrl={urls.head} cosUrl={urls.cos} faceUrl={urls.face}
               paintUrl={urls.paint} acceUrl={urls.acce}
               showBody={!urls.kig} showHead={!urls.kig} showCos={urls.kig}
-              animLibraryUrl={urls.anim} faceKeysUrl={urls.faceKeys} animName={s.anim}
-              playing forceLoop animSpeed={1} colors={colors}
-              outline={{ visible: true, thickness: 0.0025 }}
-              flattenSkeleton={false} debugSkeleton={false} collectBoneData={false}
-              onPartsReady={onPartsReady} seekRef={seekRef} animProgressRef={progRef}
+              animLibraryUrl={urls.anim} faceKeysUrl={urls.faceKeys} animName={s.anim} colors={colors}
+              outline={OUTLINE} onPartsReady={onPartsReady} seekRef={seekRef} animProgressRef={progRef}
             />
           )}
         </Suspense>

@@ -47,7 +47,9 @@ export class LumenScene {
     const data = await res.json();
     if (data.format !== "lumen-scene" || data.version !== 1) throw new Error("unsupported lumen scene format");
     const atlasUrl = new URL(data.atlas.image, new URL(url, location.href)).href;
-    const blob = await (await f(atlasUrl)).blob(); // blob, so no asset URL ends up in the DOM
+    const atlas = await f(atlasUrl);
+    if (!atlas.ok) throw new Error(`lumen atlas ${atlasUrl}: HTTP ${atlas.status}`);
+    const blob = await atlas.blob(); // blob, so no asset URL ends up in the DOM
     const image = await createImageBitmap(blob, { premultiplyAlpha: "none" });
     return new LumenScene(data, image);
   }
@@ -55,6 +57,7 @@ export class LumenScene {
   constructor(data, image) {
     this.data = data;
     this.image = image;
+    this.cursors = new Map(); // sprite id → { frame, next, list }: its display list as of `frame`
   }
 
   /** Labels of a set (e.g. "plates"), in timeline order. */
@@ -66,12 +69,18 @@ export class LumenScene {
     return new LumenPlayer(this, canvas, options);
   }
 
-  /** Display list of `spriteId` at local `frame`: [{char, name, m, mult, add, clip, placedAt}] in depth order. */
+  /**
+   * Display list of `spriteId` at local `frame`: [{char, name, m, mult, add, clip, placedAt}] in depth order.
+   * Built up from the last frame asked for: playback asks for the next frame (or the same one, held), and only a
+   * loop back to an earlier frame replays the timeline from 0. Replaying it every frame cost its whole length.
+   */
   displayList(spriteId, frame) {
-    const sprite = this.data.sprites[spriteId];
-    const list = new Map();
-    for (const [id, ops] of sprite.frames) {
-      if (id > frame) break;
+    const frames = this.data.sprites[spriteId].frames;
+    let c = this.cursors.get(spriteId);
+    if (!c || frame < c.frame) this.cursors.set(spriteId, c = { frame: -1, next: 0, list: new Map() });
+    const list = c.list;
+    for (; c.next < frames.length && frames[c.next][0] <= frame; c.next++) {
+      const [id, ops] = frames[c.next];
       for (const op of ops) {
         if (op[0] === 0) { list.delete(op[1]); continue; }
         const [, char, mode, depth, clip, transform, cm, ca, name] = op;
@@ -91,6 +100,7 @@ export class LumenScene {
         list.set(depth, obj);
       }
     }
+    c.frame = frame;
     return [...list.entries()].sort((a, b) => a[0] - b[0]).map(([depth, o]) => ({ depth, ...o }));
   }
 }

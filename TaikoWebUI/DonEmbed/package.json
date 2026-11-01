@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc --noEmit && vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "test": "node --test src/don/normalize.test.ts"
   },
   "dependencies": {
     "@react-three/fiber": "9.6.1",

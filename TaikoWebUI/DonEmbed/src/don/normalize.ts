@@ -15,7 +15,6 @@ type DonMaterialFlags = {
   outlineCutout: boolean
   forceOpaque: boolean
   forceDepthWrite: boolean
-  disableDepthTest: boolean
   forceTransparent: boolean
   facialPaint: boolean
 }
@@ -34,7 +33,6 @@ const defaultMaterialFlags: DonMaterialFlags = {
   outlineCutout: false,
   forceOpaque: false,
   forceDepthWrite: false,
-  disableDepthTest: false,
   forceTransparent: false,
   facialPaint: false,
 }
@@ -44,18 +42,6 @@ const meshOutlineUniforms = {
 }
 
 const HEAD_FACE_RIM_SIZE = 0.17618
-
-export function flattenBoneRoot(root: THREE.Object3D) {
-  const rootBone = root.getObjectByName('BONE_root') as THREE.Bone | null
-  if (!rootBone) return
-  const bones: THREE.Bone[] = []
-  rootBone.traverse((child) => {
-    if (child !== rootBone && (child as any).isBone) bones.push(child as THREE.Bone)
-  })
-  for (const bone of bones) {
-    if (bone.parent !== rootBone) rootBone.attach(bone)
-  }
-}
 
 function extrasText(material: THREE.Material) {
   const anyMat = material as any
@@ -85,7 +71,6 @@ export function materialFlags(material: THREE.Material) {
   const hasAlphaTestOne = name.includes('_at_one')
   const hasAlphaTestZero = name.includes('_at_zero')
   const hasAlphaBlend = name.includes('_a_ab')
-  const hasCullNone = name.includes('cullnone')
   const isFacialPaint = name.includes('paint_facial') || (name.includes('face') && name.includes('facial'))
   const hasShaderTypeMetadata = text.includes('shadertype')
   const isStrippedDonColorMask = name === 'rgb_don' || name.startsWith('rgb_don_')
@@ -150,14 +135,11 @@ export function materialFlags(material: THREE.Material) {
     // EXCEPTION: Don't force depth writes when _AT_ZERO is combined with blend flags, or for
     // transparent (tras/nom) materials.
     forceDepthWrite: hasAlphaTestZero && !hasBlendSuffix && !isTras && !isNom,
-    // disableDepthTest — Removed: all materials should have depthTest: true by default
-    disableDepthTest: false,
     // forceTransparent — nom materials with _AT_ONE should stay transparent but write depth.
     forceTransparent: isNom && hasAlphaTestOne,
     // facialPaint — Paint_FACIAL materials need depthTest: true enforced
     facialPaint: isFacialPaint,
   }
-  void hasCullNone
   if (!anyMat.userData) anyMat.userData = {}
   anyMat.userData._donFlags = flags
   return flags
@@ -197,7 +179,6 @@ function recolorMaterial(source: THREE.MeshBasicMaterial, colors: DonColors, fla
     transparent: flags.forceTransparent ? true : ((flags.alphaTestOne || flags.forceOpaque) ? false : Boolean(source.transparent)),
     opacity: source.opacity ?? 1,
     depthWrite: (flags.alphaTestOne || flags.forceOpaque || flags.forceDepthWrite || flags.forceTransparent) ? true : !source.transparent,
-    depthTest: flags.disableDepthTest ? false : true,
     side: THREE.DoubleSide,
     alphaMap: (source as any).alphaMap || null,
     alphaTest: flags.alphaTestOne ? Math.max((source as any).alphaTest || 0, 0.5) : ((source as any).alphaTest || 0),
@@ -268,6 +249,28 @@ function updateFaceMaterialColor(material: THREE.Material, colors: DonColors) {
   anyMat.needsUpdate = true
 }
 
+// The face copy a material made itself. A clone's userData is a JSON copy, so its _donFaceFrame isn't a texture.
+function ownFaceFrame(material: THREE.Material): THREE.Texture | undefined {
+  const t = (material as any).userData?._donFaceFrame
+  return t?.isTexture ? t : undefined
+}
+
+// A material's own copy of the face atlas (its offset picks the expression frame), freeing the copy it replaces.
+function setFaceFrame(material: THREE.MeshBasicMaterial, faceTexture: THREE.Texture) {
+  const anyMat = material as any
+  ownFaceFrame(material)?.dispose()
+  const frame = faceTexture.clone()
+  frame.repeat.set(1, 1 / 12)
+  frame.offset.set(0, 0)
+  frame.colorSpace = THREE.SRGBColorSpace
+  frame.flipY = false
+  frame.wrapS = THREE.ClampToEdgeWrapping
+  frame.wrapT = THREE.ClampToEdgeWrapping
+  frame.needsUpdate = true
+  anyMat.userData._donFaceFrame = frame
+  material.map = frame
+}
+
 function updateFaceTexture(material: THREE.Material, faceTexture: THREE.Texture | null) {
   const anyMat = material as any
   const flags = anyMat?.userData?._donFlags as Partial<DonMaterialFlags> | undefined
@@ -284,16 +287,7 @@ function updateFaceTexture(material: THREE.Material, faceTexture: THREE.Texture 
     return
   }
 
-  const atlasFrame = faceTexture.clone()
-  atlasFrame.repeat.set(1, 1 / 12)
-  atlasFrame.offset.set(0, 0)
-  atlasFrame.colorSpace = THREE.SRGBColorSpace
-  atlasFrame.flipY = false
-  atlasFrame.wrapS = THREE.ClampToEdgeWrapping
-  atlasFrame.wrapT = THREE.ClampToEdgeWrapping
-  atlasFrame.needsUpdate = true
-
-  anyMat.map = atlasFrame
+  setFaceFrame(anyMat, faceTexture)
   anyMat.color.set(0xffffff)
   anyMat.transparent = Boolean(flags.facialPaint && !flags.face)
   anyMat.opacity = 1
@@ -375,7 +369,6 @@ function basicMaterial(
     opacity: source.opacity ?? 1,
     side: THREE.DoubleSide,
     depthWrite: (flags.alphaTestOne || flags.alphaTestOneSuffix || flags.forceOpaque || flags.forceDepthWrite || flags.forceTransparent) ? true : !usesAlphaBlend,
-    depthTest: flags.disableDepthTest ? false : true,
   })
   copyDebugMaterialMetadata(source, material)
 
@@ -388,11 +381,7 @@ function basicMaterial(
   }
 
   if ((flags.face || flags.facialPaint) && faceTexture) {
-    const atlasFrame = faceTexture.clone()
-    atlasFrame.repeat.set(1, 1 / 12)
-    atlasFrame.offset.set(0, 0)
-    atlasFrame.needsUpdate = true
-    material.map = atlasFrame
+    setFaceFrame(material, faceTexture)
     material.color.set(0xffffff)
     material.transparent = Boolean(flags.facialPaint && !flags.face)
     material.opacity = 1
@@ -673,9 +662,7 @@ export function normalizePart(
   outline: { visible: boolean; thickness: number },
   castFaceToCos: boolean,
   useFacialPaintMesh = false,
-  flattenSkeleton = false,
 ) {
-  if (flattenSkeleton) flattenBoneRoot(root)
   const activeFaceTexture = kind === 'head' || (castFaceToCos && kind === 'cos') ? faceTexture : null
 
   // Remove previously generated outlines, back-face meshes, and depth pre-pass meshes to avoid duplicates.
@@ -687,9 +674,10 @@ export function normalizePart(
     if ((obj as any).userData?.donBackFace) oldBackFaces.push(obj)
     if ((obj as any).userData?.donDepthPrePass) oldDepthPrePasses.push(obj)
   })
-  for (const o of oldOutlines) o.parent?.remove(o)
-  for (const o of oldBackFaces) o.parent?.remove(o)
-  for (const o of oldDepthPrePasses) o.parent?.remove(o)
+  for (const o of [...oldOutlines, ...oldBackFaces, ...oldDepthPrePasses]) {
+    o.parent?.remove(o)
+    disposeMaterials(o as THREE.Mesh)
+  }
 
   const outlineTargets: (THREE.Mesh | THREE.SkinnedMesh)[] = []
   const backFaceTargets: (THREE.Mesh | THREE.SkinnedMesh)[] = []
@@ -779,4 +767,24 @@ export function normalizePart(
   }
 
   setMeshOutlineParams(root, outline.visible, Math.max(0, outline.thickness))
+}
+
+function disposeMaterials(mesh: THREE.Mesh) {
+  for (const m of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+    if (!m) continue
+    ownFaceFrame(m)?.dispose()
+    m.dispose()
+  }
+}
+
+/** Frees a part that's been replaced: its geometry (shared by its generated meshes), materials and face copies. */
+export function disposePart(root: THREE.Object3D) {
+  const geometries = new Set<THREE.BufferGeometry>()
+  root.traverse((obj) => {
+    const mesh = obj as THREE.Mesh
+    if (!mesh.isMesh) return
+    geometries.add(mesh.geometry)
+    disposeMaterials(mesh)
+  })
+  for (const g of geometries) g.dispose()
 }
