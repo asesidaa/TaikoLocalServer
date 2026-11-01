@@ -12,9 +12,13 @@ public class AddMyDonEntryCommandHandler(ITaikoDbContext context, ILogger<AddMyD
         var nextBaid = await context.Cards.Select(card => card.Baid)
             .DefaultIfEmpty()
             .MaxAsync(cancellationToken) + 1;
+        string friendCode;
+        do friendCode = FriendCode.New();
+        while (await context.UserData.AnyAsync(u => u.FriendCode == friendCode, cancellationToken));
         var newUser = new UserDatum
         {
             Baid = nextBaid,
+            FriendCode = friendCode,
             MyDonName = request.Name,
             MyDonNameLanguage = request.Language,
             DisplayDan = true,

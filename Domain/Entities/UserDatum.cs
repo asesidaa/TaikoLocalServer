@@ -5,6 +5,8 @@ namespace TaikoLocalServer.Domain.Entities
     public partial class UserDatum
     {
         public uint   Baid                { get; set; }
+        /// <summary>See <see cref="TaikoLocalServer.Domain.FriendCode"/>. Unique.</summary>
+        public string FriendCode          { get; set; } = string.Empty;
         public string MyDonName           { get; set; } = string.Empty;
         public uint   MyDonNameLanguage   { get; set; }
         public string Title               { get; set; } = string.Empty;

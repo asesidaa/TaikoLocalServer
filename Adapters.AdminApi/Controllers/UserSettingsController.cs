@@ -167,7 +167,8 @@ public class UserSettingsController(ITaikoDbContext context, IOptions<AuthSettin
             BodyColor = user.ColorBody,
             FaceColor = user.ColorFace,
             LimbColor = user.ColorLimb,
-            LastPlayDateTime = user.LastPlayDatetime
+            LastPlayDateTime = user.LastPlayDatetime,
+            FriendCode = user.FriendCode,
         };
     }
 }

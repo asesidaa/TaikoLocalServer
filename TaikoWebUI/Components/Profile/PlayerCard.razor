@@ -21,6 +21,20 @@
         </div>
         <div class="min-w-0 lg:text-center">
             <p class="font-display truncate text-2xl drop-shadow-[0_2px_0_rgba(0,0,0,.2)]">@(string.IsNullOrEmpty(Setting.MyDonName) ? " " : Setting.MyDonName)</p>
+            @if (Setting.FriendCode.Length == 12)
+            {
+                @* Friend code: digits in groups of four, no label (the accessible name and tooltip say it); copies without spaces. *@
+                <span class="relative mt-1.5 inline-block">
+                    <button class="inline-flex items-center gap-1.5 rounded-full bg-black/25 px-2.5 py-1 text-xs font-semibold tabular-nums tracking-wide transition-colors hover:bg-black/35"
+                            aria-label="@string.Format(Localizer["Friend code {0}, copy"], FriendCodeGroups)" title="@Localizer["Friend code · click to copy"]" @onclick="CopyFriendCode">
+                        @FriendCodeGroups<Icon Name="copy" Class="size-3.5 opacity-70" />
+                    </button>
+                    @if (copied)
+                    {
+                        <span role="status" class="fade pointer-events-none absolute left-1/2 top-full z-10 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-lg bg-zinc-950/90 px-2 py-1 text-xs text-white shadow-lg">@Localizer["Friend Code copied!"]</span>
+                    }
+                </span>
+            }
             @* In the strip (<lg) the plate sits beside the 160px don-chan slot, so it's capped at 3/4 of its 352px. *@
             <div class="mt-3 max-w-[264px] lg:mx-auto lg:max-w-[352px]">
                 <Nameplate Title="@Setting.Title" Name="@Setting.MyDonName" Language="@Setting.MyDonNameLanguage" PlateId="@Setting.TitlePlateId"
@@ -36,7 +50,7 @@
                             <p class="font-display text-xl">@Localizer[GameData.Dans[top.DanId - 1].Key]</p>
                             <p class="text-xs text-zinc-300">@(GameData.IsGold(top.ClearState) ? Localizer["Gold pass"] : Localizer["Passed"])</p>
                         </div>
-                        <img data-asset="@GameData.DanStamp(top.ClearState)" alt="" class="size-12" />
+                        <img data-asset="@GameData.DanStamp(top.ClearState)" alt="" class="size-12 object-contain" />
                     }
                     else
                     {
@@ -55,6 +69,18 @@
     [Parameter] public bool DanView { get; set; }
 
     private ElementReference frame, anchor;
+    private bool copied;
+
+    private string FriendCodeGroups => string.Join(' ', Setting.FriendCode.Chunk(4).Select(c => new string(c)));
+
+    private async Task CopyFriendCode()
+    {
+        if (!await Js.InvokeAsync<bool>("ui.copy", Setting.FriendCode)) return;
+        copied = true;
+        StateHasChanged();
+        await Task.Delay(1400);
+        copied = false;
+    }
 
     private bool HasEmbed => !string.IsNullOrWhiteSpace(Settings.Value.DonEmbedUrl);
     private string EmbedSrc => Settings.Value.DonEmbedUrl;

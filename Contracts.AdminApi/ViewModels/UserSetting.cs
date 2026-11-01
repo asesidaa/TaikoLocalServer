@@ -65,4 +65,7 @@ public class UserSetting
     public uint LimbColor { get; set; }
     
     public DateTime LastPlayDateTime { get; set; }
+
+    /// <summary>12 digits; read-only (the server assigns it and ignores it on save).</summary>
+    public string FriendCode { get; set; } = string.Empty;
 }
