@@ -23,7 +23,7 @@ pub const SCOREBOARD_INDEX: &str = "scoreboard.json";
 /// Icon sets: (Lumen file under `lumen/000_default`, index name, [(index key, file prefix, a label the sprite has)]).
 /// Each set is the sprite carrying that label, rendered one PNG per label. A comma-separated label names the sprite
 /// whose labels are exactly those, where one label alone would match a bigger animation.
-const ICONS: [(&str, &str, &[(&str, &str, &str)]); 5] = [
+const ICONS: [(&str, &str, &[(&str, &str, &str)]); 6] = [
     // none, doron, abekobe (mirror), kimagure / detarame (random: whimsical / messy), note_pos, speedx1.1 … speedx4
     ("common/option", "options.json", &[("options", "option", "doron")]),
     // easy, normal, hard, oni, ura
@@ -34,6 +34,9 @@ const ICONS: [(&str, &str, &[(&str, &str, &str)]); 5] = [
     ("enso_dani/dani_select/dani_select", "dani.json", &[("stamps", "dani", "stamp_gold_01")]),
     // AI Battle: win / lose (the result emblems), and each section's crown: none, crown_silver, crown_gold, crown_rainbow
     ("enso_ai/result/result_ai_section", "ai.json", &[("results", "ai", "win,lose"), ("crowns", "ai", "crown_rainbow")]),
+    // The results screen draws the crowns (silver = clear, gold = full combo, rainbow = donderful) and the seven score ranks
+    // at 168 and 208 px, against 40 on the song board: the WebUI uses these where they show large.
+    ("result/result", "result.json", &[("crowns", "crown_large", "silver"), ("ranks", "rank_large", "rank_1,rank_2,rank_3,rank_4,rank_5,rank_6,rank_7")]),
 ];
 
 const NAMEPLATE_LUMEN: &str = "common/name_plate";

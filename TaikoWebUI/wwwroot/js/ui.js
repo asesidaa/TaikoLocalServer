@@ -176,7 +176,9 @@
     const path = el.dataset[attr];
     if (el.dataset.loaded === path) return;
     el.dataset.loaded = path;
-    toUrl(path).then(url => { if (el.dataset[attr] !== path) return; el.hidden = !url; if (url && el.tagName === "IMG") el.src = url; });
+    // data-asset-fallback: another asset to show when this one is missing (e.g. large art from a newer extract).
+    toUrl(path).then(url => url || (el.dataset.assetFallback ? toUrl(el.dataset.assetFallback) : null))
+      .then(url => { if (el.dataset[attr] !== path) return; el.hidden = !url; if (url && el.tagName === "IMG") el.src = url; });
   });
   const hydrateAssets = () => { hydrate("asset", assetUrl); hydrate("avatar", blobUrl); };
 

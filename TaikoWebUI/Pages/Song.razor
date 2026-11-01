@@ -72,10 +72,10 @@ else
                     {
                         <div class="mt-3 flex flex-wrap items-center gap-4">
                             <span class="font-mono text-4xl font-semibold tabular-nums">@best.Score.ToString("N0")</span>
-                            <img data-asset="@GameData.CrownIcon(best.Crown)" alt="@Localizer[GameData.CrownName(best.Crown)]" class="size-10" />
-                            @if (GameData.RankIcon(best.Rank) is { } rank)
+                            <img data-asset="@GameData.CrownIconLarge(best.Crown)" data-asset-fallback="@GameData.CrownIcon(best.Crown)" alt="@Localizer[GameData.CrownName(best.Crown)]" class="size-10 object-contain" />
+                            @if (GameData.RankIconLarge(best.Rank) is { } rank)
                             {
-                                <img data-asset="@rank" alt="@string.Format(Localizer["Rank {0}"], best.Rank)" class="h-10 w-auto" />
+                                <img data-asset="@rank" data-asset-fallback="@GameData.RankIcon(best.Rank)" alt="@string.Format(Localizer["Rank {0}"], best.Rank)" class="size-10 object-contain" />
                             }
                         </div>
                         <div class="mt-4 grid grid-cols-3 gap-4 border-t border-zinc-100 pt-4 dark:border-zinc-800">

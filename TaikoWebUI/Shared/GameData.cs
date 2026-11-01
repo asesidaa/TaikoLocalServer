@@ -111,6 +111,16 @@ public static class GameData
     /// <summary>The score rank badge (White … Donderful); null for none.</summary>
     public static string? RankIcon(ScoreRank rank) => rank > ScoreRank.None ? $"ui/rank_badge_rank_{(int)rank - 1}.png" : null;
 
+    // The results screen's art (168 / 208 px against the song board's 40), for where they show large. An older extract
+    // doesn't have them: use them with data-asset-fallback set to the small one. "Played, not cleared" has no large crown.
+    public static string CrownIconLarge(CrownType crown) => crown switch
+    {
+        CrownType.Clear => "ui/crown_large_silver.png", CrownType.Gold => "ui/crown_large_gold.png",
+        CrownType.Dondaful => "ui/crown_large_rainbow.png", _ => CrownIcon(crown),
+    };
+
+    public static string? RankIconLarge(ScoreRank rank) => rank > ScoreRank.None ? $"ui/rank_large_rank_{(int)rank - 1}.png" : null;
+
     /// <summary>The difficulty's colour (star numbers, pills).</summary>
     public static string DifficultyColor(Difficulty d) => d switch
     {
