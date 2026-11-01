@@ -1,0 +1,53 @@
+@* A card's QR code for a cabinet's reader, with a switch between the player's access codes when they have several. *@
+@inject HttpClient Client
+
+@if (AccessCodes.Count == 0)
+{
+    <p class="text-sm @Css.Muted">@Localizer["No access codes yet."]</p>
+}
+else
+{
+    <div class="flex flex-col items-center gap-3 text-center">
+        @if (AccessCodes.Count > 1)
+        {
+            <div class="inline-flex flex-wrap justify-center gap-0.5 rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800" role="radiogroup" aria-label="@Localizer["Access codes"]">
+                @foreach (var ac in AccessCodes)
+                {
+                    var on = ac == current;
+                    <button role="radio" aria-checked="@Css.Aria(on)" @onclick="() => Show(ac)"
+                            class="rounded-lg px-3 py-1 font-mono text-xs @(on ? "bg-white shadow-sm dark:bg-zinc-900" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">•••• @ac[^4..]</button>
+                }
+            </div>
+        }
+        <div class="grid size-64 place-items-center rounded-2xl bg-white p-3">
+            @if (image is not null)
+            {
+                <img src="@image" alt="@Localizer["Card QR code"]" class="size-full [image-rendering:pixelated]" />
+            }
+        </div>
+        <p class="text-sm">@string.Format(Localizer["Scan it at a cabinet's card reader to play as {0}."], Name)</p>
+        <p class="text-xs @Css.Muted">@Localizer["Turn your screen brightness up if the reader doesn't pick it up."]</p>
+        <p class="rounded-xl bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">@Localizer["Anyone with this code can play as you. Don't share it."]</p>
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<string> AccessCodes { get; set; } = [];
+    [Parameter] public string Name { get; set; } = "";
+
+    private string? current, image;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (AccessCodes.Count > 0 && (current is null || !AccessCodes.Contains(current))) await Show(AccessCodes[0]);
+    }
+
+    private sealed record QrResponse(string QrCode);
+
+    private async Task Show(string code)
+    {
+        current = code;
+        image = null;
+        image = (await Client.GetFromJsonAsync<QrResponse>($"api/Cards/{code}/Qr"))?.QrCode;
+    }
+}

@@ -1,0 +1,57 @@
+@* One visit's plays (Play History, Dashboard): time span, credits, songs, new bests, then the first few plays. *@
+@inject NavigationManager Nav
+
+<section class="@Css.Card p-4 sm:p-5">
+    <h2 class="font-semibold">@Title <span class="font-normal @Css.Muted">· @Session.Start.ToString("HH:mm")–@Session.End.ToString("HH:mm")</span></h2>
+    <p class="mt-0.5 text-xs @Css.Muted">
+        @string.Format(Localizer[Session.Credits == 1 ? "{0} credit" : "{0} credits"], Session.Credits) ·
+        @(Session.Plays.Count < Session.Songs ? string.Format(Localizer["{0} of {1} songs"], Session.Plays.Count, Session.Songs) : string.Format(Localizer[Session.Songs == 1 ? "{0} song" : "{0} songs"], Session.Songs))
+        @if (Bests > 0)
+        {
+            <span> · </span><span class="font-medium text-primary-600 dark:text-primary-400">@string.Format(Localizer[Bests == 1 ? "{0} new best" : "{0} new bests"], Bests)</span>
+        }
+    </p>
+    <ul class="mt-2 divide-y divide-zinc-100 dark:divide-zinc-800">
+        @foreach (var p in open ? Session.Plays : Session.Plays.Take(Preview))
+        {
+            <li>
+                <button class="flex w-full items-center gap-3 px-1 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
+                        @onclick='() => Nav.NavigateTo($"/Users/{Baid}/Songs/{p.SongId}?diff={(int)p.Difficulty}")'>
+                    <img data-asset="@GameData.DifficultyIcon(p.Difficulty)" alt="@GameData.DifficultyName(p.Difficulty)" class="size-7 object-contain" />
+                    <span class="min-w-0 flex-1">
+                        <span class="block truncate text-sm">@p.Name</span>
+                        <span class="block truncate text-xs @Css.Muted">@p.PlayTime.ToString("HH:mm") · ★@p.Stars@(p.NameEn.Length > 0 ? " · " + p.NameEn : "")</span>
+                    </span>
+                    @if (p.NewBest)
+                    {
+                        <span class="whitespace-nowrap rounded-full bg-primary-500/10 px-2 py-0.5 text-[11px] font-medium text-primary-700 dark:text-primary-300">@Localizer["New best"]</span>
+                    }
+                    <span class="font-mono text-sm tabular-nums">@p.Score.ToString("N0")</span>
+                    <img data-asset="@GameData.CrownIcon(p.Crown)" alt="@Localizer[GameData.CrownName(p.Crown)]" title="@Localizer[GameData.CrownName(p.Crown)]" class="size-5" />
+                    @if (GameData.RankIcon(p.Rank) is { } rank)
+                    {
+                        <img data-asset="@rank" alt="@string.Format(Localizer["Rank {0}"], p.Rank)" class="hidden h-5 w-auto sm:block" />
+                    }
+                </button>
+            </li>
+        }
+    </ul>
+    @if (Session.Plays.Count > Preview)
+    {
+        <button class="mt-1 text-sm font-medium text-primary-600 hover:underline dark:text-primary-400" @onclick="() => open = !open">
+            @(open ? Localizer["Show less"] : string.Format(Localizer["Show all {0} songs"], Session.Plays.Count))
+        </button>
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired] public PlaySession Session { get; set; } = null!;
+    [Parameter, EditorRequired] public uint Baid { get; set; }
+    /// <summary>Plays shown before "Show all".</summary>
+    [Parameter] public int Preview { get; set; } = 5;
+
+    private bool open;
+    private int Bests => Session.Plays.Count(p => p.NewBest);
+
+    private string Title => Session.Start.ToString(Session.Start.Year == DateTime.Today.Year ? "ddd d MMM" : "ddd d MMM yyyy");
+}

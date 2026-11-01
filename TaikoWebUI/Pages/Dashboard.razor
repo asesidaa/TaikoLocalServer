@@ -1,24 +1,188 @@
 @page "/"
 @attribute [Authorize]
+@implements IDisposable
 @inject PageState Page
 @inject HttpClient Client
+@inject AuthService AuthService
+@inject PlayerSelection Players
+@inject IJSRuntime Js
+@inject Blazored.LocalStorage.ILocalStorageService Storage
 
-<PageTitle>Dashboard</PageTitle>
-@if (notice is not null)
+<PageTitle>@Localizer["Dashboard"]</PageTitle>
+
+<div class="mx-auto max-w-2xl space-y-4">
+    @if (user is { } u)
+    {
+        var s = u.UserSetting;
+        var light = CardStyle.IsLight(GameData.Color(s.CardColor));
+        @* The player's own card theme, so the Dashboard looks like theirs. *@
+        <section class="relative overflow-hidden rounded-3xl shadow-[0_8px_24px_-12px_rgba(0,0,0,.4)] @(light ? "text-zinc-900" : "text-white")" style="@CardStyle.Background(s.CardColor, s.CardPattern)">
+            <div class="flex items-center gap-4 p-5">
+                <span class="rounded-full ring-2 ring-white"><Avatar Setting="s" Size="56" /></span>
+                <p class="font-display min-w-0 truncate text-2xl @(light ? "" : "drop-shadow-[0_2px_0_rgba(0,0,0,.2)]")">@(string.IsNullOrEmpty(s.MyDonName) ? $"#{u.Baid}" : s.MyDonName)</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 border-t px-5 py-3 @(light ? "border-black/10" : "border-white/15")">
+                @if (AuthService.LoginRequired && s.FriendCode.Length == 12)
+                {
+                    <span class="relative">
+                        <button class="@Frosted(light) tabular-nums tracking-wide" title="@Localizer["Friend code · click to copy"]"
+                                aria-label="@string.Format(Localizer["Friend code {0}, copy"], FriendCode(s))" @onclick="() => CopyFriendCode(s.FriendCode)">
+                            @FriendCode(s)<Icon Name="copy" Class="size-3.5 opacity-70" />
+                        </button>
+                        @if (copied)
+                        {
+                            <span role="status" class="fade pointer-events-none absolute left-1/2 top-full z-10 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-lg bg-zinc-950/90 px-2 py-1 text-xs text-white shadow-lg">@Localizer["Friend Code copied!"]</span>
+                        }
+                    </span>
+                }
+                <span class="ml-auto flex gap-2">
+                    <button class="@Frosted(light)" @onclick="() => showQr = true"><Icon Name="qr" Class="size-3.5" />@Localizer["QR code"]</button>
+                    <a href="/Users/@u.Baid/Profile" class="@Frosted(light)"><Icon Name="profile" Class="size-3.5" />@Localizer["Edit profile"]</a>
+                </span>
+            </div>
+        </section>
+    }
+
+    @if (notice is not null && !noticeHidden)
+    {
+        <div class="relative">
+            <NoticeBanner Notice="notice" />
+            <button class="absolute right-2 top-2 grid size-8 place-items-center rounded-lg opacity-60 hover:opacity-100" aria-label="@Localizer["Hide"]" @onclick="HideNotice">
+                <Icon Name="x" Class="size-4" />
+            </button>
+        </div>
+    }
+
+    @if (server is { } sv)
+    {
+        @* Admins: the server at a glance; each item opens its admin tab. *@
+        <section class="@Css.Card flex flex-wrap items-center gap-x-5 gap-y-2 px-4 py-3 text-sm">
+            <TaikoWebUI.Components.Admin.ServerStatePill State="sv.State" />
+            <a href="/Admin/Server/cabinets" class="flex items-center gap-1.5 hover:underline">
+                <span class="size-2 rounded-full @(sv.CabinetsOnline > 0 ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-600")"></span>
+                @string.Format(Localizer["{0} of {1} cabinets online"], sv.CabinetsOnline, sv.Cabinets)
+            </a>
+            <span class="@Css.Muted">@string.Format(Localizer[sv.PlaysToday == 1 ? "{0} play today" : "{0} plays today"], sv.PlaysToday)</span>
+            @if (toFix is > 0)
+            {
+                <a href="/Admin/Access" class="ml-auto font-medium text-amber-700 hover:underline dark:text-amber-300">@string.Format(Localizer["Access: {0} to fix"], toFix)</a>
+            }
+        </section>
+    }
+
+    @if (recent is null)
+    {
+        <p class="text-sm @Css.Muted">@Localizer["Loading..."]</p>
+    }
+    else if (recent.Sessions.Count == 0)
+    {
+        <section class="@Css.Card px-4 py-10 text-center text-sm @Css.Muted">@Localizer["No plays in the last 7 days."]</section>
+    }
+    else
+    {
+        @foreach (var day in recent.Sessions.GroupBy(x => x.Start.Date))
+        {
+            <h2 class="pt-2 text-sm font-semibold @Css.Muted">@DayLabel(day.Key)</h2>
+            @foreach (var session in day)
+            {
+                <SessionCard @key="session.Start" Session="session" Baid="Baid" Preview="3" />
+            }
+        }
+    }
+    @if (recent is not null)
+    {
+        <p class="pt-2 text-center text-sm">
+            <a href="/Users/@Baid/PlayHistory" class="@Css.Link">@Localizer["Older plays are in Play History"]</a>
+        </p>
+    }
+</div>
+
+@if (showQr && user is not null)
 {
-    <div class="mb-4"><NoticeBanner Notice="notice" /></div>
+    <Dialog Title="@Localizer["QR code"]" OnClose="() => showQr = false">
+        <ChildContent><CardQr AccessCodes="user.AccessCodes" Name="@user.UserSetting.MyDonName" /></ChildContent>
+    </Dialog>
 }
-<ComingSoon Title="@Localizer["Dashboard"]" IconName="dashboard" />
 
 @code {
+    private const string NoticeKey = "ui.noticeHidden";
+
+    private User? user;
     private DashboardNoticeSettings? notice;
+    private bool noticeHidden, copied, showQr;
+    private PlayHistoryDay? recent;
+    private DashboardServer? server;
+    private int? toFix;
+
+    private uint Baid => AuthService.LoginRequired ? AuthService.GetLoggedInBaid() : Players.Baid;
 
     protected override async Task OnInitializedAsync()
     {
         Page.Set(Localizer["Dashboard"]);
+        Players.Changed += OnPlayerChanged;
+        if (!AuthService.LoginRequired) await Players.LoadAsync();
+        await Task.WhenAll(LoadPlayer(), LoadNotice(), LoadServer());
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
+
+    // Local mode: the player picked in the switcher.
+    private async void OnPlayerChanged()
+    {
+        await LoadPlayer();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadPlayer()
+    {
+        if (Baid == 0) return;
+        user = await Client.GetFromJsonAsync<User>($"api/Users/{Baid}");
+        recent = await Client.GetFromJsonAsync<PlayHistoryDay>($"api/PlayHistory/{Baid}/Recent?days=7");
+    }
+
+    private async Task LoadNotice()
+    {
         // 204 when no notice shows.
         var res = await Client.GetAsync("api/Notice");
-        if (res.StatusCode == System.Net.HttpStatusCode.OK)
-            notice = await res.Content.ReadFromJsonAsync<DashboardNoticeSettings>();
+        if (res.StatusCode != System.Net.HttpStatusCode.OK) return;
+        notice = await res.Content.ReadFromJsonAsync<DashboardNoticeSettings>();
+        try { noticeHidden = await Storage.GetItemAsStringAsync(NoticeKey) == NoticeId(notice!); } catch { /* storage off: show it */ }
     }
+
+    private async Task LoadServer()
+    {
+        if (AuthService.LoginRequired && !AuthService.IsAdmin) return;
+        server = await Client.GetFromJsonAsync<DashboardServer>("api/Dashboard/Server");
+        if (AuthService.LoginRequired)
+            toFix = (await Client.GetFromJsonAsync<List<ChecklistItem>>("api/Checklist"))?.Count(i => i.Level != ChecklistLevel.Ok);
+    }
+
+    // Hidden until the admin posts a different notice.
+    private static string NoticeId(DashboardNoticeSettings n) => $"{n.Title}\n{n.Message}";
+
+    private async Task HideNotice()
+    {
+        noticeHidden = true;
+        try { await Storage.SetItemAsStringAsync(NoticeKey, NoticeId(notice!)); } catch { /* hidden for this visit only */ }
+    }
+
+    private async Task CopyFriendCode(string code)
+    {
+        if (!await Js.InvokeAsync<bool>("ui.copy", code)) return;
+        copied = true;
+        StateHasChanged();
+        await Task.Delay(1400);
+        copied = false;
+    }
+
+    private static string FriendCode(UserSetting s) => string.Join(' ', s.FriendCode.Chunk(4).Select(c => new string(c)));
+
+    // Frosted buttons read on light and dark card colours.
+    private static string Frosted(bool light) =>
+        $"inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold backdrop-blur transition-colors {(light ? "bg-white/50 hover:bg-white/70" : "bg-black/25 hover:bg-black/35")}";
+
+    private string DayLabel(DateTime d) =>
+        d == DateTime.Today ? Localizer["Today"] : d == DateTime.Today.AddDays(-1) ? Localizer["Yesterday"] : d.ToString("dddd d MMM");
+
+    public void Dispose() => Players.Changed -= OnPlayerChanged;
 }

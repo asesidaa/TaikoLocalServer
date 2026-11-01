@@ -2,7 +2,6 @@
 @attribute [Authorize]
 @inject PageState Page
 @inject HttpClient Client
-@inject NavigationManager Nav
 @inject IJSRuntime Js
 
 <PageTitle>@Localizer["Play History"]</PageTitle>
@@ -97,7 +96,7 @@
                 {
                     @foreach (var s in dayData.Sessions)
                     {
-                        @SessionCard(s)
+                        <SessionCard @key="s.Start" Session="s" Baid="(uint)Baid" />
                     }
                 }
             }
@@ -117,7 +116,6 @@
     private bool opened;
     private PlayHistoryMonth? monthData;
     private PlayHistoryDay? dayData;
-    private readonly HashSet<DateTime> expanded = [];
 
     // Monday-first: blank cells before the 1st.
     private int Lead => ((int)month.DayOfWeek + 6) % 7;
@@ -199,54 +197,5 @@
                 @label
             }
         </button>
-    };
-
-    private RenderFragment SessionCard(PlaySession s) => __builder =>
-    {
-        var open = expanded.Contains(s.Start);
-        var bests = s.Plays.Count(p => p.NewBest);
-        <section class="@Css.Card p-4 sm:p-5">
-            <h2 class="font-semibold">@DayName(s.Start) <span class="font-normal @Css.Muted">· @s.Start.ToString("HH:mm")–@s.End.ToString("HH:mm")</span></h2>
-            <p class="mt-0.5 text-xs @Css.Muted">
-                @string.Format(Localizer[s.Credits == 1 ? "{0} credit" : "{0} credits"], s.Credits) ·
-                @(s.Plays.Count < s.Songs ? string.Format(Localizer["{0} of {1} songs"], s.Plays.Count, s.Songs) : string.Format(Localizer[s.Songs == 1 ? "{0} song" : "{0} songs"], s.Songs))
-                @if (bests > 0)
-                {
-                    <span> · </span><span class="font-medium text-primary-600 dark:text-primary-400">@string.Format(Localizer[bests == 1 ? "{0} new best" : "{0} new bests"], bests)</span>
-                }
-            </p>
-            <ul class="mt-2 divide-y divide-zinc-100 dark:divide-zinc-800">
-                @foreach (var p in open ? s.Plays : s.Plays.Take(5))
-                {
-                    <li>
-                        <button class="flex w-full items-center gap-3 px-1 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
-                                @onclick='() => Nav.NavigateTo($"/Users/{Baid}/Songs/{p.SongId}?diff={(int)p.Difficulty}")'>
-                            <img data-asset="@GameData.DifficultyIcon(p.Difficulty)" alt="@GameData.DifficultyName(p.Difficulty)" class="size-7 object-contain" />
-                            <span class="min-w-0 flex-1">
-                                <span class="block truncate text-sm">@p.Name</span>
-                                <span class="block truncate text-xs @Css.Muted">@p.PlayTime.ToString("HH:mm") · ★@p.Stars@(p.NameEn.Length > 0 ? " · " + p.NameEn : "")</span>
-                            </span>
-                            @if (p.NewBest)
-                            {
-                                <span class="whitespace-nowrap rounded-full bg-primary-500/10 px-2 py-0.5 text-[11px] font-medium text-primary-700 dark:text-primary-300">@Localizer["New best"]</span>
-                            }
-                            <span class="font-mono text-sm tabular-nums">@p.Score.ToString("N0")</span>
-                            <img data-asset="@GameData.CrownIcon(p.Crown)" alt="@Localizer[GameData.CrownName(p.Crown)]" title="@Localizer[GameData.CrownName(p.Crown)]" class="size-5" />
-                            @if (GameData.RankIcon(p.Rank) is { } rank)
-                            {
-                                <img data-asset="@rank" alt="@string.Format(Localizer["Rank {0}"], p.Rank)" class="hidden h-5 w-auto sm:block" />
-                            }
-                        </button>
-                    </li>
-                }
-            </ul>
-            @if (s.Plays.Count > 5)
-            {
-                <button class="mt-1 text-sm font-medium text-primary-600 hover:underline dark:text-primary-400"
-                        @onclick="() => { if (!expanded.Remove(s.Start)) expanded.Add(s.Start); }">
-                    @(open ? Localizer["Show less"] : string.Format(Localizer["Show all {0} songs"], s.Plays.Count))
-                </button>
-            }
-        </section>
     };
 }

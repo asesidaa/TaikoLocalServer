@@ -78,35 +78,48 @@ public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog cat
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
 
+        var day = (await Plays(baid)).Where(p => p.PlayTime.Date == date.Date).ToList();
+        return new PlayHistoryDay { Sessions = Sessions(day, diff, best) };
+    }
+
+    /// <summary>The Dashboard timeline: every session of the last <paramref name="days"/> days (today included), newest first.</summary>
+    [HttpGet("{baid}/Recent")]
+    public async Task<ActionResult<PlayHistoryDay>> Recent(uint baid, [FromQuery] int days = 7)
+    {
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
+        var since = DateTime.Today.AddDays(1 - Math.Clamp(days, 1, 31));
+        return new PlayHistoryDay { Sessions = Sessions((await Plays(baid)).Where(p => p.PlayTime >= since).ToList(), 0, false) };
+    }
+
+    // Groups plays into sessions (newest first), keeping the plays that match the filters; sessions left empty are dropped.
+    private List<PlaySession> Sessions(List<Row> plays, int diff, bool best)
+    {
         var songs = catalog.GetMusicDetailDictionary();
-        var day = (await Plays(baid)).Where(p => p.PlayTime.Date == date.Date).OrderBy(p => p.PlayTime).ToList();
         var sessions = new List<List<Row>>();
-        foreach (var p in day)
+        foreach (var p in plays.OrderBy(p => p.PlayTime))
         {
             if (sessions.Count == 0 || p.PlayTime - sessions[^1][^1].PlayTime > SessionGap) sessions.Add([]);
             sessions[^1].Add(p);
         }
-        return new PlayHistoryDay
+        return sessions.AsEnumerable().Reverse().Select(s => new PlaySession
         {
-            Sessions = sessions.AsEnumerable().Reverse().Select(s => new PlaySession
+            Start = s[0].PlayTime, End = s[^1].PlayTime, Songs = s.Count,
+            // Each credit numbers its songs from 0.
+            Credits = Math.Max(1, s.Count(p => p.SongNumber == 0)),
+            Plays = s.Where(p => Matches(p, diff, best)).Reverse().Select(p =>
             {
-                Start = s[0].PlayTime, End = s[^1].PlayTime, Songs = s.Count,
-                // Each credit numbers its songs from 0.
-                Credits = Math.Max(1, s.Count(p => p.SongNumber == 0)),
-                Plays = s.Where(p => Matches(p, diff, best)).Reverse().Select(p =>
+                var song = songs.GetValueOrDefault(p.SongId);
+                p.Play.Name = song?.SongName ?? $"#{p.SongId}";
+                p.Play.NameEn = song?.SongNameEN ?? "";
+                p.Play.Stars = song is null ? 0 : p.Difficulty switch
                 {
-                    var song = songs.GetValueOrDefault(p.SongId);
-                    p.Play.Name = song?.SongName ?? $"#{p.SongId}";
-                    p.Play.NameEn = song?.SongNameEN ?? "";
-                    p.Play.Stars = song is null ? 0 : p.Difficulty switch
-                    {
-                        Difficulty.Easy => song.StarEasy, Difficulty.Normal => song.StarNormal, Difficulty.Hard => song.StarHard,
-                        Difficulty.Oni => song.StarOni, _ => song.StarUra,
-                    };
-                    return p.Play;
-                }).ToList(),
-            }).Where(s => s.Plays.Count > 0).ToList(),
-        };
+                    Difficulty.Easy => song.StarEasy, Difficulty.Normal => song.StarNormal, Difficulty.Hard => song.StarHard,
+                    Difficulty.Oni => song.StarOni, _ => song.StarUra,
+                };
+                return p.Play;
+            }).ToList(),
+        }).Where(s => s.Plays.Count > 0).ToList();
     }
 
     private sealed class Row

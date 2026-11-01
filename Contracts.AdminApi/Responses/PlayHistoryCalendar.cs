@@ -42,3 +42,6 @@ public class HistoryPlay
     /// <summary>Beat every earlier play of the chart (a first play isn't counted).</summary>
     public bool NewBest { get; set; }
 }
+
+/// <summary>The Dashboard's server strip (admins).</summary>
+public sealed record DashboardServer(ServerState State, int CabinetsOnline, int Cabinets, int PlaysToday);

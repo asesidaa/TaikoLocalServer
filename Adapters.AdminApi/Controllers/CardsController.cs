@@ -7,6 +7,16 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiScope(ApiScopes.ReadProfiles, ApiScopes.AdminUsers)]
 public class CardsController(ITaikoDbContext context, IServerAccess access) : BaseAdminController<CardsController>
 {
+    /// <summary>The card's QR code for a cabinet's reader (BNTTCNID + access code), as a PNG data: URI.</summary>
+    [HttpGet("{accessCode}/Qr")]
+    public async Task<IActionResult> Qr(string accessCode)
+    {
+        var card = await context.Cards.FindAsync([accessCode], HttpContext.RequestAborted);
+        if (card is null) return NotFound();
+        if (this.AuthorizeOwnerOrAdmin(card.Baid) is { } forbid)
+            return forbid;
+        return Ok(new { qrCode = QrImage.DataUri("BNTTCNID" + card.AccessCode, QRCoder.QRCodeGenerator.ECCLevel.Q, 10) });
+    }
 
     [HttpDelete("{accessCode}")]
     public async Task<IActionResult> DeleteAccessCode(string accessCode)

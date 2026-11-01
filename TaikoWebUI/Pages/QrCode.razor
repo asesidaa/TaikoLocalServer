@@ -1,12 +1,32 @@
 @page "/Users/{baid:int}/QrCode"
 @attribute [Authorize]
 @inject PageState Page
+@inject HttpClient Client
 
-<PageTitle>QrCode</PageTitle>
-<ComingSoon Title="@(Localizer["Show QR Code"])" IconName="qr" />
+<PageTitle>@Localizer["Show QR Code"]</PageTitle>
+
+<div class="mx-auto max-w-md">
+    <h1 class="mb-6 text-2xl font-semibold tracking-tight">@Localizer["Show QR Code"]</h1>
+    <section class="@Css.Card p-6">
+        @if (user is null)
+        {
+            <p class="text-sm @Css.Muted">@Localizer["Loading..."]</p>
+        }
+        else
+        {
+            <CardQr AccessCodes="user.AccessCodes" Name="@user.UserSetting.MyDonName" />
+        }
+    </section>
+</div>
 
 @code {
     [Parameter] public int Baid { get; set; }
 
-    protected override void OnInitialized() => Page.Set(Localizer["Settings"], Localizer["Show QR Code"]);
+    private User? user;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.Set(Localizer["Settings"], Localizer["Show QR Code"]);
+        user = await Client.GetFromJsonAsync<User>($"api/Users/{Baid}");
+    }
 }
