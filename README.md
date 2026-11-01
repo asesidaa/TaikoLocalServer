@@ -15,15 +15,22 @@ It is composed of two major components :
 
 ### Setup Steps
 
-1. Extract the Server's release anywhere
-2. Run `extract.exe` from the server folder, pointing it at your game install (the folder that contains `Data`):
+1. Extract the server's release anywhere.
+2. Open [Configurations/ServerSettings.json](./Host/Configurations/ServerSettings.json) and set:
+   - `"Mode"`: `"Local"` (the default, no logins) or `"Server"` (accounts and admins). See [Local or Server mode](#local-or-server-mode).
+   - `"GamePath"`: your game install, the folder that contains `Data`, for example `"C:/Games/Taiko no Tatsujin Nijiiro Version"`. The web UI uses it to copy the game files the server needs. You can leave it empty if the game is on another PC (see step 5).
+3. (Optional) In the `Certificates` folder, import `root.pfx` into the trusted root store and `cert.pfx` into the personal store. The other import options can stay at their defaults.
+4. Start `TaikoLocalServer.exe`. It asks for administrator rights, because it listens on ports 80 and 443 as well as the game's ports. Then open [http://localhost](http://localhost).
+   - **Server mode:** the web UI opens on a setup page until an admin exists. Enter the **setup code** printed in the server's console, then your card's access code and a password for the admin account (see [Web UI admins](#web-ui-admins-server-mode)).
+   - **Local mode:** the web UI opens straight away.
+5. Add the game files. In Server mode this is the setup's **Game files** step. Afterwards, and in Local mode, use **Admin › Server Management › Game Data**; until it's done, admins see a "Game files are missing" banner. Press **Extract game files**: this runs `extract.exe` (next to the server) on your `GamePath`. It copies the datatables the server needs and converts the don-chan models, textures and animations for the web UI's 3D preview (about 175 MB). It writes only into the server's `wwwroot` folder, never into your game folder. Run it again after a game update; files that are already up to date are skipped.
+
+   If `GamePath` isn't set (for example the game is on another PC), run it yourself on the game PC, then copy its `wwwroot` output into the server's `wwwroot` folder:
    ```bash
    extract.exe --game "C:\Games\Taiko no Tatsujin Nijiiro Version"
    ```
-   This copies the datatables the server needs and converts the don-chan models, textures and animations for the web UI's 3D preview (about 175 MB, in a few seconds). It writes into the `wwwroot` folder next to it, never into your game folder. Run it again after a game update; files that are already up to date are skipped. If it reports anything as `MISSING` or `FAILED`, check that `--game` points at a complete install. See [tools/extract](./tools/extract/README.md) for details.
-3. (Optional) In `Certificates` folder, import `root.pfx` to trusted root store and `cert.pfx` to personal store. All the other import options can be kept default
-4. Visit [http://localhost](http://localhost). If the WebUI starts without errors, the config is fine
-5. Start your game! (First boot with the server will take a good minute, be patient!)
+   If it reports anything as `MISSING` or `FAILED`, check that the path points at a complete install. See [tools/extract](./tools/extract/README.md) for details.
+6. Start your game! (The first boot with the server takes a good minute, be patient!)
 
 ## Configuration
 
@@ -40,6 +47,8 @@ Set `"Mode"` in [ServerSettings.json](./Host/Configurations/ServerSettings.json)
 - **`Server`**: players log in with their access code and a password, and only admins can use the admin pages. Account rules (who may register, deleting users, free profile editing, the access-code limit) are changed by admins in the web UI.
 
 There is nothing else to configure for logins: the server generates its own signing key on first start.
+
+To switch modes, change `"Mode"` and restart the server. Players and scores carry over both ways. Going from Local to Server shows the setup page if there's no admin yet; going from Server to Local keeps accounts and passwords but ignores them.
 
 ### Web UI admins (Server mode)
 
