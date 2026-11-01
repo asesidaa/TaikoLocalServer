@@ -18,7 +18,9 @@
         }
     </div>
     <span data-plate-slot class="absolute inset-0"></span>
-    <canvas data-gt="title" class="absolute" style="@Box(-130, -43.5, 130, 16.5)"></canvas>
+    @* The game top-aligns text_title in its box (-43.5…16.5); centred there, the glyphs sat on the band's lower edge.
+       3.5 units up centres them on the plate's band (-30…-3). *@
+    <canvas data-gt="title" class="absolute" style="@Box(-130, -47, 130, 13)"></canvas>
     <canvas data-gt="name" class="absolute" style="@(ShowDan ? Box(-38, -10.5, 152, 49.5) : Box(-95, -10.5, 95, 49.5))"></canvas>
 </div>
 
