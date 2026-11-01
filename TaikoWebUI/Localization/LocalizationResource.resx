@@ -900,4 +900,7 @@
   <data name="Set GamePath Hint" xml:space="preserve">
     <value />
   </data>
+  <data name="Delete Set Confirm" xml:space="preserve">
+    <value />
+  </data>
 </root>

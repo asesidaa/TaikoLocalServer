@@ -1,0 +1,478 @@
+@* Server Management › Dani Dojo: course sets (one per year, say) and the Gaiden courses. Every set has the same 19
+   ranks; a course's songs and pass conditions are edited here and saved explicitly. *@
+@using System.Text.Json
+@using System.Text.Json.Nodes
+@inject HttpClient Client
+@inject IGameDataService GameDataService
+@inject ToastService Toast
+
+<div class="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start">
+    <nav class="@Css.Card p-2 lg:sticky lg:top-24" aria-label="@Localizer["Course sets"]">
+        <p class="px-3 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@Localizer["Course sets"]</p>
+        @foreach (var set in sets)
+        {
+            @Item(set.File, set.Name, set.IsDefault ? Localizer["Default"] : Localizer["Not the default"])
+        }
+        <button class="@Css.GhostButton mt-1 w-full !justify-start !px-3" @onclick="OpenNew"><Icon Name="plus" />@Localizer["New set"]</button>
+        <p class="px-3 pb-1 pt-3 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@Localizer["Extra courses"]</p>
+        @Item(GaidenFile, Localizer["Gaiden"], Localizer["Every cabinet"])
+    </nav>
+
+    <div class="min-w-0 space-y-4">
+        @if (Set is { } current)
+        {
+            <section class="@Css.Card flex flex-wrap items-center gap-3 p-5">
+                <div class="min-w-0 flex-1">
+                    @if (renaming)
+                    {
+                        <form class="flex gap-2" @onsubmit="Rename" @onsubmit:preventDefault>
+                            <input class="@Css.Input !py-1.5" maxlength="40" autofocus value="@newName" @oninput="e => newName = e.Value?.ToString() ?? string.Empty" />
+                            <button class="@Css.PrimaryButton !py-1.5" disabled="@(newName.Trim().Length == 0)">@Localizer["Save"]</button>
+                            <button type="button" class="@Css.GhostButton !py-1.5" @onclick="() => renaming = false">@Localizer["Cancel"]</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <h2 class="font-semibold">@current.Name</h2>
+                    }
+                    <p class="text-sm @Css.Muted">@(current.IsDefault ? Localizer["The default set: the game serves it to every cabinet."] : Localizer["Not used yet. Make it the default to serve it."])</p>
+                    <p class="font-mono text-xs @Css.Muted">wwwroot/data/@current.File</p>
+                </div>
+                @if (!renaming)
+                {
+                    <button class="@Css.GhostButton border border-zinc-200 dark:border-zinc-700" @onclick="() => { renaming = true; newName = current.Name; }">@Localizer["Rename"]</button>
+                }
+                @if (!current.IsDefault)
+                {
+                    <button class="@Css.GhostButton border border-zinc-200 dark:border-zinc-700" @onclick="MakeDefault">@Localizer["Make default"]</button>
+                    <button class="@Css.GhostButton border border-red-500/40 !text-red-600 disabled:opacity-40 dark:!text-red-400" disabled="@(current.Id == BuiltIn)"
+                            title="@(current.Id == BuiltIn ? Localizer["The built-in set can't be deleted."] : null)" @onclick="() => confirmDelete = true">@Localizer["Delete set"]</button>
+                }
+            </section>
+        }
+
+        @if (draft is null || music is null)
+        {
+            <section class="@Css.Card p-6 text-sm @Css.Muted">@Localizer["Loading..."]</section>
+        }
+        else
+        {
+            var courses = draft.OfType<JsonObject>().ToList();
+            <section class="@Css.Card p-4">
+                <div class="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+                    @for (var i = 0; i < courses.Count; i++)
+                    {
+                        var index = i;
+                        var on = index == selected;
+                        var unknown = Songs(courses[index]).Any(x => !music.ContainsKey(x["songNo"]?.GetValue<uint>() ?? 0));
+                        <button class="flex items-center gap-2 rounded-xl px-3 py-2 text-left text-sm @(on ? "bg-primary-500/10 font-medium text-primary-700 dark:text-primary-300" : "hover:bg-zinc-100 dark:hover:bg-zinc-800")"
+                                @onclick="() => selected = index">
+                            <span class="min-w-0 flex-1 truncate">@CourseName(courses[index])</span>
+                            @if (unknown)
+                            {
+                                <span class="text-amber-500" title="@Localizer["A song in this course isn't on this server."]"><Icon Name="alert" Class="size-4" /></span>
+                            }
+                        </button>
+                    }
+                </div>
+            </section>
+            @if (courses.Count > 0)
+            {
+                selected = Math.Clamp(selected, 0, courses.Count - 1);
+                @CourseEditor(courses[selected])
+            }
+        }
+    </div>
+</div>
+
+<SaveBar Dirty="Dirty" Saving="saving" BlockReason="@BlockReason" OnSave="Save" OnDiscard="Discard" />
+
+@if (newOpen)
+{
+    <Dialog Title="@Localizer["New set"]" OnClose="() => newOpen = false">
+        <ChildContent>
+            <label class="mt-3 block"><span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Name"]</span>
+                <input class="@Css.Input mt-1.5" maxlength="40" autofocus placeholder="Nijiiro 2026" value="@newName" @oninput="e => newName = e.Value?.ToString() ?? string.Empty" /></label>
+            <label class="mt-3 block"><span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Start from a copy of"]</span>
+                <select class="@Css.Input mt-1.5" @bind="copyFrom">
+                    @foreach (var s in sets)
+                    {
+                        <option value="@s.Id">@s.Name</option>
+                    }
+                </select></label>
+        </ChildContent>
+        <Footer>
+            <button class="@Css.GhostButton" @onclick="() => newOpen = false">@Localizer["Cancel"]</button>
+            <button class="@Css.PrimaryButton" disabled="@(newName.Trim().Length == 0)" @onclick="CreateSet">@Localizer["Create"]</button>
+        </Footer>
+    </Dialog>
+}
+@if (confirmDelete && Set is { } doomed)
+{
+    <Dialog Title="@Localizer["Delete set"]" Alert OnClose="() => confirmDelete = false">
+        <ChildContent>@string.Format(Localizer["Delete Set Confirm"], doomed.Name)</ChildContent>
+        <Footer>
+            <button class="@Css.GhostButton" @onclick="() => confirmDelete = false">@Localizer["Cancel"]</button>
+            <button class="inline-flex items-center gap-1.5 rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700" @onclick="DeleteSet">@Localizer["Delete"]</button>
+        </Footer>
+    </Dialog>
+}
+@if (picking is { } pick)
+{
+    var others = Songs(pick.Course).Where((_, i) => i != pick.Index).Select(x => x["songNo"]?.GetValue<uint>() ?? 0).ToHashSet();
+    <SongPicker Title="@Localizer["Change song"]" Current="@(Songs(pick.Course)[pick.Index]["songNo"]?.GetValue<uint>())" Taken="others" TakenLabel="@Localizer["In this course"]"
+                OnClose="() => picking = null" OnPick="async id => { Songs(pick.Course)[pick.Index][SongNo] = id; picking = null; await Changed(); }" />
+}
+
+@code {
+    private const string GaidenFile = "gaiden_data.json";
+    private const string BuiltIn = "dan_data";
+    private const string SongNo = "songNo";
+    private const int MaxExtraConditions = 3;   // the shipped data: Soul gauge first, then up to 3 more
+    private static readonly JsonSerializerOptions Indented = new() { WriteIndented = true };
+
+    // odaiType: DanConditionType. OKs and Bads pass at or below the border; everything else at or above.
+    private (uint Type, string Label)[] Conditions =>
+    [
+        (1, Localizer["Soul gauge %"]), (2, Localizer["Goods"]), (3, Localizer["OKs"]), (4, Localizer["Bads"]),
+        (5, Localizer["Max combo"]), (6, Localizer["Drumroll hits"]), (7, Localizer["Score"]), (8, Localizer["Hits"]),
+    ];
+    private static bool LowerWins(uint type) => type is 3 or 4;
+
+    private List<DanSetInfo> sets = [];
+    private string file = "dan_data.json";
+    private JsonArray? draft;
+    private string original = "";
+    private Dictionary<uint, MusicDetail>? music;
+    private int selected;
+    private bool saving, renaming, newOpen, confirmDelete;
+    private string newName = "", copyFrom = BuiltIn;
+    private (JsonObject Course, int Index)? picking;
+
+    private DanSetInfo? Set => sets.FirstOrDefault(s => s.File == file);
+    private bool Dirty => draft is not null && draft.ToJsonString() != original;
+
+    protected override async Task OnInitializedAsync()
+    {
+        music = await GameDataService.GetMusicDetailDictionary();
+        await LoadSets();
+        file = sets.FirstOrDefault(s => s.IsDefault)?.File ?? file;
+        await Load();
+    }
+
+    private async Task LoadSets() => sets = await Client.GetFromJsonAsync<List<DanSetInfo>>("api/DanSets") ?? [];
+
+    private async Task Load()
+    {
+        draft = null;
+        var json = await Client.GetStringAsync($"api/GameData/Files/{file}");
+        draft = JsonNode.Parse(json) as JsonArray ?? [];
+        original = draft.ToJsonString();
+    }
+
+    private async Task Open(string f)
+    {
+        if (f == file) return;
+        file = f;
+        selected = 0;
+        renaming = false;
+        await Load();
+    }
+
+    private void Discard() => draft = JsonNode.Parse(original) as JsonArray;
+    private Task Changed() { StateHasChanged(); return Task.CompletedTask; }
+
+    private static JsonArray Songs(JsonObject course) => course["aryOdaiSong"] as JsonArray ?? (JsonArray)(course["aryOdaiSong"] = new JsonArray());
+    private static JsonArray Borders(JsonObject course) => course["aryOdaiBorder"] as JsonArray ?? (JsonArray)(course["aryOdaiBorder"] = new JsonArray());
+    private static uint U(JsonNode? n) => n?.GetValue<uint>() ?? 0;
+
+    private string CourseName(JsonObject course)
+    {
+        var id = (int)U(course["danId"]);
+        return file != GaidenFile && id is >= 1 and <= 19 ? Localizer[GameData.Dans[id - 1].Key].Value : course["title"]?.ToString() ?? $"#{id}";
+    }
+
+    private static readonly string[] BorderKeys = ["redBorderTotal", "goldBorderTotal", "redBorder_1", "goldBorder_1", "redBorder_2", "goldBorder_2", "redBorder_3", "goldBorder_3"];
+
+    // Why Save is disabled: an unknown song, or a border left empty.
+    private string? BlockReason
+    {
+        get
+        {
+            if (draft is null || music is null) return null;
+            foreach (var c in draft.OfType<JsonObject>())
+            {
+                if (Songs(c).Any(x => !music.ContainsKey(U(x?[SongNo]))))
+                    return string.Format(Localizer["{0}: a song isn't on this server."], CourseName(c));
+                foreach (var b in Borders(c).OfType<JsonObject>())
+                {
+                    var keys = U(b["borderType"]) == 2 ? BorderKeys[2..] : BorderKeys[..2];
+                    if (keys.Any(k => b[k] is null))
+                        return string.Format(Localizer["{0}: a pass condition is empty."], CourseName(c));
+                }
+            }
+            return null;
+        }
+    }
+
+    private async Task Save()
+    {
+        saving = true;
+        var res = await Client.PutAsync($"api/GameData/Files/{file}", new StringContent(draft!.ToJsonString(Indented), System.Text.Encoding.UTF8, "application/json"));
+        saving = false;
+        if (!res.IsSuccessStatusCode)
+        {
+            string? message = null;
+            try { message = JsonNode.Parse(await res.Content.ReadAsStringAsync())?["message"]?.ToString(); } catch (JsonException) { }
+            Toast.Show(message ?? Localizer["Save Failed"], true);
+            return;
+        }
+        original = draft.ToJsonString();
+        Toast.Show(Localizer["Saved. Game data reloaded."]);
+    }
+
+    // ---- Sets ----
+
+    private void OpenNew()
+    {
+        newName = "";
+        copyFrom = Set?.Id ?? BuiltIn;
+        newOpen = true;
+    }
+
+    private async Task CreateSet()
+    {
+        var res = await Client.PostAsJsonAsync("api/DanSets", new { name = newName.Trim(), copyFrom });
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        var created = await res.Content.ReadFromJsonAsync<DanSetInfo>();
+        newOpen = false;
+        await LoadSets();
+        if (created is not null) await Open(created.File);
+    }
+
+    private async Task Rename()
+    {
+        var res = await Client.PutAsJsonAsync($"api/DanSets/{Set!.Id}/Name", new { name = newName.Trim() });
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        renaming = false;
+        await LoadSets();
+    }
+
+    private async Task MakeDefault()
+    {
+        var res = await Client.PutAsync($"api/DanSets/Default/{Set!.Id}", null);
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        await LoadSets();
+        Toast.Show(Localizer["Saved"]);
+    }
+
+    private async Task DeleteSet()
+    {
+        var res = await Client.DeleteAsync($"api/DanSets/{Set!.Id}");
+        confirmDelete = false;
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        await LoadSets();
+        file = "";
+        await Open(sets.First(s => s.IsDefault).File);
+    }
+
+    private RenderFragment Item(string f, string label, string hint) => __builder =>
+    {
+        var on = f == file;
+        <button aria-current="@(on ? "true" : null)" @onclick="() => Open(f)"
+                class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm @(on ? "bg-primary-500/10 text-primary-700 dark:text-primary-300" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/70")">
+            <span class="min-w-0 flex-1">
+                <span class="block truncate @(on ? "font-medium" : "")">@label</span>
+                <span class="block truncate text-xs @Css.Muted">@hint</span>
+            </span>
+            @if (on && Dirty)
+            {
+                <span class="size-2 rounded-full bg-primary-500" title="@Localizer["Unsaved changes"]"></span>
+            }
+        </button>
+    };
+
+    // ---- One course ----
+
+    private RenderFragment CourseEditor(JsonObject course) => __builder =>
+    {
+        var songs = Songs(course);
+        var borders = Borders(course);
+        <section class="@Css.Card p-5 sm:p-6">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <h2 class="font-display text-xl">@CourseName(course)</h2>
+                    <p class="mt-0.5 font-mono text-xs @Css.Muted">@course["title"] · @(file == GaidenFile ? "Course" : "Dan") ID @course["danId"]</p>
+                </div>
+                <label class="flex items-center gap-2 text-sm"><span class="font-medium">@Localizer["Version"]</span>
+                    <input type="number" min="0" class="@Css.Input !w-20 !py-1.5" value="@course["verupNo"]"
+                           @onchange='async e => { course["verupNo"] = uint.TryParse(e.Value?.ToString(), out var v) ? v : 0u; await Changed(); }' /></label>
+            </div>
+
+            <p class="mt-5 text-xs font-medium @Css.Muted">@Localizer["Songs"] · @Localizer["played in this order"]</p>
+            <ol class="mt-1.5 divide-y divide-zinc-100 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-700">
+                @for (var i = 0; i < songs.Count; i++)
+                {
+                    var index = i;
+                    var x = (JsonObject)songs[index]!;
+                    var id = U(x[SongNo]);
+                    <li class="flex flex-wrap items-center gap-x-2 gap-y-1.5 px-3 py-2 text-sm">
+                        <span class="w-4 text-xs tabular-nums @Css.Muted">@(index + 1)</span>
+                        @if (music!.TryGetValue(id, out var song))
+                        {
+                            <SongLine Song="song" Class="min-w-0 flex-1 basis-48" />
+                        }
+                        else
+                        {
+                            <span class="min-w-0 flex-1 basis-48 text-amber-700 dark:text-amber-300">@Localizer["Unknown song"] #@id</span>
+                        }
+                        <button class="@Css.GhostButton !px-2.5 !py-1.5 text-xs" @onclick="() => picking = (course, index)">@Localizer["Change"]</button>
+                        <select class="@Css.Input !w-28 !py-1.5" aria-label="@Localizer["Difficulty"]" value="@U(x["level"])"
+                                @onchange='async e => { x["level"] = uint.Parse(e.Value!.ToString()!); await Changed(); }'>
+                            @foreach (var (d, name) in GameData.Difficulties)
+                            {
+                                <option value="@((uint)d)">@Localizer[name]</option>
+                            }
+                        </select>
+                        <label class="flex items-center gap-1.5 whitespace-nowrap text-xs">
+                            <input type="checkbox" class="size-4 accent-primary-500" checked="@(x["isHiddenSongName"]?.GetValue<bool>() == true)"
+                                   @onchange='async e => { x["isHiddenSongName"] = e.Value is true; await Changed(); }' />@Localizer["Hide name"]</label>
+                        <span class="flex">
+                            <button class="grid size-7 place-items-center rounded-lg text-zinc-400 hover:bg-zinc-100 disabled:opacity-30 dark:hover:bg-zinc-800" disabled="@(index == 0)"
+                                    aria-label="@Localizer["Move up"]" @onclick="() => MoveSong(songs, index, -1)"><span class="rotate-180"><Icon Name="chevDown" /></span></button>
+                            <button class="grid size-7 place-items-center rounded-lg text-zinc-400 hover:bg-zinc-100 disabled:opacity-30 dark:hover:bg-zinc-800" disabled="@(index == songs.Count - 1)"
+                                    aria-label="@Localizer["Move down"]" @onclick="() => MoveSong(songs, index, 1)"><Icon Name="chevDown" /></button>
+                        </span>
+                    </li>
+                }
+            </ol>
+
+            <p class="mt-5 text-xs font-medium @Css.Muted">@Localizer["Pass conditions"] · @string.Format(Localizer["Soul gauge + up to {0} more"], MaxExtraConditions)</p>
+            <ul class="mt-1.5 divide-y divide-zinc-100 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-700">
+                @for (var i = 0; i < borders.Count; i++)
+                {
+                    var index = i;
+                    var b = (JsonObject)borders[index]!;
+                    var type = U(b["odaiType"]);
+                    var gauge = index == 0 && type == 1;
+                    var perSong = U(b["borderType"]) == 2;
+                    <li class="space-y-2 px-3 py-3">
+                        <div class="flex flex-wrap items-center gap-2">
+                            @if (gauge)
+                            {
+                                <span class="w-44 text-sm font-medium">@Localizer["Soul gauge %"]</span>
+                            }
+                            else
+                            {
+                                <select class="@Css.Input !w-44 !py-1.5" aria-label="@Localizer["Condition"]" value="@type"
+                                        @onchange='async e => { b["odaiType"] = uint.Parse(e.Value!.ToString()!); await Changed(); }'>
+                                    @foreach (var (t, label) in Conditions.Where(c => c.Type != 1))
+                                    {
+                                        <option value="@t">@label</option>
+                                    }
+                                </select>
+                            }
+                            <select class="@Css.Input !w-44 !py-1.5" aria-label="@Localizer["Counted"]" value="@(perSong ? 2 : 1)" @onchange='e => SetCounted(b, e.Value?.ToString() == "2")'>
+                                <option value="1">@Localizer["Across all songs"]</option>
+                                <option value="2">@Localizer["Per song"]</option>
+                            </select>
+                            <span class="text-xs @Css.Muted">@(LowerWins(type) ? Localizer["Pass at or below"] : Localizer["Pass at or above"])</span>
+                            @if (gauge)
+                            {
+                                <span class="ml-auto text-xs @Css.Muted">@Localizer["Always first"]</span>
+                            }
+                            else
+                            {
+                                <button class="ml-auto grid size-7 place-items-center rounded-lg text-zinc-400 hover:bg-red-500/10 hover:text-red-600" aria-label="@Localizer["Remove condition"]"
+                                        @onclick="async () => { borders.RemoveAt(index); await Changed(); }"><Icon Name="x" /></button>
+                            }
+                        </div>
+                        @if (perSong)
+                        {
+                            for (var n = 1; n <= 3; n++)
+                            {
+                                @Pair(b, string.Format(Localizer["Song {0}"], n), $"redBorder_{n}", $"goldBorder_{n}", type)
+                            }
+                        }
+                        else
+                        {
+                            @Pair(b, Localizer["Total"], "redBorderTotal", "goldBorderTotal", type)
+                        }
+                    </li>
+                }
+            </ul>
+            @if (borders.Count - 1 < MaxExtraConditions)
+            {
+                <button class="@Css.GhostButton mt-2 !px-2" @onclick="() => AddCondition(borders)"><Icon Name="plus" />@Localizer["Add condition"]</button>
+            }
+        </section>
+    };
+
+    private RenderFragment Pair(JsonObject b, string label, string red, string gold, uint type) => __builder =>
+    {
+        var r = b[red]?.GetValue<uint>();
+        var g = b[gold]?.GetValue<uint>();
+        var easier = r is not null && g is not null && (LowerWins(type) ? g > r : g < r);
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+            <span class="w-16 @Css.Muted">@label</span>
+            <label class="flex items-center gap-1.5"><span class="size-2 rounded-full bg-red-500"></span>
+                <input type="number" min="0" class="@Css.Input !w-24 !py-1.5" aria-label='@($"{label} {Localizer["red"]}")' value="@r" @onchange="e => SetBorder(b, red, e)" /></label>
+            <label class="flex items-center gap-1.5"><span class="size-2 rounded-full bg-amber-400"></span>
+                <input type="number" min="0" class="@Css.Input !w-24 !py-1.5" aria-label='@($"{label} {Localizer["gold"]}")' value="@g" @onchange="e => SetBorder(b, gold, e)" /></label>
+            @if (easier)
+            {
+                <span class="text-amber-600 dark:text-amber-400">@Localizer["Gold is easier than red."]</span>
+            }
+        </div>
+    };
+
+    private Task SetBorder(JsonObject b, string key, ChangeEventArgs e)
+    {
+        if (uint.TryParse(e.Value?.ToString(), out var v)) b[key] = v; else b.Remove(key);
+        return Changed();
+    }
+
+    // Switching keeps the numbers: a total goes to each song; per-song values are summed.
+    private Task SetCounted(JsonObject b, bool perSong)
+    {
+        if (perSong)
+        {
+            for (var n = 1; n <= 3; n++)
+            {
+                b[$"redBorder_{n}"] = b["redBorderTotal"]?.GetValue<uint>() ?? 0u;
+                b[$"goldBorder_{n}"] = b["goldBorderTotal"]?.GetValue<uint>() ?? 0u;
+            }
+            b.Remove("redBorderTotal");
+            b.Remove("goldBorderTotal");
+            b["borderType"] = 2u;
+        }
+        else
+        {
+            b["redBorderTotal"] = (uint)Enumerable.Range(1, 3).Sum(n => b[$"redBorder_{n}"]?.GetValue<uint>() ?? 0);
+            b["goldBorderTotal"] = (uint)Enumerable.Range(1, 3).Sum(n => b[$"goldBorder_{n}"]?.GetValue<uint>() ?? 0);
+            for (var n = 1; n <= 3; n++)
+            {
+                b.Remove($"redBorder_{n}");
+                b.Remove($"goldBorder_{n}");
+            }
+            b["borderType"] = 1u;
+        }
+        return Changed();
+    }
+
+    private Task AddCondition(JsonArray borders)
+    {
+        var used = borders.Select(x => U(x?["odaiType"])).ToHashSet();
+        var type = Conditions.Select(c => c.Type).FirstOrDefault(t => t != 1 && !used.Contains(t), 2u);
+        borders.Add(new JsonObject { ["odaiType"] = type, ["borderType"] = 1u, ["redBorderTotal"] = 0u, ["goldBorderTotal"] = 0u });
+        return Changed();
+    }
+
+    private Task MoveSong(JsonArray songs, int i, int by)
+    {
+        var node = songs[i];
+        songs.RemoveAt(i);
+        songs.Insert(i + by, node);
+        return Changed();
+    }
+}

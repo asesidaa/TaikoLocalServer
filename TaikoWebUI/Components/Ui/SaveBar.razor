@@ -1,0 +1,19 @@
+@* The dark save bar for explicit-save editors; shown only while there are unsaved changes. *@
+@if (Dirty)
+{
+    <div class="pop fixed inset-x-4 bottom-4 z-30 mx-auto flex max-w-xl items-center gap-3 rounded-2xl bg-zinc-900 px-4 py-3 text-sm text-white shadow-2xl dark:bg-white dark:text-zinc-900 lg:left-64" style="--origin:bottom">
+        <span class="min-w-0 flex-1 truncate">@(BlockReason ?? Localizer["Unsaved changes"])</span>
+        <button class="rounded-xl px-3 py-1.5 font-medium hover:bg-white/10 dark:hover:bg-zinc-900/10" @onclick="OnDiscard">@Localizer["Discard"]</button>
+        <button class="rounded-xl bg-primary-500 px-4 py-1.5 font-medium text-white hover:bg-primary-600 disabled:opacity-50"
+                disabled="@(Saving || BlockReason is not null)" @onclick="OnSave">@Localizer["Save"]</button>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Dirty { get; set; }
+    [Parameter] public bool Saving { get; set; }
+    /// <summary>Why it can't be saved yet; shown in the bar, and Save is disabled.</summary>
+    [Parameter] public string? BlockReason { get; set; }
+    [Parameter] public EventCallback OnSave { get; set; }
+    [Parameter] public EventCallback OnDiscard { get; set; }
+}

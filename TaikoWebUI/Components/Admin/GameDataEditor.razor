@@ -40,16 +40,7 @@
     </div>
 </section>
 
-@if (Dirty)
-{
-    @* The save bar: only while there are unsaved changes. *@
-    <div class="pop fixed inset-x-4 bottom-4 z-30 mx-auto flex max-w-xl items-center gap-3 rounded-2xl bg-zinc-900 px-4 py-3 text-sm text-white shadow-2xl dark:bg-white dark:text-zinc-900 lg:left-64" style="--origin:bottom">
-        <span class="flex-1">@Localizer["Unsaved changes"]</span>
-        <button class="rounded-xl px-3 py-1.5 font-medium hover:bg-white/10 dark:hover:bg-zinc-900/10" @onclick="Discard">@Localizer["Discard"]</button>
-        <button class="rounded-xl bg-primary-500 px-4 py-1.5 font-medium text-white hover:bg-primary-600 disabled:opacity-50" disabled="@(saving || BlockReason is not null)"
-                title="@BlockReason" @onclick="Save">@Localizer["Save"]</button>
-    </div>
-}
+<SaveBar Dirty="Dirty" Saving="saving" BlockReason="@BlockReason" OnSave="Save" OnDiscard="Discard" />
 
 @code {
     [Parameter, EditorRequired] public string Name { get; set; } = "";
