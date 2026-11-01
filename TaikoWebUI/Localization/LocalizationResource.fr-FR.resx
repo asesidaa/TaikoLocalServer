@@ -3180,4 +3180,7 @@
   <data name="Or run it on the game PC" xml:space="preserve">
     <value>Ou lancez-le sur le PC du jeu</value>
   </data>
+  <data name="More actions" xml:space="preserve">
+    <value>Plus d'actions</value>
+  </data>
 </root>

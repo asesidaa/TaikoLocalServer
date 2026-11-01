@@ -23,7 +23,7 @@
             @foreach (var c in cards)
             {
                 var shown = revealed.Contains(c.AccessCode);
-                <li class="flex flex-wrap items-center gap-3 py-3">
+                <li class="flex items-center gap-3 py-3">
                     <span class="grid size-9 shrink-0 place-items-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"><Icon Name="card" Class="size-5" /></span>
                     <div class="min-w-0 flex-1">
                         @if (renaming == c.AccessCode)
@@ -35,21 +35,21 @@
                         {
                             <p class="truncate text-sm font-medium">@(c.Name.Length > 0 ? c.Name : Localizer["Card"])</p>
                         }
-                        <p class="flex items-center gap-1.5 text-xs @Css.Muted">
+                        <p class="flex flex-wrap items-center gap-x-1.5 text-xs @Css.Muted">
                             <span class="font-mono tabular-nums">@(shown ? Grouped(c.AccessCode) : $"•••• {c.AccessCode[^4..]}")</span>
                             <button class="grid size-5 place-items-center rounded hover:text-zinc-900 dark:hover:text-zinc-100" aria-label="@(shown ? Localizer["Hide the code"] : Localizer["Show the code"])"
                                     @onclick="() => { if (!revealed.Remove(c.AccessCode)) revealed.Add(c.AccessCode); }">
                                 <Icon Name="@(shown ? "eyeOff" : "eye")" Class="size-3.5" />
                             </button>
-                            <span>· @LastScan(c)</span>
+                            <span class="whitespace-nowrap">· @LastScan(c)</span>
                         </p>
                     </div>
-                    <div class="flex gap-1">
-                        <button class="@Css.GhostButton !px-3 !py-1.5" @onclick="() => qrFor = c.AccessCode"><Icon Name="qr" Class="size-4" />@Localizer["QR"]</button>
-                        <button class="@Css.GhostButton !px-3 !py-1.5" @onclick="() => StartRename(c)">@Localizer["Rename"]</button>
-                        <button class="@Css.GhostButton !px-3 !py-1.5 text-red-600 disabled:opacity-40 dark:text-red-400" disabled="@(cards.Count <= 1)"
-                                title="@(cards.Count <= 1 ? Localizer["Your only card can't be removed."] : null)" @onclick="() => removing = c">@Localizer["Remove"]</button>
-                    </div>
+                    <ActionMenu Label="@Localizer["More actions"]">
+                        <button role="menuitem" class="@Css.MenuItem" @onclick="() => qrFor = c.AccessCode"><Icon Name="qr" Class="size-4" />@Localizer["QR code"]</button>
+                        <button role="menuitem" class="@Css.MenuItem" @onclick="() => StartRename(c)"><Icon Name="pencil" Class="size-4" />@Localizer["Rename"]</button>
+                        <button role="menuitem" class="@Css.MenuItem text-red-600 dark:text-red-400" disabled="@(cards.Count <= 1)"
+                                title="@(cards.Count <= 1 ? Localizer["Your only card can't be removed."] : null)" @onclick="() => removing = c"><Icon Name="trash" Class="size-4" />@Localizer["Remove"]</button>
+                    </ActionMenu>
                 </li>
             }
         </ul>

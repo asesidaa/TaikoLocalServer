@@ -88,26 +88,27 @@
                 <button class="@SmallIcon" aria-label="@(revealed.Contains(code) ? Localizer["Hide access code"] : Localizer["Show access code"])" @onclick="() => Toggle(code)">
                     <Icon Name="@(revealed.Contains(code) ? "eyeOff" : "eye")" />
                 </button>
-                @if (ban is not null)
-                {
-                    <button class="@Css.GhostButton !px-2.5 !py-1 text-xs" @onclick="() => Unban(code)">@Localizer["Unban"]</button>
-                }
-                else
-                {
-                    <button class="@SmallIcon hover:!bg-red-500/10 hover:!text-red-600" aria-label="@Localizer["Ban this card"]" title="@Localizer["Ban this card"]"
-                            @onclick="() => OpenBan(code)"><Icon Name="ban" /></button>
-                }
-                <button class="@SmallIcon" disabled="@last" title="@(last ? Localizer["A user needs at least one access code."] : null)" aria-label="@Localizer["Move to another user"]"
-                        @onclick="() => { moveCode = code; moveQuery = string.Empty; }"><Icon Name="move" /></button>
-                <button class="@SmallIcon hover:!bg-red-500/10 hover:!text-red-600" disabled="@last" title="@(last ? Localizer["A user needs at least one access code."] : null)" aria-label="@Localizer["Remove access code"]"
-                        @onclick="() => RemoveCode(code)"><Icon Name="trash" /></button>
+                <ActionMenu Label="@Localizer["More actions"]">
+                    @if (ban is not null)
+                    {
+                        <button role="menuitem" class="@Css.MenuItem" @onclick="() => Unban(code)"><Icon Name="ban" Class="size-4" />@Localizer["Unban"]</button>
+                    }
+                    else
+                    {
+                        <button role="menuitem" class="@Css.MenuItem text-red-600 dark:text-red-400" @onclick="() => OpenBan(code)"><Icon Name="ban" Class="size-4" />@Localizer["Ban this card"]</button>
+                    }
+                    <button role="menuitem" class="@Css.MenuItem" disabled="@last" title="@(last ? Localizer["A user needs at least one access code."] : null)"
+                            @onclick="() => { moveCode = code; moveQuery = string.Empty; }"><Icon Name="move" Class="size-4" />@Localizer["Move to another user"]</button>
+                    <button role="menuitem" class="@Css.MenuItem text-red-600 dark:text-red-400" disabled="@last" title="@(last ? Localizer["A user needs at least one access code."] : null)"
+                            @onclick="() => RemoveCode(code)"><Icon Name="trash" Class="size-4" />@Localizer["Remove access code"]</button>
+                </ActionMenu>
             </li>
         }
     </ul>
     @if (User.AccessCodes.Count < AuthService.BoundAccessCodeUpperLimit || !AuthService.LoginRequired)
     {
-        <form class="mt-3 flex items-end gap-2" @onsubmit="BindCode" @onsubmit:preventDefault>
-            <div class="flex-1"><AccessCodeField @bind-Value="newCode" /></div>
+        <form class="mt-3 flex flex-wrap items-end justify-end gap-2" @onsubmit="BindCode" @onsubmit:preventDefault>
+            <div class="min-w-0 flex-1 basis-72"><AccessCodeField @bind-Value="newCode" /></div>
             <button class="@Css.PrimaryButton shrink-0" disabled="@(newCode.Length != 20 || busy)"><Icon Name="plus" />@Localizer["Bind"]</button>
         </form>
     }

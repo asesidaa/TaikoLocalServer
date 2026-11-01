@@ -1,5 +1,6 @@
-@* Modal dialog: Escape or a backdrop click closes it, a click inside doesn't. *@
-<div class="fade fixed inset-0 z-[60] grid place-items-center bg-black/50 p-4" @onclick="Close" @onkeydown="OnKey">
+@* Modal dialog: Escape or a backdrop click closes it, a click inside doesn't. The track is minmax(0,1fr) so wide
+   content (long song names, codes) scrolls or truncates inside the dialog instead of widening it past the screen. *@
+<div class="fade fixed inset-0 z-[60] grid grid-cols-[minmax(0,1fr)] place-items-center bg-black/50 p-4" @onclick="Close" @onkeydown="OnKey">
     <div role="@(Alert ? "alertdialog" : "dialog")" aria-modal="true" aria-labelledby="dlg-h" @onclick:stopPropagation style="--origin:center"
          class="pop flex max-h-[min(680px,calc(100dvh-2rem))] w-full @Width flex-col rounded-2xl bg-white p-6 shadow-2xl dark:bg-zinc-900">
         <h2 id="dlg-h" class="font-semibold">@Title</h2>

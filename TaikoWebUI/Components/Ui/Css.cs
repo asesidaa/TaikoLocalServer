@@ -28,6 +28,9 @@ public static class Css
         ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
         : "bg-white text-zinc-600 ring-1 ring-zinc-200 dark:bg-zinc-900 dark:text-zinc-300 dark:ring-zinc-700");
 
+    /// <summary>An item in an ActionMenu (role="menuitem"); add text-red-600 dark:text-red-400 for a destructive one.</summary>
+    public const string MenuItem = "flex w-full items-center gap-2.5 whitespace-nowrap rounded-lg px-3 py-2 text-left text-sm hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent dark:hover:bg-zinc-800";
+
     public const string Muted = "text-zinc-500 dark:text-zinc-400";
 
     public const string Link = "font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300";

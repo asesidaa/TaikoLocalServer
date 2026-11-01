@@ -1,0 +1,28 @@
+@* A row's actions behind a ⋯ button. ChildContent is buttons styled with Css.MenuItem; picking one, a tap outside or
+   Escape closes the menu. *@
+
+<div class="relative shrink-0" @onkeydown="Key">
+    <button type="button" class="@Css.IconButton" aria-haspopup="menu" aria-expanded="@Css.Aria(open)" aria-label="@Label" @onclick="() => open = !open">
+        <Icon Name="more" />
+    </button>
+    @if (open)
+    {
+        <div class="fixed inset-0 z-40" @onclick="() => open = false"></div>
+        <div role="menu" aria-label="@Label" style="--origin:top right" @onclick="() => open = false"
+             class="pop absolute right-0 top-10 z-50 min-w-48 rounded-xl border border-zinc-200 bg-white p-1 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+            @ChildContent
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string Label { get; set; } = "";
+
+    private bool open;
+
+    private void Key(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") open = false;
+    }
+}
