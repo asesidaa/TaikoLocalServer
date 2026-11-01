@@ -64,7 +64,7 @@ else
             }
         </Rail>
 
-        <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
+        <div class="grid gap-4 lg:grid-cols-2 lg:items-start">
             <div class="min-w-0 space-y-4">
                 <section class="@Css.Card p-5">
                     <h2 class="font-semibold">@string.Format(Localizer["Your best · {0}"], GameData.DifficultyName(difficulty))</h2>
@@ -78,7 +78,7 @@ else
                                 <img data-asset="@rank" alt="@string.Format(Localizer["Rank {0}"], best.Rank)" class="h-10 w-auto" />
                             }
                         </div>
-                        <div class="mt-4 grid grid-cols-3 gap-4 border-t border-zinc-100 pt-4 xl:grid-cols-6 dark:border-zinc-800">
+                        <div class="mt-4 grid grid-cols-3 gap-4 border-t border-zinc-100 pt-4 dark:border-zinc-800">
                             @Stat(Localizer["Good"], best.Good.ToString("N0"))
                             @Stat(Localizer["OK"], best.Ok.ToString("N0"))
                             @Stat(Localizer["Bad"], best.Bad.ToString("N0"))
@@ -407,6 +407,13 @@ else
             <span class="min-w-0 flex-1 truncate text-sm @(me ? "font-medium" : "")">@name@(me ? " " + Localizer["(you)"] : "")</span>
             <img data-asset="@GameData.CrownIcon(r.BestCrown)" alt="@Localizer[GameData.CrownName(r.BestCrown)]" class="size-4" />
             <span class="font-mono text-sm tabular-nums">@r.BestScore.ToString("N0")</span>
+            @* The score rank badge, as above; a fixed slot keeps the scores aligned when there's none. *@
+            <span class="size-5 shrink-0">
+                @if (GameData.RankIcon(r.BestScoreRank) is { } rank)
+                {
+                    <img data-asset="@rank" alt="@string.Format(Localizer["Rank {0}"], r.BestScoreRank)" title="@string.Format(Localizer["Rank {0}"], r.BestScoreRank)" class="size-5" />
+                }
+            </span>
         </li>
     };
 }
