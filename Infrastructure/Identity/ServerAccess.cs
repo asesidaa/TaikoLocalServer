@@ -54,7 +54,7 @@ public sealed class ServerAccess(
             rules = new AccessRules
             {
                 OnlyAdmin = legacy.GetValue("OnlyAdmin", false),
-                RegisterWithLastPlayTime = legacy.GetValue("RegisterWithLastPlayTime", false),
+                SignUpMode = legacy.GetValue("RegisterWithLastPlayTime", false) ? SignUpMode.LastPlayTime : SignUpMode.Open,
                 AllowUserDelete = legacy.GetValue("AllowUserDelete", true),
                 AllowFreeProfileEditing = legacy.GetValue("AllowFreeProfileEditing", true),
                 AccessCodeLimit = legacy.GetValue("BoundAccessCodeUpperLimit", 3),
@@ -92,7 +92,7 @@ public sealed class ServerAccess(
         var db = scope.ServiceProvider.GetRequiredService<ITaikoDbContext>();
         var row = await db.AccessRules.FindAsync([1], cancellationToken) ?? db.AccessRules.Add(new AccessRules()).Entity;
         row.OnlyAdmin = updated.OnlyAdmin;
-        row.RegisterWithLastPlayTime = updated.RegisterWithLastPlayTime;
+        row.SignUpMode = updated.SignUpMode;
         row.AllowUserDelete = updated.AllowUserDelete;
         row.AllowFreeProfileEditing = updated.AllowFreeProfileEditing;
         row.AccessCodeLimit = Math.Max(1, updated.AccessCodeLimit);
@@ -131,7 +131,7 @@ public sealed class ServerAccess(
 
     private static AccessRules Copy(AccessRules r) => new()
     {
-        OnlyAdmin = r.OnlyAdmin, RegisterWithLastPlayTime = r.RegisterWithLastPlayTime, AllowUserDelete = r.AllowUserDelete,
+        OnlyAdmin = r.OnlyAdmin, SignUpMode = r.SignUpMode, AllowUserDelete = r.AllowUserDelete,
         AllowFreeProfileEditing = r.AllowFreeProfileEditing, AccessCodeLimit = r.AccessCodeLimit,
         LockoutAttempts = r.LockoutAttempts, LockoutMinutes = r.LockoutMinutes,
     };

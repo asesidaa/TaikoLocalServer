@@ -29,7 +29,7 @@ public sealed class AuthService : IDisposable
     public bool SetupPending => authConfig.SetupPending;
     public bool OnlyAdmin => authConfig.OnlyAdmin;
     public int BoundAccessCodeUpperLimit => authConfig.BoundAccessCodeUpperLimit;
-    public bool RegisterWithLastPlayTime => authConfig.RegisterWithLastPlayTime;
+    public SignUpMode SignUpMode => authConfig.SignUpMode;
     public bool AllowUserDelete => authConfig.AllowUserDelete;
     public bool AllowFreeProfileEditing => authConfig.AllowFreeProfileEditing;
 
@@ -151,6 +151,8 @@ public sealed class AuthService : IDisposable
             "User Already Registered" => 4,
             "Wrong Last Play Time" => 5,
             "Wrong Setup Code" => 7,
+            "Invite Code Required" => 8,
+            "Sign-up Closed" => 9,
             _ => 6
         }, fallback: 6);
     }

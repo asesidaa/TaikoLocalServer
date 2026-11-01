@@ -40,7 +40,7 @@ namespace TaikoLocalServer.Migrations
                     b.Property<bool>("OnlyAdmin")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("RegisterWithLastPlayTime")
+                    b.Property<int>("SignUpMode")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");

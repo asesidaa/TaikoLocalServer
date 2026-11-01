@@ -1,3 +1,5 @@
+using TaikoLocalServer.Domain.Enums;
+
 namespace TaikoLocalServer.Domain.Entities;
 
 /// <summary>
@@ -11,8 +13,8 @@ public class AccessRules
     /// <summary>Only admins may register and bind access codes.</summary>
     public bool OnlyAdmin { get; set; }
 
-    /// <summary>Registering needs the card's last play time (or an admin's invite code).</summary>
-    public bool RegisterWithLastPlayTime { get; set; }
+    /// <summary>Who can create a Web UI account for a card.</summary>
+    public SignUpMode SignUpMode { get; set; }
 
     public bool AllowUserDelete { get; set; } = true;
 

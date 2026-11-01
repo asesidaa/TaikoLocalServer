@@ -13,7 +13,7 @@ public class AccessRulesController(IServerAccess access) : BaseAdminController<A
         var r = access.Rules;
         return Ok(new AccessRulesSettings
         {
-            OnlyAdmin = r.OnlyAdmin, RegisterWithLastPlayTime = r.RegisterWithLastPlayTime,
+            OnlyAdmin = r.OnlyAdmin, SignUpMode = r.SignUpMode,
             AllowUserDelete = r.AllowUserDelete, AllowFreeProfileEditing = r.AllowFreeProfileEditing, AccessCodeLimit = r.AccessCodeLimit,
             LockoutAttempts = r.LockoutAttempts, LockoutMinutes = r.LockoutMinutes,
         });
@@ -27,7 +27,7 @@ public class AccessRulesController(IServerAccess access) : BaseAdminController<A
 
         await access.UpdateRulesAsync(new AccessRules
         {
-            OnlyAdmin = settings.OnlyAdmin, RegisterWithLastPlayTime = settings.RegisterWithLastPlayTime,
+            OnlyAdmin = settings.OnlyAdmin, SignUpMode = Enum.IsDefined(settings.SignUpMode) ? settings.SignUpMode : SignUpMode.LastPlayTime,
             AllowUserDelete = settings.AllowUserDelete, AllowFreeProfileEditing = settings.AllowFreeProfileEditing,
             AccessCodeLimit = settings.AccessCodeLimit,
             LockoutAttempts = settings.LockoutAttempts, LockoutMinutes = settings.LockoutMinutes,

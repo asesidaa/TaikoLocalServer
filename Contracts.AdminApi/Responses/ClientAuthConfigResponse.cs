@@ -8,7 +8,7 @@ public sealed record ClientAuthConfigResponse(
     bool AuthenticationRequired,
     bool OnlyAdmin,
     int BoundAccessCodeUpperLimit,
-    bool RegisterWithLastPlayTime,
+    SignUpMode SignUpMode,
     bool AllowUserDelete,
     bool AllowFreeProfileEditing,
     bool SetupPending);

@@ -49,7 +49,7 @@ public class AuthController(
         access.LogSetupCode();
         var rules = access.Rules;
         return Ok(new ClientAuthConfigResponse(access.Mode, access.LoginRequired, rules.OnlyAdmin, rules.AccessCodeLimit,
-            rules.RegisterWithLastPlayTime, rules.AllowUserDelete, rules.AllowFreeProfileEditing, access.SetupPending));
+            rules.SignUpMode, rules.AllowUserDelete, rules.AllowFreeProfileEditing, access.SetupPending));
     }
 
     [HttpPost("Login")]
@@ -147,7 +147,9 @@ public class AuthController(
         var accessCode = registerRequest.AccessCode;
         var password = registerRequest.Password;
         var lastPlayDateTime = registerRequest.LastPlayDateTime;
-        var registerWithLastPlayTime = access.Rules.RegisterWithLastPlayTime && !withSetupCode;
+        var signUp = withSetupCode ? SignUpMode.Open : access.Rules.SignUpMode;
+        if (signUp == SignUpMode.Closed && !User.IsAdmin())
+            return Unauthorized(new { message = "Sign-up Closed" });
         var inviteCode = registerRequest.InviteCode;
 
         var card = await context.Cards.FindAsync(new object?[] { accessCode }, HttpContext.RequestAborted);
@@ -183,14 +185,12 @@ public class AuthController(
         if (password.Length <= 0)
             return Unauthorized(new { message = "Password Cannot Be Empty !" });
 
-        if (registerWithLastPlayTime)
+        // Admins setting an account up skip the proof; everyone else proves the card as the sign-up mode says.
+        var invited = inviteCode != "" && VerifyOtp(inviteCode, card.Baid);
+        if (signUp == SignUpMode.InviteOnly && !invited && !User.IsAdmin())
+            return Unauthorized(new { message = "Invite Code Required" });
+        if (signUp == SignUpMode.LastPlayTime && !User.IsAdmin())
         {
-            var invited = false;
-            if (inviteCode != "")
-            {
-                invited = VerifyOtp(inviteCode, card.Baid);
-            }
-
             if (!invited)
             {
                 var user = await context.UserData

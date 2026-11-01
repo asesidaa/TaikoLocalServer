@@ -172,6 +172,12 @@
         (Localizer["Admin"], code.Length > 4 ? $"•••• {code[^4..]}" : code),
         (Localizer["Game files"], assetsMissing == false ? Localizer["In place"] : Localizer["Not added yet"]),
         (Localizer["Sign-up"], AuthService.OnlyAdmin ? Localizer["Admins only"]
-            : AuthService.RegisterWithLastPlayTime ? Localizer["Last play time or invite code"] : Localizer["Anyone with a card"]),
+            : AuthService.SignUpMode switch
+            {
+                SignUpMode.Open => Localizer["Anyone with a card"],
+                SignUpMode.LastPlayTime => Localizer["Last play time or invite code"],
+                SignUpMode.InviteOnly => Localizer["Invite code only"],
+                _ => Localizer["Closed"],
+            }),
     ];
 }

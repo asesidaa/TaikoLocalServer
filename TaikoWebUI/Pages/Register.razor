@@ -48,7 +48,10 @@
                                            class="@Css.Input pl-9 font-mono tracking-[.3em]" @oninput="e => invite = AccessCodeField.Digits(e.Value?.ToString() ?? string.Empty)" />
                                 </span>
                             </label>
-                            <button type="button" class="mt-3 text-sm @Css.Link" @onclick="() => useInvite = false">@Localizer["Use your last play time instead"]</button>
+                            @if (!InviteOnly)
+                            {
+                                <button type="button" class="mt-3 text-sm @Css.Link" @onclick="() => useInvite = false">@Localizer["Use your last play time instead"]</button>
+                            }
                         }
                         else
                         {
@@ -103,17 +106,20 @@
     private bool busy;
     private bool done;
 
-    // The server checks the last play time (or an invite code instead) only when RegisterWithLastPlayTime is on.
+    // The sign-up mode decides the proof: the last play time (or an invite code), an invite code only, or none.
     // (The first admin registers on /setup instead.)
-    private List<(string Id, string Label)> Steps => AuthService.RegisterWithLastPlayTime
+    private List<(string Id, string Label)> Steps => AuthService.SignUpMode is SignUpMode.LastPlayTime or SignUpMode.InviteOnly
             ? [("card", Localizer["Card"]), ("verify", Localizer["Verify"]), ("password", Localizer["Password"])]
             : [("card", Localizer["Card"]), ("password", Localizer["Password"])];
+
+    private bool InviteOnly => AuthService.SignUpMode == SignUpMode.InviteOnly;
 
     private bool IsLast => step == Steps.Count - 1;
 
     protected override void OnInitialized()
     {
-        if (AuthService.OnlyAdmin) Nav.NavigateTo("/Login", replace: true);
+        if (AuthService.OnlyAdmin || AuthService.SignUpMode == SignUpMode.Closed) Nav.NavigateTo("/Login", replace: true);
+        useInvite = InviteOnly;
         Page.Set(Localizer["Register"]);
     }
 
@@ -151,6 +157,8 @@
             case 3: error = Localizer["Unknown Access Code Error"]; step = 0; break;
             case 4: error = Localizer["Register Already Registered Error"]; step = 0; break;
             case 5: error = Localizer["Register Wrong Last Play Time Error"]; step = Steps.FindIndex(s => s.Id == "verify"); break;
+            case 8: error = Localizer["This server needs an invite code from an admin."]; step = Steps.FindIndex(s => s.Id == "verify"); break;
+            case 9: error = Localizer["Sign-up is closed on this server. Ask an admin."]; break;
             default: error = Localizer["Unknown Error"]; break;
         }
     }

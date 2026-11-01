@@ -4,7 +4,7 @@ namespace TaikoLocalServer.Contracts.AdminApi.ViewModels;
 public class AccessRulesSettings
 {
     public bool OnlyAdmin { get; set; }
-    public bool RegisterWithLastPlayTime { get; set; }
+    public SignUpMode SignUpMode { get; set; }
     public bool AllowUserDelete { get; set; } = true;
     public bool AllowFreeProfileEditing { get; set; } = true;
     public int AccessCodeLimit { get; set; } = 3;
