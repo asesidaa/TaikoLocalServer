@@ -80,8 +80,7 @@ public sealed class HeadlessAvatarRenderer(
         row.RenderAvatars = on;
         await db.SaveChangesAsync(cancellationToken);
         enabled = on;
-        if (on) await QueueStaleAsync(cancellationToken);
-        else await CloseBrowserAsync();
+        if (!on) await CloseBrowserAsync();
     }
 
     public async Task SetCards3DAsync(bool on, CancellationToken cancellationToken)
@@ -92,7 +91,6 @@ public sealed class HeadlessAvatarRenderer(
         row.Cards3D = on;
         await db.SaveChangesAsync(cancellationToken);
         stills = !on;
-        if (stills && enabled) await QueueStaleAsync(cancellationToken);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -112,7 +110,9 @@ public sealed class HeadlessAvatarRenderer(
         }
         // Give the server a moment to start listening before the first page load.
         try { await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken); } catch (OperationCanceledException) { return; }
-        if (enabled) await QueueStaleAsync(stoppingToken);
+        // On demand only: a player is drawn when their avatar or still is shown without an up-to-date image, or their
+        // costume is saved. Nothing goes over every player, so a server with thousands of them (or one just migrated)
+        // never has hours of renders waiting; only the players people look at cost anything.
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -304,26 +304,6 @@ public sealed class HeadlessAvatarRenderer(
         var contentType = head.Contains("image/webp") ? "image/webp" : head.Contains("image/png") ? "image/png"
             : throw new InvalidOperationException("The snapshot isn't an image.");
         return (Convert.FromBase64String(dataUrl[(comma + 1)..]), contentType);
-    }
-
-    // Everyone whose stored avatar doesn't show their current costume (a costume changed in game, a new player…).
-    private async Task QueueStaleAsync(CancellationToken cancellationToken)
-    {
-        using var scope = scopes.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ITaikoDbContext>();
-        var keys = await db.UserAvatars.AsNoTracking().ToDictionaryAsync(a => a.Baid, a => a.Key, cancellationToken);
-        var stills = await db.UserStills.AsNoTracking().ToDictionaryAsync(s => s.Baid, s => s.Key, cancellationToken);
-        var animations = await db.UserWebProfiles.AsNoTracking().ToDictionaryAsync(p => p.Baid, p => p.CardAnimation, cancellationToken);
-        var users = await db.UserData.AsNoTracking()
-            .Select(u => new { u.Baid, u.CurrentKigurumi, u.CurrentHead, u.CurrentBody, u.CurrentFace, u.CurrentPuchi, u.ColorBody, u.ColorFace, u.ColorLimb })
-            .ToListAsync(cancellationToken);
-        foreach (var u in users)
-        {
-            var animation = animations.GetValueOrDefault(u.Baid);
-            var key = AvatarKeys.Key(u.CurrentKigurumi, u.CurrentHead, u.CurrentBody, u.CurrentFace, u.ColorBody, u.ColorFace, u.ColorLimb, animation);
-            var stillKey = AvatarKeys.StillKey(u.CurrentKigurumi, u.CurrentHead, u.CurrentBody, u.CurrentFace, u.CurrentPuchi, u.ColorBody, u.ColorFace, u.ColorLimb, animation);
-            if (keys.GetValueOrDefault(u.Baid) != key || (this.stills && stills.GetValueOrDefault(u.Baid) != stillKey)) Enqueue(u.Baid);
-        }
     }
 
     private async Task<IPage> PageAsync()

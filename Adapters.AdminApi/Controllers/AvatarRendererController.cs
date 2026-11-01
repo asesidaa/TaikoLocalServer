@@ -38,7 +38,7 @@ public class AvatarRendererController(IAvatarRenderer renderer, ITaikoDbContext 
                 context.UserData.Where(u => u.Baid == a.Baid).Select(u => u.MyDonName).FirstOrDefault() ?? "", a.Key, a.ContentType, a.Image.Length))
             .ToListAsync(HttpContext.RequestAborted);
 
-    /// <summary>Deletes every stored avatar (and still image); when the renderer is on it draws them all again, otherwise each player's browser does.</summary>
+    /// <summary>Deletes every stored avatar (and still image); each is drawn again the next time it's shown.</summary>
     [HttpDelete("Avatars")]
     public async Task<int> Clear()
     {
@@ -46,8 +46,6 @@ public class AvatarRendererController(IAvatarRenderer renderer, ITaikoDbContext 
         await context.UserStills.ExecuteDeleteAsync(HttpContext.RequestAborted);
         this.LogActivity(context, "server.avatars", null, $"cleared {deleted}");
         await context.SaveChangesAsync(HttpContext.RequestAborted);
-        foreach (var baid in await context.UserData.Select(u => u.Baid).ToListAsync(HttpContext.RequestAborted))
-            renderer.Enqueue(baid);
         return deleted;
     }
 }
