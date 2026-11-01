@@ -43,7 +43,7 @@ There is nothing else to configure for logins: the server generates its own sign
 
 ### Web UI admins (Server mode)
 
-The first time the server starts in Server mode without an admin, it prints a **setup code** in its console, for example `K7QF-2M9X`. Register on the web UI with your own card, enter the code at the "Setup" step, and that account becomes the admin. The code changes each start until an admin exists. Each card must have played at least one credit first.
+The first time the server starts in Server mode without an admin, it prints a **setup code** in its console, for example `K7QF-2M9X`. Open the web UI: it goes to the setup page until an admin exists. Enter the code, then your card and a password, and that account becomes the admin. The card doesn't need to have played on this server yet. The code is printed again whenever the web UI is opened, and changes each start until an admin exists.
 
 Admins can also be managed from the command line, run from the server folder:
 
