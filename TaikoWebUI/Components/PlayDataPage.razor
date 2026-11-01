@@ -1,4 +1,4 @@
-@* Play Data pages (Stats, Dani Dojo): the player card on the left, a heading and one panel on the right, no tabs. *@
+@* Play Data pages (Stats, Dani Dojo): the player card on the left and one panel on the right, no tabs or heading (the breadcrumb names the page). *@
 @using TaikoWebUI.Components.Profile
 
 <div class="lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-6">
@@ -9,13 +9,11 @@
         }
     </aside>
     <div class="min-w-0">
-        <h1 class="mb-4 mt-6 text-2xl font-semibold tracking-tight lg:mt-0">@Title</h1>
-        <section class="@Css.Card p-5 sm:p-6">@ChildContent</section>
+        <section class="@Css.Card mt-6 p-5 sm:p-6 lg:mt-0">@ChildContent</section>
     </div>
 </div>
 
 @code {
-    [Parameter, EditorRequired] public string Title { get; set; } = "";
     [Parameter] public UserSetting? Setting { get; set; }
     [Parameter] public IReadOnlyList<DanBestData> Dans { get; set; } = [];
     [Parameter] public bool DanView { get; set; }
