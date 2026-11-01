@@ -1,0 +1,35 @@
+@* Labelled native select over a list of option names; the value is the option's index. *@
+<label class="block">
+    <span class="flex items-baseline justify-between gap-2 text-sm">
+        <span class="font-medium text-zinc-700 dark:text-zinc-300">@Label</span>
+        @if (!string.IsNullOrEmpty(Hint))
+        {
+            <span class="text-xs @Css.Muted">@Hint</span>
+        }
+    </span>
+    <span class="mt-1.5 flex items-center gap-2">
+        @if (!string.IsNullOrEmpty(Image))
+        {
+            <img src="@Image" alt="" class="size-8 shrink-0 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800" />
+        }
+        <select class="@Css.Input dark:[&>option]:bg-zinc-900" @onchange="OnChange">
+            @for (var i = 0; i < Options.Count; i++)
+            {
+                var index = (uint)i;
+                <option value="@index" selected="@(index == Value)">@Options[i]</option>
+            }
+        </select>
+    </span>
+</label>
+
+@code {
+    [Parameter, EditorRequired] public string Label { get; set; } = "";
+    [Parameter, EditorRequired] public IReadOnlyList<string> Options { get; set; } = [];
+    [Parameter] public uint Value { get; set; }
+    [Parameter] public EventCallback<uint> ValueChanged { get; set; }
+    [Parameter] public string? Hint { get; set; }
+    [Parameter] public string? Image { get; set; }
+
+    private Task OnChange(ChangeEventArgs e) =>
+        uint.TryParse(e.Value?.ToString(), out var v) ? ValueChanged.InvokeAsync(v) : Task.CompletedTask;
+}

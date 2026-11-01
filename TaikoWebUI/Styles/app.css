@@ -1,0 +1,73 @@
+/* Tailwind v4 source. Built to wwwroot/css/app.css by the standalone CLI (see TaikoWebUI.csproj).
+   Classes are only picked up from the sources below, so class names must appear whole in them. */
+@import "tailwindcss" source(none);
+@source "../**/*.razor";
+@source "../**/*.cs";
+@source "../wwwroot/index.html";
+@source "../wwwroot/js/*.js";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Zen Maru Gothic Black (OFL, see font.LICENSE.txt), subset to the WebUI's characters. */
+@font-face {
+    font-family: "Zen Maru Gothic";
+    src: url("font.woff2") format("woff2");
+    font-weight: 900;
+    font-display: swap;
+}
+
+@theme {
+    --font-sans: ui-sans-serif, system-ui, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
+    --font-display: "Zen Maru Gothic", ui-sans-serif, system-ui, sans-serif;
+    /* Don (default theme). The other accent themes override these below. */
+    --color-primary-50: #fff3f0;
+    --color-primary-100: #ffe2db;
+    --color-primary-300: #ffa48e;
+    --color-primary-400: #ff7a5c;
+    --color-primary-500: #f84828;
+    --color-primary-600: #e0361a;
+    --color-primary-700: #b92a13;
+    --color-ka-500: #42b8c7;
+}
+
+/* UI accent themes: swap only the primary ramp. White text on 500 is ≥ 3.5:1 for all of them.
+   :root[data-accent] outranks @theme's :root. js/ui.js sets the attribute before first paint. */
+:root[data-accent="katsu"] { --color-primary-50:#eef8fc; --color-primary-100:#d3eef8; --color-primary-300:#7fcbea; --color-primary-400:#45afdc; --color-primary-500:#1c86b8; --color-primary-600:#176f99; --color-primary-700:#135a7c; }
+:root[data-accent="sakura"] { --color-primary-50:#fff1f6; --color-primary-100:#fde0ea; --color-primary-300:#f6a2c0; --color-primary-400:#ee6e9c; --color-primary-500:#e0407c; --color-primary-600:#c42d66; --color-primary-700:#a02352; }
+:root[data-accent="matcha"] { --color-primary-50:#effaf0; --color-primary-100:#d8f2da; --color-primary-300:#93d79a; --color-primary-400:#5cb965; --color-primary-500:#2f8f3a; --color-primary-600:#26762f; --color-primary-700:#1f5f27; }
+:root[data-accent="murasaki"] { --color-primary-50:#f6f1fe; --color-primary-100:#ebe0fc; --color-primary-300:#c4a6f3; --color-primary-400:#a37ce8; --color-primary-500:#8550d6; --color-primary-600:#6f3dbd; --color-primary-700:#592f9a; }
+
+@layer base {
+    .font-display { font-weight: 900; }
+    button:not(:disabled), [role="button"] { cursor: pointer; }
+}
+
+@layer components {
+    .pop { transform-origin: var(--origin, top left); animation: pop 160ms cubic-bezier(.25, 1, .5, 1); }
+    .fade { animation: fade 160ms ease-out; }
+    .rise { animation: rise 200ms cubic-bezier(.25, 1, .5, 1); }
+    .drawer { transition: transform 220ms cubic-bezier(.25, 1, .5, 1); }
+    .chev { transition: transform 160ms ease-out; }
+}
+
+@keyframes pop { from { opacity: 0; transform: scale(.96) translateY(-2px); } }
+@keyframes fade { from { opacity: 0; } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+
+@media (prefers-reduced-motion: reduce) {
+    .pop, .fade, .rise { animation: none; }
+    .drawer, .chev { transition: none; }
+}
+
+/* Boot loader shown by index.html until Blazor renders. */
+.loader-container { position: fixed; inset: 0; z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: #09090b; color: #a1a1aa; font: 500 13px/1 ui-sans-serif, system-ui, sans-serif; }
+.loader-bar { width: min(50%, 320px); height: 4px; border-radius: 999px; overflow: hidden; background: #27272a; }
+.loader-bar::after { content: ""; display: block; height: 100%; background: var(--color-primary-500); transform: scaleX(var(--blazor-load-percentage, 0%)); transform-origin: left; transition: transform .25s ease-out; }
+:root:not(.dark) .loader-container { background: #fafafa; color: #71717a; }
+:root:not(.dark) .loader-bar { background: #e4e4e7; }
+
+#blazor-error-ui { display: none; position: fixed; inset: auto 0 0 0; z-index: 9999; padding: .75rem 1.25rem; background: #b92a13; color: #fff; font: 500 14px/1.4 ui-sans-serif, system-ui, sans-serif; }
+#blazor-error-ui .reload { margin-left: .5rem; text-decoration: underline; color: inherit; }
+#blazor-error-ui .dismiss { position: absolute; right: .75rem; top: .5rem; cursor: pointer; }
+.blazor-error-boundary { padding: 1rem; border-radius: 1rem; background: #b92a13; color: #fff; }
+.blazor-error-boundary::after { content: "An error has occurred."; }

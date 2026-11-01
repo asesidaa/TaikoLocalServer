@@ -1,0 +1,83 @@
+@* The player's card: 3D don-chan (display-only embed covering the whole card so costumes never clip),
+   name, and the game nameplate. DanView = the Dani Dojo look (段位道場 outfit for the top rank, no puchi,
+   Clear animation, and a dan panel under the nameplate). Card colour/pattern/fade/animation aren't stored
+   by the server yet, so the card uses the defaults (Don red, dots, Clear). *@
+@inject IJSRuntime Js
+@inject IOptions<WebUiSettings> Settings
+@using Microsoft.Extensions.Options
+
+<section class="relative overflow-hidden rounded-3xl text-white shadow-[0_8px_24px_-12px_rgba(0,0,0,.4)]" aria-label="@Localizer["Player card"]"
+         style="background:radial-gradient(circle at 8px 8px, rgba(255,255,255,.16) 2px, transparent 2.5px) 0 0/16px 16px, #f84828">
+    @if (HasEmbed)
+    {
+        <iframe @ref="frame" src="@EmbedSrc" title="@Localizer["3D preview"]" class="pointer-events-none absolute inset-0 size-full border-0" loading="lazy"></iframe>
+    }
+    <div class="relative grid grid-cols-[160px_minmax(0,1fr)] items-center gap-4 p-4 lg:grid-cols-1 lg:gap-2 lg:p-5">
+        <div @ref="anchor" class="relative grid h-40 place-items-center lg:h-80">
+            @if (!HasEmbed)
+            {
+                <span class="opacity-90"><DrumMark Size="96" /></span>
+            }
+        </div>
+        <div class="min-w-0 lg:text-center">
+            <p class="font-display truncate text-2xl drop-shadow-[0_2px_0_rgba(0,0,0,.2)]">@(string.IsNullOrEmpty(Setting.MyDonName) ? " " : Setting.MyDonName)</p>
+            @* In the strip (<lg) the plate sits beside the 160px don-chan slot, so it's capped at 3/4 of its 352px. *@
+            <div class="mt-3 max-w-[264px] lg:mx-auto lg:max-w-[352px]">
+                <Nameplate Title="@Setting.Title" Name="@Setting.MyDonName" Language="@Setting.MyDonNameLanguage" PlateId="@Setting.TitlePlateId"
+                           DanBadge="@(Setting.IsDisplayDanOnNamePlate ? TopDanBadge : null)" />
+            </div>
+            @if (DanView)
+            {
+                <div class="mx-auto mt-2 flex w-full max-w-[352px] items-center gap-3 rounded-2xl bg-zinc-950/85 p-3 text-left text-white">
+                    @if (TopDan is { } top)
+                    {
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs text-zinc-400">@Localizer["Dani Dojo"]</p>
+                            <p class="font-display text-xl">@Localizer[GameData.Dans[top.DanId - 1].Key]</p>
+                            <p class="text-xs text-zinc-300">@(GameData.IsGold(top.ClearState) ? Localizer["Gold pass"] : Localizer["Passed"])</p>
+                        </div>
+                        <img src="@($"images/dani_{top.ClearState}.webp")" alt="" class="size-12" />
+                    }
+                    else
+                    {
+                        <p class="flex-1 text-center text-sm">@Localizer["No Dani Dojo pass yet"]</p>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public UserSetting Setting { get; set; } = new();
+    /// <summary>The player's best result per dan, used for the nameplate badge and the Dani Dojo look.</summary>
+    [Parameter] public IReadOnlyList<DanBestData> Dans { get; set; } = [];
+    [Parameter] public bool DanView { get; set; }
+
+    private ElementReference frame, anchor;
+
+    private bool HasEmbed => !string.IsNullOrWhiteSpace(Settings.Value.DonEmbedUrl);
+    private string EmbedSrc => Settings.Value.DonEmbedUrl;
+
+    private DanBestData? TopDan => Dans.Where(d => d.ClearState != DanClearState.NotClear && d.DanId is >= 1 and <= 19)
+        .MaxBy(d => d.DanId);
+
+    private string? TopDanBadge => TopDan is { } d ? $"{GameData.Dans[d.DanId - 1].Badge}_{(GameData.IsGold(d.ClearState) ? "gold" : "red")}" : null;
+
+    // Kigurumi 36 (段位道場) has one variant per rank: cos_036007 = 五級 … cos_036025 = 達人 (DanId 1…19).
+    private string? DanCostume => TopDan is { } d ? $"{36006 + d.DanId:000000}" : "036000";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!HasEmbed) return;
+        await Js.InvokeVoidAsync("ui.don", frame, anchor, new
+        {
+            body = Setting.Body, head = Setting.Head, kigurumi = Setting.Kigurumi, face = Setting.Face,
+            puchi = DanView ? 0 : Setting.Puchi,
+            bodyColor = Setting.BodyColor, faceColor = Setting.FaceColor, limbColor = Setting.LimbColor,
+            anim = "don_result_clear_loop",
+            cosFile = DanView ? DanCostume : "",
+            zoom = 0.25, camY = 0.2,
+        });
+    }
+}

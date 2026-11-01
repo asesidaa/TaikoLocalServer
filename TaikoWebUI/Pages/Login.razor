@@ -1,46 +1,61 @@
-﻿@inject HttpClient Client
-@inject IDialogService DialogService
-@inject AuthService AuthService
-@inject NavigationManager NavigationManager
-@inject BreadcrumbsStateContainer BreadcrumbsStateContainer
-
 @page "/Login"
 @attribute [Authorize(Policy = WebUiAuthPolicies.RequireRealAuth)]
-@using MudBlazor.Services
+@inject AuthService AuthService
+@inject NavigationManager Nav
+@inject PageState Page
 
+<PageTitle>@Localizer["Log In"]</PageTitle>
 
-@if (!AuthService.IsLoggedIn)
-{
-    // Not logged in, show login form
-    <MudContainer>
-        <MudGrid Justify="Justify.Center">
-            <MudItem xs="12" md="6" lg="4">
-                <MudCard Elevation="0" Outlined="true">
-                    <MudCardHeader>
-                        <MudText Typo="Typo.h5">@Localizer["Log In"]</MudText>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <MudForm @ref="loginForm">
-                            <div style="display:flex;flex-direction:column;gap:15px;">
-                                <MudTextField @bind-value="inputAccessCode" InputType="InputType.Text" T="string"
-                                              FullWidth="true" Required="@true" OnKeyUp="HandleKeyDown"
-                                              RequiredError="Access code is required"
-                                              Label=@Localizer["Access Code"] Variant="Variant.Outlined" Margin="Margin.Dense" />
-                                <MudTextField @bind-Value="inputPassword" InputType="InputType.Password"
-                                              T="string" FullWidth="true" Required="@true" OnKeyUp="HandleKeyDown"
-                                              RequiredError="Password is required"
-                                              Label=@Localizer["Password"] Variant="Variant.Outlined" Margin="Margin.Dense" />
-                                <MudButton OnClick="Submit" FullWidth="true" StartIcon="@Icons.Material.Filled.Login" Color="Color.Primary" Variant="Variant.Filled">@Localizer["Log In"]</MudButton>
-                            </div>
-                        </MudForm>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
-        </MudGrid>
-    </MudContainer>
-}
-else
-{
-    // Already logged in, redirect to Dashboard
-    NavigationManager.NavigateTo("/");
+<div class="mx-auto w-full max-w-md @Css.Card p-6 sm:p-8">
+    <div class="mb-5 flex items-center justify-between">
+        <h1 class="font-display text-xl">@Localizer["Log In"]</h1>
+        @if (!AuthService.OnlyAdmin)
+        {
+            <span class="text-sm @Css.Muted">@Localizer["New?"] <a href="/Register" class="@Css.Link">@Localizer["Register"]</a></span>
+        }
+    </div>
+    <form class="space-y-4" novalidate @onsubmit="Submit">
+        <p class="text-sm @Css.Muted">@Localizer["Use the access code on your card and your web UI password."]</p>
+        <AccessCodeField @bind-Value="code" />
+        <PasswordField Label="@Localizer["Password"]" @bind-Value="password" />
+        <ErrorBox Message="@error" />
+        <div class="flex justify-end pt-2">
+            <button class="@Css.PrimaryButton" disabled="@busy">@Localizer["Log In"]</button>
+        </div>
+    </form>
+</div>
+
+@code {
+    private string code = "";
+    private string password = "";
+    private string? error;
+    private bool busy;
+
+    protected override void OnInitialized()
+    {
+        if (AuthService.IsLoggedIn) Nav.NavigateTo("/", replace: true);
+        Page.Set(Localizer["Log In"]);
+    }
+
+    private async Task Submit()
+    {
+        if (code.Length == 0 || password.Length == 0)
+        {
+            error = Localizer["Enter your access code and password."];
+            return;
+        }
+        busy = true;
+        var result = await AuthService.Login(code, password);
+        busy = false;
+        error = result switch
+        {
+            1 => (string?)null,
+            0 => Localizer["Login Only Admin Error"],
+            2 => Localizer["Login Wrong Password Error"],
+            3 => Localizer["Unknown Access Code Error"],
+            4 => Localizer["Access Code Not Registered Error"],
+            _ => Localizer["Unknown Error"],
+        };
+        if (result == 1) Nav.NavigateTo("/");
+    }
 }

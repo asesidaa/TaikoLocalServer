@@ -1,98 +1,155 @@
-﻿@implements IDisposable
+@implements IDisposable
 @inject AuthService AuthService
-@inject NavigationManager NavigationManager
-@inject IDialogService DialogService
+@inject NavigationManager Nav
+@inject IOptions<WebUiSettings> Settings
+@using System.Text.RegularExpressions
+@using Microsoft.Extensions.Options
 
-@using TaikoWebUI.Pages.Dialogs;
-
-<MudNavMenu Rounded="true" Class="pa-2" Margin="Margin.Dense" Color="Color.Primary">
-    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">@Localizer["Dashboard"]</MudNavLink>
+<div class="flex h-16 items-center gap-2.5 px-5">
+    <DrumMark />
+    <span class="font-display text-[17px] tracking-wide">@Settings.Value.Title</span>
+</div>
+<nav class="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
+    <p class="px-3 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@Localizer["Account"]</p>
+    @Link("/", "dashboard", Localizer["Dashboard"])
     @if (AuthService.IsAdmin || !AuthService.LoginRequired)
     {
-    <MudNavLink Href="/Users" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People">@Localizer["Users"]</MudNavLink>
+        @Link("/Users", "users", Localizer["Users"])
     }
-    
-    @{
-	    var baid = AuthService.GetLoggedInBaid();
-	    
-		if (AuthService.LoginRequired && !AuthService.OnlyAdmin && !AuthService.IsLoggedIn) {
-            <MudDivider />
-            <MudNavLink Href="/Login" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Login">@Localizer["Log In"]</MudNavLink>
-			<MudNavLink Href="/Register" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AddCard">@Localizer["Register"]</MudNavLink>
-		}
+    @if (Baid > 0)
+    {
+        @Link($"/Users/{Baid}/Profile", "profile", Localizer["Profile"])
+        @Group("playData", Localizer["Play Data"], playDataOpen, () => playDataOpen = !playDataOpen,
+            [($"/Users/{Baid}/Stats", Localizer["Stats"]), ($"/Users/{Baid}/Songs", Localizer["Song List"]),
+             ($"/Users/{Baid}/HighScores", Localizer["High Scores"]), ($"/Users/{Baid}/PlayHistory", Localizer["Play History"]),
+             ($"/Users/{Baid}/DaniDojo", Localizer["Dani Dojo"])])
+        @Group("settings", Localizer["Settings"], settingsOpen, () => settingsOpen = !settingsOpen, SettingsLinks())
+    }
+</nav>
+@if (AuthService.IsLoggedIn)
+{
+    <div class="border-t border-zinc-200/80 p-3 dark:border-zinc-800">
+        <div class="flex items-center gap-3 rounded-xl px-2 py-2">
+            <span class="grid size-10 place-items-center rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-sm font-semibold text-white">@Initial</span>
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-medium">@userName</p>
+                <p class="truncate text-xs @Css.Muted">Baid @Baid@(AuthService.IsAdmin ? $" · {Localizer["Admin"]}" : "")</p>
+            </div>
+            <button class="@Css.IconButton hover:!text-primary-600" aria-label="@Localizer["Log Out"]" @onclick="() => confirmLogout = true"><Icon Name="logOut" /></button>
+        </div>
+    </div>
+}
 
-        if (AuthService.IsLoggedIn)
-		{
-            <MudDivider />
-			<MudNavLink Href="@($"Users/{baid}/Profile")" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">@Localizer["Profile"]</MudNavLink>
-            <MudNavGroup Title=@Localizer["Play Data"] Expanded="true" Icon="@Icons.Material.Filled.EmojiEvents">
-			    <MudNavLink Href="@($"Users/{baid}/Songs")" Match="NavLinkMatch.All">@Localizer["Song List"]</MudNavLink>
-			    <MudNavLink Href="@($"Users/{baid}/HighScores")" Match="NavLinkMatch.All">@Localizer["High Scores"]</MudNavLink>
-	            <MudNavLink Href="@($"Users/{baid}/PlayHistory")" Match="NavLinkMatch.All">@Localizer["Play History"]</MudNavLink>
-			    <MudNavLink Href="@($"Users/{baid}/DaniDojo")" Match="NavLinkMatch.All">@Localizer["Dani Dojo"]</MudNavLink>
-            </MudNavGroup>
-            <MudNavGroup Title=@Localizer["Settings"] Expanded="settingsOpen" Icon="@Icons.Material.Filled.Settings">
-                <MudNavLink OnClick="ShowQrCode">@Localizer["Show QR Code"]</MudNavLink>
-                <MudNavLink Href="/ChangePassword" Match="NavLinkMatch.All">@Localizer["Change Password"]</MudNavLink>
-                <MudNavLink Href="@($"Users/{baid}/AccessCode")" Match="NavLinkMatch.All">@Localizer["Access Codes"]</MudNavLink>
-            </MudNavGroup>
-		}
-
-        if (AuthService.IsLoggedIn)
-		{
-            <MudDivider />
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Logout" IconColor="Color.Error" OnClick="Logout">@Localizer["Log Out"]</MudNavLink>
-		}
-	}
-</MudNavMenu>
+@if (confirmLogout)
+{
+    <div class="fade fixed inset-0 z-[60] grid place-items-center bg-black/50 p-4" @onclick="() => confirmLogout = false">
+        <div role="alertdialog" aria-modal="true" aria-labelledby="logout-h" class="pop w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl dark:bg-zinc-900" style="--origin:center" @onclick:stopPropagation>
+            <h2 id="logout-h" class="font-semibold">@Localizer["Log Out"]</h2>
+            <p class="mt-1 text-sm @Css.Muted">@Localizer["Log Out Confirm"]</p>
+            <div class="mt-6 flex justify-end gap-2">
+                <button class="@Css.GhostButton" @onclick="() => confirmLogout = false">@Localizer["Cancel"]</button>
+                <button class="@Css.PrimaryButton" @onclick="Logout">@Localizer["Log Out"]</button>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
-    private bool settingsOpen = false;
+    private bool playDataOpen = true;
+    private bool settingsOpen;
+    private bool confirmLogout;
+    private string userName = "";
 
-    protected override void OnInitialized()
+    // The signed-in user, or (local mode, no login) the user whose pages are open.
+    private uint Baid => AuthService.IsLoggedIn ? AuthService.GetLoggedInBaid() : RouteBaid();
+    private string Initial => string.IsNullOrEmpty(userName) ? "?" : userName[..1].ToUpperInvariant();
+
+    private uint RouteBaid()
     {
-        AuthService.LoginStatusChanged += HandleAuthStatusChanged;
+        var m = Regex.Match(Nav.ToBaseRelativePath(Nav.Uri), @"^Users/(\d+)", RegexOptions.IgnoreCase);
+        return m.Success ? uint.Parse(m.Groups[1].Value) : 0;
     }
 
-    private void HandleAuthStatusChanged(object? sender, EventArgs e)
+    private List<(string, string)> SettingsLinks()
     {
-        StateHasChanged();
+        var links = new List<(string, string)> { ($"/Users/{Baid}/QrCode", Localizer["Show QR Code"]), ($"/Users/{Baid}/AccessCode", Localizer["Access Codes"]) };
+        if (AuthService.LoginRequired && AuthService.IsLoggedIn) links.Add(("/Settings/Security", Localizer["Security"]));
+        return links;
+    }
+
+    private bool IsActive(string href) =>
+        string.Equals("/" + Nav.ToBaseRelativePath(Nav.Uri).Split('?', '#')[0].TrimEnd('/'), href, StringComparison.OrdinalIgnoreCase);
+
+    private RenderFragment Link(string href, string icon, string label) => __builder =>
+    {
+        var active = IsActive(href);
+        <a href="@href" aria-current="@(active ? "page" : null)"
+           class="group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors @(active ? "bg-primary-500/10 font-medium text-primary-700 dark:text-primary-300" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/70 dark:hover:text-zinc-100")">
+            <Icon Name="@icon" /><span class="truncate">@label</span>
+        </a>
+    };
+
+    private RenderFragment Group(string icon, string label, bool open, Action toggle, IEnumerable<(string Href, string Label)> kids) => __builder =>
+    {
+        var list = kids.ToList();
+        var expanded = open || list.Any(k => IsActive(k.Href));
+        <div>
+            <button aria-expanded="@Css.Aria(expanded)" @onclick="toggle"
+                    class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/70 dark:hover:text-zinc-100">
+                <Icon Name="@icon" /><span class="flex-1 text-left">@label</span>
+                <span class="chev @(expanded ? "rotate-180" : "")"><Icon Name="chevDown" /></span>
+            </button>
+            @if (expanded)
+            {
+                <div class="fade mt-0.5 space-y-0.5">
+                    @foreach (var (href, text) in list)
+                    {
+                        var active = IsActive(href);
+                        <a href="@href" aria-current="@(active ? "page" : null)"
+                           class="flex w-full items-center rounded-xl py-2 pl-10 pr-3 text-sm transition-colors @(active ? "bg-primary-500/10 font-medium text-primary-700 dark:text-primary-300" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/70 dark:hover:text-zinc-100")">
+                            <span class="truncate">@text</span>
+                            @if (active)
+                            {
+                                <span class="ml-auto size-2 rounded-full bg-primary-500"></span>
+                            }
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthService.LoginStatusChanged += OnAuthChanged;
+        Nav.LocationChanged += OnLocationChanged;
+        await LoadUserName();
+    }
+
+    private async Task LoadUserName()
+    {
+        var user = AuthService.IsLoggedIn ? await AuthService.GetLoggedInUser() : null;
+        userName = user?.UserSetting.MyDonName ?? "";
+    }
+
+    private async void OnAuthChanged(object? sender, EventArgs e)
+    {
+        await LoadUserName();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e) => InvokeAsync(StateHasChanged);
+
+    private async Task Logout()
+    {
+        confirmLogout = false;
+        await AuthService.Logout();
+        Nav.NavigateTo("/");
     }
 
     public void Dispose()
     {
-        AuthService.LoginStatusChanged -= HandleAuthStatusChanged;
+        AuthService.LoginStatusChanged -= OnAuthChanged;
+        Nav.LocationChanged -= OnLocationChanged;
     }
-
-    private async Task ShowQrCode()
-    {
-	    var user = await AuthService.GetLoggedInUser();
-	    if (user == null) return;
-	    
-        var parameters = new DialogParameters
-            {
-                ["user"] = user
-            };
-
-        var options = new DialogOptions { BackdropClick = false };
-        await DialogService.ShowAsync<UserQrCodeDialog>(Localizer["QR Code"], parameters, options);
-
-        // Prevent the settings menu from closing
-        settingsOpen = true;
-    }
-
-    private async Task Logout()
-	{
-		var result = await DialogService.ShowMessageBoxAsync(
-			Localizer["Log Out"],
-			Localizer["Log Out Confirm"],
-			yesText: Localizer["Log Out"],
-			noText: Localizer["Cancel"]);
-
-		if (result == true)
-		{
-			await AuthService.Logout();
-			NavigationManager.NavigateTo("/");
-		}
-	}
 }

@@ -1,0 +1,11 @@
+@if (!string.IsNullOrEmpty(Message))
+{
+    <div role="alert" class="flex items-start gap-2 rounded-xl border border-primary-500/30 bg-primary-500/10 px-3 py-2.5 text-sm text-primary-700 dark:text-primary-300">
+        <Icon Name="alert" Class="mt-0.5 size-4" /><span>@((MarkupString)Message)</span>
+    </div>
+}
+
+@code {
+    // Messages come from our own .resx strings (some contain <br>), never from user input.
+    [Parameter] public string? Message { get; set; }
+}

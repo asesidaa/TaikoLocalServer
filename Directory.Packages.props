@@ -46,10 +46,7 @@
     <PackageVersion Include="Throw" Version="1.4.0" />
 
     <!-- TaikoWebUI (Blazor WASM) -->
-    <PackageVersion Include="MudBlazor" Version="9.4.0" />
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
-    <PackageVersion Include="Markdig" Version="0.38.0" />
-    <PackageVersion Include="QRCoder" Version="1.6.0" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
 
     <!-- LocalSaveModScoreMigrator -->

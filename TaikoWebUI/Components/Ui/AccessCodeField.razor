@@ -1,0 +1,24 @@
+@* Access code input: digits only, grouped in fours as you type (paste with dashes works). *@
+<label class="block">
+    <span class="flex items-baseline justify-between text-sm">
+        <span class="font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Access Code"]</span>
+        <span class="text-xs @Css.Muted">@Localizer["On your card or Banapass"]</span>
+    </span>
+    <span class="relative mt-1.5 block">
+        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="card" /></span>
+        <input name="code" autocomplete="username" inputmode="numeric" value="@Grouped" placeholder="0000 0000 0000 0000 0000"
+               class="@Css.Input pl-9 font-mono tracking-wider @(Large ? "py-3.5 text-base" : "")" @oninput="OnInput" />
+    </span>
+</label>
+
+@code {
+    [Parameter] public string Value { get; set; } = "";
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+    [Parameter] public bool Large { get; set; }
+
+    public static string Digits(string s) => new string(s.Where(char.IsAsciiDigit).Take(20).ToArray());
+
+    private string Grouped => string.Join(" ", Enumerable.Range(0, (Value.Length + 3) / 4).Select(i => Value.Substring(i * 4, Math.Min(4, Value.Length - i * 4))));
+
+    private Task OnInput(ChangeEventArgs e) => ValueChanged.InvokeAsync(Digits(e.Value?.ToString() ?? ""));
+}

@@ -1,0 +1,226 @@
+@page "/Users/{baid:int}/Stats"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject IGameDataService GameDataService
+@inject IJSRuntime Js
+@inject PageState Page
+
+<PageTitle>@Localizer["Stats"]</PageTitle>
+
+<PlayDataPage Title="@Localizer["Stats"]" Setting="setting" Dans="dans">
+    @if (!loaded)
+    {
+        <p class="text-sm @Css.Muted">@Localizer["Loading..."]</p>
+    }
+    else
+    {
+        <div class="space-y-6">
+            <div class="grid grid-cols-2 gap-3 xl:grid-cols-3">
+                @Tile(Localizer["Plays"], history.Count.ToString("N0"), PlaysThisWeek > 0 ? string.Format(Localizer["+{0} this week"], PlaysThisWeek) : null)
+                @Tile(Localizer["Songs played"], SongsPlayed.ToString("N0"))
+                @Tile(Localizer["Clear rate"], ClearRate)
+                @Tile(Localizer["Full combos"], FullCombos.ToString("N0"))
+                @Tile(Localizer["Donderful combos"], Donderfuls.ToString("N0"))
+                @Tile(Localizer["Best combo"], BestCombo.ToString("N0"))
+            </div>
+
+            @Block(Localizer["Scoreboard"], Scoreboard, $"{Localizer[GameData.Difficulties.First(d => d.Value == PanelDifficulty).Name]} · {Localizer["as shown in game"]}")
+
+            @Block(Localizer["Crowns by difficulty"], CrownsBlock)
+
+            @Block(Localizer["Oni clears by star level"], StarsBlock)
+
+            @Block(Localizer["Activity"], ActivityBlock, Localizer["Last 16 weeks"])
+
+            @Block(Localizer["Plays by genre"], GenresBlock)
+
+            @Block(Localizer["Accuracy"], AccuracyBlock, Localizer["All plays"])
+
+            @Block(Localizer["Most played"], MostPlayedBlock)
+        </div>
+    }
+</PlayDataPage>
+
+@code {
+    private RenderFragment CrownsBlock => __builder =>
+    {
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm tabular-nums">
+                <thead class="text-xs @Css.Muted">
+                    <tr>
+                        <th class="py-2 text-left font-medium">@Localizer["Difficulty"]</th>
+                        <th class="px-2 py-2 text-right font-medium">@Localizer["Played"]</th>
+                        <th class="px-2 py-2 text-right font-medium"><img src="images/crown_Clear.webp" alt="@Localizer["Clear"]" title="@Localizer["Clear"]" class="ml-auto size-6" /></th>
+                        <th class="px-2 py-2 text-right font-medium"><img src="images/crown_Gold.webp" alt="@Localizer["Full combo"]" title="@Localizer["Full combo"]" class="ml-auto size-6" /></th>
+                        <th class="px-2 py-2 text-right font-medium"><img src="images/crown_Dondaful.webp" alt="@Localizer["Donderful"]" title="@Localizer["Donderful"]" class="ml-auto size-6" /></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                    @foreach (var (d, name) in GameData.Difficulties)
+                    {
+                        var c = Crowns(d);
+                        <tr>
+                            <td class="py-2"><span class="inline-flex items-center gap-2"><img src="@($"images/difficulty_{d}.webp")" alt="" class="size-6" />@Localizer[name]</span></td>
+                            <td class="px-2 text-right">@c.Played</td>
+                            <td class="px-2 text-right">@c.Clear</td>
+                            <td class="px-2 text-right">@c.Full</td>
+                            <td class="px-2 text-right">@c.Donderful</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    };
+
+    private RenderFragment StarsBlock => __builder =>
+    {
+        var stars = OniStars();
+        var max = Math.Max(1, stars.Max(s => s.Available));
+        <div class="flex h-36 items-end gap-2 border-b border-zinc-200 dark:border-zinc-800" role="img" aria-label="@Localizer["Oni clears by star level"]">
+            @for (var i = 0; i < stars.Length; i++)
+            {
+                var (cleared, available) = stars[i];
+                <div class="flex h-full flex-1 items-end justify-center" title="@($"★{i + 1}: {cleared} / {available}{(available > 0 ? $" ({cleared * 100 / available}%)" : "")}")">
+                    <div class="relative w-full max-w-6 rounded-t @Seq[1]" style="height:@Pct(128.0 * available / max, 144)">
+                        <div class="absolute inset-x-0 bottom-0 rounded-t @Seq[3]" style="height:@(available == 0 ? "0" : Pct(cleared, available))"></div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="mt-1 flex gap-2 text-center text-[11px] @Css.Muted">
+            @for (var i = 1; i <= 10; i++)
+            {
+                <span class="flex-1">★@i</span>
+            }
+        </div>
+        <div class="mt-2 flex gap-4 text-xs @Css.Muted">
+            <span class="flex items-center gap-1.5"><span class="size-2 rounded-full @Seq[3]"></span>@Localizer["Cleared"]</span>
+            <span class="flex items-center gap-1.5"><span class="size-2 rounded-full @Seq[1]"></span>@Localizer["Available"]</span>
+        </div>
+    };
+
+    private RenderFragment ActivityBlock => __builder =>
+    {
+        <div class="overflow-x-auto">
+            <div class="grid w-max grid-flow-col grid-rows-7 gap-0.5" role="img" aria-label="@Localizer["Plays per day, last 16 weeks"]">
+                @foreach (var (day, plays) in Activity())
+                {
+                    <span class="size-4 rounded @Seq[Bucket(plays)]" title="@($"{day:d MMM}: {plays}")"></span>
+                }
+            </div>
+        </div>
+        <div class="mt-2 flex items-center gap-1 text-xs @Css.Muted">
+            @Localizer["Less"]
+            @foreach (var c in Seq)
+            {
+                <span class="size-3 rounded-sm @c"></span>
+            }
+            @Localizer["More"]
+        </div>
+    };
+
+    private RenderFragment GenresBlock => __builder =>
+    {
+        var genres = Genres();
+        var max = Math.Max(1, genres.FirstOrDefault().Plays);
+        <div class="space-y-2">
+            @foreach (var (genre, plays) in genres)
+            {
+                var (name, bg, _) = GameData.Genre(genre);
+                <div class="grid grid-cols-[112px_1fr_40px] items-center gap-2 text-sm" title="@($"{name}: {plays}")">
+                    <span class="truncate text-zinc-600 dark:text-zinc-300">@name</span>
+                    <span class="h-4 rounded-r" style="width:@Pct(plays, max);background:@bg"></span>
+                    <span class="text-right tabular-nums">@plays</span>
+                </div>
+            }
+        </div>
+    };
+
+    private RenderFragment AccuracyBlock => __builder =>
+    {
+        var acc = Accuracy();
+        <div class="flex h-4 gap-0.5 overflow-hidden rounded" role="img" aria-label="@Localizer["Average judgements"]">
+            @for (var i = 0; i < acc.Length; i++)
+            {
+                <span class="@Acc[i]" style="width:@Pct(acc[i].Pct, 100)" title="@($"{acc[i].Label}: {acc[i].Pct:0.0}%")"></span>
+            }
+        </div>
+        <div class="mt-2 flex flex-wrap gap-4 text-xs text-zinc-600 dark:text-zinc-300">
+            @for (var i = 0; i < acc.Length; i++)
+            {
+                <span class="flex items-center gap-1.5"><span class="size-2 rounded-full @Acc[i]"></span>@acc[i].Label <span class="tabular-nums @Css.Muted">@acc[i].Pct.ToString("0.0")%</span></span>
+            }
+        </div>
+    };
+
+    private RenderFragment MostPlayedBlock => __builder =>
+    {
+        <ol class="divide-y divide-zinc-100 dark:divide-zinc-800">
+            @foreach (var ((songId, plays), i) in MostPlayed().Select((x, i) => (x, i)))
+            {
+                var (gName, bg, fg) = GameData.Genre(GameDataService.GetMusicGenreBySongId(music, songId));
+                <li class="flex items-center gap-3 py-2 text-sm">
+                    <span class="w-4 text-right tabular-nums text-zinc-400">@(i + 1)</span>
+                    <span class="flex min-w-0 flex-1 items-center gap-2 truncate font-medium">@SongName(songId)
+                        <span class="rounded-md px-1.5 py-0.5 text-[10px] font-semibold" style="background:@bg;color:@fg">@gName</span></span>
+                    <span class="tabular-nums">@plays <span class="text-xs @Css.Muted">@Localizer["plays"]</span></span>
+                </li>
+            }
+        </ol>
+    };
+
+    private static RenderFragment Tile(string label, string value, string? delta = null) => __builder =>
+    {
+        <div class="rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
+            <p class="text-xs @Css.Muted">@label</p>
+            <p class="mt-1 text-xl font-semibold">@value</p>
+            @if (delta is not null)
+            {
+                <p class="mt-0.5 text-xs text-emerald-600 dark:text-emerald-400">@delta</p>
+            }
+        </div>
+    };
+
+    private static RenderFragment Block(string title, RenderFragment body, string? note = null) => __builder =>
+    {
+        <section class="space-y-3">
+            <div class="flex items-baseline justify-between">
+                <h3 class="text-sm font-semibold">@title</h3>
+                @if (note is not null)
+                {
+                    <span class="text-xs @Css.Muted">@note</span>
+                }
+            </div>
+            @body
+        </section>
+    };
+
+    // The game's achievement panel with its digit glyphs (extract: scoreboard/panel_<difficulty>.png, scoreboard/digit_ns_0N.png).
+    // Without extracted assets the panel image hides itself and a plain count table shows instead.
+    private RenderFragment Scoreboard => __builder =>
+    {
+        var counts = PanelCounts();
+        <div class="relative mx-auto w-full max-w-[328px] select-none">
+            <img data-asset="@($"scoreboard/panel_{PanelName(PanelDifficulty)}.png")" alt="@Localizer["Scoreboard"]" class="peer block w-full" />
+            <div class="peer-[[hidden]]:hidden">
+                @for (var s = 0; s < Slots.Length; s++)
+                {
+                    var (x, y) = Slots[s];
+                    var digits = Math.Min(9999, counts[s]).ToString();
+                    var offsets = DigitOffsets[digits.Length - 1];
+                    @for (var j = 0; j < digits.Length; j++)
+                    {
+                        <img data-asset="@($"scoreboard/digit_ns_0{digits[j]}.png")" alt="" class="absolute"
+                             style="left:@Pct(x + offsets[j] - 12, 328);top:@Pct(y - 12, 192);width:@Pct(24, 328)" />
+                    }
+                }
+            </div>
+            <dl class="hidden grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm tabular-nums peer-[[hidden]]:grid">
+                @foreach (var (label, value) in new[] { ("極", counts[0]), ("雅", counts[1] + counts[2] + counts[3]), ("粋", counts[4] + counts[5] + counts[6]), (Localizer["Clear"].Value, counts[7]), (Localizer["Full combo"].Value, counts[8]), (Localizer["Donderful"].Value, counts[9]) })
+                {
+                    <dt class="@Css.Muted">@label</dt><dd>@value</dd>
+                }
+            </dl>
+        </div>
+    };
+}

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.JSInterop;
-using MudBlazor.Services;
 using TaikoLocalServer.Contracts.AdminApi.Authorization;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
 using TaikoWebUI.Authorization;
@@ -37,7 +36,6 @@ var configuration = new ConfigurationBuilder()
 
 builder.Services.AddSingleton(httpClient);
 builder.Services.AddSingleton(authConfig);
-builder.Services.AddMudServices();
 builder.Services.AddSingleton<IGameDataService, GameDataService>();
 
 builder.Services.Configure<WebUiSettings>(configuration.GetSection(nameof(WebUiSettings)));
@@ -74,10 +72,11 @@ builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
 
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddLocalization();
-builder.Services.AddSingleton<MudLocalizer, ResXMudLocalizer>();
 builder.Services.AddSingleton<ScoreUtils>();
 builder.Services.AddSingleton<StringUtil>();
-builder.Services.AddSingleton<BreadcrumbsStateContainer>();
+builder.Services.AddScoped<PageState>();
+builder.Services.AddScoped<ToastService>();
+builder.Services.AddScoped<AssetStatus>();
 builder.Services.AddBlazoredLocalStorage();
 
 var host = builder.Build();

@@ -1,79 +1,35 @@
-﻿@inject HttpClient Client
-@inject AuthService AuthService
-@inject NavigationManager NavigationManager
-@inject BreadcrumbsStateContainer BreadcrumbsStateContainer
-
-@using TaikoWebUI.Components;
-
 @page "/Users"
 @attribute [Authorize(Policy = AuthPolicies.Admin)]
+@inject HttpClient Client
+@inject PageState Page
 
-<MudGrid Class="my-8">
-    @if (!AuthService.LoginRequired || (AuthService.LoginRequired && AuthService.IsAdmin)) {
-        <MudItem xs="12">
-            <div class="d-flex justify-content-end gap-2">
-                <MudInput 
-                    @bind-Value="searchTerm" 
-                    TextChanged="(async term => { isLoading = true; await OnSearch(term); })"
-                    Immediate="true" 
-                    FullWidth="true"
-                    Clearable="true" 
-                    Margin="Margin.Dense" 
-                    Label="@Localizer["Search"]" 
-                    Placeholder="@Localizer["Search by Name, ID, or Access Code"]" 
-                    Variant="Variant.Outlined" 
-                    Adornment="Adornment.Start" 
-                    AdornmentIcon="@Icons.Material.Filled.Search"
-                    Style="width: 100%" />
-            </div>
-        </MudItem>
-        @if (isLoading || response == null)
-        {
-            // Loading...
-            for (uint i = 0; i < pageSize; i++) {
-                <MudItem xs="12" md="6" lg="4" xl="3">
-                    <MudCard Outlined="true">
-                        <MudCardContent>
-                            <MudSkeleton Width="30%" Height="42px;" Class="mb-5" />
-                            <MudSkeleton Width="80%" />
-                            <MudSkeleton Width="100%" />
-                        </MudCardContent>
-                        <MudCardActions>
-                            <MudStack Row="true" Style="width:100%" Spacing="4" Justify="Justify.FlexEnd">
-                                <MudSkeleton Width="64px" Height="40px" />
-                                <MudSkeleton Width="64px" Height="40px" />
-                            </MudStack>
-                        </MudCardActions>
-                    </MudCard>
-                </MudItem>
-            }
-        } else if (response.Users.Count > 0) {
-            foreach (var user in response.Users)
-            {
-                <MudItem xs="12" md="6" lg="4" xl="3">
-                    <UserCard User="user" UserSetting="user.UserSetting" />
-                </MudItem>
-            }
-        } else { // No users in the database
-            <MudItem xs="12">
-                <MudText Align="Align.Center" Class="my-8">
-                    @Localizer["No Data"]
-                </MudText>
-            </MudItem>
-        }
-    } else if (AuthService.LoginRequired && !AuthService.IsLoggedIn) {
-        // Not logged in, redirect
-        NavigationManager.NavigateTo("/Login");
-    } else {
-        NavigationManager.NavigateTo("/");
-    }
-
-    @if (response != null && TotalPages > 1)
+<PageTitle>Users</PageTitle>
+<ComingSoon Title="@Localizer["Users"]" IconName="users">
+    @* Until Users is redesigned: a plain way to reach each user's pages. *@
+    @if (users is null)
     {
-        <MudItem xs="12">
-            <div class="d-flex flex-column align-center">
-                <MudPagination Class="pa-4" Rectangular="true" Count="@TotalPages" Selected="currentPage" SelectedChanged="(page) => OnPageChange(page)" BoundaryCount="1" MiddleCount="3" />
-            </div>
-        </MudItem>
+        <p class="mt-6 text-sm @Css.Muted">@Localizer["Loading..."]</p>
     }
-</MudGrid>
+    else
+    {
+        <ul class="mx-auto mt-6 max-w-md divide-y divide-zinc-100 text-left dark:divide-zinc-800">
+            @foreach (var user in users)
+            {
+                <li class="flex items-center justify-between gap-3 py-2 text-sm">
+                    <span class="min-w-0 truncate"><span class="font-medium">@user.UserSetting.MyDonName</span> <span class="@Css.Muted">· Baid @user.Baid</span></span>
+                    <a href="@($"/Users/{user.Baid}/Profile")" class="@Css.Link shrink-0">@Localizer["Profile"]</a>
+                </li>
+            }
+        </ul>
+    }
+</ComingSoon>
+
+@code {
+    private List<User>? users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Page.Set(Localizer["Users"]);
+        users = (await Client.GetFromJsonAsync<UsersResponse>("api/Users?page=1&limit=200"))?.Users ?? [];
+    }
+}

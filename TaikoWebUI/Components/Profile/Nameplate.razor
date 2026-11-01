@@ -1,0 +1,57 @@
+@* The game's whole nameplate (frame, title plate, dan badge) from the extracted Lumen scene, with the title and
+   name drawn above it in the game's glyphs (js/ui.js). Until the scene loads, or without WebGL / extracted assets,
+   a plain plate shows instead. Geometry: the nameplate set is 352×110 stage units (x −172…180, y −62…48). *@
+@inject IJSRuntime Js
+
+<div @ref="el" class="group relative mx-auto aspect-[352/110] w-full max-w-[352px] select-none" role="img" aria-label="@($"{Title} · {Name}")">
+    @* Static fallback: a CSS frame plus extract's plate and dan PNGs at their places in the game's layout
+       (plate sprite at (0, −20), its bounds −167.55…172 × −42…46; dan badge at (−62, 16), bounds ±32 × ±16). *@
+    <div class="absolute inset-0 group-data-[live]:hidden">
+        <div class="absolute flex flex-col overflow-hidden rounded-full border-[3px] border-black bg-black shadow-[0_2px_0_rgba(0,0,0,.25)]" style="left:3.98%;top:25.45%;width:92.61%;height:65.45%">
+            <div class="h-[41.7%] bg-gradient-to-b from-amber-300 to-orange-500"></div>
+            <div class="flex-1 bg-white"></div>
+        </div>
+        <img data-asset="@($"nameplate/plate_{GameData.PlateLabel(PlateId)}.png")" alt="" class="absolute max-w-none" style="left:1.264%;top:0;width:96.463%;height:80%" />
+        @if (ShowDan)
+        {
+            <img data-asset="@($"nameplate/dan_{DanBadge}.png")" alt="" class="absolute max-w-none" style="left:22.159%;top:56.364%;width:18.182%;height:29.091%" />
+        }
+    </div>
+    <span data-plate-slot class="absolute inset-0"></span>
+    <canvas data-gt="title" class="absolute" style="@Box(-130, -43.5, 130, 16.5)"></canvas>
+    <canvas data-gt="name" class="absolute" style="@(ShowDan ? Box(-38, -10.5, 152, 49.5) : Box(-95, -10.5, 95, 49.5))"></canvas>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string Name { get; set; } = "";
+    [Parameter] public uint Language { get; set; }
+    [Parameter] public uint PlateId { get; set; }
+    /// <summary>Badge to show, e.g. "10dan_gold"; null hides the dan slot.</summary>
+    [Parameter] public string? DanBadge { get; set; }
+
+    private ElementReference el;
+    private bool ShowDan => DanBadge is not null;
+
+    // Text boxes from the game's text tags (sets.nameplate.text), as % of the nameplate.
+    private static string Box(double x0, double y0, double x1, double y1) => FormattableString.Invariant(
+        $"left:{(x0 + 172) / 352 * 100:0.###}%;top:{(y0 + 62) / 110 * 100:0.###}%;width:{(x1 - x0) / 352 * 100:0.###}%;height:{(y1 - y0) / 110 * 100:0.###}%");
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var plate = GameData.PlateLabel(PlateId);
+        var dan = DanBadge ?? "5kyuu_red";
+        await Js.InvokeVoidAsync("ui.nameplate", el, new
+        {
+            layout = ShowDan ? "newentry_shougou_dani" : "newentry_shougou",
+            children = new Dictionary<string, string>
+            {
+                ["title_instance"] = plate, ["ai_title_instance"] = plate,
+                ["dani_clear_instance"] = dan, ["dani_full_instance"] = dan, ["dani_donfull_instance"] = dan,
+            },
+            title = Title,
+            name = Name,
+            lang = Language,
+        });
+    }
+}

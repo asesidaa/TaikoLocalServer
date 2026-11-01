@@ -1,57 +1,9 @@
-﻿@page "/"
-@using Markdig
-@inject HttpClient Http
-@inject BreadcrumbsStateContainer BreadcrumbsStateContainer
+@page "/"
+@inject PageState Page
 
-<MudGrid Class="my-8">
-    <MudItem xs="12">
-        <MudPaper Elevation="0" Outlined="true">
-            <div class="markdown-container">
-                @if (isLoading)
-                {
-                    <MudProgressCircular/>
-                }
-                else
-                {
-                    <div class="markdown-content">
-                        @((MarkupString)markdownContent)
-                    </div>
-                }
-            </div>
-        </MudPaper>
-    </MudItem>
-</MudGrid>
+<PageTitle>Dashboard</PageTitle>
+<ComingSoon Title="@Localizer["Dashboard"]" IconName="dashboard" />
 
 @code {
-    private string markdownContent = string.Empty;
-    private bool isLoading = true;
-
-    protected override async Task OnInitializedAsync()
-    {
-        var pipeline = new MarkdownPipelineBuilder()
-            .UseAdvancedExtensions()
-            .UseEmojiAndSmiley()
-            .Build();
-
-        try
-        {
-            Http.DefaultRequestHeaders.Add("Cache-Control", "no-cache");
-            var markdown = await Http.GetStringAsync("Dashboard.md");
-
-            if (!string.IsNullOrWhiteSpace(markdown))
-            {
-                markdownContent = Markdown.ToHtml(markdown, pipeline);
-            }
-        }
-        catch (HttpRequestException)
-        {
-            markdownContent = "Error loading dashboard content.";
-        }
-
-        isLoading = false;
-
-        BreadcrumbsStateContainer.breadcrumbs.Clear();
-        BreadcrumbsStateContainer.breadcrumbs.Add(new BreadcrumbItem(Localizer["Dashboard"], href: "/"));
-        BreadcrumbsStateContainer.NotifyStateChanged();
-    }
+    protected override void OnInitialized() => Page.Set(Localizer["Dashboard"]);
 }

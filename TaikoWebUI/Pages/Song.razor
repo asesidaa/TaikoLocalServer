@@ -1,52 +1,13 @@
-﻿@page "/Users/{baid:int}/Songs/{songId:int}"
+@page "/Users/{baid:int}/Songs/{songId:int}"
 @attribute [Authorize]
+@inject PageState Page
 
-@using Blazored.LocalStorage
-@using TaikoWebUI.Components.Song
-@inject IGameDataService GameDataService
-@inject HttpClient Client
-@inject AuthService AuthService
-@inject NavigationManager NavigationManager
-@inject ILocalStorageService LocalStorage
-@inject BreadcrumbsStateContainer BreadcrumbsStateContainer
+<PageTitle>Song</PageTitle>
+<ComingSoon Title="@Localizer["Song List"]" IconName="songList" />
 
-@if (response is null)
-{
-    <MudContainer Style="display:flex;margin:50px 0;align-items:center;justify-content:center;">
-        <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
-    </MudContainer>
-}
-else
-{
-    @if (AuthService.LoginRequired && (!AuthService.IsLoggedIn || (AuthService.GetLoggedInBaid() != Baid && !AuthService.IsAdmin)))
-    {
-        NavigationManager.NavigateTo(AuthService.IsLoggedIn ? "/" : "/Login");
-    }
-    else
-    {
-        <MudStack Row="true" Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Style="height: 100%;">
-            <div style="margin: 4px; display: flex; align-items: center;">
-                <MudToggleIconButton Toggled="musicDetail?.IsFavorite ?? false"
-                                     ToggledChanged="@(async () => await OnFavoriteToggled())"
-                                     Icon="@Icons.Material.Filled.FavoriteBorder" Color="@Color.Secondary"
-                                     ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Secondary"
-                                     Size="Size.Medium"
-                                     ToggledSize="Size.Medium"
-                                     title="Add to/remove from favorites" />
-            </div>
-            <div>
-                <MudText Typo="Typo.h5">@songTitle</MudText>
-                <MudText Typo="Typo.body2">@songArtist</MudText>
-            </div>
-        </MudStack>
+@code {
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public int SongId { get; set; }
 
-        <MudGrid Class="my-4 pb-10">
-            <MudItem xs="12">
-                <SongLeaderboardCard SongId="@SongId" Baid="@Baid" />
-            </MudItem>
-            <MudItem xs="12">
-                <PlayHistoryCard Items="@songHistoryData" />
-            </MudItem>
-        </MudGrid>
-    }
+    protected override void OnInitialized() => Page.Set(Localizer["Play Data"], Localizer["Song List"]);
 }

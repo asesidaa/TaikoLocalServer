@@ -3,7 +3,6 @@ global using System.Net.Http;
 global using System.Net.Http.Json;
 global using Microsoft.AspNetCore.Components;
 global using Microsoft.AspNetCore.Components.Web;
-global using MudBlazor;
 global using TaikoWebUI;
 global using TaikoWebUI.Services;
 global using TaikoWebUI.Shared;

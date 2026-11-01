@@ -9,21 +9,32 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" />
-    <PackageReference Include="Markdig" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Localization" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
-    <PackageReference Include="MudBlazor" />
-    <PackageReference Include="QRCoder" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Contracts.AdminApi\Contracts.AdminApi.csproj" />
   </ItemGroup>
+
+  <!-- Tailwind v4: Styles/app.css → wwwroot/css/app.css with the standalone CLI (no Node.js).
+       Put the pinned binary at tools/tailwindcss/tailwindcss(.exe), v4.1.14. The output is committed,
+       so a build without the CLI (e.g. CI) still ships the last generated CSS. -->
+  <PropertyGroup>
+    <TailwindCli Condition="'$(OS)' == 'Windows_NT'">$(MSBuildThisFileDirectory)..\tools\tailwindcss\tailwindcss.exe</TailwindCli>
+    <TailwindCli Condition="'$(OS)' != 'Windows_NT'">$(MSBuildThisFileDirectory)../tools/tailwindcss/tailwindcss</TailwindCli>
+  </PropertyGroup>
+  <Target Name="TailwindBuild" BeforeTargets="BeforeBuild" Condition="Exists('$(TailwindCli)')">
+    <Exec Command="&quot;$(TailwindCli)&quot; -i Styles/app.css -o wwwroot/css/app.css --minify" WorkingDirectory="$(MSBuildThisFileDirectory)" />
+  </Target>
+  <Target Name="TailwindMissing" BeforeTargets="BeforeBuild" Condition="!Exists('$(TailwindCli)')">
+    <Warning Text="Tailwind CLI not found at $(TailwindCli); using the committed wwwroot/css/app.css. Download tailwindcss v4.1.14 there to rebuild the styles." />
+  </Target>
 
   <ItemGroup>
     <!--Settings and Dashboard-->

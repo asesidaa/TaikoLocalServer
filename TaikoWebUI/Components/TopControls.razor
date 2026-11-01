@@ -1,0 +1,112 @@
+@* Top-bar controls: language, theme colour, light/dark. Menus close on an outside click or Escape. *@
+@inject IJSRuntime Js
+@inject NavigationManager Nav
+@inject IOptions<WebUiSettings> Settings
+@using Microsoft.Extensions.Options
+
+<div class="relative" @onkeydown="OnKey">
+    <button class="flex h-9 items-center gap-1.5 rounded-xl px-2.5 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            aria-haspopup="menu" aria-expanded="@Css.Aria(menu == "lang")" aria-label="@Localizer["Language"]" @onclick='() => Open("lang")'>
+        <Icon Name="globe" /><span class="hidden sm:inline">@CurrentLanguage</span>
+    </button>
+    @if (menu == "lang")
+    {
+        <div role="menu" style="--origin:top right" class="pop absolute right-0 top-11 z-50 w-40 rounded-xl border border-zinc-200 bg-white p-1 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+            @foreach (var lang in Settings.Value.SupportedLanguages)
+            {
+                var on = lang.CultureCode == CultureInfo.CurrentUICulture.Name;
+                <button role="menuitemradio" aria-checked="@Css.Aria(on)" class="flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                        @onclick="() => SetLanguage(lang.CultureCode)">
+                    @lang.DisplayName
+                    @if (on)
+                    {
+                        <span class="size-2 rounded-full bg-primary-500"></span>
+                    }
+                </button>
+            }
+        </div>
+    }
+</div>
+<div class="relative" @onkeydown="OnKey">
+    <button class="@Css.IconButton" aria-haspopup="true" aria-expanded="@Css.Aria(menu == "accent")" aria-label="@Localizer["Theme colour"]" @onclick='() => Open("accent")'>
+        <Icon Name="palette" />
+    </button>
+    @if (menu == "accent")
+    {
+        <div role="radiogroup" aria-label="@Localizer["Theme colour"]" style="--origin:top right" class="pop absolute right-0 top-11 z-50 w-52 rounded-xl border border-zinc-200 bg-white p-1 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+            <p class="px-2.5 pb-1 pt-2 text-xs font-medium @Css.Muted">@Localizer["Theme colour"]</p>
+            @foreach (var (id, name, light, darkSwatch) in Accents)
+            {
+                var on = accent == id;
+                <button role="radio" aria-checked="@Css.Aria(on)" class="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800" @onclick="() => SetAccent(id)">
+                    <span class="size-4 rounded-full" style="background:@(dark ? darkSwatch : light)"></span>
+                    <span class="flex-1">@name</span>
+                    @if (on)
+                    {
+                        <Icon Name="check" Class="size-4 text-primary-500" />
+                    }
+                </button>
+            }
+        </div>
+    }
+</div>
+<button class="@Css.IconButton" aria-label="@(dark ? Localizer["Switch to light mode"] : Localizer["Switch to dark mode"])" @onclick="ToggleDark">
+    <Icon Name="@(dark ? "sun" : "moon")" />
+</button>
+@if (menu is not null)
+{
+    <div class="fixed inset-0 z-40" @onclick="() => menu = null"></div>
+}
+
+@code {
+    // [id, name, 500 swatch (light mode), 400 swatch (dark mode)]; the ramps live in Styles/app.css.
+    private static readonly (string Id, string Name, string Light, string Dark)[] Accents =
+    [
+        ("don", "Don", "#f84828", "#ff7a5c"),
+        ("katsu", "Katsu", "#1c86b8", "#45afdc"),
+        ("sakura", "Sakura", "#e0407c", "#ee6e9c"),
+        ("matcha", "Matcha", "#2f8f3a", "#5cb965"),
+        ("murasaki", "Murasaki", "#8550d6", "#a37ce8"),
+    ];
+
+    private string? menu;
+    private bool dark = true;
+    private string accent = "don";
+
+    private string CurrentLanguage => Settings.Value.SupportedLanguages
+        .FirstOrDefault(l => l.CultureCode == CultureInfo.CurrentUICulture.Name)?.DisplayName ?? CultureInfo.CurrentUICulture.Name;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        dark = await Js.InvokeAsync<bool>("ui.isDark");
+        accent = await Js.InvokeAsync<string>("ui.getAccent");
+        StateHasChanged();
+    }
+
+    private void Open(string name) => menu = menu == name ? null : name;
+
+    private void OnKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") menu = null;
+    }
+
+    private async Task SetLanguage(string code)
+    {
+        menu = null;
+        await Js.InvokeVoidAsync("blazorCulture.set", code);
+        Nav.NavigateTo(Nav.Uri, forceLoad: true);
+    }
+
+    private async Task SetAccent(string id)
+    {
+        accent = id;
+        await Js.InvokeVoidAsync("ui.setAccent", id);
+    }
+
+    private async Task ToggleDark()
+    {
+        dark = !dark;
+        await Js.InvokeVoidAsync("ui.setDark", dark);
+    }
+}

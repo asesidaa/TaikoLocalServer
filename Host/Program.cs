@@ -175,7 +175,19 @@ try
         await next();
     });
     app.UseBlazorFrameworkFiles();
-    app.UseStaticFiles();
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        // The WebUI's own files (js/ui.js, css/app.css, don-embed/…) keep fixed names, so without this browsers
+        // guess a cache lifetime and run stale scripts after an update. no-cache = revalidate each load (304 if
+        // unchanged). /_framework is left alone: Blazor's boot resources carry their own integrity hashes.
+        OnPrepareResponse = ctx =>
+        {
+            if (!ctx.Context.Request.Path.StartsWithSegments("/_framework"))
+            {
+                ctx.Context.Response.Headers.CacheControl = "no-cache";
+            }
+        }
+    });
     app.UseRouting();
 
     // Enable Authentication and Authorization middleware

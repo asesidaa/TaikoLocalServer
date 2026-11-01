@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>don-chan embed</title>
+  <style>
+    html, body, #root { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+    /* White arc on a dark disc so it reads on any card colour (40px / 24px: pixel-grid sizes). */
+    .spin { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+    .spin::before { content: ""; position: absolute; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,.45); }
+    .spin::after { content: ""; position: relative; width: 24px; height: 24px; box-sizing: border-box; border-radius: 50%; border: 3px solid rgba(255,255,255,.3); border-top-color: #fff; animation: r 800ms linear infinite; }
+    @keyframes r { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .spin::after { animation-duration: 2.4s; } }
+  </style>
+  <script type="module" crossorigin src="./assets/embed.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/rolldown-runtime.js">
+  <link rel="modulepreload" crossorigin href="./assets/three-core.js">
+  <link rel="modulepreload" crossorigin href="./assets/vendor.js">
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>

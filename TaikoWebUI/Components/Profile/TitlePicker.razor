@@ -1,0 +1,108 @@
+@* Title picker: search-first over the game's ~1,000 titles. "Your own title"
+   shows only when the server allows free profile editing (to become AuthSettings.AllowCustomTitles). *@
+@inject IGameDataService GameDataService
+
+<div class="fade fixed inset-0 z-[60] grid place-items-center bg-black/50 p-4" @onclick="Close" @onkeydown="OnKey">
+    <div role="dialog" aria-modal="true" aria-labelledby="title-h" @onclick:stopPropagation style="--origin:center"
+         class="pop flex max-h-[min(680px,90vh)] w-full max-w-md flex-col rounded-2xl bg-white shadow-2xl dark:bg-zinc-900">
+        <div class="flex items-center justify-between px-4 pt-4">
+            <h2 id="title-h" class="font-semibold">@Localizer["Choose a title"]</h2>
+            <button class="@Css.IconButton" aria-label="@Localizer["Close"]" @onclick="Close"><Icon Name="x" /></button>
+        </div>
+        @if (AllowCustom)
+        {
+            <div class="px-4 pt-4">
+                <label class="block">
+                    <span class="flex items-baseline justify-between text-sm">
+                        <span class="font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Your own title"]</span>
+                        <span class="text-xs @Css.Muted">@custom.EnumerateRunes().Count() / @MaxLength</span>
+                    </span>
+                    <span class="mt-1.5 flex gap-2">
+                        <input maxlength="@MaxLength" value="@custom" placeholder="@Localizer["Type anything"]" class="@Css.Input" @oninput="e => custom = e.Value?.ToString() ?? string.Empty" />
+                        <button class="@Css.PrimaryButton shrink-0 px-4" disabled="@(custom.Trim().Length == 0)" @onclick="() => Pick(custom.Trim(), null)">@Localizer["Use"]</button>
+                    </span>
+                </label>
+            </div>
+            <p class="mx-4 mt-4 flex items-center gap-3 text-xs @Css.Muted">
+                <span class="h-px flex-1 bg-zinc-200 dark:bg-zinc-800"></span>@Localizer["or pick one of the game's titles"]<span class="h-px flex-1 bg-zinc-200 dark:bg-zinc-800"></span>
+            </p>
+        }
+        <div class="px-4 pt-3">
+            <label class="relative block">
+                <span class="sr-only">@Localizer["Search titles"]</span>
+                <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="search" /></span>
+                <input type="search" autofocus value="@query" placeholder="@string.Format(Localizer["Search {0} titles"], Titles.Count)" class="@Css.Input pl-9"
+                       @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
+            </label>
+        </div>
+        <div class="mt-2 min-h-0 flex-1 overflow-y-auto px-2 pb-2">
+            @{
+                var hits = Matches();
+            }
+            @if (hits.Count == 0)
+            {
+                <p class="px-3 py-8 text-center text-sm @Css.Muted">@Localizer["No titles match."]</p>
+            }
+            @foreach (var (title, name) in hits.Take(Shown))
+            {
+                <button class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm hover:bg-zinc-100 focus-visible:bg-zinc-100 focus-visible:outline-none dark:hover:bg-zinc-800 dark:focus-visible:bg-zinc-800"
+                        @onclick="() => Pick(name, title.TitleRarity)">
+                    <span class="font-display min-w-0 flex-1 truncate">@name</span>
+                    <span class="text-xs tabular-nums text-zinc-400">#@title.TitleId</span>
+                    @if (name == Setting.Title)
+                    {
+                        <Icon Name="check" Class="size-4 text-primary-500" />
+                    }
+                    else
+                    {
+                        <span class="size-4"></span>
+                    }
+                </button>
+            }
+            @if (hits.Count > Shown)
+            {
+                <p class="px-3 py-3 text-center text-xs @Css.Muted">@string.Format(Localizer["{0} more. Keep typing to narrow it down."], hits.Count - Shown)</p>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private const int MaxLength = 20;   // the longest game title
+    private const int Shown = 150;      // rows rendered at once; typing narrows the rest
+
+    [Parameter, EditorRequired] public UserSetting Setting { get; set; } = new();
+    [Parameter, EditorRequired] public IReadOnlyList<Title> Titles { get; set; } = [];
+    [Parameter] public bool AllowCustom { get; set; }
+    /// <summary>Chosen title text and its plate (null = custom title, keep the plate).</summary>
+    [Parameter] public EventCallback<(string Title, uint? Plate)> OnPick { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private string query = "";
+    private string custom = "";
+    private string Culture => CultureInfo.CurrentCulture.ToString();
+
+    private List<(Title Title, string Name)> all = [];
+
+    protected override void OnInitialized()
+    {
+        // Resolve names once: GetTitle is a linear lookup and the list re-renders on hover.
+        all = Titles.OrderBy(t => t.TitleId).Select(t => (t, GameDataService.GetTitle([t], t.TitleId, Culture)))
+            .Where(x => x.Item2.Length > 0).ToList();
+        // A custom title reopens in the custom field.
+        if (AllowCustom && all.All(x => x.Name != Setting.Title))
+            custom = Setting.Title;
+    }
+
+    private List<(Title Title, string Name)> Matches()
+    {
+        var q = query.Trim();
+        return q.Length == 0 ? all
+            : all.Where(x => x.Name.Contains(q, StringComparison.OrdinalIgnoreCase) || x.Title.TitleId.ToString() == q).ToList();
+    }
+
+    private Task Pick(string title, uint? plate) => OnPick.InvokeAsync((title, plate));
+    private Task Close() => OnClose.InvokeAsync();
+
+    private Task OnKey(KeyboardEventArgs e) => e.Key == "Escape" ? Close() : Task.CompletedTask;
+}

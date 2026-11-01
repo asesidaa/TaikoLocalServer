@@ -401,3 +401,6 @@ TaikoLocalServer/wwwroot/data/music_attribute.bin
 
 # Rust build output (tools/extract)
 tools/extract/target/
+
+# Tailwind standalone CLI for the WebUI CSS build (downloaded, pinned version)
+tools/tailwindcss/

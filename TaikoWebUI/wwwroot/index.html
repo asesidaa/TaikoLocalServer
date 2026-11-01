@@ -1,53 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TaikoWebUI</title>
     <base href="/" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
-    <link href="css/app.css" rel="stylesheet"/>
+    <!-- Applies dark mode + accent before first paint (no flash), and defines the JS the app calls. -->
+    <script src="js/ui.js"></script>
+    <link href="css/app.css" rel="stylesheet" />
 </head>
 
-<body>
+<body class="bg-zinc-50 font-sans text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100">
 <div id="app">
     <div class="loader-container">
-        <div class="linear-progress"></div>
-        <div class="loading-text">
-            Loading...
-        </div>
+        <div class="loader-bar"></div>
+        <span>Loading…</span>
     </div>
 </div>
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
     <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
+    <a class="dismiss">✕</a>
 </div>
 <script src="_framework/blazor.webassembly.js"></script>
-<script src="_content/MudBlazor/MudBlazor.min.js"></script>
-<script src="js/textFit.min.js"></script>
-<script src="js/updateTextFit.js"></script>
-<script>
-    window.blazorCulture = {
-        get: () => localStorage['BlazorCulture'],
-        set: (value) => localStorage['BlazorCulture'] = value
-    };
-</script>
-<script>
-    window.clipboardCopy = {
-        copyText: function(text) {
-            navigator.clipboard.writeText(text).then(function () {
-                alert("Copied to clipboard!");
-            })
-                .catch(function (error) {
-                    console.error("Failed to copy text: ", error);
-                });
-        }
-    };
-</script>
 </body>
 
 </html>

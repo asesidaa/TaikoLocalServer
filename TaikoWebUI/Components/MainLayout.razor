@@ -1,114 +1,130 @@
-﻿@inherits LayoutComponentBase
-@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inherits LayoutComponentBase
+@implements IDisposable
 @inject AuthService AuthService
-@inject BreadcrumbsStateContainer BreadcrumbsStateContainer
+@inject PageState Page
+@inject ToastService Toast
+@inject AssetStatus AssetStatus
+@inject NavigationManager Nav
 @inject IOptions<WebUiSettings> Settings
+@using Microsoft.Extensions.Options
 
-@using Microsoft.Extensions.Options;
-@using TaikoWebUI.Settings;
-
-
-
-<MudThemeProvider IsDarkMode="@isDarkMode" Theme="@taikoWebUiTheme" />
-<MudPopoverProvider />
-<MudDialogProvider />
-<MudSnackbarProvider />
-
-<MudLayout>
-    <MudAppBar Elevation="0">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle" Size="Size.Small" />
-        <MudBreadcrumbs Items="BreadcrumbsStateContainer.breadcrumbs" Class="p-0 top-breadcrumbs"></MudBreadcrumbs>
-        <MudSpacer />
-        <MudStack Spacing="3" Row="true">
-            <LanguageToggle />
-            <MudIconButton Icon="@DarkModeIcon" Size="Size.Small" Color="Color.Inherit" OnClick="ToggleDarkMode" />
-        </MudStack>
-    </MudAppBar>
-    <MudDrawer Elevation="0" Style="border-right:1px solid #ededf0" @bind-Open="drawerOpen">
-        <MudDrawerHeader>
-            <MudText Typo="Typo.h6">@title</MudText>
-        </MudDrawerHeader>
-        <NavMenu />
-    </MudDrawer>
-    <MudMainContent>
-        <MudContainer MaxWidth=Settings.Value.MaxWidth Class="my-8 pb-8">
+@if (AuthService.LoginRequired && !AuthService.IsLoggedIn)
+{
+    @* Logged out: auth layout, no sidebar. Brand left, language + theme right, card centred. *@
+    <div class="flex min-h-dvh flex-col">
+        <header class="flex h-16 items-center gap-2.5 px-4 sm:px-6">
+            <DrumMark />
+            <span class="font-display text-[17px] tracking-wide">@Settings.Value.Title</span>
+            <div class="ml-auto flex items-center gap-1"><TopControls /></div>
+        </header>
+        <main class="flex flex-1 flex-col items-center justify-center px-4 pb-24 pt-4 sm:pb-32">@Body</main>
+    </div>
+}
+else
+{
+    @* Console: persistent labelled sidebar (a drawer below lg), breadcrumbs + controls in the top bar. *@
+    <div class="min-h-dvh lg:pl-64">
+        @if (drawerOpen)
+        {
+            <div class="fade fixed inset-0 z-30 bg-black/40 lg:hidden" @onclick="() => drawerOpen = false"></div>
+        }
+        <aside class="drawer fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-900 lg:translate-x-0 @(drawerOpen ? "translate-x-0" : "-translate-x-full")">
+            <NavMenu />
+        </aside>
+        <header class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-zinc-200/80 bg-zinc-50/80 px-4 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/80 sm:px-6">
+            <button class="@Css.IconButton lg:hidden" aria-label="@Localizer["Open navigation"]" @onclick="() => drawerOpen = true"><Icon Name="menu" /></button>
+            <nav aria-label="Breadcrumb" class="flex min-w-0 items-center gap-1.5 text-sm">
+                @for (var i = 0; i < Page.Crumbs.Count; i++)
+                {
+                    var last = i == Page.Crumbs.Count - 1;
+                    if (i > 0)
+                    {
+                        <Icon Name="chevRight" Class="size-4 text-zinc-400" />
+                    }
+                    <span class="truncate @(last ? "font-medium" : Css.Muted)" aria-current="@(last ? "page" : null)">@Page.Crumbs[i]</span>
+                }
+            </nav>
+            <div class="ml-auto flex items-center gap-1">
+                @if (Page.Save is { } save)
+                {
+                    @* Autosave pages only. On phones the icon alone; the text stays in the accessible status. *@
+                    <span class="mr-1 flex items-center gap-1.5 text-xs @Css.Muted" role="status">
+                        @switch (save)
+                        {
+                            case PageState.SaveStatus.Saving: <Icon Name="rotate" Class="size-4 animate-spin" /><span class="max-sm:sr-only">@Localizer["Saving…"]</span> break;
+                            case PageState.SaveStatus.Saved: <Icon Name="check" Class="size-4 text-emerald-500" /><span class="max-sm:sr-only">@Localizer["Saved"]</span> break;
+                            default: <Icon Name="cloud" Class="size-4" /><span class="max-sm:sr-only">@Localizer["All changes saved"]</span> break;
+                        }
+                    </span>
+                }
+                <TopControls />
+            </div>
+        </header>
+        <main class="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+            @if (assetsMissing && CanFixAssets)
+            {
+                @* Only people who can run it see this; players just get the plain fallbacks. *@
+                <div role="alert" class="mb-6 flex items-start gap-3 rounded-2xl border border-primary-500/30 bg-primary-500/10 p-4 text-sm text-primary-700 dark:text-primary-300">
+                    <Icon Name="alert" Class="mt-0.5 size-5" />
+                    <div class="min-w-0">
+                        <p class="font-semibold">@Localizer["Game assets haven't been extracted"]</p>
+                        <p class="mt-1 text-zinc-700 dark:text-zinc-300">@Localizer["Nameplates, dan badges, the scoreboard and the 3D don-chan come from the game install. Run the extractor next to TaikoLocalServer.exe, then reload this page:"]</p>
+                        <code class="mt-2 block overflow-x-auto whitespace-nowrap rounded-lg bg-zinc-900 px-3 py-2 font-mono text-xs text-zinc-100">extract --game "&lt;Nijiiro game folder&gt;"</code>
+                    </div>
+                </div>
+            }
             @Body
+        </main>
+    </div>
+}
 
-            <MudScrollToTop>
-                <MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.ArrowCircleUp" />
-            </MudScrollToTop>
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
+@if (Toast.Message is { } message)
+{
+    <div role="status" class="pop fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm shadow-lg @(Toast.IsError ? "bg-primary-600 text-white" : "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900")" style="--origin:bottom right">
+        <Icon Name="@(Toast.IsError ? "alert" : "check")" />@message
+    </div>
+}
 
 @code {
-    bool drawerOpen = true;
-    bool isDarkMode = false;
-    string title = "TaikoWebUI";
+    private bool drawerOpen;
+    private bool assetsMissing;
 
-    [Inject]
-    IOptions<WebUiSettings> UiSettings { get; set; } = default!;
-
-    protected override void OnInitialized()
-    {
-        title = UiSettings.Value.Title;
-    }
+    // Admins (or everyone when login is off) can run the extractor; api/Assets needs a logged-in user.
+    private bool CanFixAssets => AuthService.IsAdmin || !AuthService.LoginRequired;
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
-
-        BreadcrumbsStateContainer.OnChange += StateHasChanged;
-
-
-        var hasDrawerOpenEntry = await LocalStorage.ContainKeyAsync("drawerOpen");
-
-        if (hasDrawerOpenEntry)
-        {
-            drawerOpen = await LocalStorage.GetItemAsync<bool>("drawerOpen");
-        }
-
-        var hasDarkModeEntry = await LocalStorage.ContainKeyAsync("isDarkMode");
-
-        if (hasDarkModeEntry)
-        {
-            isDarkMode = await LocalStorage.GetItemAsync<bool>("isDarkMode");
-        }
+        AuthService.LoginStatusChanged += OnChanged;
+        Page.Changed += Refresh;
+        Toast.Changed += Refresh;
+        Nav.LocationChanged += OnLocationChanged;
+        await CheckAssets();
     }
 
-    private async Task DrawerToggle()
+    private async Task CheckAssets()
     {
-        drawerOpen = !drawerOpen;
-        await LocalStorage.SetItemAsync("drawerOpen", drawerOpen);
+        if (!CanFixAssets || (AuthService.LoginRequired && !AuthService.IsLoggedIn)) return;
+        assetsMissing = await AssetStatus.IsMissingAsync();
     }
 
-    private async Task ToggleDarkMode()
+    private async void OnChanged(object? sender, EventArgs e)
     {
-        isDarkMode = !isDarkMode;
-        await LocalStorage.SetItemAsync("isDarkMode", isDarkMode);
+        await CheckAssets();
+        Refresh();
     }
+    private void Refresh() => InvokeAsync(StateHasChanged);
 
-    private string DarkModeIcon => isDarkMode ? Icons.Material.Filled.BrightnessLow : Icons.Material.Filled.Brightness2;
-
-    readonly MudTheme taikoWebUiTheme = new()
-        {
-            PaletteLight = new PaletteLight()
-            {
-                Primary = Colors.Indigo.Default,
-                PrimaryLighten = Colors.Indigo.Lighten2,
-                PrimaryDarken = Colors.Indigo.Darken2,
-                AppbarBackground = Colors.Indigo.Darken3,
-            },
-            PaletteDark = new PaletteDark()
-            {
-                Primary = Colors.Indigo.Accent1,
-                PrimaryLighten = Colors.Indigo.Lighten4,
-                PrimaryDarken = Colors.Indigo.Accent1,
-            },
-        };
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        drawerOpen = false;
+        Refresh();
+    }
 
     public void Dispose()
     {
-        BreadcrumbsStateContainer.OnChange -= StateHasChanged;
+        AuthService.LoginStatusChanged -= OnChanged;
+        Page.Changed -= Refresh;
+        Toast.Changed -= Refresh;
+        Nav.LocationChanged -= OnLocationChanged;
     }
 }

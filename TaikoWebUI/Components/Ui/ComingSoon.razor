@@ -1,0 +1,15 @@
+@* Placeholder for pages that haven't been redesigned yet (they get their own prototype round). *@
+<div class="@Css.Card p-8 text-center">
+    <span class="mx-auto grid size-12 place-items-center rounded-2xl bg-primary-500/10 text-primary-600 dark:text-primary-400">
+        <Icon Name="@IconName" Class="size-6" />
+    </span>
+    <p class="mt-3 font-medium">@Title</p>
+    <p class="mt-1 text-sm @Css.Muted">@Localizer["This page is being redesigned and will be back soon."]</p>
+    @ChildContent
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter] public string IconName { get; set; } = "construction";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

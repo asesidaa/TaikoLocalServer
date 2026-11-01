@@ -1,0 +1,78 @@
+@page "/Settings/Security"
+@attribute [Authorize]
+@attribute [Authorize(Policy = WebUiAuthPolicies.RequireRealAuth)]
+@inject AuthService AuthService
+@inject ToastService Toast
+@inject PageState Page
+
+<PageTitle>@Localizer["Security"]</PageTitle>
+
+@* 2-step verification joins this page when the server supports it (refactor plan §1a-2). *@
+<div class="mx-auto max-w-2xl">
+    <h1 class="mb-6 text-2xl font-semibold tracking-tight">@Localizer["Security"]</h1>
+    <section class="@Css.Card p-5 sm:p-6">
+        <div class="flex items-center justify-between gap-4">
+            <div>
+                <p class="text-sm font-medium">@Localizer["Password"]</p>
+                <p class="text-xs @Css.Muted">@Localizer["Used with your access code to log in here."]</p>
+            </div>
+            @if (!editing)
+            {
+                <button class="@Css.GhostButton" @onclick="() => editing = true">@Localizer["Change"]</button>
+            }
+        </div>
+        @if (editing)
+        {
+            <form class="rise mt-5 space-y-4" novalidate @onsubmit="Submit">
+                <PasswordField Label="@Localizer["Current password"]" @bind-Value="current" />
+                <PasswordField Label="@Localizer["New password"]" AutoComplete="new-password" @bind-Value="next" />
+                <PasswordField Label="@Localizer["Confirm password"]" AutoComplete="new-password" @bind-Value="confirm" />
+                <ErrorBox Message="@error" />
+                <div class="flex justify-end gap-2">
+                    <button type="button" class="@Css.GhostButton" @onclick="Cancel">@Localizer["Cancel"]</button>
+                    <button class="@Css.PrimaryButton" disabled="@busy">@Localizer["Change Password"]</button>
+                </div>
+            </form>
+        }
+    </section>
+</div>
+
+@code {
+    private bool editing;
+    private string current = "", next = "", confirm = "";
+    private string? error;
+    private bool busy;
+
+    protected override void OnInitialized() => Page.Set(Localizer["Settings"], Localizer["Security"]);
+
+    private void Cancel()
+    {
+        editing = false;
+        error = null;
+        current = next = confirm = "";
+    }
+
+    private async Task Submit()
+    {
+        if (next.Length == 0)
+        {
+            error = Localizer["Choose a password."];
+            return;
+        }
+        busy = true;
+        var result = await AuthService.ChangePassword(current, next, confirm);
+        busy = false;
+        error = result switch
+        {
+            1 => (string?)null,
+            0 => Localizer["Login Only Admin Error"],
+            2 => Localizer["Change Password Different Confirm Password Error"],
+            4 => Localizer["Change Password Wrong Current Password Error"],
+            5 => Localizer["Access Code Not Registered Error"],
+            _ => Localizer["Unknown Error"],
+        };
+        if (result != 1) return;
+        Cancel();
+        Toast.Show(Localizer["Change Password Success"]);
+    }
+}
