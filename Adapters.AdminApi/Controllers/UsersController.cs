@@ -68,7 +68,7 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
 
     [HttpGet]
     [Authorize(Policy = AuthPolicies.Admin)]
-    public async Task<ActionResult<UsersResponse>> GetUsers([FromQuery] int page = 1, [FromQuery] int limit = 10, [FromQuery] string? searchTerm = null)
+    public async Task<ActionResult<UsersResponse>> GetUsers([FromQuery] int page = 1, [FromQuery] int limit = 10, [FromQuery] string? searchTerm = null, [FromQuery] string? filter = null)
     {
         if (page < 1)
         {
@@ -81,8 +81,16 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
         }
 
         var users = new List<User>();
-        var cardEntries = await context.Cards.ToListAsync();
-        var userEntriesQuery = context.UserData.AsQueryable();
+        var userEntriesQuery = filter switch
+        {
+            null or "" or "all" => context.UserData.AsQueryable(),
+            "registered" => context.UserData.Where(u => context.Credentials.Any(c => c.Baid == u.Baid && c.Password != "")),
+            "unregistered" => context.UserData.Where(u => !context.Credentials.Any(c => c.Baid == u.Baid && c.Password != "")),
+            "admins" => context.UserData.Where(u => u.IsAdmin),
+            _ => null,
+        };
+        if (userEntriesQuery is null)
+            return BadRequest(new { Message = "Unknown filter." });
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
@@ -106,6 +114,7 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
             .ToListAsync();
         var pageBaids = userEntries.Select(user => user.Baid).ToList();
         var profiles = await context.UserWebProfiles.Where(p => pageBaids.Contains(p.Baid)).ToDictionaryAsync(p => p.Baid);
+        var cardEntries = await context.Cards.Where(card => pageBaids.Contains(card.Baid)).ToListAsync(HttpContext.RequestAborted);
 
         var registered = await context.Credentials.Where(c => pageBaids.Contains(c.Baid) && c.Password != "")
             .Select(c => c.Baid).ToListAsync(HttpContext.RequestAborted);

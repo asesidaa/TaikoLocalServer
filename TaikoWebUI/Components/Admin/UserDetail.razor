@@ -98,7 +98,7 @@
                         <button role="menuitem" class="@Css.MenuItem text-red-600 dark:text-red-400" @onclick="() => OpenBan(code)"><Icon Name="ban" Class="size-4" />@Localizer["Ban this card"]</button>
                     }
                     <button role="menuitem" class="@Css.MenuItem" disabled="@last" title="@(last ? Localizer["A user needs at least one access code."] : null)"
-                            @onclick="() => { moveCode = code; moveQuery = string.Empty; }"><Icon Name="move" Class="size-4" />@Localizer["Move to another user"]</button>
+                            @onclick="() => { moveCode = code; return SearchMove(string.Empty); }"><Icon Name="move" Class="size-4" />@Localizer["Move to another user"]</button>
                     <button role="menuitem" class="@Css.MenuItem text-red-600 dark:text-red-400" disabled="@last" title="@(last ? Localizer["A user needs at least one access code."] : null)"
                             @onclick="() => RemoveCode(code)"><Icon Name="trash" Class="size-4" />@Localizer["Remove access code"]</button>
                 </ActionMenu>
@@ -145,12 +145,11 @@
 @* ---- Dialogs ---- *@
 @if (moveCode is not null)
 {
-    var targets = Users.Where(u => u.Baid != User.Baid && (u.UserSetting.MyDonName.Contains(moveQuery, StringComparison.OrdinalIgnoreCase) || u.Baid.ToString() == moveQuery.Trim())).ToList();
     <Dialog Title="@Localizer["Move access code"]" Width="max-w-md" OnClose="() => moveCode = null">
         <p>@((MarkupString)string.Format(Localizer["Move Code Hint"], Chip(moveCode)))</p>
-        <input type="search" autofocus class="@Css.Input mt-3" placeholder="@Localizer["Name or user ID"]" value="@moveQuery" @oninput="e => moveQuery = e.Value?.ToString() ?? string.Empty" />
+        <input type="search" autofocus class="@Css.Input mt-3" placeholder="@Localizer["Name or user ID"]" value="@moveQuery" @oninput="e => SearchMove(e.Value?.ToString() ?? string.Empty)" />
         <ul class="mt-2 max-h-72 space-y-0.5 overflow-y-auto">
-            @foreach (var u in targets.Take(50))
+            @foreach (var u in moveTargets.Where(u => u.Baid != User.Baid))
             {
                 var full = AuthService.LoginRequired && u.AccessCodes.Count >= AuthService.BoundAccessCodeUpperLimit;
                 <li>
@@ -272,8 +271,6 @@
 
 @code {
     [Parameter, EditorRequired] public User User { get; set; } = null!;
-    /// <summary>Every user, for Move's target list.</summary>
-    [Parameter] public IReadOnlyList<User> Users { get; set; } = [];
     /// <summary>Something about this user changed on the server: reload the list.</summary>
     [Parameter] public EventCallback OnChanged { get; set; }
     [Parameter] public EventCallback OnDeleted { get; set; }
@@ -286,6 +283,8 @@
     private string newCode = "";
     private string? moveCode;
     private string moveQuery = "";
+    private List<User> moveTargets = [];
+    private int moveRequest;
     private string? invite;
     private bool confirmReset, confirmAdmin, confirmDelete, busy;
     private string deleteName = "";
@@ -299,6 +298,15 @@
     private string? banCode;
     private string banReason = "";
     private int banDays = 7;
+
+    // Move's targets: the first 50 matches, searched on the server.
+    private async Task SearchMove(string q)
+    {
+        moveQuery = q;
+        var mine = ++moveRequest;
+        var result = await Client.GetFromJsonAsync<UsersResponse>($"api/Users?limit=51&searchTerm={Uri.EscapeDataString(q.Trim())}");
+        if (mine == moveRequest) moveTargets = result?.Users ?? [];
+    }
 
     protected override void OnParametersSet()
     {

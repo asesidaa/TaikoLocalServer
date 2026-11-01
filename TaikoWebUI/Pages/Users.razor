@@ -27,11 +27,11 @@
         <div class="@Css.Card">
             @if (selected is null)
             {
-                <div class="grid place-items-center p-10 text-sm @Css.Muted">@Localizer[users is { Count: 0 } ? "No users yet. A user appears the first time a card is played." : "Pick a user"]</div>
+                <div class="grid place-items-center p-10 text-sm @Css.Muted">@Localizer[data is { TotalUsers: 0 } && query.Length == 0 && filter == "all" ? "No users yet. A user appears the first time a card is played." : "Pick a user"]</div>
             }
             else
             {
-                <UserDetail User="selected" Users="users!" OnChanged="Reload" OnDeleted="OnDeleted" />
+                <UserDetail User="selected" OnChanged="Reload" OnDeleted="OnDeleted" />
             }
         </div>
     </div>
@@ -47,7 +47,7 @@
             <span class="sr-only">@Localizer["Search users"]</span>
             <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="search" /></span>
             <input type="search" value="@query" placeholder="@Localizer["Name, user ID or access code"]" class="@Css.Input pl-9"
-                   @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
+                   @oninput="e => { query = e.Value?.ToString() ?? string.Empty; return Load(1); }" />
         </label>
         if (AuthService.LoginRequired)
         {
@@ -55,19 +55,19 @@
                 @foreach (var (key, label) in Filters)
                 {
                     var on = filter == key;
-                    <button role="radio" aria-checked="@Css.Aria(on)" @onclick="() => filter = key"
+                    <button role="radio" aria-checked="@Css.Aria(on)" @onclick="() => { filter = key; return Load(1); }"
                             class="rounded-full px-2.5 py-1 text-xs font-medium @Css.Pill(on)">@label</button>
                 }
             </div>
         }
         <ul class="mt-2 @(phone ? "max-h-[55dvh]" : "max-h-[calc(100dvh-16rem)]") space-y-0.5 overflow-y-auto">
-            @if (users is null)
+            @if (data is null)
             {
                 <li class="px-3 py-3"><Skeleton Rows="8" /></li>
             }
             else
             {
-                var list = Visible();
+                var list = data.Users;
                 if (list.Count == 0)
                 {
                     <li class="px-3 py-6 text-center text-sm @Css.Muted">@Localizer["No matches"]</li>
@@ -96,10 +96,19 @@
                 }
             }
         </ul>
+        if (data is { TotalPages: > 1 })
+        {
+            <div class="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-zinc-100 pt-2 dark:border-zinc-800">
+                <span class="text-xs tabular-nums @Css.Muted">@string.Format(Localizer["{0}–{1} of {2}"], ((data.Page - 1) * PageSize + 1).ToString("N0"), Math.Min(data.Page * PageSize, data.TotalUsers).ToString("N0"), data.TotalUsers.ToString("N0"))</span>
+                <Pager Current="data.Page" Total="data.TotalPages" OnPage="Load" Label="@Localizer["User pages"]" />
+            </div>
+        }
     };
 
-    private List<User>? users;
+    private const int PageSize = 50;
+    private UsersResponse? data;
     private User? selected;
+    private int request;
     private string query = "";
     private string filter = "all";
 
@@ -112,29 +121,32 @@
         await Reload();
     }
 
-    // Every user: the list is searched and filtered here.
+    // One page, searched and filtered on the server, so thousands of users cost one page.
+    private async Task Load(int page)
+    {
+        var mine = ++request;
+        var filterArg = AuthService.LoginRequired ? filter : "all";
+        var result = await Client.GetFromJsonAsync<UsersResponse>(
+            $"api/Users?page={page}&limit={PageSize}&searchTerm={Uri.EscapeDataString(query.Trim())}&filter={filterArg}");
+        if (mine != request) return;
+        data = result;
+        selected ??= data?.Users.FirstOrDefault();
+    }
+
+    // After a change: the same page again, and the picked user fresh even when they're no longer on it.
     private async Task Reload()
     {
-        users = await PlayerSelection.GetAllUsersAsync(Client);
-        selected = users.FirstOrDefault(u => u.Baid == selected?.Baid) ?? users.FirstOrDefault();
+        await Load(data?.Page ?? 1);
+        if (selected is not { } s) return;
+        selected = data?.Users.FirstOrDefault(u => u.Baid == s.Baid)
+                   ?? (await Client.GetFromJsonAsync<UsersResponse>($"api/Users?limit=200&searchTerm={s.Baid}"))?.Users.FirstOrDefault(u => u.Baid == s.Baid)
+                   ?? s;
     }
 
     private async Task OnDeleted()
     {
         selected = null;
-        await Reload();
-    }
-
-    private List<User> Visible()
-    {
-        var q = query.Trim();
-        var digits = new string(q.Where(char.IsAsciiDigit).ToArray());
-        return users!.Where(u =>
-                (filter == "all" || !AuthService.LoginRequired
-                 || (filter == "registered" && u.IsRegistered) || (filter == "unregistered" && !u.IsRegistered) || (filter == "admins" && u.IsAdmin)) &&
-                (q.Length == 0 || u.UserSetting.MyDonName.Contains(q, StringComparison.OrdinalIgnoreCase) || u.Baid.ToString() == q
-                 || (digits.Length >= 4 && u.AccessCodes.Any(c => c.Contains(digits)))))
-            .ToList();
+        await Load(data?.Page ?? 1);
     }
 
     private string LastPlayed(User u)

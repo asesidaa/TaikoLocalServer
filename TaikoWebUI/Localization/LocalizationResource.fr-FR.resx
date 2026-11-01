@@ -3483,6 +3483,9 @@
   <data name="Title pages" xml:space="preserve">
     <value>Pages de titres</value>
   </data>
+  <data name="User pages" xml:space="preserve">
+    <value>Pages d'utilisateurs</value>
+  </data>
   <data name="Players can delete their own account in Settings, with their password. Admins can always delete accounts in User Management." xml:space="preserve">
     <value>Les joueurs peuvent supprimer leur propre compte dans Paramètres, avec leur mot de passe. Les administrateurs peuvent toujours supprimer des comptes dans Gestion des utilisateurs.</value>
   </data>

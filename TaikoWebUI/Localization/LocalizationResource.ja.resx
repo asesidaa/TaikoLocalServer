@@ -3483,6 +3483,9 @@
   <data name="Title pages" xml:space="preserve">
     <value>称号のページ</value>
   </data>
+  <data name="User pages" xml:space="preserve">
+    <value>ユーザーのページ</value>
+  </data>
   <data name="Players can delete their own account in Settings, with their password. Admins can always delete accounts in User Management." xml:space="preserve">
     <value>プレイヤーは設定から、パスワードを入力して自分のアカウントを削除できます。管理者はユーザー管理でいつでもアカウントを削除できます。</value>
   </data>
