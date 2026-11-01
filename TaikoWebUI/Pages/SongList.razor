@@ -96,7 +96,7 @@
                     <li class="flex gap-3 px-3 py-3">
                         <GenreBar Genre="s.Genre" />
                         <button class="min-w-0 flex-1 text-left" @onclick="() => Open(s.SongId)">
-                            <span class="block truncate text-[15px]">@s.Name@if (s.IsNew){<span class="ml-1.5 inline-block rounded-full bg-primary-500 px-1.5 align-middle text-[10px] font-semibold uppercase leading-4 text-white">@Localizer["New"]</span>}</span>
+                            <span class="flex items-center gap-1.5 text-[15px]"><span class="truncate">@s.Name</span>@if (s.IsNew){<span class="shrink-0 rounded-full bg-primary-500 px-1.5 text-[10px] font-semibold uppercase leading-4 text-white">@Localizer["New"]</span>}</span>
                             <span class="block truncate text-xs @Css.Muted">@(s.NameEn.Length > 0 ? $"{s.NameEn} · " : "")ID @s.SongId</span>
                             <span class="mt-2 flex flex-wrap gap-1">
                                 @for (var i = 0; i < 5; i++)
@@ -158,7 +158,7 @@
                                     <span class="flex items-stretch gap-2">
                                         <GenreBar Genre="s.Genre" />
                                         <span class="min-w-0">
-                                            <span class="block truncate">@s.Name@if (s.IsNew){<span class="ml-1.5 inline-block rounded-full bg-primary-500 px-1.5 align-middle text-[10px] font-semibold uppercase leading-4 text-white">@Localizer["New"]</span>}</span>
+                                            <span class="flex items-center gap-1.5"><span class="truncate">@s.Name</span>@if (s.IsNew){<span class="shrink-0 rounded-full bg-primary-500 px-1.5 text-[10px] font-semibold uppercase leading-4 text-white">@Localizer["New"]</span>}</span>
                                             @if (s.NameEn.Length > 0)
                                             {
                                                 <span class="block truncate text-xs @Css.Muted">@s.NameEn</span>
