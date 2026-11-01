@@ -1752,8 +1752,8 @@
   <data name="Locked" xml:space="preserve">
     <value>Verrouillé</value>
   </data>
-  <data name="Locked Ura (inner) charts" xml:space="preserve">
-    <value>Partitions Ura (cachées) verrouillées</value>
+  <data name="Locked Ura Oni charts" xml:space="preserve">
+    <value>Partitions Ura Oni verrouillées</value>
   </data>
   <data name="Locked accounts" xml:space="preserve">
     <value>Comptes verrouillés</value>
