@@ -4,6 +4,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Policy = AuthPolicies.Admin)]
+[ApiScope(ApiScopes.AdminUsers, ApiScopes.AdminUsers)]
 public class SignInsController(ITaikoDbContext context, IServerAccess access) : BaseAdminController<SignInsController>
 {
     /// <param name="failed">true: only failures; false: only successful sign-ins; null: all.</param>

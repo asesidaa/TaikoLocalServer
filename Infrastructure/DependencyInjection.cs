@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -52,11 +53,17 @@ public static class DependencyInjection
         services.AddSingleton<IServerAccess>(sp => sp.GetRequiredService<ServerAccess>());
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddHttpContextAccessor();
+        // One "Bearer" header, two kinds: tls_… is an admin's API token, anything else a Web UI sign-in (JWT).
+        const string bearerOrToken = "BearerOrApiToken";
         services.AddAuthentication(options =>
         {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultAuthenticateScheme = bearerOrToken;
+            options.DefaultChallengeScheme = bearerOrToken;
         })
+        .AddPolicyScheme(bearerOrToken, bearerOrToken, options => options.ForwardDefaultSelector = context =>
+            ApiTokenAuthenticationHandler.IsApiToken(context.Request.Headers.Authorization)
+                ? ApiTokenAuthenticationHandler.Scheme : JwtBearerDefaults.AuthenticationScheme)
+        .AddScheme<AuthenticationSchemeOptions, ApiTokenAuthenticationHandler>(ApiTokenAuthenticationHandler.Scheme, null)
         .AddJwtBearer(options =>
         {
             // MapInboundClaims = true ensures the JWT short names (unique_name, role)
@@ -89,7 +96,7 @@ public static class DependencyInjection
         services.AddTransient<IPolicyEvaluator, AuthAwarePolicyEvaluator>();
 
         // Time
-        services.AddSingleton<IClock, SystemClock>();
+        services.AddSingleton<IClock, Time.SystemClock>();
 
         return services;
     }

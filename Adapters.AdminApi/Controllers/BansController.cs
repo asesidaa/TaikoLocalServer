@@ -7,6 +7,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Policy = AuthPolicies.Admin)]
+[ApiScope(ApiScopes.AdminUsers, ApiScopes.AdminUsers)]
 public class BansController(ITaikoDbContext context) : BaseAdminController<BansController>
 {
     [HttpGet]

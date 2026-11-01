@@ -10,6 +10,7 @@ public record ServerConfigResponse(
     string GameUrl,
     bool EnableMoreSongs,
     int MoreSongsSize,
-    string GamePath);
+    string GamePath,
+    bool ApiTokens);
 
 public record ServerEndpoint(string Name, string Url);

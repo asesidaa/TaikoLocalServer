@@ -7,6 +7,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Policy = AuthPolicies.Admin)]
+[ApiScope(ApiScopes.AdminServer, ApiScopes.AdminServer)]
 public class ServerConfigController(IConfiguration config, IServerAccess access) : BaseAdminController<ServerConfigController>
 {
     [HttpGet]
@@ -25,6 +26,7 @@ public class ServerConfigController(IConfiguration config, IServerAccess access)
             s["GameUrl"] ?? "",
             s.GetValue<bool>("EnableMoreSongs"),
             s.GetValue("MoreSongsSize", DomainConstants.MusicIdMaxExpanded),
-            s["GamePath"] ?? ""));
+            s["GamePath"] ?? "",
+            s.GetValue<bool>("ApiTokens")));
     }
 }

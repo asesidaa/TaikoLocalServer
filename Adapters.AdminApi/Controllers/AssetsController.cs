@@ -13,6 +13,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Route("api/[controller]")]
 [Authorize]
 [EnableRateLimiting(DependencyInjection.AssetsRateLimitPolicy)]
+[ApiScope(ApiScopes.ReadAssets)]
 public class AssetsController : BaseAdminController<AssetsController>
 {
     private static readonly string Root = Path.GetFullPath(Path.Combine(PathHelper.GetRootPath(), PathHelper.GameDataFolder));
@@ -31,8 +32,10 @@ public class AssetsController : BaseAdminController<AssetsController>
     {
         // Only fetch() from this site's own pages (the WebUI and its /don-embed/): opening the URL, an <img>
         // hotlink or another site gets nothing. Browsers set these headers themselves; it also covers local
-        // mode (AuthenticationRequired off), where [Authorize] lets everyone through.
-        if (Request.Headers["Sec-Fetch-Site"] != "same-origin" || Request.Headers["Sec-Fetch-Dest"] != "empty")
+        // mode (AuthenticationRequired off), where [Authorize] lets everyone through. An admin's API token with
+        // read:assets (checked by ApiScopeFilter) is the one way in from outside the browser.
+        var apiToken = User.HasClaim(c => c.Type == ApiScopes.TokenClaim);
+        if (!apiToken && (Request.Headers["Sec-Fetch-Site"] != "same-origin" || Request.Headers["Sec-Fetch-Dest"] != "empty"))
         {
             return NotFound();
         }

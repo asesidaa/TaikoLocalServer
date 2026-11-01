@@ -39,6 +39,10 @@ else
         {
             <SessionsTab />
         }
+        else if (Current == "tokens")
+        {
+            <ApiTokensTab />
+        }
         else
         {
             var t = tabs.First(x => x.Id == Current);

@@ -6,6 +6,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
+[ApiScope(ApiScopes.AdminUsers, ApiScopes.AdminUsers)]
 public class SessionsController(ITaikoDbContext context) : BaseAdminController<SessionsController>
 {
     private Guid? Current => Guid.TryParse(User.FindFirstValue(IJwtTokenService.SessionClaim), out var sid) ? sid : null;

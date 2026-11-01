@@ -7,6 +7,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Policy = AuthPolicies.Admin)]
+[ApiScope(ApiScopes.AdminServer, ApiScopes.AdminServer)]
 public class DanSetsController(IGameDataCatalog catalog, ITaikoDbContext context) : BaseAdminController<DanSetsController>
 {
     public record CreateRequest(string Name, string CopyFrom);

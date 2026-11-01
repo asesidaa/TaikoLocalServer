@@ -909,4 +909,10 @@
   <data name="Ban Card Hint" xml:space="preserve">
     <value>A banned card is refused at the cabinet and for Web UI sign-in. The account and its scores stay. It needn’t have played here yet.</value>
   </data>
+  <data name="Api Tokens Hint" xml:space="preserve">
+    <value>For Discord bots, leaderboard sites and scripts that read this server. A token acts as the admin who created it, limited to its scopes, and stops working if that admin is no longer an admin.</value>
+  </data>
+  <data name="Api Tokens Off Hint" xml:space="preserve">
+    <value>API tokens are turned off, so the server refuses them. To turn them on, set {0} in {1} and restart the server.</value>
+  </data>
 </root>

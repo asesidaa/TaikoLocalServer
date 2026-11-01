@@ -4,6 +4,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Policy = AuthPolicies.Admin)]
+[ApiScope(ApiScopes.AdminServer, ApiScopes.AdminServer)]
 public class ExtractController(IExtractRunner extract, ITaikoDbContext context) : BaseAdminController<ExtractController>
 {
     [HttpGet]

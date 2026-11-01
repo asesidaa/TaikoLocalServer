@@ -253,6 +253,7 @@ public class AuthController(
     }
 
     [HttpPost("ResetPassword")]
+    [ApiScope(write: ApiScopes.AdminUsers)]
     [Authorize]
     public async Task<IActionResult> ResetPassword(ResetPasswordRequest resetPasswordRequest)
     {
@@ -270,6 +271,7 @@ public class AuthController(
     }
 
     [HttpPost("GenerateOtp")]
+    [ApiScope(write: ApiScopes.AdminUsers)]
     [Authorize(Policy = AuthPolicies.Admin)]
     public IActionResult GenerateOtp(GenerateOtpRequest generateOtpRequest)
     {

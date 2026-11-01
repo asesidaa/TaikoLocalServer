@@ -4,6 +4,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
+[ApiScope(ApiScopes.ReadProfiles, ApiScopes.AdminUsers)]
 public class CardsController(ITaikoDbContext context, IServerAccess access) : BaseAdminController<CardsController>
 {
 

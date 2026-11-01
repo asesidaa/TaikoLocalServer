@@ -27,7 +27,15 @@ public static class DependencyInjection
             options.AddPolicy(AssetsRateLimitPolicy, context => RateLimitPartition.GetFixedWindowLimiter(
                 context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
                 _ => new FixedWindowRateLimiterOptions { PermitLimit = 300, Window = TimeSpan.FromMinutes(1) }));
+            // API tokens: 120 requests a minute per token, so a runaway script can't flood the server.
+            options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                context.Request.Headers.Authorization.ToString() is var auth && auth.StartsWith("Bearer tls_", StringComparison.Ordinal)
+                    ? RateLimitPartition.GetFixedWindowLimiter(auth.Length > 20 ? auth[..20] : auth,
+                        _ => new FixedWindowRateLimiterOptions { PermitLimit = 120, Window = TimeSpan.FromMinutes(1) })
+                    : RateLimitPartition.GetNoLimiter(""));
         });
+        // API tokens are limited to their scopes on every endpoint (see ApiScopeAttribute).
+        services.Configure<Microsoft.AspNetCore.Mvc.MvcOptions>(o => o.Filters.Add<ApiScopeFilter>());
         return services;
     }
 

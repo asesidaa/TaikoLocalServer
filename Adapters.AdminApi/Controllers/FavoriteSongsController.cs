@@ -3,6 +3,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
+[ApiScope(ApiScopes.ReadScores, ApiScopes.AdminUsers)]
 public class FavoriteSongsController(ITaikoDbContext context) : BaseAdminController<FavoriteSongsController>
 {
     [HttpPost]

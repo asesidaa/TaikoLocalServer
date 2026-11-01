@@ -909,4 +909,10 @@
   <data name="Ban Card Hint" xml:space="preserve">
     <value />
   </data>
+  <data name="Api Tokens Hint" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Api Tokens Off Hint" xml:space="preserve">
+    <value />
+  </data>
 </root>

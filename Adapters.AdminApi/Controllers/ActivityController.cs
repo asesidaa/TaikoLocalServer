@@ -4,6 +4,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Policy = AuthPolicies.Admin)]
+[ApiScope(ApiScopes.AdminServer, ApiScopes.AdminServer)]
 public class ActivityController(ITaikoDbContext context) : BaseAdminController<ActivityController>
 {
     [HttpGet]

@@ -3,6 +3,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
+[ApiScope(ApiScopes.ReadScores, ApiScopes.AdminServer)]
 public class GameDataController(IGameDataCatalog catalog, ITaikoDbContext context) : BaseAdminController<GameDataController>
 {
     private const int MaxFileBytes = 4 * 1024 * 1024;
@@ -29,6 +30,7 @@ public class GameDataController(IGameDataCatalog catalog, ITaikoDbContext contex
 
     /// <summary>Every data file and how it last loaded.</summary>
     [HttpGet("Files")]
+    [ApiScope(ApiScopes.AdminServer, ApiScopes.AdminServer)]
     [Authorize(Policy = AuthPolicies.Admin)]
     public IReadOnlyList<GameDataFileStatus> GetFiles() => catalog.GetFileStatus();
 
@@ -44,6 +46,7 @@ public class GameDataController(IGameDataCatalog catalog, ITaikoDbContext contex
     }
 
     [HttpGet("Files/{**name}")]
+    [ApiScope(ApiScopes.AdminServer, ApiScopes.AdminServer)]
     [Authorize(Policy = AuthPolicies.Admin)]
     public async Task<IActionResult> GetFile(string name) =>
         await catalog.ReadDataFileAsync(name) is { } json ? Content(json, "application/json") : NotFound();

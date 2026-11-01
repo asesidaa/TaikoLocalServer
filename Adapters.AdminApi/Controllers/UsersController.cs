@@ -6,6 +6,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
+[ApiScope(ApiScopes.ReadProfiles, ApiScopes.AdminUsers)]
 public class UsersController(ITaikoDbContext context, IServerAccess access) : BaseAdminController<UsersController>
 {
 
@@ -104,6 +105,7 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
     /// game shows the fallback until the WebUI renders it again; the URL changes with the key, so it caches forever.
     /// </summary>
     [HttpGet("{baid}/Avatar")]
+    [ApiScope(ApiScopes.ReadAvatars)]
     public async Task<IActionResult> GetAvatar(uint baid, [FromQuery] string v)
     {
         var avatar = await context.UserAvatars.FindAsync(baid);
