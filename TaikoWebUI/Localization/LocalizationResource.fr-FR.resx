@@ -244,7 +244,7 @@
     <value>Gold Donderful Combo</value>
   </data>
   <data name="Song List" xml:space="preserve">
-    <value>Musiques</value>
+    <value>Liste des musiques</value>
   </data>
   <data name="Log In First" xml:space="preserve">
     <value>Veuillez vous connecter en cliquant d'abord sur l'onglet “Utilisateurs”.</value>
@@ -3188,5 +3188,11 @@
   </data>
   <data name="Credit {0}" xml:space="preserve">
     <value>Crédit {0}</value>
+  </data>
+  <data name="Plays by every player" xml:space="preserve">
+    <value>Parties de tous les joueurs</value>
+  </data>
+  <data name="{0} on this server" xml:space="preserve">
+    <value>{0} sur ce serveur</value>
   </data>
 </root>

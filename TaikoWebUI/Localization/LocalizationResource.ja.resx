@@ -3189,4 +3189,10 @@
   <data name="Credit {0}" xml:space="preserve">
     <value>クレジット {0}</value>
   </data>
+  <data name="Plays by every player" xml:space="preserve">
+    <value>全プレイヤーのプレイ回数</value>
+  </data>
+  <data name="{0} on this server" xml:space="preserve">
+    <value>このサーバーで{0}</value>
+  </data>
 </root>

@@ -29,6 +29,7 @@ else
                 <div class="flex flex-wrap items-center gap-2">
                     <span class="rounded-full px-2 py-0.5 text-[11px] font-medium" style="background:@genre.Bg;color:@genre.Fg">@genre.Name</span>
                     <span class="font-mono text-xs @Css.Muted">#@song.SongId</span>
+                    <span class="text-xs @Css.Muted" title="@Localizer["Plays by every player"]">· @string.Format(Localizer["{0} on this server"], (song.TotalPlays == 1 ? Localizer["1 play"] : string.Format(Localizer["{0} plays"], song.TotalPlays.ToString("N0"))))</span>
                 </div>
                 <h1 class="font-display mt-1.5 text-3xl leading-tight">@song.Name</h1>
                 @if (song.NameEn.Length > 0)
@@ -180,12 +181,12 @@ else
         {
             song = null;
             missing = true;
-            Page.Set(Localizer["Play Data"], Localizer["Song List"]);
+            Page.Set(Localizer["Song List"]);
             return;
         }
         song = await res.Content.ReadFromJsonAsync<SongDetail>();
         if (song is null) return;
-        Page.Set(Localizer["Play Data"], Localizer["Song List"], song.Name);
+        Page.Set(Localizer["Song List"], song.Name);
         // The difficulty picked on the Song List, or Oni (or the hardest chart there is).
         var wanted = (Difficulty)(Diff ?? 4);
         difficulty = song.Charts.Any(c => c.Difficulty == wanted) ? wanted

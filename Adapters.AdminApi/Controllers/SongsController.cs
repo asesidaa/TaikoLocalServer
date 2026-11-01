@@ -3,7 +3,7 @@ using System.Globalization;
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 /// <summary>
-/// Play Data › Song List and the Song page: every song in the catalog with one player's results. The list is
+/// Song List and the Song page: every song in the catalog with one player's results (and every player's play count). The list is
 /// filtered, sorted and paged here, so the Web UI never loads every song's results at once.
 /// </summary>
 [ApiController]
@@ -74,12 +74,19 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         var all = list.ToList();
         var pages = Math.Max(1, (all.Count + limit - 1) / limit);
         page = Math.Min(page, pages);
+        var shown = all.Skip((page - 1) * limit).Take(limit).ToList();
+        // Every player's plays, for the songs on this page only (read from the SongId/Skipped index).
+        var ids = shown.Select(s => s.SongId).ToList();
+        var totals = await context.SongPlayData.Where(p => ids.Contains(p.SongId) && !p.Skipped)
+            .GroupBy(p => p.SongId).Select(g => new { g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Key, x => x.Count, HttpContext.RequestAborted);
         return new SongListPage
         {
             Total = all.Count, AllSongs = songs.Count, Page = page, TotalPages = pages,
-            Items = all.Skip((page - 1) * limit).Take(limit).Select(s => new SongListItem
+            Items = shown.Select(s => new SongListItem
             {
                 SongId = s.SongId, Name = s.SongName, NameEn = s.SongNameEN, Genre = s.Genre, Favorite = favorites.Contains(s.SongId),
+                TotalPlays = totals.GetValueOrDefault(s.SongId),
                 Stars = Stars(s),
                 Crowns = Enumerable.Range(1, 5).Select(i => best.TryGetValue((s.SongId, (Difficulty)i), out var c) ? c : (CrownType?)null).ToArray(),
                 Ai = Enumerable.Range(1, 5).Select(i => ai.GetValueOrDefault((s.SongId, (Difficulty)i))).ToArray(),
@@ -104,6 +111,7 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         {
             SongId = s.SongId, Name = s.SongName, NameEn = s.SongNameEN, Genre = s.Genre, Stars = stars,
             Favorite = user.FavoriteSongsArray.Contains(songId),
+            TotalPlays = await context.SongPlayData.CountAsync(p => p.SongId == songId && !p.Skipped, HttpContext.RequestAborted),
             Charts = Enumerable.Range(1, 5).Where(i => stars[i - 1] > 0).Select(i =>
             {
                 var d = (Difficulty)i;

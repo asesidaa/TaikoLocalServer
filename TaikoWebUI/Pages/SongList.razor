@@ -98,6 +98,7 @@
                                         @Result(s, i, true)
                                     </span>
                                 }
+                                <span class="ml-auto self-center text-xs tabular-nums @Css.Muted" title="@Localizer["Plays by every player"]">@(s.TotalPlays == 1 ? Localizer["1 play"] : string.Format(Localizer["{0} plays"], s.TotalPlays.ToString("N0")))</span>
                             </span>
                         </button>
                         @Heart(s)
@@ -118,6 +119,7 @@
                                 </button>
                             </th>
                             <th class="hidden px-2 py-2.5 font-medium xl:table-cell">@Localizer["Genre"]</th>
+                            <th class="hidden px-2 py-2.5 text-right font-medium lg:table-cell" title="@Localizer["Plays by every player"]">@Localizer["Plays"]</th>
                             @foreach (var (d, name) in GameData.Difficulties)
                             {
                                 var on = F.Difficulty == (int)d;
@@ -143,6 +145,7 @@
                                     }
                                 </td>
                                 <td class="hidden whitespace-nowrap px-2 xl:table-cell">@GenreChip(s.Genre)</td>
+                                <td class="hidden px-2 text-right text-xs tabular-nums lg:table-cell @Css.Muted">@s.TotalPlays.ToString("N0")</td>
                                 @for (var i = 0; i < 5; i++)
                                 {
                                     var d = (Difficulty)(i + 1);
@@ -206,7 +209,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        Page.Set(Localizer["Play Data"], Localizer["Song List"]);
+        Page.Set(Localizer["Song List"]);
         await Load();
     }
 

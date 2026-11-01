@@ -154,6 +154,9 @@ namespace TaikoLocalServer.Infrastructure.Persistence
             {
                 entity.HasKey(e => e.Id);
 
+                // Every player's play count per song (Song List, Song page) reads only this index, not every play.
+                entity.HasIndex(e => new { e.SongId, e.Skipped });
+
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.PlayTime).HasColumnType("datetime");

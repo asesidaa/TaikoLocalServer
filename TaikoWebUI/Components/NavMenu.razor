@@ -15,8 +15,9 @@
     @if (Baid > 0)
     {
         @Link($"/Users/{Baid}/Profile", "profile", Localizer["Profile"])
+        @Link($"/Users/{Baid}/Songs", "music", Localizer["Song List"], prefix: true)
         @Group("playData", Localizer["Play Data"], playDataOpen, () => playDataOpen = !playDataOpen,
-            [($"/Users/{Baid}/Stats", Localizer["Stats"]), ($"/Users/{Baid}/Songs", Localizer["Song List"]),
+            [($"/Users/{Baid}/Stats", Localizer["Stats"]),
              ($"/Users/{Baid}/HighScores", Localizer["High Scores"]), ($"/Users/{Baid}/PlayHistory", Localizer["Play History"]),
              ($"/Users/{Baid}/DaniDojo", Localizer["Dani Dojo"])])
         @Link("/Settings", "settings", Localizer["Settings"], prefix: true)

@@ -579,6 +579,8 @@ namespace TaikoLocalServer.Migrations
 
                     b.HasIndex("Baid");
 
+                    b.HasIndex("SongId", "Skipped");
+
                     b.ToTable("SongPlayData");
                 });
 
