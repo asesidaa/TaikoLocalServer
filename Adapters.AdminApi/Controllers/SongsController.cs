@@ -23,7 +23,7 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
     /// <param name="reverse">The other way round, e.g. Z to A.</param>
     [HttpGet("{baid}")]
     public async Task<ActionResult<SongListPage>> List(uint baid, [FromQuery] string? q = null, [FromQuery] int genre = -1,
-        [FromQuery] bool fav = false, [FromQuery] bool isNew = false, [FromQuery] int diff = 4, [FromQuery] string status = "all",
+        [FromQuery] bool fav = false, [FromQuery] bool isNew = false, [FromQuery] int diff = 4, [FromQuery] string? results = null,
         [FromQuery] string sort = "id", [FromQuery] bool reverse = false, [FromQuery] int page = 1, [FromQuery] int limit = 50)
     {
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
@@ -51,25 +51,20 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
             (!isNew || s.IsNew) &&
             // Like the game: Sou-uchi charts only for players who turned them on (Profile › Show Sou-uchi songs).
             (user.DisplaySouUchi || !s.IsSouUchi) &&
+            // The picked difficulty also filters: only songs with that chart (in practice Ura Oni).
+            Stars(s)[diff - 1] > 0 &&
             (query.Length == 0 || s.SongId.ToString() == query ||
              s.SongName.Contains(query, StringComparison.OrdinalIgnoreCase) || s.SongNameEN.Contains(query, StringComparison.OrdinalIgnoreCase)));
-        if (status != "all")
-            list = list.Where(s =>
-            {
-                if (Stars(s)[diff - 1] == 0) return false;
-                var crown = best.TryGetValue((s.SongId, d), out var c) ? c : (CrownType?)null;
-                var battle = ai.GetValueOrDefault((s.SongId, d));
-                return status switch
-                {
-                    "unplayed" => crown is null,
-                    "notcleared" => crown == CrownType.None,
-                    "nofc" => crown is CrownType.None or CrownType.Clear,
-                    "aiunplayed" => battle is null,
-                    "ailost" => battle is { Win: false },
-                    "aiwon" => battle is { Win: true },
-                    _ => true,
-                };
-            });
+        // Your result on that chart: any of the ones picked (none picked: every song).
+        var wanted = (results ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToHashSet();
+        if (wanted.Count > 0)
+            list = list.Where(s => wanted.Contains(ResultOf(s.SongId)));
+        string ResultOf(uint songId)
+        {
+            if (ai.GetValueOrDefault((songId, d)) is var battle && wanted.Any(w => w.StartsWith("ai")))
+                return battle is null ? "aiunplayed" : battle.Win ? "aiwon" : "ailost";
+            return best.TryGetValue((songId, d), out var crown) ? crown.ToString().ToLowerInvariant() : "unplayed";
+        }
         // Most played needs every song's count, not just this page's (read from the SongId/Skipped index).
         var allPlays = sort == "plays" ? await PlayCounts(null) : null;
         list = sort switch

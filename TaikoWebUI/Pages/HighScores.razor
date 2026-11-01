@@ -166,7 +166,7 @@
                             <tr class="cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/40" @onclick="() => Open(r)">
                                 <td class="w-full max-w-0 py-2 pl-4 pr-2">
                                     <span class="flex items-center gap-2">
-                                        <span class="w-1 shrink-0 self-stretch rounded-full" style="background:@GameData.Genre(r.Genre).Bg"></span>
+                                        <GenreBar Genre="r.Genre" />
                                         <span class="min-w-0">
                                             <span class="block truncate">@r.Name</span>
                                             @if (r.NameEn.Length > 0)

@@ -11,20 +11,22 @@ public sealed class SongListState
     public bool New { get; set; }
     /// <summary>The difficulty the results filter and the stars sort refer to (1 Easy … 5 Ura Oni).</summary>
     public int Difficulty { get; set; } = 4;
-    public string Status { get; set; } = "all";
+    /// <summary>Your results at that difficulty to list (none: every song): unplayed or a crown (none, clear, gold,
+    /// dondaful), or in AI Battle aiunplayed / ailost / aiwon.</summary>
+    public HashSet<string> Results { get; } = [];
     public string Sort { get; set; } = "id";
     /// <summary>The sort the other way round (Z to A, fewest stars or plays first, new songs last).</summary>
     public bool Reverse { get; set; }
     public bool AiBattle { get; set; }
     public int Page { get; set; } = 1;
 
-    public int ActiveFilters => new[] { Genre >= 0 || Favorites, New, Status != "all", Sort != "id" || Reverse, AiBattle, Difficulty != 4 }.Count(x => x);
+    public int ActiveFilters => new[] { Genre >= 0 || Favorites, New, Results.Count > 0, Sort != "id" || Reverse, AiBattle, Difficulty != 4 }.Count(x => x);
 
     public void Reset()
     {
         Genre = -1;
         Favorites = New = AiBattle = Reverse = false;
-        Status = "all";
+        Results.Clear();
         Sort = "id";
         Difficulty = 4;
         Page = 1;

@@ -50,7 +50,7 @@
                         <li id="fv-hit-@s.SongId" role="option" aria-selected="@Css.Aria(on)">
                             <button tabindex="-1" @onclick="() => Add(s)"
                                     class="flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left @(on ? "bg-zinc-100 dark:bg-zinc-800" : "hover:bg-zinc-50 dark:hover:bg-zinc-800/60")">
-                                <span class="h-7 w-1 shrink-0 rounded-full" style="background:@GameData.Genre(s.Genre).Bg"></span>
+                                <GenreBar Genre="s.Genre" Class="h-7" />
                                 <span class="min-w-0 flex-1">
                                     <span class="block truncate text-sm">@s.SongName</span>
                                     <span class="block truncate text-xs @Css.Muted">@Subtitle(s) · ID @s.SongId</span>
@@ -96,7 +96,14 @@
                                 class="grid size-9 shrink-0 cursor-grab touch-none place-items-center rounded-lg text-zinc-400 hover:bg-zinc-100 active:cursor-grabbing dark:hover:bg-zinc-800">
                             <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.6" /><circle cx="15" cy="6" r="1.6" /><circle cx="9" cy="12" r="1.6" /><circle cx="15" cy="12" r="1.6" /><circle cx="9" cy="18" r="1.6" /><circle cx="15" cy="18" r="1.6" /></svg>
                         </button>
-                        <span class="h-9 w-1 shrink-0 rounded-full" style="background:@(s is null ? "#a1a1aa" : GameData.Genre(s.Genre).Bg)"></span>
+                        @if (s is null)
+                        {
+                            <span class="h-9 w-1 shrink-0 rounded-full bg-zinc-400"></span>
+                        }
+                        else
+                        {
+                            <GenreBar Genre="s.Genre" Class="h-9" />
+                        }
                         <span class="min-w-0 flex-1">
                             <span class="block truncate text-sm font-medium">@(s?.SongName ?? $"#{id}")</span>
                             <span class="block truncate text-xs @Css.Muted">@(s is null ? Localizer["Not on this server"] : Subtitle(s))</span>

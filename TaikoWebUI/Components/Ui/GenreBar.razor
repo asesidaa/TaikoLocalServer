@@ -1,0 +1,9 @@
+@* A song's genre: a thin bar in its colour beside the title, never a tag. Named for screen readers and on hover, so
+   it isn't colour-only. Stretches to the row by default; Class sets another height. *@
+@{ var (name, bg, _) = GameData.Genre(Genre); }
+<span role="img" aria-label="@name" title="@name" class="w-1 shrink-0 rounded-full @Class" style="background:@bg"></span>
+
+@code {
+    [Parameter, EditorRequired] public SongGenre Genre { get; set; }
+    [Parameter] public string Class { get; set; } = "self-stretch";
+}

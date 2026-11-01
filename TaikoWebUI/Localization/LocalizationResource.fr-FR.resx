@@ -3477,4 +3477,10 @@
   <data name="Reorder" xml:space="preserve">
     <value>Réordonner</value>
   </data>
+  <data name="Your results on {0}" xml:space="preserve">
+    <value>Vos résultats en {0}</value>
+  </data>
+  <data name="Title pages" xml:space="preserve">
+    <value>Pages de titres</value>
+  </data>
 </root>
