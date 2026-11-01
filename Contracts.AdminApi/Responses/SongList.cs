@@ -130,3 +130,41 @@ public class AiSection
     public uint Bad { get; set; }
     public uint Drumroll { get; set; }
 }
+
+/// <summary>
+/// One chart across every player on the server, compared with this player (the Song page's You vs the server, Next goals
+/// and On this server cards). Bests come from the same rows, and ranks from the same order, as the leaderboard.
+/// </summary>
+public class SongChartServerStats
+{
+    public const int BinWidth = 50_000;
+    /// <summary>Players with a best on this chart.</summary>
+    public int Players { get; set; }
+    /// <summary>The averages are over the other players (everyone, for a player who hasn't played it); 0 = nobody.</summary>
+    public double AverageBest { get; set; }
+    /// <summary>Per player, over all their plays: (Good + OK/2) / notes, as on the Stats card; then averaged.</summary>
+    public double AverageAccuracy { get; set; }
+    public double AveragePlays { get; set; }
+    /// <summary>Players per <see cref="BinWidth"/> band of best score, from 0; the last band takes everything above.</summary>
+    public int[] Bins { get; set; } = [];
+    /// <summary>Players by best crown: not cleared, Clear, Full combo, Donderful.</summary>
+    public int[] Crowns { get; set; } = new int[4];
+    public int TotalPlays { get; set; }
+    public DateTime? LastPlayed { get; set; }
+
+    /// <summary>This player's place (ties share it); null = not played.</summary>
+    public int? Rank { get; set; }
+    /// <summary>The share of the other players whose best is lower, 0–100; null = not played or nobody else has.</summary>
+    public double? BetterThan { get; set; }
+    /// <summary>The player just ahead (the lowest best above this one); null at #1.</summary>
+    public ChartNeighbour? Above { get; set; }
+    /// <summary>At #1: the next player down, for the gap.</summary>
+    public ChartNeighbour? RunnerUp { get; set; }
+}
+
+public class ChartNeighbour
+{
+    public string Name { get; set; } = string.Empty;
+    public int Rank { get; set; }
+    public uint Score { get; set; }
+}

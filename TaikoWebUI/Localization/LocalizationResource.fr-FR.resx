@@ -3495,4 +3495,85 @@
   <data name="How many cards a player can add to their account in Settings. Admins adding cards for them aren't limited." xml:space="preserve">
     <value>Nombre de cartes qu'un joueur peut ajouter à son compte dans Paramètres. Les administrateurs qui ajoutent des cartes pour lui ne sont pas limités.</value>
   </data>
+  <data name="You vs the server" xml:space="preserve">
+    <value>Vous face au serveur</value>
+  </data>
+  <data name="Nobody else has played this chart yet." xml:space="preserve">
+    <value>Personne d'autre n'a encore joué ce niveau.</value>
+  </data>
+  <data name="Play it to see how you compare. The server average is &lt;b&gt;{0}&lt;/b&gt;." xml:space="preserve">
+    <value>Jouez-le pour vous comparer. La moyenne du serveur est de &lt;b&gt;{0}&lt;/b&gt;.</value>
+  </data>
+  <data name="&lt;b&gt;The top score&lt;/b&gt; on this server" xml:space="preserve">
+    <value>&lt;b&gt;Le meilleur score&lt;/b&gt; du serveur</value>
+  </data>
+  <data name="&lt;b&gt;Better than {0}%&lt;/b&gt; of players on this chart" xml:space="preserve">
+    <value>&lt;b&gt;Meilleur que {0} %&lt;/b&gt; des joueurs sur ce niveau</value>
+  </data>
+  <data name="{0}% above the average score · #{1} of {2}" xml:space="preserve">
+    <value>{0} % au-dessus de la moyenne · n°{1} sur {2}</value>
+  </data>
+  <data name="{0}% below the average score · #{1} of {2}" xml:space="preserve">
+    <value>{0} % en dessous de la moyenne · n°{1} sur {2}</value>
+  </data>
+  <data name="Server average: {0}" xml:space="preserve">
+    <value>Moyenne du serveur : {0}</value>
+  </data>
+  <data name="Server average {0}" xml:space="preserve">
+    <value>Moyenne du serveur {0}</value>
+  </data>
+  <data name="Best scores on this server" xml:space="preserve">
+    <value>Meilleurs scores du serveur</value>
+  </data>
+  <data name="Best scores in bands of 50,000; you're in the {0} band" xml:space="preserve">
+    <value>Meilleurs scores par tranches de 50 000 ; vous êtes dans la tranche {0}</value>
+  </data>
+  <data name="Next goals" xml:space="preserve">
+    <value>Prochains objectifs</value>
+  </data>
+  <data name="&lt;b&gt;{0}&lt;/b&gt; to pass {1}" xml:space="preserve">
+    <value>&lt;b&gt;{0}&lt;/b&gt; pour dépasser {1}</value>
+  </data>
+  <data name="You're #{0}; {1} is #{2} with {3}" xml:space="preserve">
+    <value>Vous êtes n°{0} ; {1} est n°{2} avec {3}</value>
+  </data>
+  <data name="You're #1 on this server" xml:space="preserve">
+    <value>Vous êtes n°1 du serveur</value>
+  </data>
+  <data name="Hold it: the next best is {0} behind" xml:space="preserve">
+    <value>Gardez-la : le suivant est à {0} derrière</value>
+  </data>
+  <data name="Nobody else has played it yet" xml:space="preserve">
+    <value>Personne d'autre ne l'a encore joué</value>
+  </data>
+  <data name="&lt;b&gt;{0}&lt;/b&gt; to the next score rank" xml:space="preserve">
+    <value>&lt;b&gt;{0}&lt;/b&gt; jusqu'au rang de score suivant</value>
+  </data>
+  <data name="{0} and up" xml:space="preserve">
+    <value>{0} et plus</value>
+  </data>
+  <data name="Clear it" xml:space="preserve">
+    <value>Réussissez-le</value>
+  </data>
+  <data name="Fill the soul gauge past the clear line" xml:space="preserve">
+    <value>Remplissez la jauge d'âme au-delà de la ligne de réussite</value>
+  </data>
+  <data name="Your best play had {0} Bad: hit every note" xml:space="preserve">
+    <value>Votre meilleure partie avait {0} Bad : touchez chaque note</value>
+  </data>
+  <data name="Your best play had {0} Bads: hit every note" xml:space="preserve">
+    <value>Votre meilleure partie avait {0} Bad : touchez chaque note</value>
+  </data>
+  <data name="Your best play had {0} OK: every note a Good" xml:space="preserve">
+    <value>Votre meilleure partie avait {0} OK : que des Good</value>
+  </data>
+  <data name="Your best play had {0} OKs: every note a Good" xml:space="preserve">
+    <value>Votre meilleure partie avait {0} OK : que des Good</value>
+  </data>
+  <data name="On this server" xml:space="preserve">
+    <value>Sur ce serveur</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>Vous</value>
+  </data>
 </root>

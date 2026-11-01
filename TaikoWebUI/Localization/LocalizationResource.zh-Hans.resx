@@ -3495,4 +3495,85 @@
   <data name="How many cards a player can add to their account in Settings. Admins adding cards for them aren't limited." xml:space="preserve">
     <value>玩家可以在设置中添加到自己账户的卡片数量。管理员代为添加时不受限制。</value>
   </data>
+  <data name="You vs the server" xml:space="preserve">
+    <value>你与服务器</value>
+  </data>
+  <data name="Nobody else has played this chart yet." xml:space="preserve">
+    <value>还没有其他人玩过这个谱面。</value>
+  </data>
+  <data name="Play it to see how you compare. The server average is &lt;b&gt;{0}&lt;/b&gt;." xml:space="preserve">
+    <value>玩一次即可比较。服务器平均分为&lt;b&gt;{0}&lt;/b&gt;。</value>
+  </data>
+  <data name="&lt;b&gt;The top score&lt;/b&gt; on this server" xml:space="preserve">
+    <value>本服务器的&lt;b&gt;最高分&lt;/b&gt;</value>
+  </data>
+  <data name="&lt;b&gt;Better than {0}%&lt;/b&gt; of players on this chart" xml:space="preserve">
+    <value>&lt;b&gt;超过{0}%&lt;/b&gt;的玩家</value>
+  </data>
+  <data name="{0}% above the average score · #{1} of {2}" xml:space="preserve">
+    <value>高于平均分{0}% · 第{1}名，共{2}人</value>
+  </data>
+  <data name="{0}% below the average score · #{1} of {2}" xml:space="preserve">
+    <value>低于平均分{0}% · 第{1}名，共{2}人</value>
+  </data>
+  <data name="Server average: {0}" xml:space="preserve">
+    <value>服务器平均：{0}</value>
+  </data>
+  <data name="Server average {0}" xml:space="preserve">
+    <value>服务器平均 {0}</value>
+  </data>
+  <data name="Best scores on this server" xml:space="preserve">
+    <value>本服务器的最佳成绩</value>
+  </data>
+  <data name="Best scores in bands of 50,000; you're in the {0} band" xml:space="preserve">
+    <value>以50,000分为一档的最佳成绩；你在{0}档</value>
+  </data>
+  <data name="Next goals" xml:space="preserve">
+    <value>下一个目标</value>
+  </data>
+  <data name="&lt;b&gt;{0}&lt;/b&gt; to pass {1}" xml:space="preserve">
+    <value>&lt;b&gt;{0}&lt;/b&gt;即可超过{1}</value>
+  </data>
+  <data name="You're #{0}; {1} is #{2} with {3}" xml:space="preserve">
+    <value>你是第{0}名；{1}以{3}排第{2}名</value>
+  </data>
+  <data name="You're #1 on this server" xml:space="preserve">
+    <value>你是本服务器第1名</value>
+  </data>
+  <data name="Hold it: the next best is {0} behind" xml:space="preserve">
+    <value>保持住：第二名落后{0}</value>
+  </data>
+  <data name="Nobody else has played it yet" xml:space="preserve">
+    <value>还没有其他人玩过</value>
+  </data>
+  <data name="&lt;b&gt;{0}&lt;/b&gt; to the next score rank" xml:space="preserve">
+    <value>距下一个分数评级&lt;b&gt;{0}&lt;/b&gt;</value>
+  </data>
+  <data name="{0} and up" xml:space="preserve">
+    <value>{0}及以上</value>
+  </data>
+  <data name="Clear it" xml:space="preserve">
+    <value>通关它</value>
+  </data>
+  <data name="Fill the soul gauge past the clear line" xml:space="preserve">
+    <value>让魂槽超过通关线</value>
+  </data>
+  <data name="Your best play had {0} Bad: hit every note" xml:space="preserve">
+    <value>最佳一局有{0}个不可：打中每个音符</value>
+  </data>
+  <data name="Your best play had {0} Bads: hit every note" xml:space="preserve">
+    <value>最佳一局有{0}个不可：打中每个音符</value>
+  </data>
+  <data name="Your best play had {0} OK: every note a Good" xml:space="preserve">
+    <value>最佳一局有{0}个可：每个音符都打出良</value>
+  </data>
+  <data name="Your best play had {0} OKs: every note a Good" xml:space="preserve">
+    <value>最佳一局有{0}个可：每个音符都打出良</value>
+  </data>
+  <data name="On this server" xml:space="preserve">
+    <value>本服务器</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>你</value>
+  </data>
 </root>

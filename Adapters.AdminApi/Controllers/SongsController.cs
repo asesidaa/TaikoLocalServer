@@ -143,6 +143,65 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         };
     }
 
+    /// <summary>One chart across every player on the server, compared with this one (see <see cref="SongChartServerStats"/>).</summary>
+    [HttpGet("{baid}/{songId}/Server")]
+    public async Task<ActionResult<SongChartServerStats>> ServerStats(uint baid, uint songId, [FromQuery] int difficulty = 4)
+    {
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
+        if (difficulty is < 1 or > 5) return BadRequest(new { message = "Bad difficulty." });
+
+        var d = (Difficulty)difficulty;
+        var ct = HttpContext.RequestAborted;
+        // One row per player each: their best (the leaderboard's rows) and their play totals.
+        var bests = await context.SongBestData.Where(b => b.SongId == songId && b.Difficulty == d)
+            .Select(b => new { b.Baid, b.BestScore, b.BestCrown }).ToListAsync(ct);
+        var players = await context.SongPlayData.Where(p => p.SongId == songId && p.Difficulty == d && !p.Skipped)
+            .GroupBy(p => p.Baid).Select(g => new
+            {
+                Baid = g.Key, Plays = g.Count(), Good = g.Sum(p => (long)p.GoodCount), Ok = g.Sum(p => (long)p.OkCount),
+                Bad = g.Sum(p => (long)p.MissCount), Last = g.Max(p => p.PlayTime),
+            }).ToListAsync(ct);
+
+        var bins = new int[1_000_000 / SongChartServerStats.BinWidth + 1];
+        var crowns = new int[4];
+        foreach (var b in bests)
+        {
+            bins[Math.Min(bins.Length - 1, (int)(b.BestScore / SongChartServerStats.BinWidth))]++;
+            crowns[Math.Clamp((int)b.BestCrown, 0, 3)]++;
+        }
+        // The averages are everyone else's, so you're compared with the rest of the server.
+        var otherBests = bests.Where(b => b.Baid != baid).ToList();
+        var others = players.Where(p => p.Baid != baid).ToList();
+        var accuracies = others.Where(p => p.Good + p.Ok + p.Bad > 0).Select(p => (p.Good + p.Ok / 2.0) / (p.Good + p.Ok + p.Bad) * 100).ToList();
+        var stats = new SongChartServerStats
+        {
+            Players = bests.Count,
+            AverageBest = otherBests.Count == 0 ? 0 : otherBests.Average(b => (double)b.BestScore),
+            AverageAccuracy = accuracies.Count == 0 ? 0 : accuracies.Average(),
+            AveragePlays = others.Count == 0 ? 0 : others.Average(p => p.Plays),
+            Bins = bins, Crowns = crowns,
+            TotalPlays = players.Sum(p => p.Plays),
+            LastPlayed = players.Count == 0 ? null : players.Max(p => p.Last),
+        };
+
+        if (bests.FirstOrDefault(b => b.Baid == baid) is not { } mine) return stats;
+        int RankOf(uint score) => 1 + bests.Count(b => b.BestScore > score);
+        stats.Rank = RankOf(mine.BestScore);
+        if (bests.Count > 1) stats.BetterThan = bests.Count(b => b.BestScore < mine.BestScore) * 100.0 / (bests.Count - 1);
+        var neighbour = stats.Rank == 1
+            ? bests.Where(b => b.Baid != baid).MaxBy(b => b.BestScore)
+            : bests.Where(b => b.BestScore > mine.BestScore).MinBy(b => b.BestScore);
+        if (neighbour is not null)
+        {
+            var name = await context.UserData.Where(u => u.Baid == neighbour.Baid).Select(u => u.MyDonName).FirstOrDefaultAsync(ct);
+            var n = new ChartNeighbour { Name = string.IsNullOrEmpty(name) ? $"#{neighbour.Baid}" : name, Rank = RankOf(neighbour.BestScore), Score = neighbour.BestScore };
+            if (stats.Rank == 1) stats.RunnerUp = n;
+            else stats.Above = n;
+        }
+        return stats;
+    }
+
     /// <summary>Every player's plays per song (skipped songs don't count), for <paramref name="songs"/> or every song.</summary>
     private Task<Dictionary<uint, int>> PlayCounts(List<uint>? songs) =>
         context.SongPlayData.Where(p => (songs == null || songs.Contains(p.SongId)) && !p.Skipped)

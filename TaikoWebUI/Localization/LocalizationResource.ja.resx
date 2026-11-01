@@ -3495,4 +3495,85 @@
   <data name="How many cards a player can add to their account in Settings. Admins adding cards for them aren't limited." xml:space="preserve">
     <value>プレイヤーが設定から自分のアカウントに追加できるカードの数です。管理者が代わりに追加する場合は制限されません。</value>
   </data>
+  <data name="You vs the server" xml:space="preserve">
+    <value>サーバー内での比較</value>
+  </data>
+  <data name="Nobody else has played this chart yet." xml:space="preserve">
+    <value>まだ他に誰もこの譜面をプレイしていません。</value>
+  </data>
+  <data name="Play it to see how you compare. The server average is &lt;b&gt;{0}&lt;/b&gt;." xml:space="preserve">
+    <value>プレイすると比較できます。サーバーの平均は&lt;b&gt;{0}&lt;/b&gt;です。</value>
+  </data>
+  <data name="&lt;b&gt;The top score&lt;/b&gt; on this server" xml:space="preserve">
+    <value>このサーバーで&lt;b&gt;トップのスコア&lt;/b&gt;</value>
+  </data>
+  <data name="&lt;b&gt;Better than {0}%&lt;/b&gt; of players on this chart" xml:space="preserve">
+    <value>この譜面のプレイヤーの&lt;b&gt;{0}%より上&lt;/b&gt;</value>
+  </data>
+  <data name="{0}% above the average score · #{1} of {2}" xml:space="preserve">
+    <value>平均スコアより{0}%上 · {2}人中{1}位</value>
+  </data>
+  <data name="{0}% below the average score · #{1} of {2}" xml:space="preserve">
+    <value>平均スコアより{0}%下 · {2}人中{1}位</value>
+  </data>
+  <data name="Server average: {0}" xml:space="preserve">
+    <value>サーバー平均：{0}</value>
+  </data>
+  <data name="Server average {0}" xml:space="preserve">
+    <value>サーバー平均 {0}</value>
+  </data>
+  <data name="Best scores on this server" xml:space="preserve">
+    <value>サーバー内のベストスコア</value>
+  </data>
+  <data name="Best scores in bands of 50,000; you're in the {0} band" xml:space="preserve">
+    <value>50,000点ごとのベストスコア。あなたは{0}の帯です</value>
+  </data>
+  <data name="Next goals" xml:space="preserve">
+    <value>次の目標</value>
+  </data>
+  <data name="&lt;b&gt;{0}&lt;/b&gt; to pass {1}" xml:space="preserve">
+    <value>&lt;b&gt;{0}&lt;/b&gt;で{1}を抜けます</value>
+  </data>
+  <data name="You're #{0}; {1} is #{2} with {3}" xml:space="preserve">
+    <value>あなたは{0}位。{1}は{3}で{2}位</value>
+  </data>
+  <data name="You're #1 on this server" xml:space="preserve">
+    <value>このサーバーで1位です</value>
+  </data>
+  <data name="Hold it: the next best is {0} behind" xml:space="preserve">
+    <value>キープしよう：2位とは{0}点差</value>
+  </data>
+  <data name="Nobody else has played it yet" xml:space="preserve">
+    <value>まだ他に誰もプレイしていません</value>
+  </data>
+  <data name="&lt;b&gt;{0}&lt;/b&gt; to the next score rank" xml:space="preserve">
+    <value>次のスコアランクまで&lt;b&gt;{0}&lt;/b&gt;</value>
+  </data>
+  <data name="{0} and up" xml:space="preserve">
+    <value>{0}以上</value>
+  </data>
+  <data name="Clear it" xml:space="preserve">
+    <value>クリアしよう</value>
+  </data>
+  <data name="Fill the soul gauge past the clear line" xml:space="preserve">
+    <value>魂ゲージをクリアラインより上に</value>
+  </data>
+  <data name="Your best play had {0} Bad: hit every note" xml:space="preserve">
+    <value>ベストプレイは不可{0}：全ての音符を叩こう</value>
+  </data>
+  <data name="Your best play had {0} Bads: hit every note" xml:space="preserve">
+    <value>ベストプレイは不可{0}：全ての音符を叩こう</value>
+  </data>
+  <data name="Your best play had {0} OK: every note a Good" xml:space="preserve">
+    <value>ベストプレイは可{0}：全て良を目指そう</value>
+  </data>
+  <data name="Your best play had {0} OKs: every note a Good" xml:space="preserve">
+    <value>ベストプレイは可{0}：全て良を目指そう</value>
+  </data>
+  <data name="On this server" xml:space="preserve">
+    <value>このサーバーでは</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>あなた</value>
+  </data>
 </root>

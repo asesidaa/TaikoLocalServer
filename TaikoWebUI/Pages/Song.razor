@@ -95,6 +95,11 @@ else
                     }
                 </section>
 
+                @if (server is not null)
+                {
+                    @VsServerCard(server, summary, best)
+                }
+
                 @if (summary is not null && chart is not null)
                 {
                     @StatsCard(summary)
@@ -111,6 +116,10 @@ else
 
             <div class="space-y-4">
                 <section class="@Css.Card p-5">@AiCard(chart)</section>
+                @if (server is not null && best is not null && summary is not null)
+                {
+                    @GoalsCard(server, best, summary.TopCrown)
+                }
                 <section class="@Css.Card p-5">
                     <div class="flex items-baseline justify-between gap-2">
                         <h2 class="font-semibold">@Localizer["Leaderboard"]</h2>
@@ -154,6 +163,10 @@ else
                         <Pager Current="board.CurrentPage" Total="board.TotalPages" OnPage="LoadBoard" Label="@Localizer["Leaderboard pages"]" Class="mt-3" />
                     }
                 </section>
+                @if (server is { Players: > 0 })
+                {
+                    @ServerCard(server, summary?.TopCrown)
+                }
             </div>
         </div>
     </div>
@@ -173,6 +186,8 @@ else
     private Difficulty difficulty = Difficulty.Oni;
     // The play history card's current page, fetched from the server (a player can have thousands of plays).
     private SongPlaysPage? history;
+    // This chart across every player (You vs the server, Next goals, On this server).
+    private SongChartServerStats? server;
     private bool missing;
 
     private SongChart? Chart => song?.Charts.FirstOrDefault(c => c.Difficulty == difficulty);
@@ -196,7 +211,7 @@ else
         difficulty = song.Charts.Any(c => c.Difficulty == wanted) ? wanted
             : song.Charts.Any(c => c.Difficulty == Difficulty.Oni) ? Difficulty.Oni
             : song.Charts.LastOrDefault()?.Difficulty ?? Difficulty.Oni;
-        await Task.WhenAll(LoadBoard(1), LoadHistory(1));
+        await Task.WhenAll(LoadBoard(1), LoadHistory(1), LoadServer());
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
@@ -206,7 +221,15 @@ else
         difficulty = d;
         board = null;
         history = null;
-        await Task.WhenAll(LoadBoard(1), LoadHistory(1));
+        server = null;
+        await Task.WhenAll(LoadBoard(1), LoadHistory(1), LoadServer());
+    }
+
+    private async Task LoadServer()
+    {
+        var d = difficulty;
+        var result = await Client.GetFromJsonAsync<SongChartServerStats>($"api/Songs/{Baid}/{SongId}/Server?difficulty={(int)d}");
+        if (d == difficulty) server = result;
     }
 
     private async Task LoadBoard(int page) =>
@@ -397,6 +420,207 @@ else
             <p class="mt-2 rounded-xl border border-dashed border-zinc-200 px-3 py-4 text-center text-sm @Css.Muted dark:border-zinc-700">@string.Format(Localizer["Not played in AI Battle on {0} yet."], name)</p>
         }
     };
+
+    // ---- This chart across the server ----
+
+    // The game's score ranks, from the lowest threshold up.
+    private static readonly (uint Score, ScoreRank Rank)[] RankSteps =
+    [
+        (500_000, ScoreRank.White), (600_000, ScoreRank.Bronze), (700_000, ScoreRank.Silver), (800_000, ScoreRank.Gold),
+        (900_000, ScoreRank.Sakura), (950_000, ScoreRank.Purple), (1_000_000, ScoreRank.Dondaful),
+    ];
+
+    private static readonly (CrownType Crown, string Name, string Color)[] ServerCrowns =
+        [(CrownType.None, "Not cleared", "#a1a1aa"), (CrownType.Clear, "Clear", "#60a5fa"), (CrownType.Gold, "Full combo", "#f59e0b"), (CrownType.Dondaful, "Donderful combo", "#f84828")];
+
+    private static string Signed(double v, string format = "N0") => (v >= 0 ? "+" : "−") + Math.Abs(v).ToString(format);
+
+    // Your value as a fill, the others' average as a tick; Plays is neutral (playing less isn't worse).
+    private RenderFragment Bullet(string label, double mine, double average, double max, Func<double, string> fmt, bool neutral = false) => __builder =>
+    {
+        var delta = mine - average;
+        double Pos(double v) => Math.Clamp(v / max * 100, 0, 100);
+        <div>
+            <div class="flex items-baseline justify-between text-sm">
+                <span>@label</span>
+                <span class="tabular-nums">
+                    <b>@fmt(mine)</b>
+                    <span class="text-xs @(neutral ? Css.Muted : delta >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400")">@(neutral ? "" : delta >= 0 ? "▲ " : "▼ ")@((delta >= 0 ? "+" : "−") + fmt(Math.Abs(delta)))</span>
+                </span>
+            </div>
+            <div class="relative mt-1.5 h-2 rounded-full bg-zinc-100 dark:bg-zinc-800">
+                <span class="absolute inset-y-0 left-0 rounded-full bg-primary-500" style="width:@Pos(mine).ToString("0.##", CultureInfo.InvariantCulture)%"></span>
+                <span class="absolute -inset-y-1 w-0.5 rounded-full bg-zinc-900 dark:bg-zinc-100" style="left:@Pos(average).ToString("0.##", CultureInfo.InvariantCulture)%"
+                      title="@string.Format(Localizer["Server average: {0}"], fmt(average))"></span>
+            </div>
+            <p class="mt-1 text-xs @Css.Muted">@string.Format(Localizer["Server average {0}"], fmt(average))</p>
+        </div>
+    };
+
+    private RenderFragment VsServerCard(SongChartServerStats s, SongChartSummary? mine, SongChartPlay? best) => __builder =>
+    {
+        var others = s.Players - (s.Rank is null ? 0 : 1);
+        <section class="@Css.Card p-5">
+            <div class="flex items-baseline justify-between gap-2">
+                <h2 class="font-semibold">@Localizer["You vs the server"]</h2>
+                <span class="text-xs @Css.Muted">@string.Format(Localizer[s.Players == 1 ? "{0} player" : "{0} players"], s.Players.ToString("N0"))</span>
+            </div>
+            @if (others == 0)
+            {
+                <p class="mt-3 text-sm @Css.Muted">@Localizer[s.Players == 0 ? "Nobody has played this chart yet." : "Nobody else has played this chart yet."]</p>
+            }
+            else if (best is null || mine is null || s.Rank is not { } rank)
+            {
+                <p class="mt-3 text-sm @Css.Muted">@((MarkupString)string.Format(Localizer["Play it to see how you compare. The server average is <b>{0}</b>."], Math.Round(s.AverageBest).ToString("N0")))</p>
+            }
+            else
+            {
+                var rel = s.AverageBest > 0 ? (best.Score - s.AverageBest) / s.AverageBest * 100 : 0;
+                long notes = Math.Max(1, mine.Good + mine.Ok + mine.Bad);
+                var accuracy = (mine.Good + mine.Ok / 2.0) / notes * 100;
+                <p class="mt-3 text-lg">@((MarkupString)(rank == 1 ? Localizer["<b>The top score</b> on this server"].Value
+                    : string.Format(Localizer["<b>Better than {0}%</b> of players on this chart"], Math.Round(s.BetterThan ?? 0))))</p>
+                <p class="text-sm @Css.Muted">@string.Format(Localizer[rel >= 0 ? "{0}% above the average score · #{1} of {2}" : "{0}% below the average score · #{1} of {2}"], Math.Abs(rel).ToString("0.0"), rank, s.Players.ToString("N0"))</p>
+                <div class="mt-4 space-y-3">
+                    @Bullet(Localizer["Score"], best.Score, s.AverageBest, 1_000_000, v => Math.Round(v).ToString("N0"))
+                    @Bullet(Localizer["Accuracy"], accuracy, s.AverageAccuracy, 100, v => v.ToString("0.0") + "%")
+                    @Bullet(Localizer["Plays"], mine.Plays, s.AveragePlays, Math.Max(mine.Plays, s.AveragePlays) * 1.15, v => Math.Round(v).ToString("N0"), neutral: true)
+                </div>
+                @Histogram(s, best.Score)
+            }
+        </section>
+    };
+
+    // Every player's best in 50,000 bands, from the lowest band anyone is in; yours is filled.
+    private RenderFragment Histogram(SongChartServerStats s, uint score) => __builder =>
+    {
+        var width = SongChartServerStats.BinWidth;
+        var first = Array.FindIndex(s.Bins, n => n > 0);
+        var mineAt = Math.Min(s.Bins.Length - 1, (int)(score / width));
+        var peak = Math.Max(1, s.Bins.Max());
+        <div class="mt-4">
+            <p class="text-xs @Css.Muted">@Localizer["Best scores on this server"]</p>
+            <div class="mt-2 flex h-20 items-end gap-0.5" role="img" aria-label="@string.Format(Localizer["Best scores in bands of 50,000; you're in the {0} band"], (mineAt * width).ToString("N0"))">
+                @for (var i = first; i < s.Bins.Length; i++)
+                {
+                    var n = s.Bins[i];
+                    var range = i == s.Bins.Length - 1 ? $"{i * width:N0}+" : $"{i * width:N0}–{(i + 1) * width - 1:N0}";
+                    <span title="@($"{range}: {string.Format(Localizer[n == 1 ? "{0} player" : "{0} players"], n)}{(i == mineAt ? " " + Localizer["(you)"] : "")}")"
+                          class="flex-1 rounded-t-[4px] @(i == mineAt ? "bg-primary-500" : "bg-zinc-200 dark:bg-zinc-700")"
+                          style="height:@(Math.Max(4, n * 100.0 / peak).ToString("0.#", CultureInfo.InvariantCulture))%"></span>
+                }
+            </div>
+            <div class="mt-1 flex justify-between font-mono text-[11px] @Css.Muted"><span>@((first * width / 1000).ToString("N0"))k</span><span>@(((s.Bins.Length - 1) * width / 1000).ToString("N0"))k+</span></div>
+        </div>
+    };
+
+    // The nearest leaderboard place, score rank and crown, each with how far there is to go.
+    private RenderFragment GoalsCard(SongChartServerStats s, SongChartPlay best, CrownType crown) => __builder =>
+    {
+        var next = RankSteps.Cast<(uint Score, ScoreRank Rank)?>().FirstOrDefault(r => r!.Value.Score > best.Score);
+        <section class="@Css.Card p-5">
+            <h2 class="font-semibold">@Localizer["Next goals"]</h2>
+            <ul class="mt-1 divide-y divide-zinc-100 dark:divide-zinc-800">
+                @if (s.Above is { } above)
+                {
+                    @Goal(@<span class="grid size-9 shrink-0 place-items-center rounded-full bg-zinc-100 text-xs font-semibold tabular-nums dark:bg-zinc-800">#@above.Rank</span>,
+                          string.Format(Localizer["<b>{0}</b> to pass {1}"], Signed(above.Score - best.Score + 1.0), System.Net.WebUtility.HtmlEncode(above.Name)),
+                          string.Format(Localizer["You're #{0}; {1} is #{2} with {3}"], s.Rank, above.Name, above.Rank, above.Score.ToString("N0")),
+                          best.Score * 100.0 / (above.Score + 1))
+                }
+                else if (s.Rank == 1)
+                {
+                    @Goal(@<span class="grid size-9 shrink-0 place-items-center rounded-full bg-amber-400/20 text-amber-600 dark:text-amber-400"><Icon Name="crown" /></span>,
+                          System.Net.WebUtility.HtmlEncode(Localizer["You're #1 on this server"]),
+                          s.RunnerUp is { } second ? string.Format(Localizer["Hold it: the next best is {0} behind"], (best.Score - second.Score).ToString("N0")) : Localizer["Nobody else has played it yet"],
+                          null)
+                }
+                @if (next is { } n)
+                {
+                    var from = RankSteps.Where(r => r.Score < n.Score).Select(r => r.Score).DefaultIfEmpty(0u).Max();
+                    @Goal(@<img data-asset="@GameData.RankIconLarge(n.Rank)" data-asset-fallback="@GameData.RankIcon(n.Rank)" alt="" class="size-9 shrink-0 object-contain" />,
+                          string.Format(Localizer["<b>{0}</b> to the next score rank"], Signed(n.Score - (double)best.Score)),
+                          string.Format(Localizer["{0} and up"], n.Score.ToString("N0")),
+                          (best.Score - (double)from) * 100 / (n.Score - from))
+                }
+                @if (crown < CrownType.Dondaful)
+                {
+                    var target = crown + 1;
+                    var (title, sub) = crown switch
+                    {
+                        CrownType.None => (Localizer["Clear it"].Value, Localizer["Fill the soul gauge past the clear line"].Value),
+                        CrownType.Clear => (Localizer["Full combo"].Value, string.Format(Localizer[best.Bad == 1 ? "Your best play had {0} Bad: hit every note" : "Your best play had {0} Bads: hit every note"], best.Bad)),
+                        _ => (Localizer["Donderful combo"].Value, string.Format(Localizer[best.Ok == 1 ? "Your best play had {0} OK: every note a Good" : "Your best play had {0} OKs: every note a Good"], best.Ok)),
+                    };
+                    @Goal(@<img data-asset="@GameData.CrownIconLarge(target)" data-asset-fallback="@GameData.CrownIcon(target)" alt="" class="size-9 shrink-0 object-contain" />,
+                          System.Net.WebUtility.HtmlEncode(title), sub, null)
+                }
+            </ul>
+        </section>
+    };
+
+    // titleHtml is markup (it bolds the number); callers encode anything from players.
+    private RenderFragment Goal(RenderFragment icon, string titleHtml, string sub, double? progress) => __builder =>
+    {
+        <li class="flex items-center gap-3 py-2.5">
+            @icon
+            <span class="min-w-0 flex-1">
+                <span class="block text-sm">@((MarkupString)titleHtml)</span>
+                <span class="block text-xs @Css.Muted">@sub</span>
+                @if (progress is { } p)
+                {
+                    <span class="mt-1.5 block h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                        <span class="block h-full rounded-full bg-primary-500" style="width:@(Math.Clamp(p, 3, 100).ToString("0.#", CultureInfo.InvariantCulture))%"></span>
+                    </span>
+                }
+            </span>
+        </li>
+    };
+
+    // Players by best crown, plus totals.
+    private RenderFragment ServerCard(SongChartServerStats s, CrownType? yours) => __builder =>
+    {
+        double Pct(int n) => n * 100.0 / s.Players;
+        <section class="@Css.Card p-5">
+            <h2 class="font-semibold">@Localizer["On this server"]</h2>
+            <div class="mt-3 flex h-3 gap-0.5 overflow-hidden rounded-full" role="img"
+                 aria-label="@string.Join(", ", ServerCrowns.Select(c => $"{Localizer[c.Name]}: {s.Crowns[(int)c.Crown]}"))">
+                @foreach (var (c, name, color) in ServerCrowns.Where(c => s.Crowns[(int)c.Crown] > 0))
+                {
+                    <span title="@($"{Localizer[name]}: {s.Crowns[(int)c]} / {s.Players}")" style="width:@Pct(s.Crowns[(int)c]).ToString("0.###", CultureInfo.InvariantCulture)%;background:@color"></span>
+                }
+            </div>
+            <ul class="mt-3 space-y-1.5 text-sm">
+                @foreach (var (c, name, color) in ServerCrowns)
+                {
+                    var n = s.Crowns[(int)c];
+                    <li class="flex items-center gap-2">
+                        <span class="h-3 w-1 rounded-full" style="background:@color"></span>
+                        <img data-asset="@GameData.CrownIcon(c)" alt="" class="size-5 object-contain" />
+                        <span class="flex-1">@Localizer[name]
+                            @if (yours == c)
+                            {
+                                <span class="ml-1 rounded-full bg-primary-500/10 px-1.5 text-[11px] font-medium text-primary-700 dark:text-primary-300">@Localizer["You"]</span>
+                            }
+                        </span>
+                        <span class="tabular-nums">@n.ToString("N0")</span>
+                        <span class="w-10 text-right text-xs tabular-nums @Css.Muted">@Math.Round(Pct(n))%</span>
+                    </li>
+                }
+            </ul>
+            <div class="mt-4 grid grid-cols-3 gap-2">
+                @Tile(Localizer["Clear rate"], $"{Math.Round(Pct(s.Players - s.Crowns[0]))}%")
+                @Tile(Localizer["Plays"], s.TotalPlays.ToString("N0"))
+                @Tile(Localizer["Last played"], s.LastPlayed is { } t ? Ago(t) : "—")
+            </div>
+        </section>
+    };
+
+    private string Ago(DateTime t)
+    {
+        var days = (DateTime.Now.Date - t.Date).Days;
+        return days <= 0 ? Localizer["Today"] : days == 1 ? Localizer["Yesterday"] : days < 30 ? string.Format(Localizer["{0} days ago"], days) : t.ToString("d MMM yyyy");
+    }
 
     private RenderFragment BoardRow(SongLeaderboard r, bool me) => __builder =>
     {
