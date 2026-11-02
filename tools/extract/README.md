@@ -167,6 +167,8 @@ The game's shaders are `NSP3` files: compiled RSX vertex and fragment programs w
 
 `alphaMode` follows the material (blend factors set: `BLEND`; alpha test: `MASK` with the reference / 255 as `alphaCutoff`; otherwise `OPAQUE`), not the texture's alpha. The default head's 4-vertex quad has a blank texture and draws nothing.
 
+The thin black lines where the rims meet the barrel and the skin come, as far as the data shows, from `outline_post`, a full-screen pass over the frame (a `transform` matrix, `texture0`, `thickness`). Its nine taps read only the frame's alpha (each writes `.w`), offset by `thickness`, with inline constants 0.7 and 40.0, and its colour is black. `color_change` writes the mask texture's alpha into the frame, and the masks' alpha ramps sit on those boundaries, so the filter draws lines there (inferred: an alpha edge filter). `black_line` outputs exactly `(0, 0, 0)` with the texture's alpha and a `KIL` on a condition from the normal; its width is the run-time `param` (default `1,1,1,0`). No width, depth state or draw order is in the NUD.
+
 ### The don rig and animations (`don3d/ani/*.bin`, `src/ani.rs`)
 
 Namco's own format, worked out from the data. A file is a big-endian f32 frame count, then that many frames of 98 vec3s (1,176 bytes); `don_bind.bin` is a 2-frame file whose first frame is the bind pose. Every model uses one 39-bone rig, so the slots are fixed (t translation, r rotation, s scale):
