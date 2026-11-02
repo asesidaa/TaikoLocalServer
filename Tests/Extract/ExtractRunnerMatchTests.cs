@@ -17,6 +17,17 @@ public sealed class ExtractRunnerMatchTests
     [Fact]
     public void Movie_ByNameOnly() => Assert.True(ExtractRunner.Match(Inputs, "Data/x64/movie/mv_01.usm"));
 
+    // An older game's title names sit in nutdata/<pack>/<nn>/title_name/ (extract --inputs --era).
+    private static readonly ExtractInputs Ac15 = new(["data/config/*/musicinfo.xml"], ["data/nutdata/*/*/title_name/"], null);
+
+    [Theory]
+    [InlineData("data/config/ST8100-7/musicinfo.xml", false)]
+    [InlineData("data/nutdata/pack/05/title_name/title_1_9.nut", true)]
+    [InlineData("data/config/musicinfo.xml", null)]
+    [InlineData("data/nutdata/pack/title_name/a.nut", null)]
+    [InlineData("data/nutdata/pack/05/title_name/x/a.nut", null)]
+    public void Wildcard_MatchesOneFolder(string path, bool? expected) => Assert.Equal(expected, ExtractRunner.Match(Ac15, path));
+
     [Theory]
     [InlineData("Data/x64/movie/x/y.usm")]
     [InlineData("Data/x64/datatable/other.bin")]

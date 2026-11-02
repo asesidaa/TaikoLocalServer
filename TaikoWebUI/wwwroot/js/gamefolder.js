@@ -31,10 +31,16 @@ export async function send(input, withMods, progress) {
 
     const sets = withMods && list.mods ? [list, list.mods] : [list];
     // false: send it; true: only its name matters (movies); null: extract doesn't read it.
+    // As ExtractRunner.Match: a * segment matches any one folder name.
+    const covers = (rule, path, namesOnly) => {
+      const r = rule.split("/"), p = path.split("/"), folder = rule.endsWith("/");
+      if (namesOnly || !folder ? p.length !== r.length : p.length < r.length) return false;
+      return r.slice(0, folder ? -1 : undefined).every((s, i) => s === "*" || s === p[i]);
+    };
     const match = path => {
       for (const set of sets) {
-        if (set.files.some(r => r.endsWith("/") ? path.startsWith(r) : path === r)) return false;
-        if (set.names.some(r => path.startsWith(r) && !path.slice(r.length).includes("/"))) return true;
+        if (set.files.some(r => covers(r, path, false))) return false;
+        if (set.names.some(r => covers(r, path, true))) return true;
       }
       return null;
     };

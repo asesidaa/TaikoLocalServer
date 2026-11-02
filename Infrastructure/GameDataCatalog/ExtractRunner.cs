@@ -131,10 +131,22 @@ public sealed class ExtractRunner(IOptions<ServerSettings> settings, IGameDataCa
         foreach (var set in new[] { inputs, inputs.Mods })
         {
             if (set is null) continue;
-            if (set.Files.Any(rule => rule.EndsWith('/') ? path.StartsWith(rule, StringComparison.Ordinal) : path == rule)) return false;
-            if (set.Names.Any(rule => path.StartsWith(rule, StringComparison.Ordinal) && !path[rule.Length..].Contains('/'))) return true;
+            if (set.Files.Any(rule => Covers(rule, path, false))) return false;
+            if (set.Names.Any(rule => Covers(rule, path, true))) return true;
         }
         return null;
+    }
+
+    // A file rule, a folder rule (ending in /: everything under it, or with namesOnly only its direct children). A *
+    // segment matches any one folder name (the older games' nutdata/<…>/title_name/ folders). Mirrored in gamefolder.js.
+    private static bool Covers(string rule, string path, bool namesOnly)
+    {
+        string[] r = rule.Split('/'), p = path.Split('/');
+        var folder = rule.EndsWith('/');
+        if (namesOnly || !folder ? p.Length != r.Length : p.Length < r.Length) return false;
+        for (var i = 0; i < (folder ? r.Length - 1 : r.Length); i++)
+            if (r[i] != "*" && r[i] != p[i]) return false;
+        return true;
     }
 
     private async Task RunAsync(ProcessStartInfo info, bool uploaded)

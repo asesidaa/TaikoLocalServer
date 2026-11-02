@@ -334,6 +334,8 @@ dependencies = [
  "anyhow",
  "binrw 0.15.2",
  "clap",
+ "crc32fast",
+ "flate2",
  "glam",
  "image",
  "image_dds",

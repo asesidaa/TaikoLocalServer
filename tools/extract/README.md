@@ -33,6 +33,27 @@ It is safe to re-run, for example after a game update. Outputs that are already 
 | `movie/<8-digit id>.wmv` | `game_data/movies.json` | The ids of the attract movies (not the videos), so Server Management › Cabinets offers them instead of asking for numbers |
 | `lumen/000_default/common/player_board.{nulm,nutexb}` | `game_data/scoreboard/panel_<difficulty>.png`, `digit_ns_0N.png`, `scoreboard.json` | The Profile achievement panel ("scoreboard") per difficulty, plus the game's counter digit glyphs |
 
+## Older games (`--era`, `src/ac15.rs`, `src/source.rs`)
+
+```bash
+extract --era green --game "D:\RPCS3\Taiko no Tatsujin Green Version (SBWY 13.02)"
+extract --era yellow --game "D:\Taiko no Tatsujin - Yellow Version.zip"
+```
+
+`--era` is one of `green`, `blue`, `yellow`, `red`, `white`, `murasaki`, `kimidori`, `momoiro`. `--game` is the RPCS3 install (or anything down to its `dev_hdd0/game/SCEEXE000/USRDIR/data`, also one folder deeper, like Blue's `[ARCADE SYSTEM 357] … ReadyToPlay.7z` folder), or a `.zip` of it. Zips are read in place, without unpacking: stored and deflate members, zip64, every member CRC-checked. `--inputs --era <era>` lists what it reads, relative to `USRDIR` (paths start with `data/`).
+
+| From `USRDIR/data/` | To `<out>/data/<era>/data/` | |
+| --- | --- | --- |
+| `config/<id>/{musicinfo,musicmedleyinfo}.xml`, plus `defmusic.bin` (all but Green and Blue), `present.xml` and `spacialbaid.xml` (White, Murasaki, Kimidori) | same path | Kimidori and Momoiro keep them at the top of `data`. `<id>` is Green `S11100-1`, Blue `S10100-1`, Yellow `ST9100-1`, Red `ST8100-1`, White `ST7100-1`, Murasaki `ST6100-1` |
+| `config/S10100-1/battle/*.xml` | same | Blue's battle mode, when the dump has it (11.01BF doesn't) |
+| `config/S11100-1/rewardtitlefiltering.xml`, `nutdata/{cos,title,tone}_name/nutdatapack.ndp` | same | Green's name packs (`GreenCatalogExtractor`) |
+| `fumen/tuning.bin` | same | |
+| `movie/*`, `don3d/{cos,face,full/cos,full/face,parts/*}/*`, `nutdata/**/{title,tone}_name/*` | same, **empty** | Only the names are read: attract movie ids, and the costume, title and tone ids (`Ac15Don3dDirScanner`, `Ac15CustomizationSourceParser`). An existing file is never replaced |
+
+That's 1.6 MB (Momoiro) to 8.3 MB (Green). When the game has only another variant of the config id, it's used and written under the id the server reads: Red 10.01 ships `ST8100-7` only (an early Red, 25 Dojo courses). The White zip we have is an incomplete dump (no `config`, `tuning.bin`, `don3d` or `lm_data`), so White reports them missing.
+
+In `--inputs` rules a `*` segment matches any one folder name (`data/config/*/musicinfo.xml`, `data/nutdata/*/*/title_name/`); `ExtractRunner.Match` and the WebUI's `gamefolder.js` match the same way.
+
 ## Game UI art (`src/lumen.rs`, `src/ui.rs`)
 
 The game's 2D UI, including the nameplates and the player board, uses Lumen files (`.nulm`, magic `LMB\0`), the Flash-like format the game's 2D UI uses, with its texture atlas in the matching `.nutexb`. `lumen.rs` parses the shapes (textured or solid-colour triangles) and the sprite timelines. It renders a sprite at a frame label by playing its display list up to that frame: depth order, place/move/remove, matrix or position transforms, colour multiply/add, nested sprites at frame 0, and **clip masks** (a placement's clip depth hides deeper objects outside its shape). The tag layout is documented in `docs/webui-refactor-plan.md` §3d.
