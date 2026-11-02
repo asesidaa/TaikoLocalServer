@@ -30,5 +30,8 @@ public class UserDataController : BaseProtocolController<UserDataController>
         {
             UserDataMappers.Apply(modeFlags, response);
         }
+
+        // shortcut: what the cabinet does with the list isn't verified on hardware; drop it here if it misbehaves.
+        response.AryFriendInfoes.AddRange(common.Friends.Select(f => new UserDataResponse.FriendInfo { Baid = f.Baid, FriendName = f.FriendName }));
     }
 }

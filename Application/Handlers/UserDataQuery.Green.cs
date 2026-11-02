@@ -38,6 +38,11 @@ public partial class UserDataQueryHandler
             .ToDictionaryAsync(row => row.DanId, row => row.ClearGrade, cancellationToken);
         var displayDan = Ac15DanHelpers.NormalizeDisplayDan(saveData.DispTaikojukuDan, normalDanGrades, Ac15EraProfiles.Green.Limits);
 
+        var friends = await context.GreenFriends
+            .Where(f => f.Baid == request.Baid)
+            .Select(f => new Ac15FriendInfo(f.FriendBaid, f.FriendName))
+            .ToListAsync(cancellationToken);
+
         var snapshot = Ac15CatalogSnapshotFactory.FromGreen(green);
         var userdata = GreenAc15UserDataAdapter.CreateSnapshot(
             saveData,
@@ -49,7 +54,8 @@ public partial class UserDataQueryHandler
         return response with
         {
             Display = response.Display with { DispTaikojukuDan = GetSafeTaikojukuDanSlot(displayDan) },
-            ModeFlags = new Ac15UserDataModeFlags(saveData.IsDevil, saveData.IsExplain)
+            ModeFlags = new Ac15UserDataModeFlags(saveData.IsDevil, saveData.IsExplain),
+            Friends = friends
         };
     }
 

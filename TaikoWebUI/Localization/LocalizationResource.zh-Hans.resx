@@ -4260,4 +4260,136 @@
   <data name="Save the file first: the live season must be one that's saved." xml:space="preserve">
     <value>请先保存文件：只能把已保存的季度设为当前。</value>
   </data>
+  <data name="Battle mode" xml:space="preserve">
+    <value>对战模式</value>
+  </data>
+  <data name="Stages cleared" xml:space="preserve">
+    <value>已通关关卡</value>
+  </data>
+  <data name="Last stage" xml:space="preserve">
+    <value>最近的关卡</value>
+  </data>
+  <data name="Stage {0}" xml:space="preserve">
+    <value>关卡 {0}</value>
+  </data>
+  <data name="Boss life left: {0}" xml:space="preserve">
+    <value>首领剩余体力：{0}</value>
+  </data>
+  <data name="Partners" xml:space="preserve">
+    <value>伙伴</value>
+  </data>
+  <data name="Battle tokens" xml:space="preserve">
+    <value>对战代币</value>
+  </data>
+  <data name="Stages" xml:space="preserve">
+    <value>关卡</value>
+  </data>
+  <data name="Partner {0}" xml:space="preserve">
+    <value>伙伴 {0}</value>
+  </data>
+  <data name="{0} exp · best DPN {1}" xml:space="preserve">
+    <value>{0} 经验 · 最佳 DPN {1}</value>
+  </data>
+  <data name="Bonds {0} of {1}" xml:space="preserve">
+    <value>羁绊 {0}/{1}</value>
+  </data>
+  <data name="Specials: {0}" xml:space="preserve">
+    <value>必杀技：{0}</value>
+  </data>
+  <data name="Recent battles" xml:space="preserve">
+    <value>最近的对战</value>
+  </data>
+  <data name="No battles yet." xml:space="preserve">
+    <value>还没有对战。</value>
+  </data>
+  <data name="+{0} exp" xml:space="preserve">
+    <value>+{0} 经验</value>
+  </data>
+  <data name="Won" xml:space="preserve">
+    <value>胜</value>
+  </data>
+  <data name="Lost · boss {0} left" xml:space="preserve">
+    <value>负 · 首领剩余 {0}</value>
+  </data>
+  <data name="Lost" xml:space="preserve">
+    <value>负</value>
+  </data>
+  <data name="Training" xml:space="preserve">
+    <value>特训</value>
+  </data>
+  <data name="Training plays don't count towards your scores." xml:space="preserve">
+    <value>特训的游玩不计入成绩。</value>
+  </data>
+  <data name="No training sessions yet." xml:space="preserve">
+    <value>还没有特训记录。</value>
+  </data>
+  <data name="Songs practised" xml:space="preserve">
+    <value>练习过的歌曲</value>
+  </data>
+  <data name="Speed changes" xml:space="preserve">
+    <value>速度调整</value>
+  </data>
+  <data name="Jumps" xml:space="preserve">
+    <value>跳转</value>
+  </data>
+  <data name="{0} speed changes · {1} autoplay · {2} jumps" xml:space="preserve">
+    <value>{0} 次调速 · {1} 次自动 · {2} 次跳转</value>
+  </data>
+  <data name="Ghost battles" xml:space="preserve">
+    <value>幽灵对战</value>
+  </data>
+  <data name="Wins" xml:space="preserve">
+    <value>胜场</value>
+  </data>
+  <data name="Highest level won" xml:space="preserve">
+    <value>获胜的最高等级</value>
+  </data>
+  <data name="Sections won" xml:space="preserve">
+    <value>获胜的段落</value>
+  </data>
+  <data name="Wins by level" xml:space="preserve">
+    <value>各等级胜场</value>
+  </data>
+  <data name="Level {0}" xml:space="preserve">
+    <value>等级 {0}</value>
+  </data>
+  <data name="Section {0}: {1} good, {2} OK, {3} bad, {4} drumroll" xml:space="preserve">
+    <value>段落 {0}：良 {1}、可 {2}、不可 {3}、连打 {4}</value>
+  </data>
+  <data name="W" xml:space="preserve">
+    <value>胜</value>
+  </data>
+  <data name="L" xml:space="preserve">
+    <value>负</value>
+  </data>
+  <data name="Friends" xml:space="preserve">
+    <value>好友</value>
+  </data>
+  <data name="Green's friend list. Changes reach the cabinet on your next card tap." xml:space="preserve">
+    <value>绿版的好友列表。更改会在你下次刷卡时同步到机台。</value>
+  </data>
+  <data name="Add a friend" xml:space="preserve">
+    <value>添加好友</value>
+  </data>
+  <data name="Their 20-digit access code, from their card. They need to have played Green." xml:space="preserve">
+    <value>对方卡上的 20 位访问码。对方需要玩过绿版。</value>
+  </data>
+  <data name="No friends on your Green list yet." xml:space="preserve">
+    <value>你的绿版好友列表还是空的。</value>
+  </data>
+  <data name="last played {0}" xml:space="preserve">
+    <value>最近游玩 {0}</value>
+  </data>
+  <data name="Added. They'll show on the cabinet after your next card tap." xml:space="preserve">
+    <value>已添加。下次刷卡后会显示在机台上。</value>
+  </data>
+  <data name="Stages, partners and your recent battles." xml:space="preserve">
+    <value>关卡、伙伴和最近的对战。</value>
+  </data>
+  <data name="Your practice sessions: songs, speed changes and jumps." xml:space="preserve">
+    <value>你的特训记录：歌曲、调速和跳转。</value>
+  </data>
+  <data name="Wins by ghost level and your recent battles, section by section." xml:space="preserve">
+    <value>按幽灵等级的胜场，以及最近对战的每段结果。</value>
+  </data>
 </root>

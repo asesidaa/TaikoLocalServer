@@ -12,7 +12,11 @@ public sealed record Ac15UserDataResponse
     public Ac15UserDataModeFlags? ModeFlags { get; init; }
     public Ac15UserDataReward? Reward { get; init; }
     public byte[]? HashCrownFlg { get; init; }
+    /// <summary>Green: the player's friend list (GreenFriends, added from the Web UI), sent as ary_friend_info.</summary>
+    public IReadOnlyList<Ac15FriendInfo> Friends { get; init; } = [];
 }
+
+public sealed record Ac15FriendInfo(uint Baid, string FriendName);
 
 public sealed record Ac15UserDataSongFlags
 {

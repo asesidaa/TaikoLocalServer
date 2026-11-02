@@ -1,0 +1,117 @@
+@page "/Users/{baid:int}/Green/Friends"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject PageState Page
+@inject ToastService Toast
+
+<PageTitle>@Localizer["Friends"]</PageTitle>
+@* Green's friend list, the cabinet's own: add someone by the access code on their card, remove them. The cabinet gets the
+   list with your user data on your next card tap. No other game has web Friends, and there are no notifications. *@
+<div class="mx-auto max-w-2xl">
+    <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Friends"]</h1>
+    <GameLine Game="Green" />
+    <p class="mb-5 mt-1 text-sm @Css.Muted">@Localizer["Green's friend list. Changes reach the cabinet on your next card tap."]</p>
+
+    <form class="@Css.Card space-y-3 p-5" @onsubmit="Add" @onsubmit:preventDefault>
+        <h2 class="font-semibold">@Localizer["Add a friend"]</h2>
+        <AccessCodeField @bind-Value="code" />
+        <p class="text-xs @Css.Muted">@Localizer["Their 20-digit access code, from their card. They need to have played Green."]</p>
+        <ErrorBox Message="@error" />
+        <button class="@Css.PrimaryButton" disabled="@(code.Length != 20 || busy)"><Icon Name="plus" />@Localizer["Add"]</button>
+    </form>
+
+    <section class="mt-4">
+        @if (friends is null)
+        {
+            <div class="@Css.Card p-5"><Skeleton /></div>
+        }
+        else if (friends.Count == 0)
+        {
+            <p class="@Css.Card p-6 text-center text-sm @Css.Muted">@Localizer["No friends on your Green list yet."]</p>
+        }
+        else
+        {
+            <ul class="@Css.Card divide-y divide-zinc-100 overflow-hidden dark:divide-zinc-800">
+                @foreach (var f in friends)
+                {
+                    <li class="flex items-center gap-3 px-4 py-3">
+                        <span class="min-w-0 flex-1">
+                            <span class="block truncate text-sm font-medium">@(f.Name.Length > 0 ? f.Name : $"#{f.Baid}")</span>
+                            <span class="block text-xs @Css.Muted">@Localizer["User ID"] @f.Baid@(f.LastPlayed is { } t ? $" · {string.Format(Localizer["last played {0}"], t.ToLocalTime().ToString("d"))}" : "")</span>
+                        </span>
+                        <button class="@Css.GhostButton !px-3 !py-1.5 !text-red-600 dark:!text-red-400" disabled="@busy" @onclick="() => Remove(f)">@Localizer["Remove"]</button>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+</div>
+
+@code {
+    [Parameter] public int Baid { get; set; }
+
+    private List<GreenFriend>? friends;
+    private string code = "";
+    private string? error;
+    private bool busy;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.Set("Green", Localizer["Friends"]);
+        try
+        {
+            friends = await Client.GetFromJsonAsync<List<GreenFriend>>($"api/Green/Friends/{Baid}") ?? [];
+        }
+        catch (HttpRequestException)
+        {
+            friends = [];
+        }
+    }
+
+    private async Task Add()
+    {
+        error = null;
+        busy = true;
+        try
+        {
+            var res = await Client.PostAsJsonAsync($"api/Green/Friends/{Baid}", new AddFriendRequest(code));
+            if (res.IsSuccessStatusCode)
+            {
+                friends = await res.Content.ReadFromJsonAsync<List<GreenFriend>>() ?? friends;
+                code = "";
+                Toast.Show(Localizer["Added. They'll show on the cabinet after your next card tap."]);
+            }
+            else
+            {
+                error = (await res.Content.ReadFromJsonAsync<Dictionary<string, string>>())?.GetValueOrDefault("message") ?? Localizer["Save Failed"];
+            }
+        }
+        catch (Exception e) when (e is HttpRequestException or System.Text.Json.JsonException)
+        {
+            error = Localizer["Save Failed"];
+        }
+        finally
+        {
+            busy = false;
+        }
+    }
+
+    private async Task Remove(GreenFriend f)
+    {
+        busy = true;
+        try
+        {
+            var res = await Client.DeleteAsync($"api/Green/Friends/{Baid}/{f.Baid}");
+            if (res.IsSuccessStatusCode) friends?.Remove(f);
+            else Toast.Show(Localizer["Save Failed"], true);
+        }
+        catch (HttpRequestException)
+        {
+            Toast.Show(Localizer["Save Failed"], true);
+        }
+        finally
+        {
+            busy = false;
+        }
+    }
+}

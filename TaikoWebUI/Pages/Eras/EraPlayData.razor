@@ -28,6 +28,18 @@
                 (ShopLive is { } live ? ((long)live.Earned - live.Spent).ToString("N0") : null, Localizer["Don medals"]),
                 (shop?.Seasons.Sum(x => x.Items.Count(i => i.PurchasedAt is not null)).ToString("N0"), Localizer["items bought"]))
         }
+        @if (GameName == "Blue")
+        {
+            @Card(EraPaths.Battle, "medal", Localizer["Battle mode"], Localizer["Stages, partners and your recent battles."])
+        }
+        @if (EraPaths.HasTraining(GameName))
+        {
+            @Card(EraPaths.Training, "rotate", Localizer["Training"], Localizer["Your practice sessions: songs, speed changes and jumps."])
+        }
+        @if (GameName == "Green")
+        {
+            @Card(EraPaths.Ghost, "users", Localizer["Ghost battles"], Localizer["Wins by ghost level and your recent battles, section by section."])
+        }
         @* Stats needs numbers only Nijiiro's server keeps. *@
         <div class="rounded-2xl border border-dashed border-zinc-300 p-5 opacity-70 dark:border-zinc-700">
             <div class="flex items-center gap-2 text-zinc-500"><Icon Name="chart" /><span class="font-semibold">@Localizer["Stats"]</span></div>

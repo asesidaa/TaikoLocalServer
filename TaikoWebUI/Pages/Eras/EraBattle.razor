@@ -1,0 +1,148 @@
+@page "/Users/{baid:int}/{Game}/PlayData/Battle"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject GameDataService GameDataService
+@inject PageState Page
+
+<PageTitle>@Localizer["Battle mode"]</PageTitle>
+@* Blue's Battle mode: the stage grid, the partners and the latest battles. Stages and partners are numbers (no name
+   catalogue yet). *@
+<div class="mx-auto max-w-4xl">
+    <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Battle mode"]</h1>
+    <GameLine Game="@GameName" Class="mb-5" />
+    @if (data is null)
+    {
+        <div class="@Css.Card p-5"><Skeleton /></div>
+    }
+    else
+    {
+        var lastLost = data.Recent.FirstOrDefault() is { Won: false } l ? l : null;
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            @Tile(Localizer["Stages cleared"], data.Cleared.Count.ToString())
+            @Tile(Localizer["Last stage"], data.LastStageId is { } last ? string.Format(Localizer["Stage {0}"], last) : "–",
+                data.LastBossLife is { } life and > 0 ? string.Format(Localizer["Boss life left: {0}"], life) : null)
+            @Tile(Localizer["Partners"], data.Partners.Count.ToString())
+            @Tile(Localizer["Battle tokens"], data.Tokens.Sum(t => (long)t.Value).ToString("N0"))
+        </div>
+
+        <section class="@Css.Card mt-4 p-5">
+            <h2 class="font-semibold">@Localizer["Stages"]</h2>
+            <div class="mt-3 grid grid-cols-10 gap-1.5">
+                @for (uint i = 1; i <= data.StageCount; i++)
+                {
+                    var cleared = data.Cleared.Contains(i);
+                    var open = data.Unlocked.Contains(i);
+                    <span class="@($"grid aspect-square place-items-center rounded-lg text-[11px] font-medium tabular-nums {(cleared ? "bg-primary-500 text-white" : open ? "border-2 border-primary-500 text-primary-700 dark:text-primary-300" : "bg-zinc-100 text-zinc-400 dark:bg-zinc-800")}")"
+                          title="@string.Format(Localizer["Stage {0}"], i)">@i</span>
+                }
+            </div>
+            <p class="mt-3 flex flex-wrap gap-4 text-xs @Css.Muted">
+                <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-primary-500"></span>@Localizer["Cleared"]</span>
+                <span class="flex items-center gap-1.5"><span class="size-3 rounded border-2 border-primary-500"></span>@Localizer["Unlocked"]</span>
+                <span class="flex items-center gap-1.5"><span class="size-3 rounded bg-zinc-200 dark:bg-zinc-700"></span>@Localizer["Locked"]</span>
+            </p>
+        </section>
+
+        @if (data.Partners.Count > 0)
+        {
+            <section class="mt-4">
+                <h2 class="mb-2 text-sm font-semibold">@Localizer["Partners"]</h2>
+                <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    @foreach (var p in data.Partners)
+                    {
+                        <div class="@Css.Card p-4">
+                            <p class="font-semibold">@string.Format(Localizer["Partner {0}"], p.NpcId)</p>
+                            <p class="text-sm @Css.Muted">@string.Format(Localizer["{0} exp · best DPN {1}"], p.Exp.ToString("N0"), p.MaxDpn.ToString("N0"))</p>
+                            <p class="mt-1 text-sm" aria-label="@string.Format(Localizer["Bonds {0} of {1}"], p.Bonds, data.BondsCap ?? p.Bonds)">
+                                <span class="text-primary-500">@(new string('♥', (int)Math.Min(p.Bonds, 20)))</span><span class="text-zinc-300 dark:text-zinc-600">@(new string('♥', (int)Math.Max(0, Math.Min((data.BondsCap ?? p.Bonds) - p.Bonds, 20))))</span>
+                            </p>
+                            @if (p.Specials.Count > 0)
+                            {
+                                <p class="mt-1 text-xs @Css.Muted">@string.Format(Localizer["Specials: {0}"], string.Join(", ", p.Specials))</p>
+                            }
+                        </div>
+                    }
+                </div>
+            </section>
+        }
+
+        <section class="mt-4">
+            <h2 class="mb-2 text-sm font-semibold">@Localizer["Recent battles"]</h2>
+            @if (data.Recent.Count == 0)
+            {
+                <p class="@Css.Card p-5 text-sm @Css.Muted">@Localizer["No battles yet."]</p>
+            }
+            else
+            {
+                <ul class="@Css.Card divide-y divide-zinc-100 overflow-hidden dark:divide-zinc-800">
+                    @foreach (var r in data.Recent)
+                    {
+                        <li class="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2.5 text-sm">
+                            <span class="w-28 shrink-0 text-xs tabular-nums @Css.Muted">@r.At?.ToString("g")</span>
+                            <span class="min-w-0 flex-1">
+                                <span class="block truncate font-medium">@(r.StageId is { } s ? string.Format(Localizer["Stage {0}"], s) : "–") · @SongName(r.SongNo)</span>
+                                <span class="block text-xs @Css.Muted">
+                                    @(r.NpcId is { } n ? string.Format(Localizer["Partner {0}"], n) : "")
+                                    @if (r.Difficulty is >= 1 and <= 5)
+                                    {
+                                        <text> · @GameData.DifficultyName((Difficulty)r.Difficulty.Value)</text>
+                                    }
+                                    @if (r.ExpGained is { } exp)
+                                    {
+                                        <text> · @string.Format(Localizer["+{0} exp"], exp)</text>
+                                    }
+                                    @if (r.Dpn is { } dpn)
+                                    {
+                                        <text> · DPN @dpn</text>
+                                    }
+                                </span>
+                            </span>
+                            <span class="@($"shrink-0 text-xs font-semibold {(r.Won ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400")}")">
+                                @(r.Won ? Localizer["Won"] : r.BossLife is { } left and > 0 ? string.Format(Localizer["Lost · boss {0} left"], left) : Localizer["Lost"])
+                            </span>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+    }
+</div>
+
+@code {
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public string Game { get; set; } = "";
+
+    private string GameName => EraPaths.Older(Game) ?? Game;
+    private BattleResponse? data;
+    private Dictionary<uint, MusicDetail> songs = [];
+
+    private string SongName(uint? id) => id is { } s && songs.TryGetValue(s, out var m) && m.SongName.Length > 0 ? m.SongName : id is { } n ? $"#{n}" : "–";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.SetEraPlayData(GameName, Localizer["Play Data"], Baid, Localizer["Battle mode"]);
+        data = null;
+        try
+        {
+            var response = Client.GetFromJsonAsync<BattleResponse>($"api/Blue/Battle/{Baid}");
+            songs = await GameDataService.GetMusicDetailDictionary("Blue");
+            data = await response;
+        }
+        catch (HttpRequestException)
+        {
+            data = new BattleResponse(10, [], [], null, null, null, [], [], []);
+        }
+    }
+
+    private RenderFragment Tile(string label, string value, string? note = null) => __builder =>
+    {
+        <div class="@Css.Card p-4">
+            <p class="text-xs @Css.Muted">@label</p>
+            <p class="mt-1 text-xl font-semibold tabular-nums">@value</p>
+            @if (note is not null)
+            {
+                <p class="text-xs @Css.Muted">@note</p>
+            }
+        </div>
+    };
+}

@@ -4260,4 +4260,136 @@
   <data name="Save the file first: the live season must be one that's saved." xml:space="preserve">
     <value>Enregistrez d'abord le fichier : la saison en cours doit être enregistrée.</value>
   </data>
+  <data name="Battle mode" xml:space="preserve">
+    <value>Mode combat</value>
+  </data>
+  <data name="Stages cleared" xml:space="preserve">
+    <value>Étapes réussies</value>
+  </data>
+  <data name="Last stage" xml:space="preserve">
+    <value>Dernière étape</value>
+  </data>
+  <data name="Stage {0}" xml:space="preserve">
+    <value>Étape {0}</value>
+  </data>
+  <data name="Boss life left: {0}" xml:space="preserve">
+    <value>Vie restante du boss : {0}</value>
+  </data>
+  <data name="Partners" xml:space="preserve">
+    <value>Partenaires</value>
+  </data>
+  <data name="Battle tokens" xml:space="preserve">
+    <value>Jetons de combat</value>
+  </data>
+  <data name="Stages" xml:space="preserve">
+    <value>Étapes</value>
+  </data>
+  <data name="Partner {0}" xml:space="preserve">
+    <value>Partenaire {0}</value>
+  </data>
+  <data name="{0} exp · best DPN {1}" xml:space="preserve">
+    <value>{0} exp · meilleur DPN {1}</value>
+  </data>
+  <data name="Bonds {0} of {1}" xml:space="preserve">
+    <value>Liens {0} sur {1}</value>
+  </data>
+  <data name="Specials: {0}" xml:space="preserve">
+    <value>Spéciaux : {0}</value>
+  </data>
+  <data name="Recent battles" xml:space="preserve">
+    <value>Combats récents</value>
+  </data>
+  <data name="No battles yet." xml:space="preserve">
+    <value>Aucun combat pour l'instant.</value>
+  </data>
+  <data name="+{0} exp" xml:space="preserve">
+    <value>+{0} exp</value>
+  </data>
+  <data name="Won" xml:space="preserve">
+    <value>Gagné</value>
+  </data>
+  <data name="Lost · boss {0} left" xml:space="preserve">
+    <value>Perdu · boss à {0}</value>
+  </data>
+  <data name="Lost" xml:space="preserve">
+    <value>Perdu</value>
+  </data>
+  <data name="Training" xml:space="preserve">
+    <value>Entraînement</value>
+  </data>
+  <data name="Training plays don't count towards your scores." xml:space="preserve">
+    <value>Les parties d'entraînement ne comptent pas dans vos scores.</value>
+  </data>
+  <data name="No training sessions yet." xml:space="preserve">
+    <value>Aucune séance d'entraînement pour l'instant.</value>
+  </data>
+  <data name="Songs practised" xml:space="preserve">
+    <value>Morceaux travaillés</value>
+  </data>
+  <data name="Speed changes" xml:space="preserve">
+    <value>Changements de vitesse</value>
+  </data>
+  <data name="Jumps" xml:space="preserve">
+    <value>Sauts</value>
+  </data>
+  <data name="{0} speed changes · {1} autoplay · {2} jumps" xml:space="preserve">
+    <value>{0} changements de vitesse · {1} auto · {2} sauts</value>
+  </data>
+  <data name="Ghost battles" xml:space="preserve">
+    <value>Combats contre fantômes</value>
+  </data>
+  <data name="Wins" xml:space="preserve">
+    <value>Victoires</value>
+  </data>
+  <data name="Highest level won" xml:space="preserve">
+    <value>Niveau le plus haut gagné</value>
+  </data>
+  <data name="Sections won" xml:space="preserve">
+    <value>Sections gagnées</value>
+  </data>
+  <data name="Wins by level" xml:space="preserve">
+    <value>Victoires par niveau</value>
+  </data>
+  <data name="Level {0}" xml:space="preserve">
+    <value>Niveau {0}</value>
+  </data>
+  <data name="Section {0}: {1} good, {2} OK, {3} bad, {4} drumroll" xml:space="preserve">
+    <value>Section {0} : {1} bien, {2} OK, {3} raté, {4} roulements</value>
+  </data>
+  <data name="W" xml:space="preserve">
+    <value>G</value>
+  </data>
+  <data name="L" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="Friends" xml:space="preserve">
+    <value>Amis</value>
+  </data>
+  <data name="Green's friend list. Changes reach the cabinet on your next card tap." xml:space="preserve">
+    <value>La liste d'amis de Green. Les changements arrivent à la borne à votre prochain passage de carte.</value>
+  </data>
+  <data name="Add a friend" xml:space="preserve">
+    <value>Ajouter un ami</value>
+  </data>
+  <data name="Their 20-digit access code, from their card. They need to have played Green." xml:space="preserve">
+    <value>Son code d'accès à 20 chiffres, sur sa carte. Il faut avoir joué à Green.</value>
+  </data>
+  <data name="No friends on your Green list yet." xml:space="preserve">
+    <value>Pas encore d'amis dans votre liste Green.</value>
+  </data>
+  <data name="last played {0}" xml:space="preserve">
+    <value>dernière partie le {0}</value>
+  </data>
+  <data name="Added. They'll show on the cabinet after your next card tap." xml:space="preserve">
+    <value>Ajouté. Il apparaîtra sur la borne après votre prochain passage de carte.</value>
+  </data>
+  <data name="Stages, partners and your recent battles." xml:space="preserve">
+    <value>Étapes, partenaires et vos combats récents.</value>
+  </data>
+  <data name="Your practice sessions: songs, speed changes and jumps." xml:space="preserve">
+    <value>Vos séances d'entraînement : morceaux, changements de vitesse et sauts.</value>
+  </data>
+  <data name="Wins by ghost level and your recent battles, section by section." xml:space="preserve">
+    <value>Victoires par niveau de fantôme et vos combats récents, section par section.</value>
+  </data>
 </root>

@@ -9,17 +9,24 @@ namespace TaikoWebUI.Shared;
 public static class EraPaths
 {
     public const string Nijiiro = "Nijiiro";
-    public const string DonChallenge = "DonChallenge", Shop = "Shop";
+    public const string DonChallenge = "DonChallenge", Shop = "Shop", Battle = "Battle", Training = "Training", Ghost = "Ghost";
 
     /// <summary>The Play Data pages each game has, in the sidebar's order.</summary>
     public static IReadOnlyList<string> PagesOf(string game) => game == Nijiiro
         ? [PlayDataPaths.Stats, PlayDataPaths.Favourites, PlayDataPaths.HighScores, PlayDataPaths.PlayHistory, PlayDataPaths.DaniDojo]
         : [PlayDataPaths.HighScores, PlayDataPaths.PlayHistory, PlayDataPaths.DaniDojo,
-            .. HasDonChallenge(game) ? [DonChallenge] : Array.Empty<string>(), .. HasShop(game) ? [Shop] : Array.Empty<string>()];
+            .. HasDonChallenge(game) ? [DonChallenge] : Array.Empty<string>(), .. HasShop(game) ? [Shop] : Array.Empty<string>(),
+            .. game == "Blue" ? [Battle] : Array.Empty<string>(), .. HasTraining(game) ? [Training] : Array.Empty<string>(),
+            .. game == "Green" ? [Ghost] : Array.Empty<string>()];
 
     public static bool HasDonChallenge(string game) => game is "Red" or "White";
 
     public static bool HasShop(string game) => game is "Green" or "Blue" or "Yellow";
+
+    public static bool HasTraining(string game) => game is "Blue" or "White" or "Yellow";
+
+    /// <summary>Green's friend list (the cabinet's), its own sidebar item. No other game has web Friends.</summary>
+    public static string Friends(long baid) => $"/Users/{baid}/Green/Friends";
 
     /// <summary>An older game's name as written in a URL, or null for anything else (Nijiiro included).</summary>
     public static string? Older(string? segment) =>

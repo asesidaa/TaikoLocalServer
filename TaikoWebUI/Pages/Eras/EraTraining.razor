@@ -1,0 +1,81 @@
+@page "/Users/{baid:int}/{Game}/PlayData/Training"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject GameDataService GameDataService
+@inject PageState Page
+
+<PageTitle>@Localizer["Training"]</PageTitle>
+@* Blue, White and Yellow's Training (Tokkun): each practice session's songs and what was used. *@
+<div class="mx-auto max-w-3xl">
+    <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Training"]</h1>
+    <GameLine Game="@GameName" />
+    <p class="mb-5 mt-1 text-sm @Css.Muted">@Localizer["Training plays don't count towards your scores."]</p>
+    @if (sessions is null)
+    {
+        <div class="@Css.Card p-5"><Skeleton /></div>
+    }
+    else if (sessions.Count == 0)
+    {
+        <p class="@Css.Card p-6 text-center text-sm @Css.Muted">@Localizer["No training sessions yet."]</p>
+    }
+    else
+    {
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            @Tile(Localizer["Sessions"], sessions.Count)
+            @Tile(Localizer["Songs practised"], sessions.SelectMany(s => s.Songs).Distinct().Count())
+            @Tile(Localizer["Speed changes"], sessions.Sum(s => (long)s.SpeedChanges))
+            @Tile(Localizer["Jumps"], sessions.Sum(s => (long)s.Jumps))
+        </div>
+        <ul class="@Css.Card mt-4 divide-y divide-zinc-100 overflow-hidden dark:divide-zinc-800">
+            @foreach (var s in sessions)
+            {
+                <li class="px-4 py-3 text-sm">
+                    <div class="flex flex-wrap items-baseline justify-between gap-2">
+                        <span class="font-medium">@(s.At?.ToString("g") ?? "–")</span>
+                        <span class="text-xs @Css.Muted">@string.Format(Localizer["{0} speed changes · {1} autoplay · {2} jumps"], s.SpeedChanges, s.Autoplays, s.Jumps)</span>
+                    </div>
+                    @if (s.Songs.Count > 0)
+                    {
+                        <p class="mt-1 truncate text-xs @Css.Muted">@string.Join(" · ", s.Songs.Select(SongName))</p>
+                    }
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public string Game { get; set; } = "";
+
+    private string GameName => EraPaths.Older(Game) ?? Game;
+    private List<TrainingSession>? sessions;
+    private Dictionary<uint, MusicDetail> songs = [];
+
+    private string SongName(uint id) => songs.TryGetValue(id, out var m) && m.SongName.Length > 0 ? m.SongName : $"#{id}";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.SetEraPlayData(GameName, Localizer["Play Data"], Baid, Localizer["Training"]);
+        sessions = null;
+        if (!EraPaths.HasTraining(GameName)) return;
+        try
+        {
+            var response = Client.GetFromJsonAsync<List<TrainingSession>>($"api/{GameName}/Training/{Baid}");
+            songs = await GameDataService.GetMusicDetailDictionary(GameName);
+            sessions = await response ?? [];
+        }
+        catch (HttpRequestException)
+        {
+            sessions = [];
+        }
+    }
+
+    private RenderFragment Tile(string label, long value) => __builder =>
+    {
+        <div class="@Css.Card p-4">
+            <p class="text-xs @Css.Muted">@label</p>
+            <p class="mt-1 text-xl font-semibold tabular-nums">@value.ToString("N0")</p>
+        </div>
+    };
+}

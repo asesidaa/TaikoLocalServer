@@ -4260,4 +4260,136 @@
   <data name="Save the file first: the live season must be one that's saved." xml:space="preserve">
     <value>先にファイルを保存してください。開催中にできるのは保存済みのシーズンだけです。</value>
   </data>
+  <data name="Battle mode" xml:space="preserve">
+    <value>バトルモード</value>
+  </data>
+  <data name="Stages cleared" xml:space="preserve">
+    <value>クリアしたステージ</value>
+  </data>
+  <data name="Last stage" xml:space="preserve">
+    <value>最後のステージ</value>
+  </data>
+  <data name="Stage {0}" xml:space="preserve">
+    <value>ステージ{0}</value>
+  </data>
+  <data name="Boss life left: {0}" xml:space="preserve">
+    <value>ボスの残り体力: {0}</value>
+  </data>
+  <data name="Partners" xml:space="preserve">
+    <value>パートナー</value>
+  </data>
+  <data name="Battle tokens" xml:space="preserve">
+    <value>バトルトークン</value>
+  </data>
+  <data name="Stages" xml:space="preserve">
+    <value>ステージ</value>
+  </data>
+  <data name="Partner {0}" xml:space="preserve">
+    <value>パートナー{0}</value>
+  </data>
+  <data name="{0} exp · best DPN {1}" xml:space="preserve">
+    <value>経験値{0}・最高DPN {1}</value>
+  </data>
+  <data name="Bonds {0} of {1}" xml:space="preserve">
+    <value>きずな{1}中{0}</value>
+  </data>
+  <data name="Specials: {0}" xml:space="preserve">
+    <value>必殺技: {0}</value>
+  </data>
+  <data name="Recent battles" xml:space="preserve">
+    <value>最近のバトル</value>
+  </data>
+  <data name="No battles yet." xml:space="preserve">
+    <value>まだバトルがありません。</value>
+  </data>
+  <data name="+{0} exp" xml:space="preserve">
+    <value>経験値+{0}</value>
+  </data>
+  <data name="Won" xml:space="preserve">
+    <value>勝ち</value>
+  </data>
+  <data name="Lost · boss {0} left" xml:space="preserve">
+    <value>負け・ボス残り{0}</value>
+  </data>
+  <data name="Lost" xml:space="preserve">
+    <value>負け</value>
+  </data>
+  <data name="Training" xml:space="preserve">
+    <value>特訓</value>
+  </data>
+  <data name="Training plays don't count towards your scores." xml:space="preserve">
+    <value>特訓のプレイはスコアに記録されません。</value>
+  </data>
+  <data name="No training sessions yet." xml:space="preserve">
+    <value>まだ特訓をしていません。</value>
+  </data>
+  <data name="Songs practised" xml:space="preserve">
+    <value>練習した曲</value>
+  </data>
+  <data name="Speed changes" xml:space="preserve">
+    <value>速度変更</value>
+  </data>
+  <data name="Jumps" xml:space="preserve">
+    <value>ジャンプ</value>
+  </data>
+  <data name="{0} speed changes · {1} autoplay · {2} jumps" xml:space="preserve">
+    <value>速度変更{0}・オート{1}・ジャンプ{2}</value>
+  </data>
+  <data name="Ghost battles" xml:space="preserve">
+    <value>ゴーストバトル</value>
+  </data>
+  <data name="Wins" xml:space="preserve">
+    <value>勝利数</value>
+  </data>
+  <data name="Highest level won" xml:space="preserve">
+    <value>勝った最高レベル</value>
+  </data>
+  <data name="Sections won" xml:space="preserve">
+    <value>勝ったセクション</value>
+  </data>
+  <data name="Wins by level" xml:space="preserve">
+    <value>レベル別の勝利数</value>
+  </data>
+  <data name="Level {0}" xml:space="preserve">
+    <value>レベル{0}</value>
+  </data>
+  <data name="Section {0}: {1} good, {2} OK, {3} bad, {4} drumroll" xml:space="preserve">
+    <value>セクション{0}: 良{1}・可{2}・不可{3}・連打{4}</value>
+  </data>
+  <data name="W" xml:space="preserve">
+    <value>勝</value>
+  </data>
+  <data name="L" xml:space="preserve">
+    <value>負</value>
+  </data>
+  <data name="Friends" xml:space="preserve">
+    <value>フレンド</value>
+  </data>
+  <data name="Green's friend list. Changes reach the cabinet on your next card tap." xml:space="preserve">
+    <value>グリーンのフレンドリストです。変更は次にカードをタッチしたときに筐体へ届きます。</value>
+  </data>
+  <data name="Add a friend" xml:space="preserve">
+    <value>フレンドを追加</value>
+  </data>
+  <data name="Their 20-digit access code, from their card. They need to have played Green." xml:space="preserve">
+    <value>相手のカードにある20桁のアクセスコード。グリーンをプレイしたことがある人だけ追加できます。</value>
+  </data>
+  <data name="No friends on your Green list yet." xml:space="preserve">
+    <value>グリーンのフレンドはまだいません。</value>
+  </data>
+  <data name="last played {0}" xml:space="preserve">
+    <value>最終プレイ {0}</value>
+  </data>
+  <data name="Added. They'll show on the cabinet after your next card tap." xml:space="preserve">
+    <value>追加しました。次にカードをタッチすると筐体に表示されます。</value>
+  </data>
+  <data name="Stages, partners and your recent battles." xml:space="preserve">
+    <value>ステージ、パートナー、最近のバトル。</value>
+  </data>
+  <data name="Your practice sessions: songs, speed changes and jumps." xml:space="preserve">
+    <value>特訓の記録: 曲、速度変更、ジャンプ。</value>
+  </data>
+  <data name="Wins by ghost level and your recent battles, section by section." xml:space="preserve">
+    <value>ゴーストのレベル別の勝利数と、最近のバトルのセクションごとの結果。</value>
+  </data>
 </root>

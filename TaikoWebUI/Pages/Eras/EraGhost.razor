@@ -1,0 +1,109 @@
+@page "/Users/{baid:int}/{Game}/PlayData/Ghost"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject GameDataService GameDataService
+@inject PageState Page
+
+<PageTitle>@Localizer["Ghost battles"]</PageTitle>
+@* Green's Ghost battles: wins by ghost level, tokens, and recent battles with each of the four sections won or lost. *@
+<div class="mx-auto max-w-3xl">
+    <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Ghost battles"]</h1>
+    <GameLine Game="@GameName" Class="mb-5" />
+    @if (data is null)
+    {
+        <div class="@Css.Card p-5"><Skeleton /></div>
+    }
+    else
+    {
+        var wins = data.Levels.Sum(l => (long)l.Wins);
+        var max = data.Levels.Select(l => l.Wins).DefaultIfEmpty(1u).Max();
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            @Tile(Localizer["Wins"], wins.ToString("N0"))
+            @Tile(Localizer["Highest level won"], data.Levels.Where(l => l.Wins > 0).Select(l => l.LevelId).DefaultIfEmpty(0u).Max() is var top and > 0 ? top.ToString() : "–")
+            @Tile(Localizer["Tokens"], data.Tokens.Sum(t => (long)t.Value).ToString("N0"))
+            @Tile(Localizer["Sections won"], data.Recent.SelectMany(b => b.Sections).Count(s => s.Won).ToString("N0"))
+        </div>
+        @if (data.Levels.Count > 0)
+        {
+            <section class="@Css.Card mt-4 p-5">
+                <h2 class="font-semibold">@Localizer["Wins by level"]</h2>
+                <ul class="mt-3 space-y-1.5 text-sm">
+                    @foreach (var l in data.Levels)
+                    {
+                        <li class="flex items-center gap-3">
+                            <span class="w-16 shrink-0 text-xs @Css.Muted">@string.Format(Localizer["Level {0}"], l.LevelId)</span>
+                            <span class="h-2 flex-1 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"><span class="block h-full rounded-full bg-primary-500" style="width:@(l.Wins * 100 / Math.Max(1u, max))%"></span></span>
+                            <span class="w-10 shrink-0 text-right tabular-nums">@l.Wins</span>
+                        </li>
+                    }
+                </ul>
+            </section>
+        }
+        <section class="mt-4">
+            <h2 class="mb-2 text-sm font-semibold">@Localizer["Recent battles"]</h2>
+            @if (data.Recent.Count == 0)
+            {
+                <p class="@Css.Card p-5 text-sm @Css.Muted">@Localizer["No battles yet."]</p>
+            }
+            else
+            {
+                <ul class="@Css.Card divide-y divide-zinc-100 overflow-hidden dark:divide-zinc-800">
+                    @foreach (var b in data.Recent)
+                    {
+                        var won = b.Sections.Count(s => s.Won) * 2 > b.Sections.Count;
+                        <li class="flex flex-wrap items-center gap-x-3 gap-y-1.5 px-4 py-2.5 text-sm">
+                            <span class="w-28 shrink-0 text-xs tabular-nums @Css.Muted">@b.At.ToLocalTime().ToString("g")</span>
+                            <span class="min-w-0 flex-1">
+                                <span class="block truncate font-medium">@SongName(b.SongId)</span>
+                                <span class="block text-xs @Css.Muted">@(b.Difficulty is >= 1 and <= 5 ? GameData.DifficultyName((Difficulty)b.Difficulty) : "") · @b.Score.ToString("N0")</span>
+                            </span>
+                            <span class="flex gap-1" aria-label="@string.Format(Localizer["{0} of {1} sections won"], b.Sections.Count(s => s.Won), b.Sections.Count)">
+                                @foreach (var s in b.Sections)
+                                {
+                                    <span class="@($"h-6 w-8 rounded text-center text-[10px] font-semibold leading-6 {(s.Won ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" : "bg-red-500/10 text-red-700 dark:text-red-300")}")"
+                                          title="@string.Format(Localizer["Section {0}: {1} good, {2} OK, {3} bad, {4} drumroll"], s.No, s.Good, s.Ok, s.Bad, s.Drumroll)">@(s.Won ? Localizer["W"] : Localizer["L"])</span>
+                                }
+                            </span>
+                            <span class="@($"w-10 shrink-0 text-right text-xs font-semibold {(won ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400")}")">@(won ? Localizer["Won"] : Localizer["Lost"])</span>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+    }
+</div>
+
+@code {
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public string Game { get; set; } = "";
+
+    private string GameName => EraPaths.Older(Game) ?? Game;
+    private GhostResponse? data;
+    private Dictionary<uint, MusicDetail> songs = [];
+
+    private string SongName(uint id) => songs.TryGetValue(id, out var m) && m.SongName.Length > 0 ? m.SongName : $"#{id}";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.SetEraPlayData(GameName, Localizer["Play Data"], Baid, Localizer["Ghost battles"]);
+        data = null;
+        try
+        {
+            var response = Client.GetFromJsonAsync<GhostResponse>($"api/Green/Ghost/{Baid}");
+            songs = await GameDataService.GetMusicDetailDictionary("Green");
+            data = await response ?? new GhostResponse([], [], []);
+        }
+        catch (HttpRequestException)
+        {
+            data = new GhostResponse([], [], []);
+        }
+    }
+
+    private RenderFragment Tile(string label, string value) => __builder =>
+    {
+        <div class="@Css.Card p-4">
+            <p class="text-xs @Css.Muted">@label</p>
+            <p class="mt-1 text-xl font-semibold tabular-nums">@value</p>
+        </div>
+    };
+}
