@@ -304,7 +304,7 @@
                 @foreach (var id in draftMovies.ToList())
                 {
                     <span class="inline-flex items-center gap-1 rounded-full bg-zinc-100 py-1 pl-2.5 pr-1 font-mono text-xs dark:bg-zinc-800">#@id
-                        <button class="grid size-5 place-items-center rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700" aria-label="@Localizer["Remove"]" @onclick="() => draftMovies.Remove(id)"><Icon Name="x" Class="size-3" /></button>
+                        <button class="grid size-4 place-items-center rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700" aria-label="@Localizer["Remove"]" @onclick="() => draftMovies.Remove(id)"><Icon Name="x" Class="size-3" /></button>
                     </span>
                 }
                 <form class="inline-flex gap-1" @onsubmit="AddMovie" @onsubmit:preventDefault>
@@ -380,7 +380,7 @@
                     @foreach (var id in strays)
                     {
                         <span class="inline-flex items-center gap-1 rounded-full bg-amber-500/15 py-1 pl-2.5 pr-1 font-mono text-xs">#@id@(MovieName(id) is { } n ? $" · {n}" : "")
-                            <button class="grid size-5 place-items-center rounded-full hover:bg-amber-500/20" aria-label="@string.Format(Localizer["Remove movie {0}"], id)" @onclick="() => draftMovies.Remove(id)"><Icon Name="x" Class="size-3" /></button>
+                            <button class="grid size-4 place-items-center rounded-full hover:bg-amber-500/20" aria-label="@string.Format(Localizer["Remove movie {0}"], id)" @onclick="() => draftMovies.Remove(id)"><Icon Name="x" Class="size-3" /></button>
                         </span>
                     }
                 </div>
