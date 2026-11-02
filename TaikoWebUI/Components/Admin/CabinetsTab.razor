@@ -63,9 +63,13 @@
     private List<uint> draftMovies = [];
     private string originalDraft = "";
     private JsonArray? defaultMovies;
-    // The numbered movies in the game install (extract writes the list); null when extract hasn't.
+    // The numbered movies in the game install (extract writes the list); null when extract hasn't. Names are server-wide.
     private List<uint>? gameMovies;
-    private sealed record MovieList(List<uint> Movies);
+    private Dictionary<uint, string> movieNames = [];
+    private string movieQuery = "", movieFilter = "all", renameText = "";
+    private uint? renaming;
+    private ElementReference renameInput;
+    private bool focusRename;
 
     private string DraftKey => $"{draftOwn}|{draftSet}|{string.Join(',', draftMovies)}";
     private bool Dirty => originalDraft.Length > 0 && DraftKey != originalDraft;
@@ -73,8 +77,8 @@
     protected override async Task OnInitializedAsync()
     {
         sets = await Client.GetFromJsonAsync<List<DanSetInfo>>("api/DanSets") ?? [];
-        var movies = await Client.GetAsync("api/Assets/movies.json");
-        if (movies.IsSuccessStatusCode) gameMovies = (await movies.Content.ReadFromJsonAsync<MovieList>())?.Movies;
+        if (await Client.GetFromJsonAsync<GameMovies>("api/Movies") is { } movies)
+            (gameMovies, movieNames) = (movies.InGame, movies.Names);
         await Load();
         await Pick(null);
     }
@@ -240,9 +244,50 @@
         movieInput = "";
     }
 
+    // The list stays sorted by ID, as the game reads it.
     private void ToggleMovie(uint id)
     {
         if (!draftMovies.Remove(id)) draftMovies.Add(id);
+        draftMovies.Sort();
+    }
+
+    // All on keeps the stray IDs (not in the movie folder); they're removed one by one below the list.
+    private void AllMovies(bool on) =>
+        draftMovies = on ? draftMovies.Union(gameMovies!).Order().ToList() : draftMovies.Where(id => !gameMovies!.Contains(id)).ToList();
+
+    private string? MovieName(uint id) => movieNames.GetValueOrDefault(id);
+
+    private void StartRename(uint id)
+    {
+        renaming = id;
+        renameText = MovieName(id) ?? "";
+        focusRename = true;
+    }
+
+    // Names save at once (server-wide), apart from the cabinet's Save bar. Enter or leaving the field saves, Esc cancels.
+    private async Task SaveRename(uint id)
+    {
+        if (renaming != id) return;
+        renaming = null;
+        var name = renameText.Trim();
+        if (name == (MovieName(id) ?? "")) return;
+        var res = await Client.PutAsJsonAsync($"api/Movies/{id}/Name", new { name });
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        if (name.Length == 0) movieNames.Remove(id);
+        else movieNames[id] = name;
+    }
+
+    private async Task RenameKey(KeyboardEventArgs e, uint id)
+    {
+        if (e.Key == "Enter") await SaveRename(id);
+        else if (e.Key == "Escape") renaming = null;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!focusRename) return;
+        focusRename = false;
+        await renameInput.FocusAsync();
     }
 
     private RenderFragment Movies(bool locked) => __builder =>
@@ -251,28 +296,7 @@
             <p class="text-sm font-medium">@Localizer["Movies"]</p>
             @if (gameMovies is { Count: > 0 } game)
             {
-                @* One toggle per movie in the game; ids that aren't in it (an older list, a removed mod) can only be removed. *@
-                <div class="mt-2 flex flex-wrap items-center gap-1.5" role="group" aria-label="@Localizer["Movies"]">
-                    @foreach (var id in game)
-                    {
-                        var on = draftMovies.Contains(id);
-                        <button aria-pressed="@Css.Aria(on)" @onclick="() => ToggleMovie(id)"
-                                class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-mono text-xs @Css.Chip(on)">
-                            @if (on)
-                            {
-                                <Icon Name="check" Class="size-3" />
-                            }
-                            #@id
-                        </button>
-                    }
-                    @foreach (var id in draftMovies.Where(m => !game.Contains(m)).ToList())
-                    {
-                        <span class="inline-flex items-center gap-1 rounded-full bg-amber-500/15 py-1 pl-2.5 pr-1 font-mono text-xs text-amber-800 dark:text-amber-200" title="@Localizer["Not in the game's movie folder"]">#@id
-                            <button class="grid size-5 place-items-center rounded-full hover:bg-amber-500/20" aria-label="@Localizer["Remove"]" @onclick="() => draftMovies.Remove(id)"><Icon Name="x" Class="size-3" /></button>
-                        </span>
-                    }
-                </div>
-                <p class="mt-1 text-xs @Css.Muted">@string.Format(Localizer["{0} of the game's {1} movies selected."], draftMovies.Count(game.Contains), game.Count)</p>
+                @MovieChecklist(game)
             }
             else
             {
@@ -291,6 +315,77 @@
             <p class="mt-1 text-xs @Css.Muted">@Localizer["Movie IDs are the numbered files in the game's Data/x64/movie folder. Run extract to pick from a list."]</p>
             }
         </div>
+    };
+
+    // A row per movie in the game's folder: checkbox, #id, its name with a pencil to rename. IDs on the list that aren't
+    // in the folder (an older list, a removed mod) show below it and can only be removed.
+    private RenderFragment MovieChecklist(List<uint> game) => __builder =>
+    {
+        var onCount = game.Count(draftMovies.Contains);
+        var q = movieQuery.Trim().TrimStart('#');
+        var rows = game.Where(id => movieFilter switch { "on" => draftMovies.Contains(id), "off" => !draftMovies.Contains(id), _ => true })
+            .Where(id => q.Length == 0 || id.ToString().Contains(q) || (MovieName(id)?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
+        var strays = draftMovies.Where(m => !game.Contains(m)).ToList();
+        <div class="mt-2 flex flex-wrap items-center gap-2">
+            <input type="search" class="@Css.Input !py-1.5" placeholder="@Localizer["Search by name or ID"]" aria-label="@Localizer["Search movies"]"
+                   value="@movieQuery" @oninput="e => movieQuery = e.Value?.ToString() ?? string.Empty" />
+            <div class="inline-flex rounded-xl bg-zinc-100 p-0.5 text-xs font-medium dark:bg-zinc-800" role="group" aria-label="@Localizer["Show"]">
+                @foreach (var (key, label, count) in new[] { ("all", Localizer["All"].Value, game.Count), ("on", Localizer["On"].Value, onCount), ("off", Localizer["Off"].Value, game.Count - onCount) })
+                {
+                    var current = movieFilter == key;
+                    <button aria-pressed="@Css.Aria(current)" @onclick="() => movieFilter = key"
+                            class="rounded-lg px-2.5 py-1 @(current ? "bg-white shadow-sm dark:bg-zinc-700" : Css.Muted)">@label <span class="tabular-nums opacity-70">@count</span></button>
+                }
+            </div>
+            <button class="@Css.GhostButton !px-2.5 !py-1.5 text-xs" @onclick="() => AllMovies(true)">@Localizer["All on"]</button>
+            <button class="@Css.GhostButton !px-2.5 !py-1.5 text-xs" @onclick="() => AllMovies(false)">@Localizer["All off"]</button>
+        </div>
+        @if (draftMovies.Count == 0)
+        {
+            <p class="mt-2 text-xs @Css.Muted">@Localizer["No movies on: the cabinet plays its built-in attract loop."]</p>
+        }
+        <ul class="mt-2 max-h-96 divide-y divide-zinc-100 overflow-y-auto rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-700" aria-label="@Localizer["Movies"]">
+            @foreach (var id in rows)
+            {
+                var on = draftMovies.Contains(id);
+                var name = MovieName(id);
+                <li class="flex min-h-11 items-center gap-3 px-3 py-1.5 @(on ? "" : "bg-zinc-50 dark:bg-zinc-800/40")">
+                    <input type="checkbox" class="size-4 shrink-0 accent-primary-500" checked="@on" @onchange="() => ToggleMovie(id)"
+                           aria-label="@string.Format(Localizer["Play movie {0}, {1}"], id, name ?? Localizer["Unnamed"])" />
+                    <span class="w-14 shrink-0 font-mono text-xs @Css.Muted">#@id</span>
+                    @if (renaming == id)
+                    {
+                        <input @ref="renameInput" class="@Css.Input min-w-0 flex-1 !py-1 text-sm" maxlength="60" aria-label="@string.Format(Localizer["Name for movie {0}"], id)"
+                               value="@renameText" @oninput="e => renameText = e.Value?.ToString() ?? string.Empty"
+                               @onkeydown="e => RenameKey(e, id)" @onblur="() => SaveRename(id)" />
+                    }
+                    else
+                    {
+                        <span class="min-w-0 flex-1 truncate text-sm @(name is null ? "italic " + Css.Muted : "")">@(name ?? Localizer["Unnamed"])</span>
+                        <button class="@Css.IconButton !size-8 shrink-0" aria-label="@string.Format(Localizer["Rename movie {0}"], id)" @onclick="() => StartRename(id)"><Icon Name="pencil" Class="size-4" /></button>
+                    }
+                </li>
+            }
+            @if (rows.Count == 0)
+            {
+                <li class="px-3 py-4 text-center text-sm @Css.Muted">@Localizer["No movies match."]</li>
+            }
+        </ul>
+        <p class="mt-1 text-xs @Css.Muted">@string.Format(Localizer["{0} of the game's {1} movies selected."], onCount, game.Count)</p>
+        @if (strays.Count > 0)
+        {
+            <div class="mt-2 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-amber-800 dark:text-amber-200">
+                <p class="text-xs font-medium">@Localizer["On the list but not in the game's movie folder"]</p>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                    @foreach (var id in strays)
+                    {
+                        <span class="inline-flex items-center gap-1 rounded-full bg-amber-500/15 py-1 pl-2.5 pr-1 font-mono text-xs">#@id@(MovieName(id) is { } n ? $" · {n}" : "")
+                            <button class="grid size-5 place-items-center rounded-full hover:bg-amber-500/20" aria-label="@string.Format(Localizer["Remove movie {0}"], id)" @onclick="() => draftMovies.Remove(id)"><Icon Name="x" Class="size-3" /></button>
+                        </span>
+                    }
+                </div>
+            </div>
+        }
     };
 
     private RenderFragment Defaults => __builder =>

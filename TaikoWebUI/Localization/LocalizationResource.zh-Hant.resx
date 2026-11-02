@@ -3726,4 +3726,40 @@
   <data name="Back to {0}" xml:space="preserve">
     <value>返回{0}</value>
   </data>
+  <data name="Search by name or ID" xml:space="preserve">
+    <value>依名稱或 ID 搜尋</value>
+  </data>
+  <data name="Search movies" xml:space="preserve">
+    <value>搜尋影片</value>
+  </data>
+  <data name="All on" xml:space="preserve">
+    <value>全部開啟</value>
+  </data>
+  <data name="All off" xml:space="preserve">
+    <value>全部關閉</value>
+  </data>
+  <data name="No movies on: the cabinet plays its built-in attract loop." xml:space="preserve">
+    <value>沒有開啟的影片:機台會播放內建的待機循環。</value>
+  </data>
+  <data name="Play movie {0}, {1}" xml:space="preserve">
+    <value>播放影片 {0},{1}</value>
+  </data>
+  <data name="Unnamed" xml:space="preserve">
+    <value>未命名</value>
+  </data>
+  <data name="Name for movie {0}" xml:space="preserve">
+    <value>影片 {0} 的名稱</value>
+  </data>
+  <data name="Rename movie {0}" xml:space="preserve">
+    <value>重新命名影片 {0}</value>
+  </data>
+  <data name="No movies match." xml:space="preserve">
+    <value>沒有符合的影片。</value>
+  </data>
+  <data name="On the list but not in the game's movie folder" xml:space="preserve">
+    <value>在清單中但不在遊戲的影片資料夾裡</value>
+  </data>
+  <data name="Remove movie {0}" xml:space="preserve">
+    <value>移除影片 {0}</value>
+  </data>
 </root>

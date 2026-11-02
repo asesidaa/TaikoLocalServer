@@ -42,6 +42,7 @@ namespace TaikoLocalServer.Infrastructure.Persistence
         public virtual DbSet<TrustedBrowser> TrustedBrowsers { get; set; } = null!;
         public virtual DbSet<ServerOptions> ServerOptions { get; set; } = null!;
         public virtual DbSet<Cabinet> Cabinets { get; set; } = null!;
+        public virtual DbSet<MovieLabel> MovieLabels { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -91,6 +92,12 @@ namespace TaikoLocalServer.Infrastructure.Persistence
             modelBuilder.Entity<TrustedBrowser>(entity => entity.HasIndex(e => e.TokenHash).IsUnique());
             modelBuilder.Entity<ServerOptions>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
             modelBuilder.Entity<Cabinet>(entity => entity.HasKey(e => e.ChassisId));
+            modelBuilder.Entity<MovieLabel>(entity =>
+            {
+                entity.HasKey(e => e.MovieId);
+                entity.Property(e => e.MovieId).ValueGeneratedNever();
+                entity.Property(e => e.Name).HasMaxLength(MovieLabel.MaxLength);
+            });
 
             modelBuilder.Entity<UserWebProfile>(entity =>
             {

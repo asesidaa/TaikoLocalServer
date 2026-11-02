@@ -411,6 +411,21 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("DashboardNotices");
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.MovieLabel", b =>
+                {
+                    b.Property<uint>("MovieId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MovieId");
+
+                    b.ToTable("MovieLabels");
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.ServerOptions", b =>
                 {
                     b.Property<int>("Id")

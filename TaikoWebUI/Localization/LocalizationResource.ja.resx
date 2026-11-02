@@ -3726,4 +3726,40 @@
   <data name="Back to {0}" xml:space="preserve">
     <value>{0}に戻る</value>
   </data>
+  <data name="Search by name or ID" xml:space="preserve">
+    <value>名前またはIDで検索</value>
+  </data>
+  <data name="Search movies" xml:space="preserve">
+    <value>ムービーを検索</value>
+  </data>
+  <data name="All on" xml:space="preserve">
+    <value>すべてオン</value>
+  </data>
+  <data name="All off" xml:space="preserve">
+    <value>すべてオフ</value>
+  </data>
+  <data name="No movies on: the cabinet plays its built-in attract loop." xml:space="preserve">
+    <value>オンのムービーがありません:筐体は内蔵のデモループを再生します。</value>
+  </data>
+  <data name="Play movie {0}, {1}" xml:space="preserve">
+    <value>ムービー{0}を再生({1})</value>
+  </data>
+  <data name="Unnamed" xml:space="preserve">
+    <value>名前なし</value>
+  </data>
+  <data name="Name for movie {0}" xml:space="preserve">
+    <value>ムービー{0}の名前</value>
+  </data>
+  <data name="Rename movie {0}" xml:space="preserve">
+    <value>ムービー{0}の名前を変更</value>
+  </data>
+  <data name="No movies match." xml:space="preserve">
+    <value>一致するムービーがありません。</value>
+  </data>
+  <data name="On the list but not in the game's movie folder" xml:space="preserve">
+    <value>リストにあるがゲームのムービーフォルダにない</value>
+  </data>
+  <data name="Remove movie {0}" xml:space="preserve">
+    <value>ムービー{0}を削除</value>
+  </data>
 </root>

@@ -3726,4 +3726,40 @@
   <data name="Back to {0}" xml:space="preserve">
     <value>Retour à {0}</value>
   </data>
+  <data name="Search by name or ID" xml:space="preserve">
+    <value>Rechercher par nom ou ID</value>
+  </data>
+  <data name="Search movies" xml:space="preserve">
+    <value>Rechercher des vidéos</value>
+  </data>
+  <data name="All on" xml:space="preserve">
+    <value>Tout activer</value>
+  </data>
+  <data name="All off" xml:space="preserve">
+    <value>Tout désactiver</value>
+  </data>
+  <data name="No movies on: the cabinet plays its built-in attract loop." xml:space="preserve">
+    <value>Aucune vidéo activée : la borne joue sa boucle de démonstration intégrée.</value>
+  </data>
+  <data name="Play movie {0}, {1}" xml:space="preserve">
+    <value>Lire la vidéo {0}, {1}</value>
+  </data>
+  <data name="Unnamed" xml:space="preserve">
+    <value>Sans nom</value>
+  </data>
+  <data name="Name for movie {0}" xml:space="preserve">
+    <value>Nom de la vidéo {0}</value>
+  </data>
+  <data name="Rename movie {0}" xml:space="preserve">
+    <value>Renommer la vidéo {0}</value>
+  </data>
+  <data name="No movies match." xml:space="preserve">
+    <value>Aucune vidéo ne correspond.</value>
+  </data>
+  <data name="On the list but not in the game's movie folder" xml:space="preserve">
+    <value>Dans la liste mais pas dans le dossier vidéo du jeu</value>
+  </data>
+  <data name="Remove movie {0}" xml:space="preserve">
+    <value>Retirer la vidéo {0}</value>
+  </data>
 </root>

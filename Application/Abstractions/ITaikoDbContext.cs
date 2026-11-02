@@ -20,6 +20,7 @@ public interface ITaikoDbContext
     DbSet<TrustedBrowser> TrustedBrowsers { get; }
     DbSet<ServerOptions> ServerOptions { get; }
     DbSet<Cabinet> Cabinets { get; }
+    DbSet<MovieLabel> MovieLabels { get; }
     DbSet<Token> Tokens { get; }
     DbSet<SongBestDatum> SongBestData { get; }
     DbSet<SongPlayDatum> SongPlayData { get; }
