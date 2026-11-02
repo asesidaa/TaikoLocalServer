@@ -81,7 +81,17 @@
                             <Avatar Setting="u.UserSetting" Size="40" />
                             <span class="min-w-0 flex-1">
                                 <span class="block truncate text-sm font-medium">@u.UserSetting.MyDonName</span>
-                                <span class="block truncate text-xs @Css.Muted">@Localizer["User ID"] @u.Baid · @LastPlayed(u)</span>
+                                <span class="flex items-center gap-1.5 truncate text-xs @Css.Muted">@Localizer["User ID"] @u.Baid · @LastPlayed(u)
+                                    @if (u.Games.Count > 1)
+                                    {
+                                        <span class="flex items-center gap-1" title="@string.Join(", ", u.Games.Select(g => g.Game))">
+                                            @foreach (var g in GameInfo.All.Where(i => u.Games.Any(x => x.Game == i.Name)))
+                                            {
+                                                <GameDot Game="g" />
+                                            }
+                                        </span>
+                                    }
+                                </span>
                             </span>
                             @if (AuthService.LoginRequired && !u.IsRegistered)
                             {
@@ -156,7 +166,8 @@
 
     private string LastPlayed(User u)
     {
-        var t = u.UserSetting.LastPlayDateTime;
+        // The latest play in any game (Games is newest first).
+        var t = u.Games.FirstOrDefault()?.LastPlayed ?? u.UserSetting.LastPlayDateTime;
         if (t == default) return Localizer["Never"];
         var days = (int)(DateTime.Now - t).TotalDays;
         return days <= 0 ? Localizer["Today"] : days == 1 ? Localizer["Yesterday"] : days < 30 ? string.Format(Localizer["{0} days ago"], days) : t.ToString("d");

@@ -4407,4 +4407,31 @@
   <data name="Open {0}'s Game data" xml:space="preserve">
     <value>開啟 {0} 的遊戲資料</value>
   </data>
+  <data name="No plays in any game yet." xml:space="preserve">
+    <value>還沒有在任何遊戲中遊玩過。</value>
+  </data>
+  <data name="The card and User ID are the same in every game. Scores, dan results and profiles are kept per game." xml:space="preserve">
+    <value>卡片和使用者 ID 在所有遊戲中相同。成績、段位結果和個人資料按遊戲分別保存。</value>
+  </data>
+  <data name="Deletes the user, their scores and play history in every game, and their access codes." xml:space="preserve">
+    <value>刪除該使用者、其在所有遊戲中的成績和遊玩紀錄，以及其存取碼。</value>
+  </data>
+  <data name="Remove a score · {0}" xml:space="preserve">
+    <value>刪除成績 · {0}</value>
+  </data>
+  <data name="{0}, on {1}" xml:space="preserve">
+    <value>{0}，在{1}</value>
+  </data>
+  <data name="{0} hasn't played {1}" xml:space="preserve">
+    <value>{0} 還沒玩過{1}</value>
+  </data>
+  <data name="Their {0} profile and play data are created the first time they tap their card on a {0} cabinet." xml:space="preserve">
+    <value>{0} 的個人資料和遊玩資料會在其第一次在 {0} 機台上刷卡時建立。</value>
+  </data>
+  <data name="Admin view: these are &lt;b&gt;{0}&lt;/b&gt;'s &lt;b&gt;{2}&lt;/b&gt; pages (User ID {1}). Changes you make are saved to their account." xml:space="preserve">
+    <value>管理員檢視:這是 &lt;b&gt;{0}&lt;/b&gt; 的 &lt;b&gt;{2}&lt;/b&gt; 頁面(使用者 ID {1})。你所做的變更會儲存到其帳號。</value>
+  </data>
+  <data name="No plays" xml:space="preserve">
+    <value>未遊玩</value>
+  </data>
 </root>

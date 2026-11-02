@@ -25,8 +25,11 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
         var cardEntries = await context.Cards.Where(card => card.Baid == baid).ToListAsync();
         var profile = await context.UserWebProfiles.FindAsync(baid);
         var save = await context.UserSaveDataNijiiro.AsNoTracking().FirstOrDefaultAsync(s => s.Baid == baid, HttpContext.RequestAborted) ?? new UserSaveDataNijiiro { Baid = baid };
+        var games = (await UserGames.ForAsync(context, [baid], HttpContext.RequestAborted))[baid];
         return new User
         {
+            Plays = games.Sum(g => g.Plays),
+            Games = games,
             Baid = userDatum.Baid,
             AccessCodes = cardEntries.Select(card => card.AccessCode).ToList(),
             IsAdmin = userDatum.IsAdmin,
@@ -121,8 +124,7 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
             .Select(c => c.Baid).ToListAsync(HttpContext.RequestAborted);
         var twoFactor = await context.Credentials.Where(c => pageBaids.Contains(c.Baid) && c.TotpSecret != null)
             .Select(c => c.Baid).ToListAsync(HttpContext.RequestAborted);
-        var plays = await context.SongPlayDataNijiiro.Where(p => pageBaids.Contains(p.Baid)).GroupBy(p => p.Baid)
-            .Select(g => new { g.Key, Count = g.Count() }).ToDictionaryAsync(g => g.Key, g => g.Count, HttpContext.RequestAborted);
+        var games = await UserGames.ForAsync(context, pageBaids, HttpContext.RequestAborted);
 
         foreach (var user in userEntries)
         {
@@ -133,7 +135,8 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
                 IsAdmin = user.IsAdmin,
                 IsRegistered = registered.Contains(user.Baid),
                 TwoFactor = twoFactor.Contains(user.Baid),
-                Plays = plays.GetValueOrDefault(user.Baid),
+                Plays = games[user.Baid].Sum(g => g.Plays),
+                Games = games[user.Baid],
                 UserSetting = UserSettingsController.BuildNijiiroUserSetting(user, saves.GetValueOrDefault(user.Baid) ?? new UserSaveDataNijiiro { Baid = user.Baid }, profiles.GetValueOrDefault(user.Baid))
             });
         }
@@ -251,6 +254,20 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
         context.SongBestDataNijiiro.Remove(best);
         context.SongPlayDataNijiiro.RemoveRange(plays);
         this.LogActivity(context, "score.remove", baid, $"#{songId} {difficulty} · {best.BestScore:N0} · {plays.Count} {(plays.Count == 1 ? "play" : "plays")}");
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return NoContent();
+    }
+
+    /// <summary>The same in an older game: its best score (both rows where the song has a Shin chart) and the plays behind it.</summary>
+    [HttpDelete("/api/{era}/Users/{baid}/Scores/{songId}/{difficulty}")]
+    [Authorize(Policy = AuthPolicies.Admin)]
+    public async Task<IActionResult> RemoveEraScore(string era, uint baid, uint songId, Difficulty difficulty)
+    {
+        if (!EraRoute.TryParse(era, out var game)) return EraRoute.BadEra(era);
+        if (game == GameEra.Nijiiro) return await RemoveScore(baid, songId, difficulty);
+        if (await UserGames.RemoveScoreAsync(context, game, baid, songId, difficulty, HttpContext.RequestAborted) is not { } removed)
+            return NotFound();
+        this.LogActivity(context, "score.remove", baid, $"{game} #{songId} {difficulty} · {removed.BestScore:N0} · {removed.Plays} {(removed.Plays == 1 ? "play" : "plays")}");
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }

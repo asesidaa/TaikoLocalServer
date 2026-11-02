@@ -28,6 +28,8 @@ public sealed partial class AdminView : IDisposable
     /// <summary>The player being viewed; 0 when it's the admin's own pages (or no admin view).</summary>
     public uint Baid { get; private set; }
     public string Name { get; private set; } = "";
+    /// <summary>The games the viewed player has data in; null until it loads (or with no admin view).</summary>
+    public IReadOnlySet<string>? Played { get; private set; }
     public event Action? Changed;
 
     private void OnChanged(object? sender, EventArgs e) => Update();
@@ -39,13 +41,16 @@ public sealed partial class AdminView : IDisposable
         if (baid == Baid) return;
         Baid = baid;
         Name = "";
+        Played = null;
         Changed?.Invoke();
         if (baid == 0) return;
         try
         {
-            var name = (await client.GetFromJsonAsync<User>($"api/Users/{baid}"))?.UserSetting.MyDonName;
+            var user = await client.GetFromJsonAsync<User>($"api/Users/{baid}");
             if (Baid != baid) return;
+            var name = user?.UserSetting.MyDonName;
             Name = string.IsNullOrEmpty(name) ? $"#{baid}" : name;
+            Played = user?.Games.Select(g => g.Game).ToHashSet();
             Changed?.Invoke();
         }
         catch (HttpRequestException) { /* the banner names them by ID */ }

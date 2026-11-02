@@ -2,13 +2,16 @@
    their own. Edits are allowed and land in Access › Activity as the admin's. *@
 @implements IDisposable
 @inject AdminView View
+@inject NavigationManager Nav
 @using System.Text.Encodings.Web
 
 @if (View.Baid > 0)
 {
     <div role="status" class="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-200">
         <Icon Name="shield" Class="size-5 shrink-0" />
-        <p class="min-w-0 flex-1 basis-64">@((MarkupString)string.Format(Localizer["Admin view: these are <b>{0}</b>'s pages (User ID {1}). Changes you make are saved to their account."], HtmlEncoder.Default.Encode(Name), View.Baid))</p>
+        <p class="min-w-0 flex-1 basis-64">@((MarkupString)(Game == EraPaths.Nijiiro
+            ? string.Format(Localizer["Admin view: these are <b>{0}</b>'s pages (User ID {1}). Changes you make are saved to their account."], HtmlEncoder.Default.Encode(Name), View.Baid)
+            : string.Format(Localizer["Admin view: these are <b>{0}</b>'s <b>{2}</b> pages (User ID {1}). Changes you make are saved to their account."], HtmlEncoder.Default.Encode(Name), View.Baid, Game)))</p>
         <div class="flex gap-2">
             <a href="@($"/Users?user={View.Baid}")" class="@Button">@Localizer["User Management"]</a>
             <a href="/" class="@Button">@Localizer["Exit"]</a>
@@ -20,9 +23,22 @@
     private const string Button = "whitespace-nowrap rounded-xl border border-amber-500/40 px-3 py-1.5 font-semibold transition-colors hover:bg-amber-500/15";
     private string Name => View.Name.Length > 0 ? View.Name : $"#{View.Baid}";
 
-    protected override void OnInitialized() => View.Changed += Refresh;
+    // The game whose pages these are (the URL's); the banner names an older one.
+    private string Game => EraPaths.GameOf("/" + Nav.ToBaseRelativePath(Nav.Uri));
+
+    protected override void OnInitialized()
+    {
+        View.Changed += Refresh;
+        Nav.LocationChanged += OnLocation;
+    }
+
+    private void OnLocation(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e) => Refresh();
 
     private void Refresh() => InvokeAsync(StateHasChanged);
 
-    public void Dispose() => View.Changed -= Refresh;
+    public void Dispose()
+    {
+        View.Changed -= Refresh;
+        Nav.LocationChanged -= OnLocation;
+    }
 }

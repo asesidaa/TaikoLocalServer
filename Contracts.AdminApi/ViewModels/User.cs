@@ -14,7 +14,11 @@ public class User
     /// <summary>Has 2-step verification on.</summary>
     public bool TwoFactor { get; set; }
 
+    /// <summary>Plays in every game.</summary>
     public int Plays { get; set; }
+
+    /// <summary>The games they have data in, newest first.</summary>
+    public List<UserGame> Games { get; set; } = [];
 
     public UserSetting UserSetting { get; set; } = new();
 }

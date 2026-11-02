@@ -1,0 +1,57 @@
+@* Admin view of a game the player has never played: say so instead of that game's empty pages. *@
+@implements IDisposable
+@inject AdminView View
+@inject NavigationManager Nav
+
+@if (Missing is { } game)
+{
+    <div class="mx-auto max-w-lg py-10 text-center">
+        <span class="mx-auto grid size-12 place-items-center rounded-full bg-zinc-100 text-zinc-500 dark:bg-zinc-800"><Icon Name="playData" Class="size-6" /></span>
+        <h1 class="mt-4 text-xl font-semibold">@string.Format(Localizer["{0} hasn't played {1}"], Name, game)</h1>
+        <p class="mt-2 text-sm @Css.Muted">@string.Format(Localizer["Their {0} profile and play data are created the first time they tap their card on a {0} cabinet."], game)</p>
+        <div class="mt-6 flex flex-wrap justify-center gap-2">
+            @foreach (var other in GameInfo.All.Where(g => View.Played!.Contains(g.Name)).Take(3))
+            {
+                <a class="@Css.GhostButton border border-zinc-200 dark:border-zinc-700" href="@EraPaths.Index(View.Baid, other.Name)"><GameDot Game="other" />@string.Format(Localizer["{0}'s Play Data"], other.Name)</a>
+            }
+        </div>
+    </div>
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private string Name => View.Name.Length > 0 ? View.Name : $"#{View.Baid}";
+
+    // A game page (Profile or Play Data, of any game) of a player with no data in that game.
+    private string? Missing
+    {
+        get
+        {
+            if (View.Played is not { } played) return null;
+            var path = "/" + Nav.ToBaseRelativePath(Nav.Uri);
+            var game = EraPaths.GameOf(path);
+            return EraPaths.Switch(path, View.Baid, game) is not null && !played.Contains(game) ? game : null;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        View.Changed += Refresh;
+        Nav.LocationChanged += OnLocation;
+    }
+
+    private void OnLocation(object? sender, LocationChangedEventArgs e) => Refresh();
+
+    private void Refresh() => InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        View.Changed -= Refresh;
+        Nav.LocationChanged -= OnLocation;
+    }
+}

@@ -18,11 +18,12 @@
             {
                 var on = game.Name == Value;
                 <li role="option" aria-selected="@Css.Aria(on)">
-                    <button type="button" class="@Css.MenuItem @(on ? "bg-primary-500/10 font-medium" : "")" @onclick="() => Pick(game.Name)">
+                    @{ var dim = Dim?.Invoke(game.Name) == true; }
+                    <button type="button" class="@Css.MenuItem @(on ? "bg-primary-500/10 font-medium" : "") @(dim ? "opacity-60" : "")" @onclick="() => Pick(game.Name)">
                         <GameDot Game="game" />
                         <span>@game.Name</span>
                         <span class="text-xs @Css.Muted">@game.Japanese</span>
-                        @if (Detail?.Invoke(game.Name) is { Length: > 0 } detail)
+                        @if ((dim ? Localizer["No plays"].Value : Detail?.Invoke(game.Name)) is { Length: > 0 } detail)
                         {
                             <span class="ml-auto pl-3 text-xs @Css.Muted">@detail</span>
                         }
@@ -40,6 +41,8 @@
     [Parameter] public EventCallback<string> ValueChanged { get; set; }
     /// <summary>A short note after a game's name (Game data: how many files it has).</summary>
     [Parameter] public Func<string, string?>? Detail { get; set; }
+    /// <summary>Games to show dimmed, with "No plays" (admin view: the ones the player has never played).</summary>
+    [Parameter] public Func<string, bool>? Dim { get; set; }
     [Parameter] public string Class { get; set; } = "";
 
     private bool open;

@@ -4407,4 +4407,31 @@
   <data name="Open {0}'s Game data" xml:space="preserve">
     <value>Ouvrir les données de {0}</value>
   </data>
+  <data name="No plays in any game yet." xml:space="preserve">
+    <value>Aucune partie dans aucun jeu pour l'instant.</value>
+  </data>
+  <data name="The card and User ID are the same in every game. Scores, dan results and profiles are kept per game." xml:space="preserve">
+    <value>La carte et l'ID utilisateur sont les mêmes dans tous les jeux. Les scores, les résultats de dan et les profils sont propres à chaque jeu.</value>
+  </data>
+  <data name="Deletes the user, their scores and play history in every game, and their access codes." xml:space="preserve">
+    <value>Supprime l'utilisateur, ses scores et son historique dans tous les jeux, et ses codes d'accès.</value>
+  </data>
+  <data name="Remove a score · {0}" xml:space="preserve">
+    <value>Supprimer un score · {0}</value>
+  </data>
+  <data name="{0}, on {1}" xml:space="preserve">
+    <value>{0}, sur {1}</value>
+  </data>
+  <data name="{0} hasn't played {1}" xml:space="preserve">
+    <value>{0} n'a pas joué à {1}</value>
+  </data>
+  <data name="Their {0} profile and play data are created the first time they tap their card on a {0} cabinet." xml:space="preserve">
+    <value>Son profil et ses données de jeu {0} sont créés la première fois qu'il passe sa carte sur une borne {0}.</value>
+  </data>
+  <data name="Admin view: these are &lt;b&gt;{0}&lt;/b&gt;'s &lt;b&gt;{2}&lt;/b&gt; pages (User ID {1}). Changes you make are saved to their account." xml:space="preserve">
+    <value>Vue admin : ce sont les pages &lt;b&gt;{2}&lt;/b&gt; de &lt;b&gt;{0}&lt;/b&gt; (ID utilisateur {1}). Vos modifications sont enregistrées sur son compte.</value>
+  </data>
+  <data name="No plays" xml:space="preserve">
+    <value>Aucune partie</value>
+  </data>
 </root>

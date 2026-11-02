@@ -20,16 +20,44 @@
     </div>
 </div>
 <div class="grid grid-cols-3 divide-x divide-zinc-100 border-b border-zinc-100 text-center dark:divide-zinc-800 dark:border-zinc-800">
-    @foreach (var (k, v) in new[] { (Localizer["User ID"].Value, User.Baid.ToString()), (Localizer["Plays"].Value, User.Plays.ToString("N0")), (Localizer["Last played"].Value, Ago(s.LastPlayDateTime)) })
+    @foreach (var (k, v) in new[] { (Localizer["User ID"].Value, User.Baid.ToString()), (Localizer["Plays"].Value, User.Plays.ToString("N0")), (Localizer["Last played"].Value, LastPlayed) })
     {
         <div class="px-2 py-3"><p class="text-xs @Css.Muted">@k</p><p class="mt-0.5 font-semibold tabular-nums">@v</p></div>
     }
 </div>
-<div class="flex flex-wrap gap-2 px-5 py-4">
-    <a href="@($"/Users/{User.Baid}/Profile")" class="@Outline"><Icon Name="profile" />@Localizer["Profile"]</a>
-    <a href="@PlayDataPaths.Of(User.Baid, PlayDataPaths.Stats)" class="@Outline"><Icon Name="chart" />@Localizer["Play Data"]</a>
-    <a href="@($"/Users/{User.Baid}/QrCode")" class="@Outline"><Icon Name="qr" />@Localizer["QR code"]</a>
-</div>
+@Section(Localizer["Games"], @<div>
+    @if (User.Games.Count == 0)
+    {
+        <p class="text-sm @Css.Muted">@Localizer["No plays in any game yet."]</p>
+    }
+    else
+    {
+        <ul class="divide-y divide-zinc-100 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-700">
+            @foreach (var g in User.Games)
+            {
+                <li class="flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2.5">
+                    <span class="flex min-w-0 flex-1 basis-40 items-center gap-2">
+                        <GameDot Game="GameInfo.Of(g.Game)" />
+                        <span class="min-w-0">
+                            <span class="block text-sm font-medium">@g.Game</span>
+                            <span class="block text-xs @Css.Muted">@(g.Plays == 1 ? Localizer["1 play"] : string.Format(Localizer["{0} plays"], g.Plays.ToString("N0"))) · @Ago(g.LastPlayed ?? default)</span>
+                        </span>
+                    </span>
+                    <span class="flex flex-wrap gap-1.5">
+                        <a href="@EraPaths.Profile(User.Baid, g.Game)" class="@Outline !px-2.5 !py-1.5 text-xs"><Icon Name="profile" Class="size-4" />@Localizer["Profile"]</a>
+                        <a href="@(g.Game == EraPaths.Nijiiro ? PlayDataPaths.Of(User.Baid, PlayDataPaths.Stats) : EraPaths.Index(User.Baid, g.Game))" class="@Outline !px-2.5 !py-1.5 text-xs"><Icon Name="chart" Class="size-4" />@Localizer["Play Data"]</a>
+                        <button class="@Outline !px-2.5 !py-1.5 text-xs disabled:opacity-40" disabled="@(g.Plays == 0)" @onclick="() => OpenScores(g.Game)"><Icon Name="music" Class="size-4" />@Localizer["Remove a score"]</button>
+                    </span>
+                </li>
+            }
+        </ul>
+        @if (AuthService.EnabledGames.Count > 1)
+        {
+            <p class="mt-2 text-xs @Css.Muted">@Localizer["The card and User ID are the same in every game. Scores, dan results and profiles are kept per game."]</p>
+        }
+    }
+    <a href="@($"/Users/{User.Baid}/QrCode")" class="@Outline mt-3"><Icon Name="qr" />@Localizer["QR code"]</a>
+</div>)
 
 @if (AuthService.LoginRequired)
 {
@@ -119,10 +147,6 @@
     @Section(Localizer["Sign-in help"], SignInHelp)
 }
 
-@Section(Localizer["Data tools"], @<div class="grid gap-2 sm:grid-cols-2">
-    @Tile("music", Localizer["Remove a score"], Localizer["Bad or cheated scores"], OpenScores)
-</div>)
-
 @Section(Localizer["Danger zone"], @<div class="divide-y divide-zinc-100 dark:divide-zinc-800">
     @if (AuthService.LoginRequired)
     {
@@ -135,7 +159,7 @@
         </div>
     }
     <div class="flex items-center justify-between gap-4 @(AuthService.LoginRequired ? "pt-4" : "")">
-        <div><p class="text-sm font-medium">@Localizer["Delete user"]</p><p class="text-xs @Css.Muted">@Localizer["Delete User Hint"]</p></div>
+        <div><p class="text-sm font-medium">@Localizer["Delete user"]</p><p class="text-xs @Css.Muted">@(AuthService.EnabledGames.Count > 1 ? Localizer["Deletes the user, their scores and play history in every game, and their access codes."] : Localizer["Delete User Hint"])</p></div>
         <button class="@Danger shrink-0" disabled="@self" title="@(self ? Localizer["You can't delete yourself."] : null)" @onclick="() => { confirmDelete = true; deleteName = string.Empty; }">
             <Icon Name="trash" />@Localizer["Delete"]
         </button>
@@ -238,7 +262,7 @@
 {
     var q = scoreQuery.Trim();
     var hits = scores.Where(x => q.Length == 0 || x.MusicName.Contains(q, StringComparison.OrdinalIgnoreCase) || x.SongId.ToString() == q).ToList();
-    <Dialog Title="@Localizer["Remove a score"]" Width="max-w-lg" OnClose="() => scores = null">
+    <Dialog Title="@(scoresGame == EraPaths.Nijiiro && AuthService.EnabledGames.Count == 1 ? Localizer["Remove a score"] : string.Format(Localizer["Remove a score · {0}"], scoresGame))" Width="max-w-lg" OnClose="() => scores = null">
         <p>@Localizer["Remove Score Hint"]</p>
         <input type="search" autofocus class="@Css.Input mt-3" placeholder="@Localizer["Song name or ID"]" value="@scoreQuery" @oninput="e => scoreQuery = e.Value?.ToString() ?? string.Empty" />
         <ul class="mt-2 max-h-80 divide-y divide-zinc-100 overflow-y-auto dark:divide-zinc-800">
@@ -289,6 +313,7 @@
     private bool confirmReset, confirmAdmin, confirmDelete, busy;
     private string deleteName = "";
     private List<SongBestData>? scores;
+    private string scoresGame = EraPaths.Nijiiro;
     private string scoreQuery = "";
     private (uint, Difficulty)? removing;
     private uint shownBaid;
@@ -557,12 +582,18 @@
         }
     }
 
-    private async Task OpenScores()
+    // The latest play across games; with more than one game, which one it was in.
+    private string LastPlayed => User.Games.FirstOrDefault(g => g.LastPlayed is not null) is { } last
+        ? User.Games.Count > 1 ? string.Format(Localizer["{0}, on {1}"], Ago(last.LastPlayed!.Value), last.Game) : Ago(last.LastPlayed!.Value)
+        : Ago(User.UserSetting.LastPlayDateTime);
+
+    private async Task OpenScores(string game)
     {
         scoreQuery = "";
         removing = null;
-        var music = await GameDataService.GetMusicDetailDictionary();
-        var list = (await Client.GetFromJsonAsync<SongBestResponse>($"api/PlayData/{User.Baid}"))?.SongBestData ?? [];
+        scoresGame = game;
+        var music = await GameDataService.GetMusicDetailDictionary(game);
+        var list = (await Client.GetFromJsonAsync<SongBestResponse>($"api/{game}/PlayData/{User.Baid}"))?.SongBestData ?? [];
         foreach (var x in list)
         {
             // Songs without a name in this language fall back to Japanese, then to the ID.
@@ -574,7 +605,7 @@
 
     private async Task RemoveScore(SongBestData x)
     {
-        if (await Run(() => Client.DeleteAsync($"api/Users/{User.Baid}/Scores/{x.SongId}/{(int)x.Difficulty}"), Localizer["Score removed"]))
+        if (await Run(() => Client.DeleteAsync($"api/{scoresGame}/Users/{User.Baid}/Scores/{x.SongId}/{(int)x.Difficulty}"), Localizer["Score removed"]))
         {
             scores!.Remove(x);
             removing = null;

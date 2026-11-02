@@ -18,7 +18,7 @@
         @if (AuthService.EnabledGames.Count > 1)
         {
             @* Which game's pages these are; switching keeps the page when that game has it. *@
-            <GameMenu Games="AuthService.EnabledGames" Value="@Game" ValueChanged="SwitchGame" Class="my-1.5" />
+            <GameMenu Games="AuthService.EnabledGames" Value="@Game" ValueChanged="SwitchGame" Class="my-1.5" Dim="@(View.Played is { } played ? g => !played.Contains(g) : null)" />
         }
         @Link(EraPaths.Profile(Baid, Game), "profile", Localizer["Profile"])
         @* The game's whole song list (with this player's results): its own item, not a Play Data page. *@

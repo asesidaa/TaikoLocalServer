@@ -4407,4 +4407,31 @@
   <data name="Open {0}'s Game data" xml:space="preserve">
     <value>{0}のゲームデータを開く</value>
   </data>
+  <data name="No plays in any game yet." xml:space="preserve">
+    <value>まだどのゲームもプレイしていません。</value>
+  </data>
+  <data name="The card and User ID are the same in every game. Scores, dan results and profiles are kept per game." xml:space="preserve">
+    <value>カードとユーザーIDはすべてのゲームで共通です。スコア、段位の結果、プロフィールはゲームごとに保存されます。</value>
+  </data>
+  <data name="Deletes the user, their scores and play history in every game, and their access codes." xml:space="preserve">
+    <value>ユーザーと、すべてのゲームのスコアとプレイ履歴、アクセスコードを削除します。</value>
+  </data>
+  <data name="Remove a score · {0}" xml:space="preserve">
+    <value>スコアを削除・{0}</value>
+  </data>
+  <data name="{0}, on {1}" xml:space="preserve">
+    <value>{0}（{1}）</value>
+  </data>
+  <data name="{0} hasn't played {1}" xml:space="preserve">
+    <value>{0}さんは{1}をプレイしていません</value>
+  </data>
+  <data name="Their {0} profile and play data are created the first time they tap their card on a {0} cabinet." xml:space="preserve">
+    <value>{0}のプロフィールとプレイデータは、{0}の筐体で初めてカードをタッチしたときに作られます。</value>
+  </data>
+  <data name="Admin view: these are &lt;b&gt;{0}&lt;/b&gt;'s &lt;b&gt;{2}&lt;/b&gt; pages (User ID {1}). Changes you make are saved to their account." xml:space="preserve">
+    <value>管理者ビュー:&lt;b&gt;{0}&lt;/b&gt;さんの&lt;b&gt;{2}&lt;/b&gt;のページです(ユーザーID {1})。変更はこのユーザーのアカウントに保存されます。</value>
+  </data>
+  <data name="No plays" xml:space="preserve">
+    <value>プレイなし</value>
+  </data>
 </root>
