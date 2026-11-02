@@ -43,7 +43,7 @@ else
 }
 @if (picking)
 {
-    <SongPicker Title="@Localizer["Add a song"]" Taken="Ids().ToHashSet()" TakenLabel="@Localizer["In the list"]"
+    <SongPicker Game="@Game" Title="@Localizer["Add a song"]" Taken="Ids().ToHashSet()" TakenLabel="@Localizer["In the list"]"
                 OnPick="Add" OnClose="() => picking = false" />
 }
 
@@ -52,6 +52,7 @@ else
     [Parameter, EditorRequired] public IReadOnlyDictionary<uint, MusicDetail> Music { get; set; } = null!;
     [Parameter] public int? Max { get; set; }
     [Parameter] public EventCallback OnChanged { get; set; }
+    [Parameter] public string Game { get; set; } = "Nijiiro";
 
     private const string SmallIcon = "grid size-7 shrink-0 place-items-center rounded-lg text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 disabled:hover:bg-transparent dark:hover:bg-zinc-800";
 

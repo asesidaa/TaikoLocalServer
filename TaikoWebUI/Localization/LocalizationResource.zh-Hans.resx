@@ -3753,4 +3753,301 @@
   <data name="Remove movie {0}" xml:space="preserve">
     <value>移除影片 {0}</value>
   </data>
+  <data name="Don Challenge on" xml:space="preserve">
+    <value>开启咚挑战</value>
+  </data>
+  <data name="Rounds" xml:space="preserve">
+    <value>轮次</value>
+  </data>
+  <data name="Active (set in ServerSettings.json)" xml:space="preserve">
+    <value>当前（在 ServerSettings.json 中设置）</value>
+  </data>
+  <data name="Tasks" xml:space="preserve">
+    <value>任务</value>
+  </data>
+  <data name="Task {0}" xml:space="preserve">
+    <value>任务 {0}</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>文字</value>
+  </data>
+  <data name="Add task" xml:space="preserve">
+    <value>添加任务</value>
+  </data>
+  <data name="Community task" xml:space="preserve">
+    <value>集体任务</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>说明</value>
+  </data>
+  <data name="Rewards" xml:space="preserve">
+    <value>奖励</value>
+  </data>
+  <data name="After" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="tasks" xml:space="preserve">
+    <value>个任务后</value>
+  </data>
+  <data name="This round has {0} tasks, so no one can earn this." xml:space="preserve">
+    <value>本轮只有 {0} 个任务，没人能获得这项奖励。</value>
+  </data>
+  <data name="Title IDs" xml:space="preserve">
+    <value>称号 ID</value>
+  </data>
+  <data name="Add reward" xml:space="preserve">
+    <value>添加奖励</value>
+  </data>
+  <data name="Rule" xml:space="preserve">
+    <value>规则</value>
+  </data>
+  <data name="How many" xml:space="preserve">
+    <value>数量</value>
+  </data>
+  <data name="of any song" xml:space="preserve">
+    <value>首（任意歌曲）</value>
+  </data>
+  <data name="songs from" xml:space="preserve">
+    <value>首，选自</value>
+  </data>
+  <data name="Add ID" xml:space="preserve">
+    <value>添加 ID</value>
+  </data>
+  <data name="Games" xml:space="preserve">
+    <value>游戏</value>
+  </data>
+  <data name="{0} of {1} on. Turned on in ServerSettings.json; a change needs a restart." xml:space="preserve">
+    <value>已开启 {0}/{1}。在 ServerSettings.json 中开启，更改后需要重启。</value>
+  </data>
+  <data name="1 needs attention" xml:space="preserve">
+    <value>1 个需要处理</value>
+  </data>
+  <data name="{0} need attention" xml:space="preserve">
+    <value>{0} 个需要处理</value>
+  </data>
+  <data name="All loaded" xml:space="preserve">
+    <value>全部已加载</value>
+  </data>
+  <data name="Game data" xml:space="preserve">
+    <value>游戏数据</value>
+  </data>
+  <data name="Checking…" xml:space="preserve">
+    <value>检查中…</value>
+  </data>
+  <data name="{0} players can still sign in, but its songs and events won't load. Copy {0}'s {1} folder to {2}. Then press Check again; no restart needed." xml:space="preserve">
+    <value>{0} 的玩家仍可登录，但它的歌曲和活动无法加载。把 {0} 的 {1} 文件夹复制到 {2}，然后点“再次检查”，无需重启。</value>
+  </data>
+  <data name="Off:" xml:space="preserve">
+    <value>未开启：</value>
+  </data>
+  <data name="How to turn one on" xml:space="preserve">
+    <value>如何开启</value>
+  </data>
+  <data name="In {0}, set the game's {1} to {2}, copy its {3} folder to {4}, then restart the server." xml:space="preserve">
+    <value>在 {0} 中把该游戏的 {1} 设为 {2}，把它的 {3} 文件夹复制到 {4}，然后重启服务器。</value>
+  </data>
+  <data name="{0}: still not fully loaded" xml:space="preserve">
+    <value>{0}：仍未完全加载</value>
+  </data>
+  <data name="{0}: loaded" xml:space="preserve">
+    <value>{0}：已加载</value>
+  </data>
+  <data name="Couldn't check again." xml:space="preserve">
+    <value>无法再次检查。</value>
+  </data>
+  <data name="{0} of {1} files loaded" xml:space="preserve">
+    <value>已加载 {0}/{1} 个文件</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>安装位置</value>
+  </data>
+  <data name="Not set (Eras.Nijiiro.GameDataPath), so extract needs the game folder from a browser or a run by hand" xml:space="preserve">
+    <value>未设置（Eras.Nijiiro.GameDataPath），所以 extract 需要从浏览器提供游戏文件夹，或手动运行</value>
+  </data>
+  <data name="Extract reads {0}" xml:space="preserve">
+    <value>extract 读取 {0}</value>
+  </data>
+  <data name="Not found at {0}" xml:space="preserve">
+    <value>在 {0} 未找到</value>
+  </data>
+  <data name="Data folder" xml:space="preserve">
+    <value>数据文件夹</value>
+  </data>
+  <data name="Found at {0}, but it didn't load: {1}" xml:space="preserve">
+    <value>在 {0} 找到，但未能加载：{1}</value>
+  </data>
+  <data name="Found at {0}: {1} songs" xml:space="preserve">
+    <value>在 {0} 找到：{1} 首歌曲</value>
+  </data>
+  <data name="Names" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="Needs the data folder" xml:space="preserve">
+    <value>需要数据文件夹</value>
+  </data>
+  <data name="No names read for {0}, so items show their number" xml:space="preserve">
+    <value>未读取到 {0} 的名称，所以物品显示编号</value>
+  </data>
+  <data name="{0} costumes, {1} titles, {2} drum sounds" xml:space="preserve">
+    <value>{0} 件装扮、{1} 个称号、{2} 种音色</value>
+  </data>
+  <data name="Shop: season {0}" xml:space="preserve">
+    <value>商店：第 {0} 季</value>
+  </data>
+  <data name="Don Challenge: {0}" xml:space="preserve">
+    <value>咚挑战：{0}</value>
+  </data>
+  <data name="Partly loaded" xml:space="preserve">
+    <value>部分加载</value>
+  </data>
+  <data name="Problem" xml:space="preserve">
+    <value>有问题</value>
+  </data>
+  <data name="Not available" xml:space="preserve">
+    <value>不可用</value>
+  </data>
+  <data name="Seasons" xml:space="preserve">
+    <value>季度</value>
+  </data>
+  <data name="Season {0}" xml:space="preserve">
+    <value>第 {0} 季</value>
+  </data>
+  <data name="Add season" xml:space="preserve">
+    <value>添加季度</value>
+  </data>
+  <data name="Active: {0} cabinets show this season (set in ServerSettings.json)" xml:space="preserve">
+    <value>当前：{0} 机台显示这一季（在 ServerSettings.json 中设置）</value>
+  </data>
+  <data name="Opens" xml:space="preserve">
+    <value>开始</value>
+  </data>
+  <data name="Closes" xml:space="preserve">
+    <value>结束</value>
+  </data>
+  <data name="&quot;New&quot; badge for (days)" xml:space="preserve">
+    <value>“新”标记天数</value>
+  </data>
+  <data name="&quot;Ending soon&quot; badge for (days)" xml:space="preserve">
+    <value>“即将结束”标记天数</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>物品</value>
+  </data>
+  <data name="Add item" xml:space="preserve">
+    <value>添加物品</value>
+  </data>
+  <data name="Replace the game's own attract movies" xml:space="preserve">
+    <value>替换游戏自带的待机影片</value>
+  </data>
+  <data name="Off: these play as well as the game's own." xml:space="preserve">
+    <value>关闭时：它们会和游戏自带的一起播放。</value>
+  </data>
+  <data name="Older games" xml:space="preserve">
+    <value>旧版游戏</value>
+  </data>
+  <data name="Nothing to extract: the server reads each game's folder." xml:space="preserve">
+    <value>无需提取：服务器会直接读取每个游戏的文件夹。</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>就绪</value>
+  </data>
+  <data name="Didn't load" xml:space="preserve">
+    <value>未能加载</value>
+  </data>
+  <data name="Folder not found" xml:space="preserve">
+    <value>未找到文件夹</value>
+  </data>
+  <data name="Copy {0}'s data folder there, then Check again: no restart needed." xml:space="preserve">
+    <value>把 {0} 的 data 文件夹复制到那里，然后再次检查，无需重启。</value>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>类型</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>从</value>
+  </data>
+  <data name="Until" xml:space="preserve">
+    <value>到</value>
+  </data>
+  <data name="Game" xml:space="preserve">
+    <value>游戏</value>
+  </data>
+  <data name="{0}'s game data didn't load" xml:space="preserve">
+    <value>{0} 的游戏数据未能加载</value>
+  </data>
+  <data name="{0}'s game folder isn't there" xml:space="preserve">
+    <value>{0} 的游戏文件夹不存在</value>
+  </data>
+  <data name="Song pickers can't show names until it loads. Fix it in Server Management › Status › Games." xml:space="preserve">
+    <value>加载前，歌曲选择器无法显示名称。请在服务器管理 › 状态 › 游戏中修复。</value>
+  </data>
+  <data name="Events" xml:space="preserve">
+    <value>活动</value>
+  </data>
+  <data name="Cabinet" xml:space="preserve">
+    <value>机台</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>其他</value>
+  </data>
+  <data name="{0} files" xml:space="preserve">
+    <value>{0} 个文件</value>
+  </data>
+  <data name="{0}'s own files, in {1}. Saving one reloads {0}." xml:space="preserve">
+    <value>{0} 自己的文件，位于 {1}。保存其中一个会重新加载 {0}。</value>
+  </data>
+  <data name="Not valid JSON: {0}" xml:space="preserve">
+    <value>JSON 无效：{0}</value>
+  </data>
+  <data name="Fix the JSON first." xml:space="preserve">
+    <value>请先修正 JSON。</value>
+  </data>
+  <data name="Game files are missing for {0}. Cabinets can't play and pages show IDs instead of names." xml:space="preserve">
+    <value>缺少 {0} 的游戏文件。机台无法游玩，页面会显示编号而不是名称。</value>
+  </data>
+  <data name="Game files are missing for {0}. {0} cabinets can't load songs or events." xml:space="preserve">
+    <value>缺少 {0} 的游戏文件。{0} 机台无法加载歌曲和活动。</value>
+  </data>
+  <data name="Fix it" xml:space="preserve">
+    <value>去修复</value>
+  </data>
+  <data name="{0} and {1}" xml:space="preserve">
+    <value>{0} 和 {1}</value>
+  </data>
+  <data name="A game that isn't ready can be fixed later in Server Management › Status." xml:space="preserve">
+    <value>未就绪的游戏可以稍后在服务器管理 › 状态中修复。</value>
+  </data>
+  <data name="Nijiiro files" xml:space="preserve">
+    <value>虹色版文件</value>
+  </data>
+  <data name="{0} of {1} ready" xml:space="preserve">
+    <value>{0}/{1} 已就绪</value>
+  </data>
+  <data name="General notice" xml:space="preserve">
+    <value>一般通知</value>
+  </data>
+  <data name="Maintenance coming" xml:space="preserve">
+    <value>即将维护</value>
+  </data>
+  <data name="Maintenance now" xml:space="preserve">
+    <value>正在维护</value>
+  </data>
+  <data name="Closing soon" xml:space="preserve">
+    <value>即将关闭</value>
+  </data>
+  <data name="Drum sound" xml:space="preserve">
+    <value>音色</value>
+  </data>
+  <data name="Item shop" xml:space="preserve">
+    <value>道具商店</value>
+  </data>
+  <data name="Don Challenge" xml:space="preserve">
+    <value>咚挑战</value>
+  </data>
+  <data name="Taikojuku upgrades" xml:space="preserve">
+    <value>太鼓塾更新</value>
+  </data>
+  <data name="Telop messages" xml:space="preserve">
+    <value>滚动消息</value>
+  </data>
 </root>

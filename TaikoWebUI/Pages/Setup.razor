@@ -35,15 +35,27 @@
                     break;
                 case 2:
                     <h2 class="text-lg font-semibold">@Localizer["Game files"]</h2>
-                    @if (assetsMissing == false)
+                    @if (AuthService.NijiiroOn)
                     {
-                        <p class="mt-3 flex items-center gap-2 text-sm"><Icon Name="check" Class="size-5 text-emerald-500" />@Localizer["The game files are in place."]</p>
+                        @if (older.Total > 0)
+                        {
+                            <h3 class="mt-3 flex items-center gap-2 text-sm font-semibold"><GameDot Game="GameInfo.All[0]" />Nijiiro</h3>
+                        }
+                        @if (assetsMissing == false)
+                        {
+                            <p class="mt-3 flex items-center gap-2 text-sm"><Icon Name="check" Class="size-5 text-emerald-500" />@Localizer["The game files are in place."]</p>
+                        }
+                        else
+                        {
+                            <p class="mt-1 mb-4 text-sm @Css.Muted">@Localizer["Game Files Hint"]</p>
+                            <ExtractPanel OnFinished="CheckAssets" />
+                            <p class="mt-3 text-xs @Css.Muted">@Localizer["Cabinets can't play until this is done."]</p>
+                        }
                     }
-                    else
+                    <OlderGamesList Class="mt-5" OnChecked="r => older = r" />
+                    @if (older.Ready < older.Total)
                     {
-                        <p class="mt-1 mb-4 text-sm @Css.Muted">@Localizer["Game Files Hint"]</p>
-                        <ExtractPanel OnFinished="CheckAssets" />
-                        <p class="mt-3 text-xs @Css.Muted">@Localizer["Cabinets can't play until this is done."]</p>
+                        <p class="mt-2 text-xs @Css.Muted">@Localizer["A game that isn't ready can be fixed later in Server Management › Status."]</p>
                     }
                     break;
                 default:
@@ -70,7 +82,7 @@
                     <button class="@Css.PrimaryButton" disabled="@(busy || (step == 0 && setupCode.Length != 9))">@Localizer["Continue"]<Icon Name="chevRight" /></button>
                     break;
                 case 2:
-                    <button class="@Css.PrimaryButton">@(assetsMissing == false ? Localizer["Continue"] : Localizer["Skip for now"])<Icon Name="chevRight" /></button>
+                    <button class="@Css.PrimaryButton">@(assetsMissing == false || !AuthService.NijiiroOn ? Localizer["Continue"] : Localizer["Skip for now"])<Icon Name="chevRight" /></button>
                     break;
                 default:
                     @* A full reload: the server no longer reports setup as pending. *@
@@ -92,6 +104,7 @@
     private bool busy;
     private bool? assetsMissing;
     private List<string> labels = [];
+    private (int Ready, int Total) older;
 
     protected override async Task OnInitializedAsync()
     {
@@ -170,7 +183,10 @@
     [
         (Localizer["Mode"], Localizer["Server"]),
         (Localizer["Admin"], code.Length > 4 ? $"•••• {code[^4..]}" : code),
-        (Localizer["Game files"], assetsMissing == false ? Localizer["In place"] : Localizer["Not added yet"]),
+        .. AuthService.NijiiroOn
+            ? [(older.Total > 0 ? Localizer["Nijiiro files"] : Localizer["Game files"], assetsMissing == false ? Localizer["In place"] : Localizer["Not added yet"])]
+            : Array.Empty<(string, string)>(),
+        .. older.Total > 0 ? [(Localizer["Older games"], string.Format(Localizer["{0} of {1} ready"], older.Ready, older.Total))] : Array.Empty<(string, string)>(),
         (Localizer["Sign-up"], AuthService.OnlyAdmin ? Localizer["Admins only"]
             : AuthService.SignUpMode switch
             {

@@ -139,6 +139,8 @@ public sealed class YellowInitialDataProtocolTests
             => era == GameEra.Yellow ? yellow : throw new InvalidOperationException($"Unexpected era {era}");
 
         public Task InitializeAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public IReadOnlyDictionary<GameEra, EraLoadResult> LoadResults { get; } = new Dictionary<GameEra, EraLoadResult>();
+        public Task<EraLoadResult> ReloadAsync(GameEra era, CancellationToken cancellationToken = default) => throw new NotSupportedException();
     }
 
     private sealed class FakeYellowCatalog : IYellowCatalog

@@ -1,0 +1,93 @@
+@* An older game's telop messages (the scrolling line on the cabinet). The game reads the kind from a prefix on the
+   text (/S, /Mp, /M, /Cp, /C, /U) and strips it before showing it; here it's a select. *@
+@using System.Text.Json.Nodes
+
+<div class="space-y-3">
+    @foreach (var m in Messages.OfType<JsonObject>().ToList())
+    {
+        var (prefix, text) = Split(m["telop"]?.ToString() ?? "");
+        <div class="rounded-xl border border-zinc-200 p-3 dark:border-zinc-700">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="font-mono text-xs @Css.Muted">#@m["telopId"]</span>
+                <select class="@Css.Input !w-auto !py-1.5 text-sm" aria-label="@Localizer["Kind"]" value="@prefix"
+                        @onchange="e => Set(m, e.Value?.ToString() ?? Prefixes[0].Prefix, text)">
+                    @foreach (var (p, label) in Prefixes)
+                    {
+                        <option value="@p">@Localizer[label]</option>
+                    }
+                </select>
+                <button class="ml-auto grid size-7 place-items-center rounded-lg text-zinc-400 hover:bg-red-500/10 hover:text-red-600" aria-label="@Localizer["Remove"]"
+                        @onclick="() => Remove(m)"><Icon Name="x" /></button>
+            </div>
+            <input class="@Css.Input mt-2" aria-label="@Localizer["Message"]" value="@text" @onchange="e => Set(m, prefix, e.Value?.ToString() ?? string.Empty)" />
+            <div class="mt-2 grid gap-2 sm:grid-cols-2">
+                <label class="text-xs @Css.Muted">@Localizer["From"]
+                    <input type="datetime-local" class="@Css.Input mt-1" value="@ToInput(m["startDatetime"])" @onchange='e => SetDate(m, "startDatetime", e.Value)' />
+                </label>
+                <label class="text-xs @Css.Muted">@Localizer["Until"]
+                    <input type="datetime-local" class="@Css.Input mt-1" value="@ToInput(m["endDatetime"])" @onchange='e => SetDate(m, "endDatetime", e.Value)' />
+                </label>
+            </div>
+            @* How the cabinet shows it: the text without its prefix. *@
+            <p class="mt-2 truncate rounded-lg bg-zinc-900 px-3 py-1.5 font-display text-sm text-amber-200" aria-hidden="true">@text</p>
+        </div>
+    }
+    <button class="@Css.GhostButton !px-2" @onclick="Add"><Icon Name="plus" />@Localizer["Add message"]</button>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public JsonArray Messages { get; set; } = null!;
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private static readonly (string Prefix, string Label)[] Prefixes =
+    [
+        ("/S", "General notice"), ("/Mp", "Maintenance coming"), ("/M", "Maintenance now"),
+        ("/Cp", "Closing soon"), ("/C", "Closed"), ("/U", "Unknown"),
+    ];
+
+    // Longest first, so /Mp isn't read as /M.
+    private static (string Prefix, string Text) Split(string telop)
+    {
+        foreach (var (p, _) in Prefixes.OrderByDescending(x => x.Prefix.Length))
+        {
+            if (telop.StartsWith(p, StringComparison.Ordinal))
+                return (p, telop[p.Length..].TrimStart());
+        }
+        return (Prefixes[0].Prefix, telop);
+    }
+
+    private Task Set(JsonObject m, string prefix, string text)
+    {
+        m["telop"] = $"{prefix} {text}";
+        return OnChanged.InvokeAsync();
+    }
+
+    // The files use yyyyMMddHHmmss.
+    private static string ToInput(JsonNode? value) =>
+        DateTime.TryParseExact(value?.ToString(), "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out var d) ? d.ToString("yyyy-MM-ddTHH:mm") : "";
+
+    private Task SetDate(JsonObject m, string key, object? value)
+    {
+        if (DateTime.TryParse(value?.ToString(), out var d)) m[key] = d.ToString("yyyyMMddHHmm") + "00";
+        return OnChanged.InvokeAsync();
+    }
+
+    private Task Remove(JsonObject m)
+    {
+        Messages.Remove(m);
+        return OnChanged.InvokeAsync();
+    }
+
+    private Task Add()
+    {
+        var id = Messages.OfType<JsonObject>().Select(o => o["telopId"]?.GetValue<uint>() ?? 0).DefaultIfEmpty(0u).Max() + 1;
+        var now = DateTime.Now;
+        Messages.Add(new JsonObject
+        {
+            ["telopId"] = id, ["verupNo"] = 1u,
+            ["startDatetime"] = now.ToString("yyyyMMdd") + "000000", ["endDatetime"] = now.AddYears(1).ToString("yyyyMMdd") + "235959",
+            ["telop"] = "/S ",
+        });
+        return OnChanged.InvokeAsync();
+    }
+}

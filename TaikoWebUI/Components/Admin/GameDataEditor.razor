@@ -18,10 +18,10 @@
     <div class="flex flex-wrap items-start justify-between gap-3">
         <div>
             <h2 class="font-semibold">@Title</h2>
-            <p class="font-mono text-xs @Css.Muted">wwwroot/data/@Name</p>
+            <p class="font-mono text-xs @Css.Muted">@FilePath</p>
         </div>
         <label class="flex items-center gap-2 text-xs @Css.Muted">
-            <input type="checkbox" class="accent-primary-500" @bind="showJson" />JSON
+            <input type="checkbox" class="accent-primary-500" checked="@showJson" @onchange="e => { showJson = (bool)e.Value!; jsonText = null; jsonError = null; }" />JSON
         </label>
     </div>
     <div class="mt-4">
@@ -31,7 +31,13 @@
         }
         else if (showJson)
         {
-            <pre class="max-h-[60vh] overflow-auto rounded-lg bg-zinc-900 p-3 font-mono text-xs text-zinc-100">@draft.ToJsonString(Indented)</pre>
+            @* Editable: some files have no form yet (Taikojuku packs), so this is how they're changed. *@
+            <textarea class="h-[60vh] w-full rounded-lg bg-zinc-900 p-3 font-mono text-xs text-zinc-100 outline-none focus:ring-2 focus:ring-primary-500/40"
+                      spellcheck="false" aria-label="JSON" value="@(jsonText ??= draft.ToJsonString(Indented))" @oninput="JsonEdited"></textarea>
+            @if (jsonError is not null)
+            {
+                <p class="mt-2 text-xs text-red-600 dark:text-red-400">@jsonError</p>
+            }
         }
         else
         {
@@ -49,6 +55,33 @@
     /// <summary>Unsaved changes (the list shows a dot), and saves (the page refreshes the file status).</summary>
     [Parameter] public EventCallback<bool> OnDirtyChanged { get; set; }
     [Parameter] public EventCallback OnSaved { get; set; }
+    /// <summary>Whose file this is (GameInfo name). An older game's files are in wwwroot/data/&lt;game&gt;/ and use its songs.</summary>
+    [Parameter] public string Game { get; set; } = "Nijiiro";
+
+    private string Api => Game == "Nijiiro" ? "api/GameData" : $"api/{Game}/GameData";
+    private string FilePath => Game == "Nijiiro" ? $"wwwroot/data/{Name}" : $"wwwroot/data/{Game.ToLowerInvariant()}/{Name}";
+
+    /// <summary>The kind of file, so an older game's red_telop_data.json gets the same form as green's telop_data.json.</summary>
+    private string Kind => Game == "Nijiiro" ? Name
+        : new[] { "event_folder_data.json", "telop_data.json", "movie_data.json", "item_shop_data.json", "don_challenge_data.json", "taikojuku_verup_data.json" }
+            .FirstOrDefault(k => Name.EndsWith(k, StringComparison.Ordinal)) ?? Name;
+
+    private string? jsonText, jsonError;
+
+    private async Task JsonEdited(ChangeEventArgs e)
+    {
+        jsonText = e.Value?.ToString() ?? "";
+        try
+        {
+            draft = JsonNode.Parse(jsonText) ?? draft;
+            jsonError = null;
+        }
+        catch (JsonException ex)
+        {
+            jsonError = string.Format(Localizer["Not valid JSON: {0}"], ex.Message);
+        }
+        await NotifyDirty();
+    }
 
     private static readonly JsonSerializerOptions Indented = new() { WriteIndented = true };
 
@@ -75,7 +108,7 @@
         draft = null;
         selectedIndex = 0;
         showJson = false;
-        music ??= await GameDataService.GetMusicDetailDictionary();
+        music ??= await GameDataService.GetMusicDetailDictionary(Game);
         if (Name is "locked_costume_data.json") costumes = await GameDataService.GetCostumeList();
         if (Name is "locked_title_data.json") titles = await GameDataService.GetTitleDictionary();
         await Load();
@@ -85,7 +118,7 @@
 
     private async Task Load()
     {
-        var res = await Client.GetAsync($"api/GameData/Files/{Name}");
+        var res = await Client.GetAsync($"{Api}/Files/{Name}");
         missing = !res.IsSuccessStatusCode;
         if (missing) return;
         draft = JsonNode.Parse(await res.Content.ReadAsStringAsync());
@@ -94,11 +127,19 @@
         await NotifyDirty();
     }
 
-    private IEnumerable<(uint Id, string Json)> Entries() => draft is JsonArray a && Name is "event_folder_data.json" or "intro_data.json"
-        ? a.OfType<JsonObject>().Select(o => ((o[IdKey]?.GetValue<uint>() ?? 0), o.ToJsonString()))
-        : [];
+    // Entries the cabinet fetches again only when their version number goes up: which list, its ID and version keys.
+    private (JsonArray? List, string Id, string Verup) Versioned => Kind switch
+    {
+        "intro_data.json" => (draft as JsonArray, "setId", "verupNo"),
+        "event_folder_data.json" => (draft as JsonArray, "folderId", "verupNo"),
+        "telop_data.json" => (draft as JsonArray, "telopId", "verupNo"),
+        "item_shop_data.json" => (draft?["seasons"] as JsonArray, "season_id", "verup_no"),
+        _ => (null, "", ""),
+    };
 
-    private string IdKey => Name == "intro_data.json" ? "setId" : "folderId";
+    private IEnumerable<(uint Id, string Json)> Entries() =>
+        Versioned.List?.OfType<JsonObject>().Select(o => (o[Versioned.Id]?.GetValue<uint>() ?? 0, o.ToJsonString())) ?? [];
+
 
     private async Task Changed()
     {
@@ -116,26 +157,28 @@
     private async Task Discard()
     {
         draft = JsonNode.Parse(original);
+        jsonText = null;
+        jsonError = null;
         await NotifyDirty();
     }
 
     // Why Save is disabled, or null.
-    private string? BlockReason => Name == "qrcode_data.json" && draft is JsonArray qr &&
+    private string? BlockReason => jsonError is not null ? Localizer["Fix the JSON first."] : Name == "qrcode_data.json" && draft is JsonArray qr &&
         qr.OfType<JsonObject>().GroupBy(o => o["serial"]?.ToString() ?? "").Any(g => g.Key.Length == 0 || g.Count() > 1)
         ? Localizer["Every QR code needs its own serial."] : null;
 
     private async Task Save()
     {
-        // Cabinets fetch a folder or intro set again only when its verupNo goes up.
-        foreach (var o in (draft as JsonArray)?.OfType<JsonObject>() ?? [])
+        // Cabinets fetch a folder, intro set, message or shop season again only when its version goes up.
+        var (list, idKey, verupKey) = Versioned;
+        foreach (var o in list?.OfType<JsonObject>() ?? [])
         {
-            if (Name is not ("event_folder_data.json" or "intro_data.json")) break;
-            var id = o[IdKey]?.GetValue<uint>() ?? 0;
+            var id = o[idKey]?.GetValue<uint>() ?? 0;
             if (loadedEntries.GetValueOrDefault(id) != o.ToJsonString())
-                o["verupNo"] = (o["verupNo"]?.GetValue<uint>() ?? 0) + 1;
+                o[verupKey] = (o[verupKey]?.GetValue<uint>() ?? 0) + 1;
         }
         saving = true;
-        var res = await Client.PutAsync($"api/GameData/Files/{Name}", new StringContent(draft!.ToJsonString(Indented), System.Text.Encoding.UTF8, "application/json"));
+        var res = await Client.PutAsync($"{Api}/Files/{Name}", new StringContent(draft!.ToJsonString(Indented), System.Text.Encoding.UTF8, "application/json"));
         saving = false;
         if (!res.IsSuccessStatusCode)
         {
@@ -147,6 +190,7 @@
         }
         Toast.Show(Localizer["Saved. Game data reloaded."]);
         original = draft.ToJsonString();
+        jsonText = null;
         loadedEntries = Entries().ToDictionary(e => e.Id, e => e.Json);
         await NotifyDirty();
         await OnSaved.InvokeAsync();
@@ -156,6 +200,19 @@
 
     private RenderFragment Form => __builder =>
     {
+        if (Game != "Nijiiro")
+        {
+            switch (Kind)
+            {
+                case "event_folder_data.json": @Folders("folderId", Localizer["Folder"], "songNo", null) break;
+                case "telop_data.json": <TelopEditor Messages="(JsonArray)draft!" OnChanged="Changed" /> break;
+                case "movie_data.json": <MovieListEditor Config="(JsonObject)draft!" OnChanged="Changed" /> break;
+                case "item_shop_data.json": <ItemShopEditor Shop="(JsonObject)draft!" Game="@Game" Music="music!" OnChanged="Changed" /> break;
+                case "don_challenge_data.json": <DonChallengeEditor Data="(JsonObject)draft!" Game="@Game" Music="music!" OnChanged="Changed" /> break;
+                default: <p class="text-sm @Css.Muted">@Localizer["No form for this file yet; use JSON."]</p> break;
+            }
+            return;
+        }
         switch (Name)
         {
             case "event_folder_data.json": @Folders("folderId", Localizer["Folder"], "songNo", null) break;
@@ -223,7 +280,7 @@
         {
             item[songsKey] = songs = [];
         }
-        <div class="mt-1"><SongListEditor List="songs" Music="music!" Max="max" OnChanged="Changed" /></div>
+        <div class="mt-1"><SongListEditor List="songs" Music="music!" Max="max" Game="@Game" OnChanged="Changed" /></div>
     };
 
     private RenderFragment Lists(params (string Key, string Label)[] lists) => __builder =>

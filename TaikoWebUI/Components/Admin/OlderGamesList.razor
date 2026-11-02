@@ -1,0 +1,86 @@
+@* Setup's Game files step: the older games that are on, and whether each one's data folder was found. They aren't
+   extracted: the server reads each folder at start-up, and Check again re-reads them without a restart. *@
+@inject HttpClient Client
+
+@if (games is { Count: > 0 })
+{
+    <div class="@Class">
+        <div class="flex items-center justify-between gap-2">
+            <h3 class="text-sm font-semibold">@Localizer["Older games"]</h3>
+            <button type="button" class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-primary-600 hover:bg-primary-500/10 disabled:opacity-60 dark:text-primary-400"
+                    disabled="@checking" @onclick="CheckAgain">
+                <Icon Name="rotate" Class="@($"size-3.5 {(checking ? "animate-spin" : "")}")" />@(checking ? Localizer["Checking…"] : Localizer["Check again"])
+            </button>
+        </div>
+        <p class="text-xs @Css.Muted">@Localizer["Nothing to extract: the server reads each game's folder."]</p>
+        <ul class="mt-2 divide-y divide-zinc-100 rounded-xl border border-zinc-200 text-sm dark:divide-zinc-800 dark:border-zinc-700">
+            @foreach (var g in games)
+            {
+                var info = GameInfo.Of(g.Era);
+                var ready = Ready(g);
+                <li class="px-3 py-2.5">
+                    <div class="flex items-center gap-2">
+                        <GameDot Game="info" />
+                        <span class="font-medium">@info.Name</span>
+                        <span class="ml-auto inline-flex items-center gap-1 text-xs font-medium @(ready ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400")">
+                            <Icon Name="@(ready ? "check" : "alert")" Class="size-3.5" />@(ready ? Localizer["Ready"] : g.FolderFound ? Localizer["Didn't load"] : Localizer["Folder not found"])
+                        </span>
+                    </div>
+                    <p class="mt-0.5 truncate pl-4.5 font-mono text-xs @Css.Muted" title="@g.Folder">@g.Folder</p>
+                    @if (!ready)
+                    {
+                        <p class="mt-1 pl-4.5 text-xs text-red-700 dark:text-red-300">
+                            @(g.Error is { } e && g.FolderFound ? e : string.Format(Localizer["Copy {0}'s data folder there, then Check again: no restart needed."], info.Name))
+                        </p>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    [Parameter] public string Class { get; set; } = "";
+
+    /// <summary>The older games and how many are ready, each time they're (re)read.</summary>
+    [Parameter] public EventCallback<(int Ready, int Total)> OnChecked { get; set; }
+
+    private List<GameStatus>? games;
+    private bool checking;
+
+    protected override Task OnInitializedAsync() => Load();
+
+    private static bool Ready(GameStatus g) => g.FolderFound && g.Error is null;
+
+    private async Task Load()
+    {
+        try
+        {
+            games = (await Client.GetFromJsonAsync<List<GameStatus>>("api/Games") ?? [])
+                .Where(g => g.Enabled && g.Era != "Nijiiro").ToList();
+        }
+        catch (HttpRequestException)
+        {
+            games = [];
+        }
+        await OnChecked.InvokeAsync((games.Count(Ready), games.Count));
+    }
+
+    private async Task CheckAgain()
+    {
+        checking = true;
+        try
+        {
+            foreach (var g in games!.Where(g => !Ready(g)).ToList())
+            {
+                using var _ = await Client.PostAsync($"api/Games/{g.Era}/Reload", null);
+            }
+        }
+        catch (HttpRequestException)
+        {
+            // The list below still shows what was last known.
+        }
+        await Load();
+        checking = false;
+    }
+}

@@ -100,13 +100,28 @@ else
                     <a href="/Settings" class="font-semibold underline underline-offset-2">@Localizer["Set it up"]</a>
                 </div>
             }
-            @if (assetsMissing && CanFixAssets)
+            @if ((NijiiroMissing || olderMissing.Count > 0) && CanFixAssets)
             {
-                @* Only people who can run it see this; players just get the plain fallbacks. *@
+                @* Only people who can fix it see this; players just get the plain fallbacks. An older game's missing folder
+                   is named too, but only Nijiiro's files change the whole site. *@
+                var names = (NijiiroMissing ? ["Nijiiro"] : Array.Empty<string>()).Concat(olderMissing).ToList();
                 <div role="alert" class="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-200">
                     <Icon Name="alert" Class="size-5" />
-                    <p class="min-w-0 flex-1">@Localizer["Game files are missing. Cabinets can't play and pages show IDs instead of names."]</p>
-                    <a href="/Admin/Server/data" class="font-semibold underline underline-offset-2">@Localizer["Add them"]</a>
+                    <p class="min-w-0 flex-1">
+                        @if (AuthService.EnabledGames.Count == 1)
+                        {
+                            @Localizer["Game files are missing. Cabinets can't play and pages show IDs instead of names."]
+                        }
+                        else if (NijiiroMissing)
+                        {
+                            @string.Format(Localizer["Game files are missing for {0}. Cabinets can't play and pages show IDs instead of names."], AndList(names))
+                        }
+                        else
+                        {
+                            @string.Format(Localizer["Game files are missing for {0}. {0} cabinets can't load songs or events."], AndList(names))
+                        }
+                    </p>
+                    <a href="@(NijiiroMissing ? "/Admin/Server/data" : "/Admin/Server")" class="font-semibold underline underline-offset-2">@(NijiiroMissing ? Localizer["Add them"] : Localizer["Fix it"])</a>
                 </div>
             }
             @if (Status.Server?.Current == ServerState.Offline && !Unaffected)
@@ -183,6 +198,7 @@ else
         Nav.NavigateTo("/");
     }
     private bool assetsMissing;
+    private List<string> olderMissing = [];
 
     // Admins (or everyone when login is off) can run the extractor; api/Assets needs a logged-in user.
     private bool CanFixAssets => AuthService.IsAdmin || !AuthService.LoginRequired;
@@ -229,7 +245,22 @@ else
     {
         if (!CanFixAssets || (AuthService.LoginRequired && !AuthService.IsLoggedIn)) return;
         assetsMissing = await AssetStatus.IsMissingAsync();
+        if (AuthService.EnabledGames.Count == 1 && AuthService.NijiiroOn) return;
+        try
+        {
+            olderMissing = (await Client.GetFromJsonAsync<List<GameStatus>>("api/Games") ?? [])
+                .Where(g => g.Enabled && g.Era != "Nijiiro" && (!g.FolderFound || g.Error is not null)).Select(g => g.Era).ToList();
+        }
+        catch (HttpRequestException)
+        {
+            // The banner just leaves the older games out.
+        }
     }
+
+    private bool NijiiroMissing => assetsMissing && AuthService.NijiiroOn;
+
+    private string AndList(List<string> names) =>
+        names.Count == 1 ? names[0] : string.Format(Localizer["{0} and {1}"], string.Join(", ", names[..^1]), names[^1]);
 
     private async void OnChanged(object? sender, EventArgs e)
     {

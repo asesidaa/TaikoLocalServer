@@ -33,6 +33,9 @@ public sealed class AuthService : IDisposable
     public SignUpMode SignUpMode => authConfig.SignUpMode;
     public bool AllowUserDelete => authConfig.AllowUserDelete;
     public bool AllowFreeProfileEditing => authConfig.AllowFreeProfileEditing;
+    /// <summary>The games turned on in ServerSettings.json (Eras), as GameInfo names; Nijiiro alone when the server doesn't say.</summary>
+    public IReadOnlyList<string> EnabledGames => authConfig.EnabledEras is { Count: > 0 } eras ? eras : ["Nijiiro"];
+    public bool NijiiroOn => EnabledGames.Contains("Nijiiro");
     /// <summary>This user may type their own title: the rule (Player Settings), or they're an admin, or there are no accounts.</summary>
     public bool CanUseCustomTitle => authConfig.AllowCustomTitles || IsAdmin || !LoginRequired;
 

@@ -1,0 +1,220 @@
+@* Server Management › Status: the games turned on in ServerSettings.json and whether each one's files loaded.
+   Read-only (it's config); an older game with a problem gets Check again, which re-reads its files without a restart. *@
+@inject HttpClient Client
+@inject ToastService Toast
+@inject NavigationManager Nav
+
+<section class="@Css.Card p-5 sm:p-6">
+    @if (games is null)
+    {
+        <h2 class="font-semibold">@Localizer["Games"]</h2>
+        <div class="mt-2"><Skeleton /></div>
+    }
+    else
+    {
+        var on = games.Where(g => g.Enabled).ToList();
+        var off = games.Where(g => !g.Enabled).ToList();
+        var issues = on.Count(g => Checks(g).Any(c => c.Tone is Tone.Bad or Tone.Warn));
+        <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="min-w-0">
+                <h2 class="font-semibold">@Localizer["Games"]</h2>
+                <p class="text-sm @Css.Muted">@string.Format(Localizer["{0} of {1} on. Turned on in ServerSettings.json; a change needs a restart."], on.Count, games.Count)</p>
+            </div>
+            @if (issues > 0)
+            {
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-400/15 px-3 py-1 text-sm font-medium text-amber-800 dark:text-amber-200">
+                    <Icon Name="alert" />@(issues == 1 ? Localizer["1 needs attention"] : string.Format(Localizer["{0} need attention"], issues))
+                </span>
+            }
+            else
+            {
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-medium text-emerald-700 dark:text-emerald-300"><Icon Name="check" />@Localizer["All loaded"]</span>
+            }
+        </div>
+        <ul class="mt-4 divide-y divide-zinc-100 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-700">
+            @foreach (var g in on)
+            {
+                var info = GameInfo.Of(g.Era);
+                var checks = Checks(g);
+                var worst = checks.Any(c => c.Tone == Tone.Bad) ? Tone.Bad : checks.Any(c => c.Tone == Tone.Warn) ? Tone.Warn : Tone.Ok;
+                <li class="px-4 py-3.5 @(worst == Tone.Bad ? "bg-red-500/[.03]" : "")">
+                    <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                        <GameDot Game="info" />
+                        <span class="font-semibold">@info.Name</span>
+                        <span class="text-xs @Css.Muted">@info.Japanese</span>
+                        @if (Extra(g) is { } extra)
+                        {
+                            <span class="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-0.5 text-xs @Css.Muted dark:bg-zinc-800"><Icon Name="tag" Class="size-3" />@extra</span>
+                        }
+                        @if (g.Era == "Nijiiro")
+                        {
+                            <a href="Admin/Server/data" class="ml-auto text-sm @Css.Link">@Localizer["Game data"]</a>
+                        }
+                        else if (worst != Tone.Ok)
+                        {
+                            <button class="ml-auto inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-primary-600 hover:bg-primary-500/10 disabled:opacity-60 dark:text-primary-400"
+                                    disabled="@(checking is not null)" @onclick="() => CheckAgain(g)">
+                                <Icon Name="rotate" Class="@($"size-3.5 {(checking == g.Era ? "animate-spin" : "")}")" />@(checking == g.Era ? Localizer["Checking…"] : Localizer["Check again"])
+                            </button>
+                        }
+                    </div>
+                    <ul class="mt-2 space-y-1.5 pl-5">
+                        @foreach (var c in checks)
+                        {
+                            <li class="flex items-start gap-2.5">
+                                <span class="mt-px grid size-5 shrink-0 place-items-center rounded-full @ToneClass(c.Tone)" title="@ToneWord(c.Tone)">
+                                    <Icon Name="@(c.Tone switch { Tone.Ok => "check", Tone.None => "minus", _ => "alert" })" Class="size-3" /><span class="sr-only">@ToneWord(c.Tone):</span>
+                                </span>
+                                <span class="min-w-0 text-sm">
+                                    <span class="font-medium">@c.Label</span>
+                                    <span class="break-words @(c.Tone switch { Tone.Bad => "text-red-600 dark:text-red-400", Tone.Warn => "text-amber-700 dark:text-amber-300", _ => Css.Muted })">@c.Detail</span>
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                    @if (g.Era != "Nijiiro" && worst == Tone.Bad)
+                    {
+                        <p class="mt-2 rounded-xl bg-red-500/5 px-3 py-2 text-xs text-red-700 dark:text-red-300">
+                            @((MarkupString)string.Format(Localizer["{0} players can still sign in, but its songs and events won't load. Copy {0}'s {1} folder to {2}. Then press Check again; no restart needed."],
+                                info.Name, "<span class=\"font-mono\">data</span>", $"<span class=\"font-mono\">{System.Net.WebUtility.HtmlEncode(g.Folder)}</span>"))
+                        </p>
+                    }
+                </li>
+            }
+        </ul>
+        @if (off.Count > 0)
+        {
+            <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
+                <span class="@Css.Muted">@Localizer["Off:"]</span>
+                @foreach (var g in off)
+                {
+                    var info = GameInfo.Of(g.Era);
+                    <span class="inline-flex items-center gap-1.5 @Css.Muted"><GameDot Game="info" />@info.Name</span>
+                }
+                <button class="ml-auto inline-flex items-center gap-1 text-sm @Css.Link" aria-expanded="@Css.Aria(howTo)" @onclick="() => howTo = !howTo">
+                    @Localizer["How to turn one on"]<Icon Name="chevDown" Class="@($"size-4 {(howTo ? "rotate-180" : "")}")" />
+                </button>
+            </div>
+            @if (howTo)
+            {
+                var example = GameInfo.Of(off[0].Era).Name;
+                <div class="mt-3 rounded-xl bg-zinc-100 p-3 text-sm dark:bg-zinc-800/60">
+                    <p>@((MarkupString)string.Format(Localizer["In {0}, set the game's {1} to {2}, copy its {3} folder to {4}, then restart the server."],
+                        "<span class=\"font-mono text-xs\">Configurations/ServerSettings.json</span>", "<span class=\"font-mono text-xs\">Enabled</span>",
+                        "<span class=\"font-mono text-xs\">true</span>", "<span class=\"font-mono text-xs\">data</span>",
+                        $"<span class=\"font-mono text-xs\">wwwroot/data/{example.ToLowerInvariant()}/data</span>"))</p>
+                    <pre class="mt-2 overflow-x-auto rounded-lg bg-zinc-900 p-3 font-mono text-xs leading-5 text-zinc-100">"Eras": {
+  "@example": {
+    "Enabled": true
+  }
+}</pre>
+                </div>
+            }
+        }
+    }
+</section>
+
+@code {
+    private enum Tone { Ok, Warn, Bad, None }
+
+    private sealed record Check(Tone Tone, string Label, string Detail);
+
+    private List<GameStatus>? games;
+    private string? checking;
+    private bool howTo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            games = await Client.GetFromJsonAsync<List<GameStatus>>("api/Games");
+        }
+        catch (HttpRequestException)
+        {
+            games = [];
+        }
+    }
+
+    private async Task CheckAgain(GameStatus g)
+    {
+        checking = g.Era;
+        try
+        {
+            var response = await Client.PostAsync($"api/Games/{g.Era}/Reload", null);
+            if (response.IsSuccessStatusCode && await response.Content.ReadFromJsonAsync<GameStatus>() is { } now)
+            {
+                games![games.IndexOf(g)] = now;
+                Toast.Show(Checks(now).Any(c => c.Tone is Tone.Bad or Tone.Warn)
+                    ? string.Format(Localizer["{0}: still not fully loaded"], now.Era)
+                    : string.Format(Localizer["{0}: loaded"], now.Era));
+            }
+            else
+            {
+                Toast.Show(Localizer["Couldn't check again."], true);
+            }
+        }
+        catch (HttpRequestException)
+        {
+            Toast.Show(Localizer["Couldn't check again."], true);
+        }
+        finally
+        {
+            checking = null;
+        }
+    }
+
+    private List<Check> Checks(GameStatus g)
+    {
+        if (g.Era == "Nijiiro")
+        {
+            var data = g.FilesTotal is null
+                ? new Check(Tone.None, Localizer["Game data"], "")
+                : new Check(g.FilesLoaded == g.FilesTotal ? Tone.Ok : Tone.Warn, Localizer["Game data"],
+                    string.Format(Localizer["{0} of {1} files loaded"], g.FilesLoaded, g.FilesTotal));
+            var install = g.Folder.Length == 0
+                ? new Check(Tone.None, Localizer["Install"], Localizer["Not set (Eras.Nijiiro.GameDataPath), so extract needs the game folder from a browser or a run by hand"])
+                : g.FolderFound
+                    ? new Check(Tone.Ok, Localizer["Install"], string.Format(Localizer["Extract reads {0}"], g.Folder))
+                    : new Check(Tone.Warn, Localizer["Install"], string.Format(Localizer["Not found at {0}"], g.Folder));
+            return [data, install];
+        }
+
+        var folder = !g.FolderFound
+            ? new Check(Tone.Bad, Localizer["Data folder"], string.Format(Localizer["Not found at {0}"], g.Folder))
+            : g.Error is { } error
+                ? new Check(Tone.Bad, Localizer["Data folder"], string.Format(Localizer["Found at {0}, but it didn't load: {1}"], g.Folder, error))
+                : new Check(Tone.Ok, Localizer["Data folder"], string.Format(Localizer["Found at {0}: {1} songs"], g.Folder, g.Songs));
+        Check names;
+        if (folder.Tone == Tone.Bad)
+            names = new(Tone.None, Localizer["Names"], Localizer["Needs the data folder"]);
+        else if (g.Costumes + g.Titles + g.Tones == 0)
+            names = new(Tone.None, Localizer["Names"], string.Format(Localizer["No names read for {0}, so items show their number"], g.Era));
+        else
+        {
+            var counts = string.Format(Localizer["{0} costumes, {1} titles, {2} drum sounds"], g.Costumes, g.Titles, g.Tones);
+            names = new(g.Costumes == 0 || g.Titles == 0 || g.Tones == 0 ? Tone.Warn : Tone.Ok, Localizer["Names"], counts);
+        }
+        return [folder, names];
+    }
+
+    private string? Extra(GameStatus g) =>
+        g.ShopSeason is { } season ? string.Format(Localizer["Shop: season {0}"], season)
+        : g.DonChallengeRound is { } round ? string.Format(Localizer["Don Challenge: {0}"], round)
+        : null;
+
+    private static string ToneClass(Tone t) => t switch
+    {
+        Tone.Ok => "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+        Tone.Warn => "bg-amber-400/15 text-amber-700 dark:text-amber-300",
+        Tone.Bad => "bg-red-500/10 text-red-600 dark:text-red-400",
+        _ => "bg-zinc-500/10 text-zinc-500 dark:text-zinc-400",
+    };
+
+    private string ToneWord(Tone t) => t switch
+    {
+        Tone.Ok => Localizer["OK"],
+        Tone.Warn => Localizer["Partly loaded"],
+        Tone.Bad => Localizer["Problem"],
+        _ => Localizer["Not available"],
+    };
+}

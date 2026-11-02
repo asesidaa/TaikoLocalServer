@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Application.Settings;
@@ -127,7 +128,7 @@ public static class DependencyInjection
         }
 
         services.AddSingleton<IGameDataCatalog>(sp => new FileGameDataCatalog(
-            sp.GetServices<IEraGameDataCatalog>()));
+            sp.GetServices<IEraGameDataCatalog>(), sp.GetRequiredService<ILogger<FileGameDataCatalog>>()));
         services.AddSingleton<IExtractRunner, ExtractRunner>();
 
         // Identity

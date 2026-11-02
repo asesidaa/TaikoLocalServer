@@ -1,0 +1,57 @@
+@* "Game": which game's pages or files you're on (the sidebar, Game data). A button with the current game's dot that
+   opens the list of games, newest first; Escape or a tap outside closes it. *@
+
+<div class="relative @Class" @onkeydown="Key">
+    <button type="button" aria-haspopup="listbox" aria-expanded="@Css.Aria(open)" @onclick="() => open = !open"
+            class="flex w-full items-center gap-2.5 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-left text-sm hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800">
+        <span class="text-xs @Css.Muted">@Localizer["Game"]</span>
+        <GameDot Game="GameInfo.Of(Value)" />
+        <span class="min-w-0 flex-1 truncate font-medium">@GameInfo.Of(Value).Name</span>
+        <Icon Name="chevDown" Class="@($"size-4 {Css.Muted} {(open ? "rotate-180" : "")}")" />
+    </button>
+    @if (open)
+    {
+        <div class="fixed inset-0 z-40" @onclick="() => open = false"></div>
+        <ul role="listbox" aria-label="@Localizer["Game"]" style="--origin:top"
+            class="pop absolute inset-x-0 top-11 z-50 max-h-80 overflow-y-auto rounded-xl border border-zinc-200 bg-white p-1 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+            @foreach (var game in GameInfo.All.Where(g => Games.Contains(g.Name)))
+            {
+                var on = game.Name == Value;
+                <li role="option" aria-selected="@Css.Aria(on)">
+                    <button type="button" class="@Css.MenuItem @(on ? "bg-primary-500/10 font-medium" : "")" @onclick="() => Pick(game.Name)">
+                        <GameDot Game="game" />
+                        <span>@game.Name</span>
+                        <span class="text-xs @Css.Muted">@game.Japanese</span>
+                        @if (Detail?.Invoke(game.Name) is { Length: > 0 } detail)
+                        {
+                            <span class="ml-auto pl-3 text-xs @Css.Muted">@detail</span>
+                        }
+                    </button>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    /// <summary>The games to list (GameInfo names); they're shown in GameInfo's order.</summary>
+    [Parameter, EditorRequired] public IReadOnlyCollection<string> Games { get; set; } = [];
+    [Parameter, EditorRequired] public string Value { get; set; } = "";
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+    /// <summary>A short note after a game's name (Game data: how many files it has).</summary>
+    [Parameter] public Func<string, string?>? Detail { get; set; }
+    [Parameter] public string Class { get; set; } = "";
+
+    private bool open;
+
+    private async Task Pick(string game)
+    {
+        open = false;
+        if (game != Value) await ValueChanged.InvokeAsync(game);
+    }
+
+    private void Key(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") open = false;
+    }
+}

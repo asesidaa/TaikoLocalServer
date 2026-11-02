@@ -20,6 +20,17 @@ public class GameDataService(HttpClient client)
     public async Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary() =>
         musicDetails ??= await client.GetFromJsonAsync<Dictionary<uint, MusicDetail>>("api/GameData/MusicDetails") ?? [];
 
+    private readonly Dictionary<string, Dictionary<uint, MusicDetail>> eraMusic = [];
+
+    /// <summary>One game's songs, from its own catalogue (Nijiiro's is <see cref="GetMusicDetailDictionary()"/>).</summary>
+    public async Task<Dictionary<uint, MusicDetail>> GetMusicDetailDictionary(string game)
+    {
+        if (game == "Nijiiro") return await GetMusicDetailDictionary();
+        if (!eraMusic.TryGetValue(game, out var songs))
+            eraMusic[game] = songs = await client.GetFromJsonAsync<Dictionary<uint, MusicDetail>>($"api/{game}/GameData/MusicDetails") ?? [];
+        return songs;
+    }
+
     public async Task<List<Costume>> GetCostumeList()
     {
         await LoadCostumes();

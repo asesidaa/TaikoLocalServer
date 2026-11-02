@@ -74,13 +74,15 @@
     [Parameter] public string TakenLabel { get; set; } = "";
     [Parameter] public EventCallback<uint> OnPick { get; set; }
     [Parameter] public EventCallback OnClose { get; set; }
+    /// <summary>Whose songs to pick from (GameInfo name).</summary>
+    [Parameter] public string Game { get; set; } = "Nijiiro";
 
     private List<MusicDetail> songs = [];
     private string query = "";
     private SongGenre? genre;
 
     protected override async Task OnInitializedAsync() =>
-        songs = (await GameDataService.GetMusicDetailDictionary()).Values.OrderBy(s => s.SongId).ToList();
+        songs = (await GameDataService.GetMusicDetailDictionary(Game)).Values.OrderBy(s => s.SongId).ToList();
 
     private List<MusicDetail> Matches()
     {

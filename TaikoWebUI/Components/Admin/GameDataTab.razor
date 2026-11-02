@@ -1,10 +1,16 @@
-@* Server Management › Game data: a list (Overview, then the editable datasets) beside the picked one. *@
+@* Server Management › Game data: a list (Overview, then the editable datasets) beside the picked one. With older games
+   on, a Game menu picks whose files these are; each older game has its own files in wwwroot/data/<game>/. *@
 @inject HttpClient Client
 @inject AssetStatus AssetStatus
+@inject AuthService AuthService
 @inject ToastService Toast
 
 <div class="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start">
     <nav class="@Css.Card hidden p-2 lg:sticky lg:top-24 lg:block" aria-label="@Localizer["Game Data"]">
+        @if (Games.Count > 1)
+        {
+            <GameMenu Games="Games" Value="@game" ValueChanged="SwitchGame" Detail="FileCount" Class="mb-2" />
+        }
         @Item("overview", Localizer["Overview"], "database", files?.Count(f => f.Error is not null || f.Missing) ?? 0)
         @foreach (var (group, sets) in Groups)
         {
@@ -14,12 +20,19 @@
                 @Item(file, label, icon)
             }
         }
-        <p class="px-3 pb-1 pt-3 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@Localizer["Elsewhere"]</p>
-        <a href="/Admin/Server/dan" class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/70"><Icon Name="medal" />@Localizer["Dani Dojo"]<Icon Name="chevRight" Class="ml-auto size-4" /></a>
-        <a href="/Admin/Server/announcements" class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/70"><Icon Name="megaphone" />@Localizer["In-game messages"]<Icon Name="chevRight" Class="ml-auto size-4" /></a>
-        <a href="/Admin/Server/cabinets" class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/70"><Icon Name="monitor" />@Localizer["Movies"]<Icon Name="chevRight" Class="ml-auto size-4" /></a>
+        @if (game == "Nijiiro")
+        {
+            <p class="px-3 pb-1 pt-3 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@Localizer["Elsewhere"]</p>
+            <a href="/Admin/Server/dan" class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/70"><Icon Name="medal" />@Localizer["Dani Dojo"]<Icon Name="chevRight" Class="ml-auto size-4" /></a>
+            <a href="/Admin/Server/announcements" class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/70"><Icon Name="megaphone" />@Localizer["In-game messages"]<Icon Name="chevRight" Class="ml-auto size-4" /></a>
+            <a href="/Admin/Server/cabinets" class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/70"><Icon Name="monitor" />@Localizer["Movies"]<Icon Name="chevRight" Class="ml-auto size-4" /></a>
+        }
     </nav>
     <div class="min-w-0 space-y-4">
+        @if (Games.Count > 1)
+        {
+            <GameMenu Games="Games" Value="@game" ValueChanged="SwitchGame" Detail="FileCount" Class="lg:hidden" />
+        }
         <Rail Label="@Localizer["Game Data"]" Class="lg:hidden" TrackClass="gap-2">
             @Chip("overview", Localizer["Overview"], files?.Count(f => f.Error is not null || f.Missing) ?? 0)
             @foreach (var (_, sets) in Groups)
@@ -30,60 +43,31 @@
                 }
             }
         </Rail>
-        @if (selected == "overview")
+        @if (selected == "overview" && game == "Nijiiro")
         {
             <section class="@Css.Card p-5 sm:p-6">
                 <h2 class="font-semibold">@Localizer["Game assets"]</h2>
                 <p class="mb-4 text-sm @Css.Muted">@Localizer["Game Assets Hint"]</p>
                 <ExtractPanel OnFinished="Reloaded" />
             </section>
-            <section class="@Css.Card p-5 sm:p-6">
-                <div class="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                        <h2 class="font-semibold">@Localizer["Data files"]</h2>
-                        <p class="text-sm @Css.Muted">@Localizer["Data Files Hint"]</p>
-                    </div>
-                    <button class="@Css.GhostButton border border-zinc-200 dark:border-zinc-700" disabled="@reloading" @onclick="Reload">
-                        <Icon Name="rotate" Class="@(reloading ? "size-4 animate-spin" : "size-4")" />@Localizer["Reload"]
-                    </button>
-                </div>
-                @if (files is null)
-                {
-                    <div class="mt-4"><Skeleton /></div>
-                }
-                else
-                {
-                    <ul class="mt-3 divide-y divide-zinc-100 dark:divide-zinc-800">
-                        @foreach (var f in files)
-                        {
-                            <li class="flex items-start gap-3 py-2 text-sm">
-                                <Icon Name="@(f.Missing || f.Error is not null ? "alert" : "check")"
-                                      Class="@($"mt-0.5 size-4 {(f.Missing ? "text-amber-500" : f.Error is not null ? "text-red-500" : "text-emerald-500")}")" />
-                                <span class="min-w-0 flex-1">
-                                    <span class="block font-mono text-xs">@f.Name</span>
-                                    @if (f.Missing)
-                                    {
-                                        <span class="block text-xs text-amber-700 dark:text-amber-300">@Localizer[f.Editable ? "Missing" : "Missing: extract the game files"]</span>
-                                    }
-                                    else if (f.Error is not null)
-                                    {
-                                        <span class="block text-xs text-red-600 dark:text-red-400">@f.Error @Localizer["The server still uses the previous contents."]</span>
-                                    }
-                                </span>
-                                @if (f.Modified is { } m)
-                                {
-                                    <time class="shrink-0 text-xs tabular-nums @Css.Muted" datetime="@m.ToString("O")">@m.ToLocalTime().ToString("g")</time>
-                                }
-                            </li>
-                        }
-                    </ul>
-                }
-            </section>
+            @FileList
         }
-        else
+        else if (selected == "overview")
         {
-            var (_, label, _) = Groups.SelectMany(g => g.Sets).First(x => x.File == selected);
-            <GameDataEditor @key="selected" Name="@selected" Title="@label" Status="files?.FirstOrDefault(f => f.Name == selected)"
+            var status = gameStatus?.FirstOrDefault(g => g.Era == game);
+            @if (status is { FolderFound: false } or { Error: not null })
+            {
+                <div role="alert" class="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-300">
+                    <p class="font-semibold">@(status.FolderFound ? string.Format(Localizer["{0}'s game data didn't load"], game) : string.Format(Localizer["{0}'s game folder isn't there"], game))</p>
+                    <p class="mt-1 break-words">@(status.FolderFound ? status.Error : string.Format(Localizer["Not found at {0}"], status.Folder))</p>
+                    <p class="mt-1 text-zinc-700 dark:text-zinc-300">@Localizer["Song pickers can't show names until it loads. Fix it in Server Management › Status › Games."]</p>
+                </div>
+            }
+            @FileList
+        }
+        else if (Groups.SelectMany(g => g.Sets).FirstOrDefault(x => x.File == selected) is { File: not null } set)
+        {
+            <GameDataEditor @key="@($"{game}/{selected}")" Game="@game" Name="@selected" Title="@set.Label" Status="files?.FirstOrDefault(f => f.Name == selected)"
                             OnDirtyChanged="d => SetDirty(selected, d)" OnSaved="Reloaded" />
         }
     </div>
@@ -91,39 +75,108 @@
 
 @code {
     private IReadOnlyList<GameDataFileStatus>? files;
+    private List<GameStatus>? gameStatus;
+    private readonly Dictionary<string, int> fileCounts = [];
+    private string game = "Nijiiro";
     private string selected = "overview";
     private bool reloading;
     private readonly HashSet<string> dirty = [];
 
-    private (string Group, (string File, string Label, string Icon)[] Sets)[] Groups =>
+    private IReadOnlyList<string> Games => AuthService.EnabledGames;
+
+    private string Api => game == "Nijiiro" ? "api/GameData" : $"api/{game}/GameData";
+
+    private string Folder => game == "Nijiiro" ? "wwwroot/data" : $"wwwroot/data/{game.ToLowerInvariant()}";
+
+    // An older game's files, by what they are (red_telop_data.json and green's telop_data.json are both Telop).
+    private static readonly (string Suffix, int Group, string Label, string Icon)[] EraKinds =
     [
-        (Localizer["Songs"], [
-            ("event_folder_data.json", Localizer["Event folders"], "list"),
-            ("intro_data.json", Localizer["Song intros"], "music"),
-            ("special_songs_data.json", Localizer["Time-limited songs"], "clock"),
-            ("locked_songs_data.json", Localizer["Locked songs"], "lock"),
-            ("shop_folder_data.json", Localizer["Shop"], "ticket"),
-        ]),
-        (Localizer["Unlocks"], [
-            ("locked_costume_data.json", Localizer["Locked costumes"], "shirt"),
-            ("locked_title_data.json", Localizer["Locked titles"], "id"),
-            ("token_data.json", Localizer["Tokens"], "key"),
-            ("qrcode_data.json", Localizer["QR codes"], "qr"),
-        ]),
+        ("event_folder_data.json", 0, "Event folders", "list"),
+        ("item_shop_data.json", 0, "Item shop", "ticket"),
+        ("don_challenge_data.json", 1, "Don Challenge", "medal"),
+        ("taikojuku_verup_data.json", 1, "Taikojuku upgrades", "dani"),
+        ("telop_data.json", 2, "Telop messages", "megaphone"),
+        ("movie_data.json", 2, "Movies", "monitor"),
     ];
+
+    private (string Group, (string File, string Label, string Icon)[] Sets)[] Groups => game == "Nijiiro"
+        ?
+        [
+            (Localizer["Songs"], [
+                ("event_folder_data.json", Localizer["Event folders"], "list"),
+                ("intro_data.json", Localizer["Song intros"], "music"),
+                ("special_songs_data.json", Localizer["Time-limited songs"], "clock"),
+                ("locked_songs_data.json", Localizer["Locked songs"], "lock"),
+                ("shop_folder_data.json", Localizer["Shop"], "ticket"),
+            ]),
+            (Localizer["Unlocks"], [
+                ("locked_costume_data.json", Localizer["Locked costumes"], "shirt"),
+                ("locked_title_data.json", Localizer["Locked titles"], "id"),
+                ("token_data.json", Localizer["Tokens"], "key"),
+                ("qrcode_data.json", Localizer["QR codes"], "qr"),
+            ]),
+        ]
+        : EraGroups();
+
+    private (string Group, (string File, string Label, string Icon)[] Sets)[] EraGroups()
+    {
+        string[] groupNames = [Localizer["Songs"], Localizer["Events"], Localizer["Cabinet"], Localizer["Other"]];
+        return (files ?? [])
+            .Select(f => EraKinds.FirstOrDefault(k => f.Name.EndsWith(k.Suffix, StringComparison.Ordinal)) is { Suffix: not null } k
+                ? (Group: k.Group, Order: Array.IndexOf(EraKinds, k), Set: (f.Name, (string)Localizer[k.Label], k.Icon))
+                : (Group: 3, Order: 99, Set: (f.Name, f.Name, "database")))
+            .GroupBy(x => x.Group).OrderBy(g => g.Key)
+            .Select(g => (groupNames[g.Key], g.OrderBy(x => x.Order).Select(x => x.Set).ToArray()))
+            .ToArray();
+    }
+
+    private string? FileCount(string g) => fileCounts.TryGetValue(g, out var n) ? string.Format(Localizer["{0} files"], n) : null;
 
     private void SetDirty(string file, bool on)
     {
         if (on) dirty.Add(file); else dirty.Remove(file);
     }
 
-    protected override async Task OnInitializedAsync() =>
-        files = await Client.GetFromJsonAsync<List<GameDataFileStatus>>("api/GameData/Files");
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Games.Contains(game)) game = Games[0];
+        await LoadFiles();
+        if (Games.Count > 1)
+        {
+            try
+            {
+                gameStatus = await Client.GetFromJsonAsync<List<GameStatus>>("api/Games");
+                foreach (var g in Games)
+                    fileCounts[g] = (await Client.GetFromJsonAsync<List<GameDataFileStatus>>(g == "Nijiiro" ? "api/GameData/Files" : $"api/{g}/GameData/Files"))?.Count ?? 0;
+            }
+            catch (HttpRequestException)
+            {
+                // The menu just leaves the counts out.
+            }
+        }
+    }
+
+    private async Task LoadFiles() => files = await Client.GetFromJsonAsync<List<GameDataFileStatus>>($"{Api}/Files");
+
+    // Stays on the same kind of file when the other game has one (Telop → Telop), else its Overview.
+    private async Task SwitchGame(string to)
+    {
+        var kind = selected == "overview" ? null
+            : game == "Nijiiro" ? selected
+            : EraKinds.FirstOrDefault(k => selected.EndsWith(k.Suffix, StringComparison.Ordinal)).Suffix;
+        game = to;
+        files = null;
+        dirty.Clear();
+        await LoadFiles();
+        selected = kind is null ? "overview"
+            : files!.FirstOrDefault(f => game == "Nijiiro" ? f.Name == kind : f.Name.EndsWith(kind, StringComparison.Ordinal))?.Name
+              is { } match && Groups.SelectMany(g => g.Sets).Any(s => s.File == match) ? match : "overview";
+    }
 
     private async Task Reload()
     {
         reloading = true;
-        var res = await Client.PostAsync("api/GameData/Reload", null);
+        var res = await Client.PostAsync($"{Api}/Reload", null);
         reloading = false;
         if (!res.IsSuccessStatusCode)
         {
@@ -134,12 +187,58 @@
         Toast.Show(Localizer["Game data reloaded"]);
     }
 
-    // extract reloads the server's game data itself; refresh what this page shows.
+    // Saving or extract reloads the server's game data itself; refresh what this page shows.
     private async Task Reloaded()
     {
-        files = await Client.GetFromJsonAsync<List<GameDataFileStatus>>("api/GameData/Files");
-        await AssetStatus.IsMissingAsync(refresh: true);
+        await LoadFiles();
+        if (game == "Nijiiro") await AssetStatus.IsMissingAsync(refresh: true);
     }
+
+    private RenderFragment FileList => __builder =>
+    {
+        <section class="@Css.Card p-5 sm:p-6">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                    <h2 class="font-semibold">@Localizer["Data files"]</h2>
+                    <p class="text-sm @Css.Muted">@(game == "Nijiiro" ? Localizer["Data Files Hint"] : string.Format(Localizer["{0}'s own files, in {1}. Saving one reloads {0}."], game, Folder))</p>
+                </div>
+                <button class="@Css.GhostButton border border-zinc-200 dark:border-zinc-700" disabled="@reloading" @onclick="Reload">
+                    <Icon Name="rotate" Class="@(reloading ? "size-4 animate-spin" : "size-4")" />@Localizer["Reload"]
+                </button>
+            </div>
+            @if (files is null)
+            {
+                <div class="mt-4"><Skeleton /></div>
+            }
+            else
+            {
+                <ul class="mt-3 divide-y divide-zinc-100 dark:divide-zinc-800">
+                    @foreach (var f in files)
+                    {
+                        <li class="flex items-start gap-3 py-2 text-sm">
+                            <Icon Name="@(f.Missing || f.Error is not null ? "alert" : "check")"
+                                  Class="@($"mt-0.5 size-4 {(f.Missing ? "text-amber-500" : f.Error is not null ? "text-red-500" : "text-emerald-500")}")" />
+                            <span class="min-w-0 flex-1">
+                                <span class="block font-mono text-xs">@f.Name</span>
+                                @if (f.Missing)
+                                {
+                                    <span class="block text-xs text-amber-700 dark:text-amber-300">@Localizer[f.Editable ? "Missing" : "Missing: extract the game files"]</span>
+                                }
+                                else if (f.Error is not null)
+                                {
+                                    <span class="block break-words text-xs text-red-600 dark:text-red-400">@f.Error @Localizer["The server still uses the previous contents."]</span>
+                                }
+                            </span>
+                            @if (f.Modified is { } m)
+                            {
+                                <time class="shrink-0 text-xs tabular-nums @Css.Muted" datetime="@m.ToString("O")">@m.ToLocalTime().ToString("g")</time>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+    };
 
     // Phones: the same list as a chip row, with the same unsaved / didn't load dots.
     private RenderFragment Chip(string id, string label, int problems = 0) => __builder =>

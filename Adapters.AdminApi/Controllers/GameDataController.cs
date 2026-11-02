@@ -1,4 +1,5 @@
 using TaikoLocalServer.Application.Catalog.Ac15;
+using TaikoLocalServer.Infrastructure.GameDataCatalog;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
@@ -109,6 +110,74 @@ public class GameDataController(IGameDataCatalog catalog, ITaikoDbContext contex
         this.LogActivity(context, "gamedata.save", null, name);
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
+    }
+
+    // ---- Each game's data files (Game data's Game menu); Nijiiro's are the ones above ----
+
+    [HttpGet("/api/{era}/[controller]/Files")]
+    [ApiScope(ApiScopes.AdminServer, ApiScopes.AdminServer)]
+    [Authorize(Policy = AuthPolicies.Admin)]
+    public IActionResult GetEraFiles(string era)
+    {
+        if (!TryEnabledEra(era, out var gameEra, out var refused)) return refused;
+        return Ok(gameEra == GameEra.Nijiiro ? GetFiles() : EraDataFiles.List(catalog, gameEra));
+    }
+
+    [HttpPost("/api/{era}/[controller]/Reload")]
+    [Authorize(Policy = AuthPolicies.Admin)]
+    public async Task<IActionResult> ReloadEra(string era)
+    {
+        if (!TryEnabledEra(era, out var gameEra, out var refused)) return refused;
+        if (gameEra == GameEra.Nijiiro) return Ok(await Reload());
+        await catalog.ReloadAsync(gameEra, HttpContext.RequestAborted);
+        this.LogActivity(context, "gamedata.reload", null, gameEra.ToString());
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return Ok(EraDataFiles.List(catalog, gameEra));
+    }
+
+    [HttpGet("/api/{era}/[controller]/Files/{name}")]
+    [ApiScope(ApiScopes.AdminServer, ApiScopes.AdminServer)]
+    [Authorize(Policy = AuthPolicies.Admin)]
+    public async Task<IActionResult> GetEraFile(string era, string name)
+    {
+        if (!TryEnabledEra(era, out var gameEra, out var refused)) return refused;
+        if (gameEra == GameEra.Nijiiro) return await GetFile(name);
+        return await EraDataFiles.ReadAsync(gameEra, name) is { } json ? Content(json, "application/json") : NotFound();
+    }
+
+    /// <summary>Saves one of an older game's files and reloads that game. 400 with the reason when it doesn't load.</summary>
+    [HttpPut("/api/{era}/[controller]/Files/{name}")]
+    [Authorize(Policy = AuthPolicies.Admin)]
+    [RequestSizeLimit(MaxFileBytes)]
+    [Consumes("application/json")]
+    public async Task<IActionResult> PutEraFile(string era, string name)
+    {
+        if (!TryEnabledEra(era, out var gameEra, out var refused)) return refused;
+        if (gameEra == GameEra.Nijiiro) return await PutFile(name);
+        using var reader = new StreamReader(Request.Body);
+        var json = await reader.ReadToEndAsync(HttpContext.RequestAborted);
+        if (await EraDataFiles.SaveAsync(catalog, gameEra, name, json, HttpContext.RequestAborted) is { } error)
+            return BadRequest(new { message = error });
+
+        this.LogActivity(context, "gamedata.save", null, $"{gameEra}: {name}");
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return NoContent();
+    }
+
+    private bool TryEnabledEra(string era, out GameEra gameEra, out IActionResult refused)
+    {
+        refused = null!;
+        if (!EraRoute.TryParse(era, out gameEra))
+        {
+            refused = EraRoute.BadEra(era);
+            return false;
+        }
+        if (!catalog.LoadResults.ContainsKey(gameEra))
+        {
+            refused = BadRequest(new { message = $"{gameEra} is off in ServerSettings.json." });
+            return false;
+        }
+        return true;
     }
 
     private Dictionary<uint, MusicDetail> BuildGreenMusicDetails()

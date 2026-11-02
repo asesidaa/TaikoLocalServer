@@ -1,0 +1,161 @@
+@* Green, Blue and Yellow's item shop: a tab per season, its dates and badges, and what it sells for Don medals.
+   The live season is ServerSettings.json's Eras.<Game>.ActiveShopSeasonId. *@
+@using System.Text.Json.Nodes
+@inject HttpClient Client
+
+@{
+    if (Shop["seasons"] is not JsonArray seasons) Shop["seasons"] = seasons = [];
+    var list = seasons.OfType<JsonObject>().ToList();
+}
+<div class="flex flex-wrap items-center gap-1.5" role="tablist" aria-label="@Localizer["Seasons"]">
+    @for (var i = 0; i < list.Count; i++)
+    {
+        var index = i;
+        var id = list[i]["season_id"]?.GetValue<uint>() ?? 0;
+        <button role="tab" aria-selected="@Css.Aria(index == selected)" class="rounded-full px-3 py-1.5 text-sm font-medium @Css.Chip(index == selected)" @onclick="() => selected = index">
+            @if (id == active)
+            {
+                <span class="mr-1 text-emerald-500" aria-hidden="true">●</span>
+            }
+            @string.Format(Localizer["Season {0}"], id)
+        </button>
+    }
+    <button class="@Css.GhostButton !px-2 !py-1.5" @onclick="() => AddSeason(seasons)"><Icon Name="plus" />@Localizer["Add season"]</button>
+</div>
+@if (list.Count > 0)
+{
+    selected = Math.Clamp(selected, 0, list.Count - 1);
+    var s = list[selected];
+    var seasonId = s["season_id"]?.GetValue<uint>() ?? 0;
+    <div class="mt-4 space-y-3" role="tabpanel">
+        @if (seasonId == active)
+        {
+            <p class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                <Icon Name="check" Class="size-3.5" />@string.Format(Localizer["Active: {0} cabinets show this season (set in ServerSettings.json)"], Game)
+            </p>
+        }
+        <label class="block text-xs @Css.Muted">@Localizer["Name"]
+            <input class="@Css.Input mt-1" value="@s["telop"]" @onchange='e => Set(() => s["telop"] = e.Value?.ToString() ?? "")' />
+        </label>
+        <div class="grid gap-3 sm:grid-cols-2">
+            <label class="text-xs @Css.Muted">@Localizer["Opens"]
+                <input type="datetime-local" class="@Css.Input mt-1" value="@ToInput(s["start_datetime"])" @onchange='e => SetDate(s, "start_datetime", e.Value)' />
+            </label>
+            <label class="text-xs @Css.Muted">@Localizer["Closes"]
+                <input type="datetime-local" class="@Css.Input mt-1" value="@ToInput(s["end_datetime"])" @onchange='e => SetDate(s, "end_datetime", e.Value)' />
+            </label>
+            <label class="text-xs @Css.Muted">@Localizer["\"New\" badge for (days)"]
+                <input type="number" min="0" class="@Css.Input mt-1" value="@s["afterstart_days"]" @onchange='e => SetNumber(s, "afterstart_days", e.Value)' />
+            </label>
+            <label class="text-xs @Css.Muted">@Localizer["\"Ending soon\" badge for (days)"]
+                <input type="number" min="0" class="@Css.Input mt-1" value="@s["beforeclose_days"]" @onchange='e => SetNumber(s, "beforeclose_days", e.Value)' />
+            </label>
+        </div>
+        @{
+            if (s["items"] is not JsonArray items) s["items"] = items = [];
+        }
+        <p class="pt-2 text-sm font-medium">@Localizer["Items"]</p>
+        <div class="space-y-1">
+            @foreach (var item in items.OfType<JsonObject>().ToList())
+            {
+                var type = item["item_type"]?.ToString() ?? "song";
+                var itemId = item["item_id"]?.GetValue<uint>() ?? 0;
+                <div class="flex flex-wrap items-center gap-2 rounded-xl border border-zinc-200 px-3 py-1.5 dark:border-zinc-700">
+                    <select class="@Css.Input !w-auto !px-2 !py-1 text-xs" aria-label="@Localizer["Type"]" value="@type" @onchange='e => Set(() => item["item_type"] = e.Value?.ToString() ?? "song")'>
+                        @foreach (var (value, label) in Types)
+                        {
+                            <option value="@value">@Localizer[label]</option>
+                        }
+                    </select>
+                    @if (type == "song" && Music.TryGetValue(itemId, out var song))
+                    {
+                        <SongLine Song="song" Class="min-w-0 flex-1 text-sm" />
+                    }
+                    else
+                    {
+                        <span class="min-w-0 flex-1 text-sm @(type == "song" ? "text-amber-700 dark:text-amber-300" : "")">@(type == "song" ? Localizer["Unknown song"] : $"{Localizer[Types.First(t => t.Value == type).Label]} {itemId}")</span>
+                    }
+                    <label class="flex items-center gap-1 text-xs @Css.Muted">ID
+                        <input type="number" min="0" class="@Css.Input !w-20 !px-2 !py-1" value="@itemId" @onchange='e => SetNumber(item, "item_id", e.Value)' />
+                    </label>
+                    <label class="flex items-center gap-1 text-xs @Css.Muted">@Localizer["Price"]
+                        <input type="number" min="0" class="@Css.Input !w-20 !px-2 !py-1" value="@item["item_price"]" @onchange='e => SetNumber(item, "item_price", e.Value)' />
+                    </label>
+                    <button class="grid size-7 place-items-center rounded-lg text-zinc-400 hover:bg-red-500/10 hover:text-red-600" aria-label="@Localizer["Remove"]"
+                            @onclick="() => Set(() => items.Remove(item))"><Icon Name="x" /></button>
+                </div>
+            }
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <button class="@Css.GhostButton !px-2" @onclick="() => picking = items"><Icon Name="music" />@Localizer["Add song"]</button>
+            <button class="@Css.GhostButton !px-2" @onclick='() => Set(() => items.Add(new JsonObject { ["item_type"] = "head", ["item_id"] = 0u, ["item_price"] = 0u }))'><Icon Name="plus" />@Localizer["Add item"]</button>
+        </div>
+    </div>
+}
+@if (picking is { } target)
+{
+    <SongPicker Game="@Game" Title="@Localizer["Add a song to the shop"]" TakenLabel="@Localizer["In the shop"]"
+                Taken='target.OfType<JsonObject>().Where(i => i["item_type"]?.ToString() == "song").Select(i => i["item_id"]?.GetValue<uint>() ?? 0).ToHashSet()'
+                OnClose="() => picking = null"
+                OnPick='async id => { target.Add(new JsonObject { ["item_type"] = "song", ["item_id"] = id, ["item_price"] = 0u }); picking = null; await OnChanged.InvokeAsync(); }' />
+}
+
+@code {
+    [Parameter, EditorRequired] public JsonObject Shop { get; set; } = null!;
+    [Parameter, EditorRequired] public string Game { get; set; } = "";
+    [Parameter, EditorRequired] public IReadOnlyDictionary<uint, MusicDetail> Music { get; set; } = null!;
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    // The values the shop loader reads (Ac15ShopItemType); no titles.
+    private static readonly (string Value, string Label)[] Types =
+    [
+        ("song", "Song"), ("tone", "Drum sound"), ("kigurumi", "Kigurumi"), ("head", "Head"), ("body", "Body"), ("face", "Face paint"), ("puchi", "Puchi"),
+    ];
+
+    private int selected;
+    private uint? active;
+    private JsonArray? picking;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            active = (await Client.GetFromJsonAsync<List<GameStatus>>("api/Games"))?.FirstOrDefault(g => g.Era == Game)?.ShopSeason;
+        }
+        catch (HttpRequestException)
+        {
+            // No badge.
+        }
+        // Open on the live season.
+        var index = (Shop["seasons"] as JsonArray)?.OfType<JsonObject>().ToList().FindIndex(s => s["season_id"]?.GetValue<uint>() == active) ?? -1;
+        if (index >= 0) selected = index;
+    }
+
+    private Task Set(Action change)
+    {
+        change();
+        return OnChanged.InvokeAsync();
+    }
+
+    private Task SetNumber(JsonObject o, string key, object? value) => Set(() => o[key] = uint.TryParse(value?.ToString(), out var n) ? n : 0u);
+
+    private static string ToInput(JsonNode? value) =>
+        DateTime.TryParseExact(value?.ToString(), "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out var d) ? d.ToString("yyyy-MM-ddTHH:mm") : "";
+
+    private Task SetDate(JsonObject o, string key, object? value) =>
+        Set(() => { if (DateTime.TryParse(value?.ToString(), out var d)) o[key] = d.ToString("yyyyMMddHHmm") + "00"; });
+
+    private Task AddSeason(JsonArray seasons)
+    {
+        var id = seasons.OfType<JsonObject>().Select(s => s["season_id"]?.GetValue<uint>() ?? 0).DefaultIfEmpty(0u).Max() + 1;
+        var now = DateTime.Now;
+        seasons.Add(new JsonObject
+        {
+            ["season_id"] = id, ["verup_no"] = 1u, ["telop"] = "",
+            ["start_datetime"] = now.ToString("yyyyMMdd") + "000000", ["end_datetime"] = now.AddMonths(3).ToString("yyyyMMdd") + "235959",
+            ["afterstart_days"] = 7u, ["beforeclose_days"] = 7u, ["items"] = new JsonArray(),
+        });
+        selected = seasons.Count - 1;
+        return OnChanged.InvokeAsync();
+    }
+}

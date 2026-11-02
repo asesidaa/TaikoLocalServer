@@ -1,0 +1,183 @@
+@* Red and White's Don Challenge: a tab per monthly round, its tasks, the community task and the rewards. The live
+   round is ServerSettings.json's Eras.<Game>.ActiveDonChallengeBundleId. Fields this form doesn't show are kept. *@
+@using System.Text.Json.Nodes
+@inject HttpClient Client
+
+<Toggle Label="@Localizer["Don Challenge on"]" Icon="medal" Value="Enabled" ValueChanged="SetEnabled" />
+@{
+    if (Data["monthly_bundles"] is not JsonArray rounds) Data["monthly_bundles"] = rounds = [];
+    var list = rounds.OfType<JsonObject>().ToList();
+}
+<div class="mt-4 flex flex-wrap items-center gap-1.5" role="tablist" aria-label="@Localizer["Rounds"]">
+    @for (var i = 0; i < list.Count; i++)
+    {
+        var index = i;
+        var id = list[i]["bundle_id"]?.ToString() ?? "";
+        <button role="tab" aria-selected="@Css.Aria(index == selected)" class="rounded-full px-3 py-1.5 font-mono text-xs font-medium @Css.Chip(index == selected)" @onclick="() => selected = index">
+            @if (id == active)
+            {
+                <span class="mr-1 text-emerald-500" aria-hidden="true">●</span>
+            }
+            @id
+        </button>
+    }
+</div>
+@if (list.Count > 0)
+{
+    selected = Math.Clamp(selected, 0, list.Count - 1);
+    var round = list[selected];
+    if (round["personal_tasks"] is not JsonArray tasks) round["personal_tasks"] = tasks = [];
+    var taskCount = tasks.Count;
+    <div class="mt-4 space-y-5" role="tabpanel">
+        @if ((round["bundle_id"]?.ToString() ?? "") == active)
+        {
+            <p class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                <Icon Name="check" Class="size-3.5" />@Localizer["Active (set in ServerSettings.json)"]
+            </p>
+        }
+        <div>
+            <p class="text-sm font-medium">@Localizer["Tasks"]</p>
+            <div class="mt-2 space-y-3">
+                @foreach (var t in tasks.OfType<JsonObject>().ToList())
+                {
+                    <div class="rounded-xl border border-zinc-200 p-3 dark:border-zinc-700">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium dark:bg-zinc-800">@string.Format(Localizer["Task {0}"], t["slot"])</span>
+                            <button class="ml-auto grid size-7 place-items-center rounded-lg text-zinc-400 hover:bg-red-500/10 hover:text-red-600" aria-label="@Localizer["Remove"]"
+                                    @onclick="() => Set(() => tasks.Remove(t))"><Icon Name="x" /></button>
+                        </div>
+                        <input class="@Css.Input mt-2" aria-label="@Localizer["Text"]" value="@t["name"]" @onchange='e => Set(() => t["name"] = e.Value?.ToString() ?? "")' />
+                        @Rule(t, "required_song_count")
+                    </div>
+                }
+                <button class="@Css.GhostButton !px-2" @onclick="() => AddTask(tasks)"><Icon Name="plus" />@Localizer["Add task"]</button>
+            </div>
+        </div>
+        @if (round["community_task"] is JsonObject community)
+        {
+            <div>
+                <p class="text-sm font-medium">@Localizer["Community task"]</p>
+                <div class="mt-2 rounded-xl border border-zinc-200 p-3 dark:border-zinc-700">
+                    <input class="@Css.Input" aria-label="@Localizer["Text"]" value="@community["name"]" @onchange='e => Set(() => community["name"] = e.Value?.ToString() ?? "")' />
+                    <input class="@Css.Input mt-2" aria-label="@Localizer["Description"]" placeholder="@Localizer["Description"]" value="@community["description"]"
+                           @onchange='e => Set(() => community["description"] = e.Value?.ToString() ?? "")' />
+                    @Rule(community, "required_community_count")
+                </div>
+            </div>
+        }
+        <div>
+            <p class="text-sm font-medium">@Localizer["Rewards"]</p>
+            @{
+                if (round["rewards"] is not JsonArray rewards) round["rewards"] = rewards = [];
+            }
+            <div class="mt-2 space-y-3">
+                @foreach (var r in rewards.OfType<JsonObject>().ToList())
+                {
+                    var after = r["required_completed_tasks"]?.GetValue<int>() ?? 0;
+                    if (r["reward_song_noes"] is not JsonArray songs) r["reward_song_noes"] = songs = [];
+                    if (r["reward_title_ids"] is not JsonArray titles) r["reward_title_ids"] = titles = [];
+                    <div class="rounded-xl border border-zinc-200 p-3 dark:border-zinc-700">
+                        <div class="flex flex-wrap items-center gap-2 text-sm">
+                            <label class="flex items-center gap-2">@Localizer["After"]
+                                <input type="number" min="1" class="@Css.Input !w-16 !px-2 !py-1" value="@after" @onchange='e => SetNumber(r, "required_completed_tasks", e.Value)' />
+                                @Localizer["tasks"]
+                            </label>
+                            <button class="ml-auto grid size-7 place-items-center rounded-lg text-zinc-400 hover:bg-red-500/10 hover:text-red-600" aria-label="@Localizer["Remove"]"
+                                    @onclick="() => Set(() => rewards.Remove(r))"><Icon Name="x" /></button>
+                        </div>
+                        @if (after > taskCount)
+                        {
+                            <p class="mt-1 text-xs text-amber-700 dark:text-amber-300">@string.Format(Localizer["This round has {0} tasks, so no one can earn this."], taskCount)</p>
+                        }
+                        <p class="mt-2 text-xs font-medium @Css.Muted">@Localizer["Songs"]</p>
+                        <div class="mt-1"><SongListEditor List="songs" Music="Music" Game="@Game" OnChanged="OnChanged" /></div>
+                        <p class="mt-2 text-xs font-medium @Css.Muted">@Localizer["Title IDs"]</p>
+                        @IdChips(titles)
+                    </div>
+                }
+                <button class="@Css.GhostButton !px-2" @onclick='() => Set(() => rewards.Add(new JsonObject { ["required_completed_tasks"] = taskCount, ["reward_song_noes"] = new JsonArray(), ["reward_title_ids"] = new JsonArray() }))'><Icon Name="plus" />@Localizer["Add reward"]</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired] public JsonObject Data { get; set; } = null!;
+    [Parameter, EditorRequired] public string Game { get; set; } = "";
+    [Parameter, EditorRequired] public IReadOnlyDictionary<uint, MusicDetail> Music { get; set; } = null!;
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private int selected;
+    private string? active;
+    private readonly Dictionary<JsonArray, string> newIds = [];
+
+    private bool Enabled => Data["enabled"]?.GetValue<bool>() == true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            active = (await Client.GetFromJsonAsync<List<GameStatus>>("api/Games"))?.FirstOrDefault(g => g.Era == Game)?.DonChallengeRound;
+        }
+        catch (HttpRequestException)
+        {
+            // No badge.
+        }
+        var index = (Data["monthly_bundles"] as JsonArray)?.OfType<JsonObject>().ToList().FindIndex(b => b["bundle_id"]?.ToString() == active) ?? -1;
+        if (index >= 0) selected = index;
+    }
+
+    private Task SetEnabled(bool on) => Set(() => Data["enabled"] = on);
+
+    private Task Set(Action change)
+    {
+        change();
+        return OnChanged.InvokeAsync();
+    }
+
+    private Task SetNumber(JsonObject o, string key, object? value) => Set(() => o[key] = int.TryParse(value?.ToString(), out var n) ? n : 0);
+
+    // A task's rule: Clear or Full combo, how many songs, from which ("Any song" when the list is empty).
+    private RenderFragment Rule(JsonObject task, string countKey) => __builder =>
+    {
+        if (task["rule"] is not JsonObject rule) task["rule"] = rule = new JsonObject { ["kind"] = "clear" };
+        if (rule["eligible_song_noes"] is not JsonArray songs) rule["eligible_song_noes"] = songs = [];
+        <div class="mt-2 flex flex-wrap items-center gap-2 text-sm">
+            <select class="@Css.Input !w-auto !py-1.5" aria-label="@Localizer["Rule"]" value="@rule["kind"]" @onchange='e => Set(() => rule["kind"] = e.Value?.ToString() ?? "clear")'>
+                <option value="clear">@Localizer["Clear"]</option>
+                <option value="full_combo">@Localizer["Full combo"]</option>
+            </select>
+            <input type="number" min="1" class="@Css.Input !w-16 !px-2 !py-1" aria-label="@Localizer["How many"]" value="@rule[countKey]" @onchange="e => SetNumber(rule, countKey, e.Value)" />
+            <span class="@Css.Muted">@(songs.Count == 0 ? Localizer["of any song"] : Localizer["songs from"])</span>
+        </div>
+        <div class="mt-1"><SongListEditor List="songs" Music="Music" Game="@Game" OnChanged="OnChanged" /></div>
+    };
+
+    private RenderFragment IdChips(JsonArray ids) => __builder =>
+    {
+        <div class="mt-1 flex flex-wrap items-center gap-1.5">
+            @foreach (var node in ids.ToList())
+            {
+                <span class="inline-flex items-center gap-1 rounded-full bg-zinc-100 py-1 pl-2.5 pr-1 text-xs dark:bg-zinc-800">
+                    <span class="font-mono">@node</span>
+                    <button class="grid size-5 place-items-center rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700" aria-label="@Localizer["Remove"]"
+                            @onclick="() => Set(() => ids.Remove(node))"><Icon Name="x" Class="size-3" /></button>
+                </span>
+            }
+            <input inputmode="numeric" class="@Css.Input !w-24 !px-2 !py-1 font-mono text-xs" placeholder="@Localizer["Add ID"]" aria-label="@Localizer["Add ID"]"
+                   value="@newIds.GetValueOrDefault(ids)" @oninput="e => newIds[ids] = e.Value?.ToString() ?? string.Empty"
+                   @onkeydown='e => e.Key == "Enter" && uint.TryParse(newIds.GetValueOrDefault(ids), out var id) ? Set(() => { ids.Add(id); newIds[ids] = ""; }) : Task.CompletedTask' />
+        </div>
+    };
+
+    private Task AddTask(JsonArray tasks)
+    {
+        var slot = tasks.OfType<JsonObject>().Select(t => t["slot"]?.GetValue<int>() ?? 0).DefaultIfEmpty(0).Max() + 1;
+        var id = tasks.OfType<JsonObject>().Select(t => t["task_id"]?.GetValue<long>() ?? 0).DefaultIfEmpty(0).Max() + 1;
+        return Set(() => tasks.Add(new JsonObject
+        {
+            ["task_id"] = id, ["slot"] = slot, ["name"] = "",
+            ["rule"] = new JsonObject { ["kind"] = "clear", ["required_song_count"] = 1, ["eligible_song_noes"] = new JsonArray() },
+        }));
+    }
+}

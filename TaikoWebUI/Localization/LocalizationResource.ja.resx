@@ -3753,4 +3753,301 @@
   <data name="Remove movie {0}" xml:space="preserve">
     <value>ムービー{0}を削除</value>
   </data>
+  <data name="Don Challenge on" xml:space="preserve">
+    <value>ドンチャレ オン</value>
+  </data>
+  <data name="Rounds" xml:space="preserve">
+    <value>ラウンド</value>
+  </data>
+  <data name="Active (set in ServerSettings.json)" xml:space="preserve">
+    <value>有効（ServerSettings.jsonで設定）</value>
+  </data>
+  <data name="Tasks" xml:space="preserve">
+    <value>お題</value>
+  </data>
+  <data name="Task {0}" xml:space="preserve">
+    <value>お題{0}</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>テキスト</value>
+  </data>
+  <data name="Add task" xml:space="preserve">
+    <value>お題を追加</value>
+  </data>
+  <data name="Community task" xml:space="preserve">
+    <value>みんなのお題</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>説明</value>
+  </data>
+  <data name="Rewards" xml:space="preserve">
+    <value>報酬</value>
+  </data>
+  <data name="After" xml:space="preserve">
+    <value>達成数</value>
+  </data>
+  <data name="tasks" xml:space="preserve">
+    <value>個のお題</value>
+  </data>
+  <data name="This round has {0} tasks, so no one can earn this." xml:space="preserve">
+    <value>このラウンドのお題は{0}個なので、誰も獲得できません。</value>
+  </data>
+  <data name="Title IDs" xml:space="preserve">
+    <value>称号ID</value>
+  </data>
+  <data name="Add reward" xml:space="preserve">
+    <value>報酬を追加</value>
+  </data>
+  <data name="Rule" xml:space="preserve">
+    <value>条件</value>
+  </data>
+  <data name="How many" xml:space="preserve">
+    <value>曲数</value>
+  </data>
+  <data name="of any song" xml:space="preserve">
+    <value>曲（どの曲でも）</value>
+  </data>
+  <data name="songs from" xml:space="preserve">
+    <value>曲（以下から）</value>
+  </data>
+  <data name="Add ID" xml:space="preserve">
+    <value>IDを追加</value>
+  </data>
+  <data name="Games" xml:space="preserve">
+    <value>ゲーム</value>
+  </data>
+  <data name="{0} of {1} on. Turned on in ServerSettings.json; a change needs a restart." xml:space="preserve">
+    <value>{1}中{0}がオン。ServerSettings.jsonで切り替え、変更には再起動が必要です。</value>
+  </data>
+  <data name="1 needs attention" xml:space="preserve">
+    <value>1件 要確認</value>
+  </data>
+  <data name="{0} need attention" xml:space="preserve">
+    <value>{0}件 要確認</value>
+  </data>
+  <data name="All loaded" xml:space="preserve">
+    <value>すべて読み込み済み</value>
+  </data>
+  <data name="Game data" xml:space="preserve">
+    <value>ゲームデータ</value>
+  </data>
+  <data name="Checking…" xml:space="preserve">
+    <value>確認中…</value>
+  </data>
+  <data name="{0} players can still sign in, but its songs and events won't load. Copy {0}'s {1} folder to {2}. Then press Check again; no restart needed." xml:space="preserve">
+    <value>{0}のプレイヤーはサインインできますが、曲とイベントは読み込まれません。{0}の{1}フォルダを{2}にコピーし、「もう一度確認」を押してください。再起動は不要です。</value>
+  </data>
+  <data name="Off:" xml:space="preserve">
+    <value>オフ:</value>
+  </data>
+  <data name="How to turn one on" xml:space="preserve">
+    <value>オンにする方法</value>
+  </data>
+  <data name="In {0}, set the game's {1} to {2}, copy its {3} folder to {4}, then restart the server." xml:space="preserve">
+    <value>{0}でそのゲームの{1}を{2}にし、{3}フォルダを{4}にコピーしてから、サーバーを再起動してください。</value>
+  </data>
+  <data name="{0}: still not fully loaded" xml:space="preserve">
+    <value>{0}: まだ完全には読み込まれていません</value>
+  </data>
+  <data name="{0}: loaded" xml:space="preserve">
+    <value>{0}: 読み込みました</value>
+  </data>
+  <data name="Couldn't check again." xml:space="preserve">
+    <value>もう一度確認できませんでした。</value>
+  </data>
+  <data name="{0} of {1} files loaded" xml:space="preserve">
+    <value>{1}ファイル中{0}を読み込み済み</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>インストール先</value>
+  </data>
+  <data name="Not set (Eras.Nijiiro.GameDataPath), so extract needs the game folder from a browser or a run by hand" xml:space="preserve">
+    <value>未設定（Eras.Nijiiro.GameDataPath）のため、extractにはブラウザからのゲームフォルダか手動実行が必要です</value>
+  </data>
+  <data name="Extract reads {0}" xml:space="preserve">
+    <value>extractは{0}を読みます</value>
+  </data>
+  <data name="Not found at {0}" xml:space="preserve">
+    <value>{0}に見つかりません</value>
+  </data>
+  <data name="Data folder" xml:space="preserve">
+    <value>データフォルダ</value>
+  </data>
+  <data name="Found at {0}, but it didn't load: {1}" xml:space="preserve">
+    <value>{0}にありますが、読み込めませんでした: {1}</value>
+  </data>
+  <data name="Found at {0}: {1} songs" xml:space="preserve">
+    <value>{0}: {1}曲</value>
+  </data>
+  <data name="Names" xml:space="preserve">
+    <value>名前</value>
+  </data>
+  <data name="Needs the data folder" xml:space="preserve">
+    <value>データフォルダが必要です</value>
+  </data>
+  <data name="No names read for {0}, so items show their number" xml:space="preserve">
+    <value>{0}の名前は読み込まれていないため、アイテムは番号で表示されます</value>
+  </data>
+  <data name="{0} costumes, {1} titles, {2} drum sounds" xml:space="preserve">
+    <value>着せ替え{0}、称号{1}、音色{2}</value>
+  </data>
+  <data name="Shop: season {0}" xml:space="preserve">
+    <value>ショップ: シーズン{0}</value>
+  </data>
+  <data name="Don Challenge: {0}" xml:space="preserve">
+    <value>ドンチャレ: {0}</value>
+  </data>
+  <data name="Partly loaded" xml:space="preserve">
+    <value>一部読み込み</value>
+  </data>
+  <data name="Problem" xml:space="preserve">
+    <value>問題あり</value>
+  </data>
+  <data name="Not available" xml:space="preserve">
+    <value>利用不可</value>
+  </data>
+  <data name="Seasons" xml:space="preserve">
+    <value>シーズン</value>
+  </data>
+  <data name="Season {0}" xml:space="preserve">
+    <value>シーズン{0}</value>
+  </data>
+  <data name="Add season" xml:space="preserve">
+    <value>シーズンを追加</value>
+  </data>
+  <data name="Active: {0} cabinets show this season (set in ServerSettings.json)" xml:space="preserve">
+    <value>有効: {0}の筐体はこのシーズンを表示します（ServerSettings.jsonで設定）</value>
+  </data>
+  <data name="Opens" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="Closes" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="&quot;New&quot; badge for (days)" xml:space="preserve">
+    <value>「NEW」表示（日数）</value>
+  </data>
+  <data name="&quot;Ending soon&quot; badge for (days)" xml:space="preserve">
+    <value>「まもなく終了」表示（日数）</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>アイテム</value>
+  </data>
+  <data name="Add item" xml:space="preserve">
+    <value>アイテムを追加</value>
+  </data>
+  <data name="Replace the game's own attract movies" xml:space="preserve">
+    <value>ゲーム内蔵のデモムービーを置き換える</value>
+  </data>
+  <data name="Off: these play as well as the game's own." xml:space="preserve">
+    <value>オフ: ゲーム内蔵のものに加えて再生されます。</value>
+  </data>
+  <data name="Older games" xml:space="preserve">
+    <value>旧作</value>
+  </data>
+  <data name="Nothing to extract: the server reads each game's folder." xml:space="preserve">
+    <value>抽出は不要です。サーバーが各ゲームのフォルダを読みます。</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>準備完了</value>
+  </data>
+  <data name="Didn't load" xml:space="preserve">
+    <value>読み込めませんでした</value>
+  </data>
+  <data name="Folder not found" xml:space="preserve">
+    <value>フォルダが見つかりません</value>
+  </data>
+  <data name="Copy {0}'s data folder there, then Check again: no restart needed." xml:space="preserve">
+    <value>{0}のdataフォルダをそこにコピーして「もう一度確認」してください。再起動は不要です。</value>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>種類</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="Until" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="Game" xml:space="preserve">
+    <value>ゲーム</value>
+  </data>
+  <data name="{0}'s game data didn't load" xml:space="preserve">
+    <value>{0}のゲームデータを読み込めませんでした</value>
+  </data>
+  <data name="{0}'s game folder isn't there" xml:space="preserve">
+    <value>{0}のゲームフォルダがありません</value>
+  </data>
+  <data name="Song pickers can't show names until it loads. Fix it in Server Management › Status › Games." xml:space="preserve">
+    <value>読み込まれるまで曲の選択で名前を表示できません。サーバー管理 › 状態 › ゲームで直してください。</value>
+  </data>
+  <data name="Events" xml:space="preserve">
+    <value>イベント</value>
+  </data>
+  <data name="Cabinet" xml:space="preserve">
+    <value>筐体</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>その他</value>
+  </data>
+  <data name="{0} files" xml:space="preserve">
+    <value>{0}ファイル</value>
+  </data>
+  <data name="{0}'s own files, in {1}. Saving one reloads {0}." xml:space="preserve">
+    <value>{0}専用のファイル（{1}）。保存すると{0}を再読み込みします。</value>
+  </data>
+  <data name="Not valid JSON: {0}" xml:space="preserve">
+    <value>JSONが正しくありません: {0}</value>
+  </data>
+  <data name="Fix the JSON first." xml:space="preserve">
+    <value>先にJSONを直してください。</value>
+  </data>
+  <data name="Game files are missing for {0}. Cabinets can't play and pages show IDs instead of names." xml:space="preserve">
+    <value>{0}のゲームファイルがありません。筐体はプレイできず、ページには名前の代わりにIDが表示されます。</value>
+  </data>
+  <data name="Game files are missing for {0}. {0} cabinets can't load songs or events." xml:space="preserve">
+    <value>{0}のゲームファイルがありません。{0}の筐体は曲やイベントを読み込めません。</value>
+  </data>
+  <data name="Fix it" xml:space="preserve">
+    <value>直す</value>
+  </data>
+  <data name="{0} and {1}" xml:space="preserve">
+    <value>{0}と{1}</value>
+  </data>
+  <data name="A game that isn't ready can be fixed later in Server Management › Status." xml:space="preserve">
+    <value>準備できていないゲームは、後でサーバー管理 › 状態で直せます。</value>
+  </data>
+  <data name="Nijiiro files" xml:space="preserve">
+    <value>ニジイロのファイル</value>
+  </data>
+  <data name="{0} of {1} ready" xml:space="preserve">
+    <value>{1}中{0}が準備完了</value>
+  </data>
+  <data name="General notice" xml:space="preserve">
+    <value>お知らせ</value>
+  </data>
+  <data name="Maintenance coming" xml:space="preserve">
+    <value>メンテナンス予告</value>
+  </data>
+  <data name="Maintenance now" xml:space="preserve">
+    <value>メンテナンス中</value>
+  </data>
+  <data name="Closing soon" xml:space="preserve">
+    <value>まもなく閉店</value>
+  </data>
+  <data name="Drum sound" xml:space="preserve">
+    <value>音色</value>
+  </data>
+  <data name="Item shop" xml:space="preserve">
+    <value>アイテムショップ</value>
+  </data>
+  <data name="Don Challenge" xml:space="preserve">
+    <value>ドンチャレ</value>
+  </data>
+  <data name="Taikojuku upgrades" xml:space="preserve">
+    <value>太鼓塾の更新</value>
+  </data>
+  <data name="Telop messages" xml:space="preserve">
+    <value>テロップ</value>
+  </data>
 </root>

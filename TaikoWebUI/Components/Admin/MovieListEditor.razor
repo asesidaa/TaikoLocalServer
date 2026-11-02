@@ -1,0 +1,50 @@
+@* An older game's attract movies: the IDs to play, and whether they replace the game's own. Older games' movies
+   aren't extracted, so they have no names here. *@
+@using System.Text.Json.Nodes
+
+<Toggle Label="@Localizer["Replace the game's own attract movies"]" Icon="monitor" Value="Override"
+        ValueChanged="SetOverride"
+        Description="@Localizer["Off: these play as well as the game's own."]" />
+@{
+    if (Config["movies"] is not JsonArray movies) Config["movies"] = movies = [];
+}
+<div class="mt-4 flex flex-wrap items-center gap-1.5">
+    @foreach (var m in movies.OfType<JsonObject>().ToList())
+    {
+        <span class="inline-flex items-center gap-1 rounded-full bg-zinc-100 py-1 pl-2.5 pr-1 text-xs dark:bg-zinc-800">
+            <span class="font-mono">@m["movie_id"]</span>
+            <button class="grid size-5 place-items-center rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700" aria-label="@string.Format(Localizer["Remove movie {0}"], m["movie_id"])"
+                    @onclick="() => Set(() => movies.Remove(m))"><Icon Name="x" Class="size-3" /></button>
+        </span>
+    }
+    <form class="inline-flex items-center gap-1" @onsubmit="() => Add(movies)" @onsubmit:preventDefault>
+        <input inputmode="numeric" class="@Css.Input !w-28 !px-2 !py-1 font-mono text-xs" placeholder="@Localizer["Movie ID"]" aria-label="@Localizer["Movie ID"]"
+               value="@newId" @oninput="e => newId = e.Value?.ToString() ?? string.Empty" />
+        <button class="inline-flex items-center gap-1 rounded-full border border-dashed border-zinc-300 px-2.5 py-1 text-xs font-medium text-zinc-600 hover:border-primary-500 hover:text-primary-600 disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-300"
+                disabled="@(!uint.TryParse(newId, out _))"><Icon Name="plus" Class="size-3.5" />@Localizer["Add"]</button>
+    </form>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public JsonObject Config { get; set; } = null!;
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private string newId = "";
+
+    private bool Override => Config["override_default"]?.GetValue<bool>() == true;
+
+    private Task SetOverride(bool on) => Set(() => Config["override_default"] = on);
+
+    private Task Set(Action change)
+    {
+        change();
+        return OnChanged.InvokeAsync();
+    }
+
+    private Task Add(JsonArray movies)
+    {
+        if (!uint.TryParse(newId, out var id) || movies.OfType<JsonObject>().Any(m => m["movie_id"]?.GetValue<uint>() == id)) return Task.CompletedTask;
+        newId = "";
+        return Set(() => movies.Add(new JsonObject { ["movie_id"] = id, ["enable_days"] = 0u }));
+    }
+}
