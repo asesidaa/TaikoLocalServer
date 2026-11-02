@@ -87,7 +87,11 @@ pub fn convert(src: &crate::source::Source, out: &std::path::Path, report: &mut 
         return Ok(());
     }
     if packs.iter().all(|p| crate::nut::is_fresh(&index, src, p)) {
-        report.up_to_date.push("ui".into());
+        // One per image, as a fresh run counts them: ui.json lists each set's labels.
+        let sets: serde_json::Map<String, serde_json::Value> = std::fs::read_to_string(&index).ok().and_then(|s| serde_json::from_str(&s).ok()).unwrap_or_default();
+        for (prefix, labels) in &sets {
+            report.up_to_date.extend(labels.as_array().into_iter().flatten().filter_map(|l| l.as_str()).map(|l| format!("{prefix}_{l}")));
+        }
         return Ok(());
     }
     std::fs::create_dir_all(&dir)?;

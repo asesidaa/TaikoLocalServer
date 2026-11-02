@@ -168,7 +168,12 @@ fn convert(
     let outputs: Vec<PathBuf> = std::iter::once(index.clone()).chain(scene.map(|(name, _)| dst_dir.join(name))).collect();
     let fresh = |o: &PathBuf| sources.iter().try_fold(true, |ok, s| crate::is_newer_than(o, s).map(|n| ok && n));
     if outputs.iter().try_fold(true, |ok, o| fresh(o).map(|n| ok && n))? {
-        report.up_to_date.push(file.into());
+        // Count what a fresh run writes: one image per label in the index (and the scene).
+        let labels: Map<String, Value> = fs::read_to_string(&index).ok().and_then(|s| serde_json::from_str(&s).ok()).unwrap_or_default();
+        for (key, set) in &labels {
+            report.up_to_date.extend(set["labels"].as_array().into_iter().flatten().filter_map(Value::as_str).map(|l| format!("{key}_{l}")));
+        }
+        report.up_to_date.extend(scene.map(|(name, _)| name.to_string()));
         return Ok(());
     }
 
