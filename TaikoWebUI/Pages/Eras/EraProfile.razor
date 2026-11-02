@@ -6,10 +6,12 @@
 @inject HttpClient Client
 @inject PageState Page
 @inject ToastService Toast
+@inject IJSRuntime Js
 
 <PageTitle>@Localizer["Profile"]</PageTitle>
 @* An older game's profile as one form: name and title, costume (unlocked items only), colours and game options.
-   What the game doesn't have is hidden, and one line names it. Older games have no 3D don-chan here. *@
+   What the game doesn't have is hidden, and one line names it. The preview is the game's own 3D don-chan once its
+   models are extracted (Server Management › Games), else the player's initial. *@
 <div class="mx-auto max-w-3xl">
     <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Profile"]</h1>
     <GameLine Game="@GameName" Class="mb-5" />
@@ -21,9 +23,16 @@
     {
         var caps = settings.Capabilities;
         <div class="space-y-4">
-            @* Preview: the player's initial on their card colour, and a plain nameplate. *@
+            @* Preview: don-chan as this game draws him (or the player's initial), and a plain nameplate. *@
             <section class="@Css.Card flex items-center gap-4 p-5">
-                <span class="grid size-16 shrink-0 place-items-center rounded-full bg-primary-500 text-2xl font-semibold text-white" aria-hidden="true">@(form.Name.Length > 0 ? form.Name[..1].ToUpperInvariant() : "?")</span>
+                @if (has3D)
+                {
+                    <div @ref="donFrame" role="img" aria-label="@Localizer["3D preview"]" class="pointer-events-none relative size-32 shrink-0"></div>
+                }
+                else
+                {
+                    <span class="grid size-16 shrink-0 place-items-center rounded-full bg-primary-500 text-2xl font-semibold text-white" aria-hidden="true">@(form.Name.Length > 0 ? form.Name[..1].ToUpperInvariant() : "?")</span>
+                }
                 <div class="min-w-0 flex-1 rounded-xl bg-zinc-900 px-4 py-2 text-white">
                     @if (caps.SupportsTitle)
                     {
@@ -32,7 +41,10 @@
                     <p class="truncate font-semibold">@form.Name</p>
                 </div>
             </section>
-            <p class="text-xs @Css.Muted">@string.Format(Localizer["{0} doesn't have don-chan's 3D model here, so the preview is your initial."], GameName)</p>
+            @if (!has3D)
+            {
+                <p class="text-xs @Css.Muted">@string.Format(Localizer["{0}'s don-chan models aren't extracted, so the preview is your initial."], GameName)</p>
+            }
 
             <section class="@Css.Card space-y-4 p-5">
                 <h2 class="font-semibold">@Localizer["Name & title"]</h2>
@@ -195,7 +207,26 @@
         try { costumes = await Client.GetFromJsonAsync<List<Costume>>($"api/{GameName}/customization/costumes") ?? []; } catch (HttpRequestException) { }
         try { titles = await Client.GetFromJsonAsync<Dictionary<uint, Title>>($"api/{GameName}/customization/titles") ?? []; } catch (HttpRequestException) { }
         try { tones = await Client.GetFromJsonAsync<Dictionary<uint, Neiro>>($"api/{GameName}/customization/neiros") ?? []; } catch (HttpRequestException) { }
+        // The game's models are there when extract --era wrote its animations.
+        try { has3D = (await Client.GetAsync($"api/Assets/{GameName.ToLowerInvariant()}/animation/facekeys.json")).IsSuccessStatusCode; } catch (HttpRequestException) { }
         Reset();
+    }
+
+    private bool has3D;
+    private ElementReference donFrame;
+
+    // The preview follows the form (the viewer only reloads when a part changes).
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!has3D || form is null) return;
+        await Js.InvokeVoidAsync("ui.don", donFrame, null, new
+        {
+            game = GameName,
+            body = form.Slots.GetValueOrDefault("body"), head = form.Slots.GetValueOrDefault("head"), kigurumi = form.Slots.GetValueOrDefault("kigurumi"),
+            face = form.Slots.GetValueOrDefault("face"), puchi = form.Slots.GetValueOrDefault("puchi"),
+            bodyColor = form.Body, faceColor = form.Face, limbColor = form.Limb,
+            zoom = 0.2, camY = 0.15,
+        });
     }
 
     private void Reset()

@@ -19,13 +19,20 @@ const PALETTE = ["#F84828", "#68C0C0", "#DC1500", "#F8F0E0", "#009687", "#00BF87
  * [cx, cy, h] in px inside the element: the box zoom/camY frame, so don-chan keeps his size and place while the canvas
  * covers the whole card. cosFile is an exact kigurumi variant (e.g. "036014", the Dani Dojo outfit per rank) and wins
  * over kigurumi. quality: low = 1x, standard = the screen's own, high = at least 2x; unset = the player's choice
- * (Settings › Display).
+ * (Settings › Display). game: an older game ("Green"…) draws that game's own models from game_data/<game>/ (extract
+ * --era); unset is Nijiiro.
  */
 const DEFAULTS = {
   body: 0, head: 0, kigurumi: 0, face: 0, puchi: 0, bodyColor: 1, faceColor: 0, limbColor: 3,
-  anim: "don_result_full_loop", zoom: 0.34, camY: 0.27, anchor: null, cosFile: "", quality: null,
+  anim: "don_result_full_loop", zoom: 0.34, camY: 0.27, anchor: null, cosFile: "", quality: null, game: "",
 };
-const PARTS = ["body", "head", "kigurumi", "face", "puchi", "cosFile"];
+const PARTS = ["body", "head", "kigurumi", "face", "puchi", "cosFile", "game"];
+// The older games' (PS3) models are in the game's units, 100 times Nijiiro's.
+const ERA_SCALE = 0.01;
+// Their shaders, by the low byte of a material's nudFlags (extras): color_change mixes the player's colours by the
+// texture's channels, face_anime shows the face set's current frame. The outline (black_line) is an inverted hull,
+// as wide as the vertex colour's green says (the only thing that reads it), in the game's units.
+const ERA_COLOR_CHANGE = 0x01, ERA_FACE = 0x02, ERA_OUTLINE_WIDTH = 0.3;
 const OUTLINE = { visible: true, thickness: 0.0025 };
 const CAM_X = -0.017, CAM_YAW = THREE.MathUtils.degToRad(-29);
 const PUCHI_Y = 0.115;
@@ -73,9 +80,14 @@ export function mount(el) {
     }
     return p;
   };
-  // A costume part, falling back to part 0 when the operator's extract doesn't have that id.
-  const part = async (prefix, file, ext) =>
-    (await asset(`${prefix}/${prefix}_${file}.${ext}`)) ?? asset(`${prefix}/${prefix}_000000.${ext}`);
+  // A costume part, falling back to part 0 when the operator's extract doesn't have that id. An older game's are in
+  // game_data/<game>/, and its puchi are acce/acc_<id>.glb.
+  const part = async (base, folder, file, ext) => {
+    const name = base && folder === "acce" ? "acc" : folder;
+    return (await asset(`${base}${folder}/${name}_${file}.${ext}`)) ?? asset(`${base}${folder}/${name}_000000.${ext}`);
+  };
+  const eraFace = async (base, kig, cosFile, paint) =>
+    (kig ? await asset(`${base}face/face_${cosFile}.png`) : null) ?? part(base, "paint", paint, "png");
   const cached = (url, load) => {
     let p = loaded.get(url);
     if (!p) loaded.set(url, p = load(url));
@@ -106,18 +118,19 @@ export function mount(el) {
   async function build(s, id) {
     const kig = s.kigurumi > 0 || !!s.cosFile;
     const cosFile = s.cosFile || (kig ? pad(s.kigurumi) : "000000");
+    const era = !!s.game, base = era ? `${s.game.toLowerCase()}/` : "";
     // A kigurumi brings its own face atlas (face_<cos id>), when the game has one.
     const urls = await Promise.all([
-      part("body", pad(s.body), "glb"), part("head", pad(s.head), "glb"), part("cos", cosFile, "glb"),
-      part("face", cosFile, "png"), part("paint", pad(s.face), "png"), part("acce", pad(s.puchi), "png"),
-      asset("animation/don.glb"), asset("animation/facekeys.json"),
+      part(base, "body", pad(s.body), "glb"), part(base, "head", pad(s.head), "glb"), part(base, "cos", cosFile, "glb"),
+      era ? eraFace(base, kig, cosFile, pad(s.face)) : part(base, "face", cosFile, "png"), part(base, "paint", pad(s.face), "png"), part(base, "acce", pad(s.puchi), era ? "glb" : "png"),
+      asset(`${base}animation/don.glb`), asset(`${base}animation/facekeys.json`),
     ]);
     if (id !== seq) return;
     if (urls.some(u => !u)) return setStatus(false, "missing-assets");
     let loadedParts;
     try {
       const [body, head, cos, face, paint, acce, anim, faceKeys] = urls;
-      loadedParts = await Promise.all([gltf(body), gltf(head), gltf(cos), texture(face), texture(paint), texture(acce), gltf(anim), json(faceKeys)]);
+      loadedParts = await Promise.all([gltf(body), gltf(head), gltf(cos), texture(face), texture(paint), era ? gltf(acce) : texture(acce), gltf(anim), json(faceKeys)]);
     } catch {
       if (id === seq) setStatus(false, "load-failed");
       return;
@@ -132,6 +145,7 @@ export function mount(el) {
     }
     // Skinned hierarchies must be cloned with SkeletonUtils, or the animation doesn't bind (T-pose).
     const roots = { body: cloneSkinned(bodyG.scene), head: cloneSkinned(headG.scene), cos: cloneSkinned(cosG.scene) };
+    if (era) return buildEra({ kig, roots, faceTex, paintTex, acce: acceTex, animLib, faceKeys, urls });
     // The puchi: a camera-facing sprite that flips between its two atlas frames and bobs once a second.
     const atlas = acceTex.clone();
     atlas.colorSpace = THREE.SRGBColorSpace;
@@ -161,6 +175,96 @@ export function mount(el) {
     setStatus(false);
     // The first frame after a swap is the bind pose with raw materials; fade in two frames later.
     requestAnimationFrame(() => requestAnimationFrame(() => { if (model === next && !status.loading) show(true); }));
+  }
+
+  // An older game's don-chan: its own models, rig and clips (game_data/<game>/), scaled to Nijiiro's units, and its
+  // puchi a model with its own "loop" clip.
+  function buildEra({ kig, roots, faceTex, paintTex, acce, animLib, faceKeys, urls }) {
+    const puchiRoot = cloneSkinned(acce.scene);
+    const shown = kig ? [roots.cos] : [roots.body, roots.head];
+    const group = new THREE.Group();
+    group.scale.setScalar(ERA_SCALE);
+    group.add(...shown, puchiRoot);
+    const next = { era: true, kig, roots: { ...roots, puchi: puchiRoot }, shown, group, faceTex, paintTex, puchiLib: acce, animLib, faceKeys, urls,
+      mixers: [], actions: [], faceTextures: [] };
+    dressEra(next);
+    bind(next);
+    if (model) {
+      scene.remove(model.group);
+      release(model, urls);
+    }
+    model = next;
+    scene.add(group);
+    setStatus(false);
+    requestAnimationFrame(() => requestAnimationFrame(() => { if (model === next && !status.loading) show(true); }));
+  }
+
+  // The game's own materials, made again on a colour change. The GLB's material stays on the mesh as its source.
+  function dressEra(m) {
+    const c = colours();
+    for (const tex of m.faceTextures) tex.dispose();
+    m.faceTextures = [];
+    for (const root of Object.values(m.roots)) {
+      const meshes = [];
+      root.traverse(obj => { if (obj.isMesh && !obj.userData.donEraOutline) meshes.push(obj); });
+      for (const obj of meshes) {
+        const src = obj.userData.donEraSource ??= obj.material;
+        if (obj.material !== src) obj.material.dispose();
+        const shader = (src.userData?.nudFlags ?? 0) & 0xff;
+        if (shader === ERA_COLOR_CHANGE) obj.material = eraColorChange(src, c);
+        else if (shader === ERA_FACE) {
+          // The plane's own texture is never read: it shows the face set's frame (12 rows, as Nijiiro's).
+          const frame = m.faceTex.clone();
+          frame.repeat.set(1, 1 / 12);
+          frame.needsUpdate = true;
+          m.faceTextures.push(frame);
+          obj.material = new THREE.MeshBasicMaterial({ map: frame, transparent: true, depthWrite: false, side: src.side });
+        } else {
+          obj.material = new THREE.MeshBasicMaterial({ map: src.map, transparent: src.transparent, alphaTest: src.alphaTest,
+            depthWrite: src.depthWrite, side: src.side });
+          if (obj.material.map) obj.material.map.colorSpace = THREE.SRGBColorSpace;
+        }
+        if (src.userData?.outline && !obj.userData.donEraOutlined) eraOutline(obj);
+      }
+    }
+  }
+
+  // color_change: rgb = t.r·limb + t.g·(body − limb) + t.b·(face − limb), opaque (the RGB under alpha 0 counts), unlit.
+  function eraColorChange(src, c) {
+    const map = src.map;
+    if (map) map.colorSpace = THREE.NoColorSpace;   // a mask: its channels are weights, not colours
+    const mat = new THREE.MeshBasicMaterial({ map, side: src.side });
+    const limb = new THREE.Color(c.rim), body = new THREE.Color(c.body), face = new THREE.Color(c.face);
+    mat.onBeforeCompile = shader => {
+      Object.assign(shader.uniforms, { eraLimb: { value: limb }, eraBody: { value: body }, eraFace: { value: face } });
+      shader.fragmentShader = shader.fragmentShader
+        .replace("#include <common>", "#include <common>\nuniform vec3 eraLimb;\nuniform vec3 eraBody;\nuniform vec3 eraFace;")
+        .replace("#include <map_fragment>", `vec4 eraMask = texture2D(map, vMapUv);
+          diffuseColor = vec4(eraMask.r * eraLimb + eraMask.g * (eraBody - eraLimb) + eraMask.b * (eraFace - eraLimb), 1.0);`);
+    };
+    mat.customProgramCacheKey = () => "eraColorChange";
+    return mat;
+  }
+
+  // black_line: the same skinned mesh drawn black, back faces only, pushed out along its normals before skinning.
+  function eraOutline(obj) {
+    obj.userData.donEraOutlined = true;
+    if (!obj.geometry.attributes.color || !obj.geometry.attributes.normal) return;
+    const mat = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.BackSide, vertexColors: true });
+    mat.onBeforeCompile = shader => {
+      shader.vertexShader = shader.vertexShader.replace("#include <begin_vertex>",
+        `#include <begin_vertex>
+        transformed += normalize(objectNormal) * ${ERA_OUTLINE_WIDTH.toFixed(3)} * color.g;`);
+      shader.fragmentShader = shader.fragmentShader.replace("#include <color_fragment>", "diffuseColor.rgb = vec3(0.0);");
+    };
+    mat.customProgramCacheKey = () => "eraOutline";
+    const outline = obj.isSkinnedMesh ? new THREE.SkinnedMesh(obj.geometry, mat) : new THREE.Mesh(obj.geometry, mat);
+    if (obj.isSkinnedMesh) outline.bind(obj.skeleton, obj.bindMatrix);
+    outline.userData.donEraOutline = true;
+    outline.position.copy(obj.position);
+    outline.quaternion.copy(obj.quaternion);
+    outline.scale.copy(obj.scale);
+    obj.parent.add(outline);
   }
 
   const colours = () => ({
@@ -206,6 +310,14 @@ export function mount(el) {
       m.mixers.push(mixer);
       m.actions.push(action);
     }
+    // An older game's puchi plays its own loop (after the main actions, which the face keys follow).
+    const loop = m.puchiLib?.animations.find(a => a.name === "loop") ?? m.puchiLib?.animations[0];
+    if (loop) {
+      const mixer = new THREE.AnimationMixer(m.roots.puchi), action = mixer.clipAction(loop);
+      action.setLoop(THREE.LoopRepeat, Infinity);
+      action.play();
+      m.mixers.push(mixer);
+    }
   }
 
   // The face atlas frame for the main action's time.
@@ -222,9 +334,11 @@ export function mount(el) {
   function release(m, keep) {
     for (const mixer of m.mixers) mixer.stopAllAction();
     for (const root of Object.values(m.roots)) disposePart(root);
-    m.atlas.dispose();
-    m.puchi.geometry.dispose();
-    m.puchi.material.dispose();
+    if (!m.era) {
+      m.atlas.dispose();
+      m.puchi.geometry.dispose();
+      m.puchi.material.dispose();
+    }
     for (const url of m.urls) if (!keep.includes(url)) forget(url);
   }
 
@@ -260,9 +374,11 @@ export function mount(el) {
     if (model) {
       for (const mixer of model.mixers) mixer.update(delta);
       faceFrame(model);
-      model.atlas.offset.y = Math.floor(time) % 2 === 0 ? 0.5 : 0;
-      model.puchi.position.y = PUCHI_Y + Math.sin(time * 2 * Math.PI) * 0.01;
-      model.puchi.quaternion.copy(camera.quaternion);
+      if (!model.era) {
+        model.atlas.offset.y = Math.floor(time) % 2 === 0 ? 0.5 : 0;
+        model.puchi.position.y = PUCHI_Y + Math.sin(time * 2 * Math.PI) * 0.01;
+        model.puchi.quaternion.copy(camera.quaternion);
+      }
     }
     if (w && h) renderer.render(scene, camera);
   }
@@ -289,7 +405,7 @@ export function mount(el) {
       state = { ...state, ...next };
       if (seq === 0 || PARTS.some(k => state[k] !== prev[k])) return load();
       if (!model) return;
-      if (state.bodyColor !== prev.bodyColor || state.faceColor !== prev.faceColor || state.limbColor !== prev.limbColor) dress(model);
+      if (state.bodyColor !== prev.bodyColor || state.faceColor !== prev.faceColor || state.limbColor !== prev.limbColor) (model.era ? dressEra : dress)(model);
       if (state.anim !== prev.anim) bind(model);
     },
   };

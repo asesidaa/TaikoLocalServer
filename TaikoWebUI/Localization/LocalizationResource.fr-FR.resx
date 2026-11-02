@@ -4560,4 +4560,7 @@
   <data name="A game that isn't ready can be extracted later in Server Management › Games." xml:space="preserve">
     <value>Un jeu qui n'est pas prêt peut être extrait plus tard dans Gestion du serveur › Jeux.</value>
   </data>
+  <data name="{0}'s don-chan models aren't extracted, so the preview is your initial." xml:space="preserve">
+    <value>Les modèles de don-chan de {0} ne sont pas extraits, donc l'aperçu montre votre initiale.</value>
+  </data>
 </root>
