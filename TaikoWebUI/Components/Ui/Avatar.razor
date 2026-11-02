@@ -5,7 +5,7 @@
 
 @* The initial is nudged up 0.075em: Zen Maru Gothic's ascent/descent (1.15/0.3em) put a capital's middle that far below
    the line box's. *@
-<span class="relative grid shrink-0 place-items-center overflow-hidden rounded-full font-display leading-none @(CardStyle.IsLight(Hex) ? "text-zinc-900" : "text-white")"
+<span class="relative grid shrink-0 place-items-center overflow-hidden rounded-full font-display leading-none @(CardStyle.IsLight(Hex) ? "text-zinc-900" : "text-white") @(OnCard ? "border-2 border-white" : "")"
       style="width:@(Size)px;height:@(Size)px;@CardStyle.Background(Setting.CardColor, OnCard ? CardPattern.None : Setting.CardPattern);background-clip:padding-box;font-size:@(Size / 2)px" aria-hidden="true">
     <span class="-translate-y-[0.075em]">@Initial</span>
     @if (Auth.ServerAvatars)
