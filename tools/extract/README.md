@@ -16,6 +16,28 @@ extract --game "G:\Games\Taiko no Tatsujin Nijiiro Version (SBWY 39.06)"
 
 It is safe to re-run, for example after a game update. Outputs that are already up to date (not older than the game's file; datatables must also match in size) are skipped. It exits with code `2` when a required file is missing or a texture fails to convert, and `1` on any other error. One bad texture doesn't stop the rest.
 
+Each step prints `<label>: N written, M already up to date, X missing, Y failed`, then its `MISSING` and `FAILED` lines (the server reads these for progress). A run that gets to the end, failed steps or not, also writes a manifest for the server's Extract panel, replacing the last one: `<out>/data/extract.json` (Nijiiro) or `<out>/data/<era>/extract.json`. A run stopped by an error (exit `1`) writes none.
+
+```json
+{
+  "era": "red",
+  "finishedAt": "2026-11-02T21:00:00Z",
+  "source": "<--game as given>",
+  "steps": [{ "label": "server files", "written": 1440, "upToDate": 0, "missing": 0, "failed": 0 }],
+  "notes": [{ "kind": "gap", "code": "early-config", "detail": "ST8100-7" }]
+}
+```
+
+`steps` are the printed steps in order, labels without the era. `notes` (older games only) are the ones that apply:
+
+| Kind | Code | When |
+| --- | --- | --- |
+| `gap` | `early-config` | The game's config id isn't in the dump and another variant was copied in its place; `detail` is the one used (Red 10.01: `ST8100-7`) |
+| `gap` | `no-battle` | Blue, without `config/<id>/battle/` files: battle mode stays off |
+| `absent` | `no-title-plates` | The UI art has no `plate_*` set (White, Murasaki, Momoiro) |
+| `absent` | `no-costume-icons` | No `cos_icon` output (every game but Green) |
+| `included` | `names` | Green's costume, title and drum-sound name packs were copied (the server reads them) |
+
 ## What it does today
 
 | From `Data/x64/` | To `<out>/` | |
