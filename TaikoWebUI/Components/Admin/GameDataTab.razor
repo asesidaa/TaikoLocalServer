@@ -4,6 +4,7 @@
 @inject AssetStatus AssetStatus
 @inject AuthService AuthService
 @inject ToastService Toast
+@inject NavigationManager Nav
 
 <div class="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start">
     <nav class="@Css.Card hidden p-2 lg:sticky lg:top-24 lg:block" aria-label="@Localizer["Game Data"]">
@@ -139,6 +140,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // ?game=Red opens that game's files (a cabinet's "What it shows" links here).
+        var asked = new Uri(Nav.Uri).Query.TrimStart('?').Split('&').Select(p => p.Split('=')).FirstOrDefault(p => p is ["game", _])?[1];
+        if (asked is not null && Games.FirstOrDefault(g => g.Equals(asked, StringComparison.OrdinalIgnoreCase)) is { } named) game = named;
         if (!Games.Contains(game)) game = Games[0];
         await LoadFiles();
         if (Games.Count > 1)

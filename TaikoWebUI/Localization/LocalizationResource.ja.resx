@@ -4392,4 +4392,19 @@
   <data name="Wins by ghost level and your recent battles, section by section." xml:space="preserve">
     <value>ゴーストのレベル別の勝利数と、最近のバトルのセクションごとの結果。</value>
   </data>
+  <data name="Nijiiro cabinets without their own settings" xml:space="preserve">
+    <value>個別設定のないニジイロ筐体</value>
+  </data>
+  <data name="Every Nijiiro cabinet without its own settings uses these. Older games' cabinets use their game's Game data files." xml:space="preserve">
+    <value>個別設定のないニジイロ筐体はすべてこれを使います。旧作の筐体は、そのゲームのゲームデータファイルを使います。</value>
+  </data>
+  <data name="What it shows" xml:space="preserve">
+    <value>表示する内容</value>
+  </data>
+  <data name="{0} cabinets have no settings of their own: what they show comes from {0}'s Game data files, the same for every {0} cabinet." xml:space="preserve">
+    <value>{0}の筐体には個別設定がありません。表示内容は{0}のゲームデータファイルから取られ、すべての{0}筐体で共通です。</value>
+  </data>
+  <data name="Open {0}'s Game data" xml:space="preserve">
+    <value>{0}のゲームデータを開く</value>
+  </data>
 </root>

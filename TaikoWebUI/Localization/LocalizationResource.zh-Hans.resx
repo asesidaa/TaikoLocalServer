@@ -4392,4 +4392,19 @@
   <data name="Wins by ghost level and your recent battles, section by section." xml:space="preserve">
     <value>按幽灵等级的胜场，以及最近对战的每段结果。</value>
   </data>
+  <data name="Nijiiro cabinets without their own settings" xml:space="preserve">
+    <value>没有单独设置的虹色版机台</value>
+  </data>
+  <data name="Every Nijiiro cabinet without its own settings uses these. Older games' cabinets use their game's Game data files." xml:space="preserve">
+    <value>所有没有单独设置的虹色版机台都使用这些。旧版游戏的机台使用各自游戏的游戏数据文件。</value>
+  </data>
+  <data name="What it shows" xml:space="preserve">
+    <value>显示的内容</value>
+  </data>
+  <data name="{0} cabinets have no settings of their own: what they show comes from {0}'s Game data files, the same for every {0} cabinet." xml:space="preserve">
+    <value>{0} 机台没有单独设置：显示的内容来自 {0} 的游戏数据文件，所有 {0} 机台都相同。</value>
+  </data>
+  <data name="Open {0}'s Game data" xml:space="preserve">
+    <value>打开 {0} 的游戏数据</value>
+  </data>
 </root>

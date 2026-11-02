@@ -1,9 +1,11 @@
 @* Server Management › Cabinets: every cabinet the server has seen (they're recorded as they connect), who may
-   connect, and per-cabinet settings (Dani Dojo course set, movies) over the defaults. *@
+   connect, and per-cabinet settings (Dani Dojo course set, movies) over the defaults. Those are Nijiiro's: an older game's
+   cabinet takes what it shows from that game's Game data files. *@
 @using System.Text.Json
 @using System.Text.Json.Nodes
 @inject HttpClient Client
 @inject ToastService Toast
+@inject AuthService AuthService
 
 <div class="mb-4 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm dark:border-zinc-800 dark:bg-zinc-900/50">
     @if (list?.Restricted == true)
@@ -91,7 +93,24 @@
     private RenderFragment List(bool phone) => __builder =>
     {
         <input type="search" class="@Css.Input" placeholder="@Localizer["Chassis ID or shop"]" value="@query" @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
-        <ul class="mt-2 @(phone ? "max-h-[55dvh]" : "max-h-[calc(100dvh-18rem)]") space-y-0.5 overflow-y-auto">
+        @if (CabinetGames.Count > 1)
+    {
+        <div class="mt-2 flex flex-wrap gap-1.5" role="group" aria-label="@Localizer["Game"]">
+            @foreach (var g in CabinetGames.Prepend(null))
+            {
+                var current = gameFilter == g;
+                <button aria-pressed="@Css.Aria(current)" @onclick="() => gameFilter = g"
+                        class="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium @(current ? "bg-primary-500/10 text-primary-700 dark:text-primary-300" : "bg-zinc-100 dark:bg-zinc-800 " + Css.Muted)">
+                    @if (g is not null)
+                    {
+                        <GameDot Game="GameInfo.Of(g)" />
+                    }
+                    @(g ?? Localizer["All"])
+                </button>
+            }
+        </div>
+    }
+    <ul class="mt-2 @(phone ? "max-h-[55dvh]" : "max-h-[calc(100dvh-18rem)]") space-y-0.5 overflow-y-auto">
             <li>@Row(null)</li>
             @if (list is not null)
             {
@@ -114,7 +133,8 @@
     private IEnumerable<(string, List<CabinetItem>)> Groups()
     {
         var q = query.Trim();
-        var shown = list!.Cabinets.Where(c => q.Length == 0 || c.ChassisId.Contains(q, StringComparison.OrdinalIgnoreCase)
+        var shown = list!.Cabinets.Where(c => gameFilter is null || GameOf(c) == gameFilter)
+            .Where(c => q.Length == 0 || c.ChassisId.Contains(q, StringComparison.OrdinalIgnoreCase)
                                                              || c.ShopId.Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
         var groups = list.Restricted
             ? new[] { (Localizer["Waiting for approval"].Value, CabinetAccess.Pending), (Localizer["Allowed"].Value, CabinetAccess.Allowed), (Localizer["Blocked"].Value, CabinetAccess.Blocked) }
@@ -149,17 +169,32 @@
             {
                 <Icon Name="settings" Class="size-4 text-zinc-400" />
                 <span class="min-w-0 flex-1"><span class="block text-sm font-medium">@Localizer["Defaults"]</span>
-                    <span class="block text-xs @Css.Muted">@(summary ? Localizer["tap to switch cabinet"] : Localizer["Every cabinet without its own settings"])</span></span>
+                    <span class="block text-xs @Css.Muted">@(summary ? Localizer["tap to switch cabinet"] : ManyGames ? Localizer["Nijiiro cabinets without their own settings"] : Localizer["Every cabinet without its own settings"])</span></span>
             }
             else
             {
                 <span class="size-2 shrink-0 rounded-full @Dot(c)"></span>
                 <span class="min-w-0 flex-1">
                     <span class="block truncate font-mono text-sm">@c.ChassisId</span>
-                    <span class="block truncate text-xs @Css.Muted">@(c.ShopId.Length > 0 ? c.ShopId : "–") · @(summary ? Localizer["tap to switch cabinet"] : c.OwnSettings ? Localizer["Own settings"] : Localizer["Defaults"])</span>
+                    <span class="flex items-center gap-1.5 truncate text-xs @Css.Muted">
+                        @if (ManyGames)
+                        {
+                            <GameDot Game="GameInfo.Of(GameOf(c))" />@GameOf(c)<span>·</span>
+                        }
+                        @(c.ShopId.Length > 0 ? c.ShopId : "–") · @(summary ? Localizer["tap to switch cabinet"] : GameOf(c) != "Nijiiro" ? Localizer["Game data"] : c.OwnSettings ? Localizer["Own settings"] : Localizer["Defaults"])
+                    </span>
                 </span>
             }
     };
+
+    private string? gameFilter;
+
+    // The game is the first word of the version the cabinet's requests recorded ("Red 08.01"); WW 39.06 and CHN are Nijiiro.
+    private static string GameOf(CabinetItem c) => EraPaths.Older(c.Version.Split(' ')[0]) ?? "Nijiiro";
+
+    private bool ManyGames => AuthService.EnabledGames.Count > 1;
+
+    private List<string> CabinetGames => list?.Cabinets.Select(GameOf).Distinct().OrderBy(g => GameInfo.All.ToList().FindIndex(i => i.Name == g)).ToList() ?? [];
 
     private static string Dot(CabinetItem c) => c.Access switch
     {
@@ -392,7 +427,7 @@
     {
         <div class="border-b border-zinc-100 p-5 dark:border-zinc-800">
             <h2 class="font-semibold">@Localizer["Defaults"]</h2>
-            <p class="text-sm @Css.Muted">@Localizer["Every cabinet without its own settings uses these."]</p>
+            <p class="text-sm @Css.Muted">@(ManyGames ? Localizer["Every Nijiiro cabinet without its own settings uses these. Older games' cabinets use their game's Game data files."] : Localizer["Every cabinet without its own settings uses these."])</p>
         </div>
         <div class="space-y-5 p-5">
             <div>
@@ -411,7 +446,11 @@
             <div class="flex flex-wrap items-start gap-3">
                 <div class="min-w-0 flex-1">
                     <h2 class="font-mono text-lg font-semibold">@c.ChassisId</h2>
-                    <p class="text-sm @Css.Muted">@(c.ShopId.Length > 0 ? $"{Localizer["Shop"]} {c.ShopId}" : Localizer["No shop ID yet"]) · @(c.Version.Length > 0 ? c.Version : "–")</p>
+                    <p class="flex flex-wrap items-center gap-x-1.5 text-sm @Css.Muted">@if (ManyGames || GameOf(c) != "Nijiiro")
+                        {
+                            <GameDot Game="GameInfo.Of(GameOf(c))" />@GameOf(c)<span>·</span>
+                        }
+                        @(c.ShopId.Length > 0 ? $"{Localizer["Shop"]} {c.ShopId}" : Localizer["No shop ID yet"]) · @(c.Version.Length > 0 ? c.Version : "–")</p>
                     <p class="text-xs @Css.Muted">@(c.Online ? Localizer["Online now"] : c.LastSeen is { } seen ? string.Format(Localizer["Last seen {0}"], seen.ToLocalTime().ToString("g")) : Localizer["Never connected (pre-approved)"])</p>
                 </div>
                 <button class="@Css.GhostButton !px-2.5 !py-1 text-xs" title="@Localizer["Removes it from this list; it reappears if it connects again."]" @onclick="() => Forget(c)">@Localizer["Forget"]</button>
@@ -437,6 +476,15 @@
                 }
             </div>
         </div>
+        @if (GameOf(c) is var game && game != "Nijiiro")
+        {
+            <div class="space-y-2 p-5">
+                <p class="text-sm font-medium">@Localizer["What it shows"]</p>
+                <p class="text-sm @Css.Muted">@string.Format(Localizer["{0} cabinets have no settings of their own: what they show comes from {0}'s Game data files, the same for every {0} cabinet."], game)</p>
+                <a href="@($"/Admin/Server/data?game={game}")" class="inline-flex items-center gap-1 text-sm @Css.Link">@string.Format(Localizer["Open {0}'s Game data"], game)<Icon Name="chevRight" Class="size-4" /></a>
+            </div>
+            return;
+        }
         <div class="space-y-5 p-5">
             <Toggle Label="@Localizer["Use this cabinet's own settings"]" Description="@Localizer["Off: it uses the defaults."]" Icon="settings" @bind-Value="draftOwn" />
             <label class="block @(draftOwn ? "" : "pointer-events-none opacity-50")">

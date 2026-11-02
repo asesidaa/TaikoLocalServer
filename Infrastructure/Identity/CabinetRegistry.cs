@@ -43,11 +43,12 @@ public sealed class CabinetRegistry(IServiceScopeFactory scopes, IOptions<Server
 
         var allowed = cabinet.Access == CabinetAccess.Allowed;
         var write = isNew || !allowed || cabinet.LastSeen is null || now - cabinet.LastSeen > SeenGranularity
-                    || cabinet.ShopId != shopId || cabinet.Version != version;
+                    || cabinet.ShopId != shopId || (version.Length > 0 && cabinet.Version != version);
         cabinet.FirstSeen ??= now;
         cabinet.LastSeen = now;
         cabinet.ShopId = shopId;
-        cabinet.Version = version;
+        // The shared /v01r00 start-up requests don't say which game: keep the one the game's own requests recorded.
+        if (version.Length > 0) cabinet.Version = version;
         if (!allowed) cabinet.RefusedCount++;
         if (isNew) logger.LogInformation("New cabinet {ChassisId} (shop {ShopId}, {Version}){Pending}", chassisId, shopId, version,
             allowed ? "" : ": waiting for approval");
