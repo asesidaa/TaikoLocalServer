@@ -38,6 +38,12 @@ public sealed class EraSettings
 
     public string GameDataPath { get; set; } = string.Empty;
 
+    /// <summary>
+    /// An older game's install (RPCS3, its USRDIR/data, or a .zip), which extract reads when an admin extracts it
+    /// (Server Management › Games). Nijiiro's is GameDataPath. Relative paths are from the server's folder.
+    /// </summary>
+    public string GamePath { get; set; } = string.Empty;
+
     public string? CustomizationNameDataPath { get; set; }
 
     public bool? EnableShop { get; set; }

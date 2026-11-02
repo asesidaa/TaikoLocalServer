@@ -1,8 +1,9 @@
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 /// <summary>
-/// "Run extract": copies the game files in from Eras.Nijiiro.GameDataPath, or from a game folder an admin sends from their browser
-/// (AllowRemoteGameDir) (Server Management › Game data, setup). Admin only.
+/// Extract: copies games' files in from their installs on the server (Eras.Nijiiro.GameDataPath, Eras.&lt;Game&gt;.GamePath),
+/// or from game folders an admin sends from their browser (AllowRemoteGameDir), one game after another (Server
+/// Management › Games, Game data, setup). Admin only.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -16,45 +17,61 @@ public class ExtractController(IExtractRunner extract, ITaikoDbContext context) 
     [HttpGet]
     public ExtractStatus Get() => extract.Status;
 
-    /// <summary>
-    /// Starts a run; poll GET for its report. <paramref name="mods"/> layers the install's Data_mods.
-    /// <paramref name="uploaded"/> runs on the files sent to Upload instead of Eras.Nijiiro.GameDataPath.
-    /// </summary>
+    /// <summary>Starts a run of the games asked for, one after another; poll GET for its progress.</summary>
     [HttpPost]
-    public async Task<IActionResult> Start([FromQuery] bool mods = true, [FromQuery] bool uploaded = false)
+    public async Task<IActionResult> Start([FromBody] ExtractRequest request)
     {
-        if (extract.Start(mods, uploaded) is { } error)
+        var games = new List<GameEra>();
+        foreach (var name in request.Games)
+        {
+            if (!EraRoute.TryParse(name, out var game)) return EraRoute.BadEra(name);
+            games.Add(game);
+        }
+        var uploaded = new HashSet<GameEra>();
+        foreach (var name in request.Uploaded ?? [])
+        {
+            if (!EraRoute.TryParse(name, out var game)) return EraRoute.BadEra(name);
+            uploaded.Add(game);
+        }
+
+        if (extract.Start(games, request.Mods, uploaded) is { } error)
             return Conflict(new { message = error });
-        this.LogActivity(context, "gamedata.extract", null, string.Join(", ", new[] { mods ? "with mods" : "", uploaded ? "sent from the browser" : "" }.Where(s => s.Length > 0)));
+        var detail = string.Join(", ", games.Select(g => uploaded.Contains(g) ? $"{g} (sent from the browser)" : g.ToString()));
+        this.LogActivity(context, "gamedata.extract", null, request.Mods && games.Contains(GameEra.Nijiiro) ? $"{detail}, with mods" : detail);
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return Accepted(extract.Status);
     }
 
-    /// <summary>The game files to send: only these are accepted.</summary>
+    /// <summary>The game files to send for a game: only these are accepted.</summary>
     [HttpGet("Inputs")]
-    public async Task<IActionResult> Inputs()
+    public async Task<IActionResult> Inputs([FromQuery] string game = nameof(GameEra.Nijiiro))
     {
-        var (inputs, error) = await extract.InputsAsync(HttpContext.RequestAborted);
+        if (!EraRoute.TryParse(game, out var era)) return EraRoute.BadEra(game);
+        var (inputs, error) = await extract.InputsAsync(era, HttpContext.RequestAborted);
         return inputs is null ? Conflict(new { message = error }) : Ok(inputs);
     }
 
-    /// <summary>Starts sending a game folder (drops what was sent before).</summary>
+    /// <summary>Starts sending a game's folder (drops what was sent for it before).</summary>
     [HttpDelete("Upload")]
-    public IActionResult ClearUpload() =>
-        extract.ClearUpload() is { } error ? Conflict(new { message = error }) : NoContent();
+    public IActionResult ClearUpload([FromQuery] string game = nameof(GameEra.Nijiiro))
+    {
+        if (!EraRoute.TryParse(game, out var era)) return EraRoute.BadEra(game);
+        return extract.ClearUpload(era) is { } error ? Conflict(new { message = error }) : NoContent();
+    }
 
-    /// <summary>A batch of game files: each form field's name is the file's path in the game folder.</summary>
+    /// <summary>A batch of a game's files: each form field's name is the file's path in the game folder.</summary>
     [HttpPost("Upload")]
     [RequestSizeLimit(UploadLimit)]
     [RequestFormLimits(MultipartBodyLengthLimit = UploadLimit)]
-    public async Task<IActionResult> Upload()
+    public async Task<IActionResult> Upload([FromQuery] string game = nameof(GameEra.Nijiiro))
     {
+        if (!EraRoute.TryParse(game, out var era)) return EraRoute.BadEra(game);
         if (!Request.HasFormContentType) return BadRequest(new { message = "Send the files as multipart form data." });
         var form = await Request.ReadFormAsync(HttpContext.RequestAborted);
         foreach (var file in form.Files)
         {
             await using var stream = file.OpenReadStream();
-            if (await extract.SaveUploadAsync(file.Name, stream, HttpContext.RequestAborted) is { } error)
+            if (await extract.SaveUploadAsync(era, file.Name, stream, HttpContext.RequestAborted) is { } error)
                 return BadRequest(new { message = error });
         }
         return NoContent();

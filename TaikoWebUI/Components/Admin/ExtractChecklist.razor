@@ -1,0 +1,517 @@
+@* Extract game files (Server Management › Games; Setup; one game's own card in Game data › Overview): tick the games
+   that are on, press one Extract button, and they run one after another. Each is read from its install on the server
+   (Eras.<Game>.GamePath; Nijiiro's Eras.Nijiiro.GameDataPath) or picked in this browser (AllowRemoteGameDir).
+   Afterwards each says in plain words what came out and what the copy lacks (its extract.json's notes). *@
+@implements IAsyncDisposable
+@inject HttpClient Client
+@inject IJSRuntime Js
+@inject ToastService Toast
+
+@if (status is null)
+{
+    <Skeleton />
+}
+else if (Bare)
+{
+    @Body
+}
+else
+{
+    <section class="@Css.Card p-5 sm:p-6">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="min-w-0">
+                <h2 class="flex items-center gap-2 font-semibold">
+                    @if (Only is { } one)
+                    {
+                        <GameDot Game="GameInfo.Of(one)" />@string.Format(Localizer["{0} game files"], one)
+                    }
+                    else
+                    {
+                        @Localizer["Extract game files"]
+                    }
+                </h2>
+                <p class="mt-0.5 text-sm @Css.Muted">
+                    @(Only is null ? Localizer["Pick the games to extract. They run one after another; the game folders aren't changed."]
+                        : Shown.FirstOrDefault() is { Last: not null } ? Localizer["Extract again after a game update. The game folder isn't changed."]
+                        : string.Format(Localizer["Reads {0} and writes what the server and the Web UI need. The game folder isn't changed."], Only))
+                </p>
+            </div>
+            @SourceToggle
+        </div>
+        <div class="mt-4">@Body</div>
+    </section>
+}
+
+@code {
+    /// <summary>One game's own card (Game data › Overview) instead of every game that's on.</summary>
+    [Parameter] public string? Only { get; set; }
+    /// <summary>Without the card and title (Setup's step has both); every game starts ticked.</summary>
+    [Parameter] public bool Bare { get; set; }
+    /// <summary>A run finished (successfully or not): the games' data has been reloaded.</summary>
+    [Parameter] public EventCallback OnFinished { get; set; }
+
+    private sealed record Picked(int Files, long Bytes, string Folder);
+    private sealed record PickResult(string? Error, int Files, long Bytes, string Folder);
+    private sealed record SendResult(string? Error, bool Mods);
+
+    private ExtractStatus? status;
+    private bool browser, mods = true, starting, reportOpen;
+    private readonly HashSet<string> ticked = [];
+    private readonly Dictionary<string, Picked> picks = [];
+    private readonly Dictionary<string, ElementReference> folderInputs = [];
+    private string? open, sending, error;
+    private double sent, total;
+    private CancellationTokenSource? polling;
+    private IJSObjectReference? module;
+    private DotNetObjectReference<ExtractChecklist>? self;
+
+    private IEnumerable<ExtractGame> Shown => status!.Games.Where(g => Only is null || g.Game == Only);
+    private bool Running => status?.Run?.Running == true || sending is not null;
+    private bool SourceOk(ExtractGame g) => browser ? picks.ContainsKey(g.Game) : g.GamePathFound;
+    private List<ExtractGame> Chosen => Shown.Where(g => (Only is not null || ticked.Contains(g.Game)) && SourceOk(g)).ToList();
+
+    private RenderFragment Body => __builder =>
+    {
+        if (!status!.ExtractFound)
+        {
+            <div class="space-y-2 text-sm">
+                <p class="@Css.Muted">@Localizer["extract.exe isn't next to TaikoLocalServer.exe, so run it yourself:"]</p>
+                <code class="block overflow-x-auto whitespace-nowrap rounded-lg bg-zinc-900 px-3 py-2 font-mono text-xs text-zinc-100">@Command(Only ?? "Nijiiro")</code>
+                <button class="@Css.GhostButton !px-0" @onclick="Refresh"><Icon Name="rotate" />@Localizer["Check again"]</button>
+            </div>
+            return;
+        }
+        if (Bare)
+        {
+            <div class="mb-3 flex justify-end">@SourceToggle</div>
+        }
+        if (Only is not null)
+        {
+            var g = Shown.FirstOrDefault();
+            if (g is null)
+            {
+                <p class="text-sm @Css.Muted">@string.Format(Localizer["{0} is off in ServerSettings.json."], Only)</p>
+                return;
+            }
+            <div class="rounded-xl bg-zinc-100 p-3 dark:bg-zinc-800/60">@Source(g)</div>
+            <div class="mt-2">@State(g)</div>
+            @Details(g, true)
+        }
+        else
+        {
+            <ul class="divide-y divide-zinc-100 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-700">
+                @foreach (var g in Shown)
+                {
+                    var state = StateOf(g);
+                    <li class="px-3 py-3 @(state == "running" ? "bg-primary-500/[.04]" : "")">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" class="size-4 shrink-0 accent-primary-500" checked="@ticked.Contains(g.Game)"
+                                   disabled="@(!SourceOk(g) || Running)" aria-label="@string.Format(Localizer["Extract {0}"], g.Game)"
+                                   @onchange="e => Tick(g.Game, e.Value is true)" />
+                            <span class="flex min-w-0 flex-1 items-center gap-2"><GameDot Game="GameInfo.Of(g.Game)" /><span class="font-medium">@g.Game</span></span>
+                            @State(g)
+                        </div>
+                        <div class="mt-1.5 pl-7">
+                            @Source(g)
+                            @Details(g, false)
+                        </div>
+                    </li>
+                }
+            </ul>
+            var off = GameInfo.All.Where(i => status.Games.All(g => g.Game != i.Name)).ToList();
+            if (off.Count > 0)
+            {
+                <p class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs @Css.Muted">
+                    <span>@Localizer["Off, so not offered:"]</span>
+                    @foreach (var i in off)
+                    {
+                        <span class="inline-flex items-center gap-1.5"><GameDot Game="i" />@i.Name</span>
+                    }
+                </p>
+            }
+        }
+        if (Shown.Any(g => g.Game == "Nijiiro"))
+        {
+            <div class="mt-3"><Toggle Label="@Localizer["Include the game's mods folder"]" Description="@Localizer["Nijiiro: include files from Data_mods over vanilla ones"]" Icon="archive" @bind-Value="mods" /></div>
+        }
+        if (error is { } e)
+        {
+            <p class="mt-3 text-sm text-red-600 dark:text-red-400">@e</p>
+        }
+        <div class="mt-4 flex flex-wrap items-center justify-end gap-3">
+            @if (browser)
+            {
+                <span class="mr-auto text-xs @Css.Muted">@Localizer["Only the files extract needs are sent, and they're deleted after the run."]</span>
+            }
+            @RunButton
+        </div>
+        if (status.Run is { Output.Count: > 0 } run)
+        {
+            <details class="mt-3" open="@reportOpen" @ontoggle="() => reportOpen = !reportOpen">
+                <summary class="cursor-pointer text-xs font-medium @Css.Muted">@Localizer["Report"]</summary>
+                <pre class="mt-2 max-h-64 overflow-auto rounded-lg bg-zinc-900 p-3 font-mono text-xs text-zinc-100">@string.Join("\n", run.Output)</pre>
+            </details>
+        }
+    };
+
+    // Where the games are read from: their folders on the server, or picked in this browser (AllowRemoteGameDir).
+    private RenderFragment SourceToggle => __builder =>
+    {
+        if (status is not { RemoteGameDir: true, ExtractFound: true }) return;
+        <span class="inline-flex rounded-xl bg-zinc-100 p-1 text-xs dark:bg-zinc-800" role="group" aria-label="@Localizer["Read the games from"]">
+            @foreach (var (fromBrowser, label) in new[] { (false, Localizer["On the server"].Value), (true, Localizer["From this browser"].Value) })
+            {
+                <button aria-pressed="@Css.Aria(browser == fromBrowser)" disabled="@Running" @onclick="() => browser = fromBrowser"
+                        class="@($"rounded-lg px-2.5 py-1 font-medium {(browser == fromBrowser ? "bg-white shadow-sm dark:bg-zinc-700" : Css.Muted)}")">@label</button>
+            }
+        </span>
+    };
+
+    private RenderFragment Source(ExtractGame g) => __builder =>
+    {
+        if (browser)
+        {
+            if (picks.TryGetValue(g.Game, out var p))
+            {
+                <span class="flex min-w-0 items-center gap-1.5 text-xs @Css.Muted">
+                    <Icon Name="cloud" Class="size-4 shrink-0" />
+                    <span class="truncate">@string.Format(Localizer["From this browser: {0} · {1} files to send"], p.Folder, p.Files.ToString("N0"))</span>
+                </span>
+            }
+            @* A real file input (not a JS click) so every browser treats the pick as the user's own. *@
+            <label class="@($"{Css.GhostButton} mt-1 cursor-pointer border border-zinc-200 !px-2.5 !py-1 text-xs focus-within:ring-2 focus-within:ring-primary-500 dark:border-zinc-700 {(Running ? "pointer-events-none opacity-50" : "")}")">
+                <Icon Name="archive" />@string.Format(Localizer["Choose {0}'s folder…"], g.Game)
+                <input @ref="folderInputs[g.Game]" type="file" webkitdirectory class="sr-only" disabled="@Running" @onchange="() => Pick(g.Game)" />
+            </label>
+            return;
+        }
+        if (g.GamePathFound)
+        {
+            <span class="flex min-w-0 items-center gap-1.5 text-xs @Css.Muted">
+                <Icon Name="archive" Class="size-4 shrink-0" /><span class="truncate font-mono" title="@g.GamePath">@g.GamePath</span>
+            </span>
+        }
+        else if (g.GamePath.Length > 0)
+        {
+            <span class="text-xs text-amber-700 dark:text-amber-300">@string.Format(Localizer["{0} isn't there. Check {1} in ServerSettings.json."], g.GamePath, g.Setting)</span>
+        }
+        else
+        {
+            <span class="text-xs text-amber-700 dark:text-amber-300">
+                @((MarkupString)string.Format(Localizer["No game folder set. Add {0} to ServerSettings.json and restart."], $"<span class=\"font-mono\">{g.Setting}</span>"))
+                @if (status!.RemoteGameDir)
+                {
+                    @Localizer[" Or pick it in this browser."]
+                }
+            </span>
+        }
+    };
+
+    // none, sending, waiting, running, failed, gap, done.
+    private string StateOf(ExtractGame g)
+    {
+        var run = status!.Run;
+        if (sending == g.Game) return "sending";
+        if (run is { Running: true } && run.Games.Contains(g.Game))
+            return run.Current == g.Game ? "running" : run.ExitCodes.ContainsKey(g.Game) ? Done(g) : "waiting";
+        if (sending is not null && Chosen.Any(c => c.Game == g.Game)) return "waiting";
+        if (run?.ExitCodes.TryGetValue(g.Game, out var code) == true && code != 0) return "failed";
+        return g.Last is not null || g.Extracted ? Done(g) : "none";
+    }
+
+    private static string Done(ExtractGame g) => g.Last?.Notes.Any(n => n.Kind == "gap") == true ? "gap" : "done";
+
+    private RenderFragment State(ExtractGame g) => __builder =>
+    {
+        switch (StateOf(g))
+        {
+            case "running" or "sending":
+                <span class="text-xs font-medium text-primary-600 dark:text-primary-400">@(StateOf(g) == "sending" ? Localizer["Sending"] : Localizer["Extracting"])</span>
+                break;
+            case "waiting":
+                <span class="text-xs @Css.Muted">@Localizer["Waiting"]</span>
+                break;
+            case "failed":
+                <span class="inline-flex items-center gap-1 text-xs font-medium text-red-600 dark:text-red-400"><Icon Name="alert" Class="size-4" />@Localizer["Didn't finish"]</span>
+                break;
+            case "gap":
+                <span class="inline-flex items-center gap-1 text-xs font-medium text-amber-700 dark:text-amber-300"><Icon Name="alert" Class="size-4" />@Localizer["Extracted, with a gap"]</span>
+                break;
+            case "done":
+                <span class="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 dark:text-emerald-300"><Icon Name="check" Class="size-4" />@Localizer["Extracted"]</span>
+                break;
+            default:
+                <span class="text-xs @Css.Muted">@Localizer["Not extracted"]</span>
+                break;
+        }
+    };
+
+    // Under a game: sending or extracting progress, or what came out (a gap is always shown, else folded away).
+    private RenderFragment Details(ExtractGame g, bool unfolded) => __builder =>
+    {
+        var state = StateOf(g);
+        if (state == "sending")
+        {
+            @Bar(string.Format(Localizer["Sending {0} files…"], picks.GetValueOrDefault(g.Game)?.Files.ToString("N0")), total > 0 ? (int)(sent * 100 / total) : 0, g.Game)
+        }
+        else if (state == "running")
+        {
+            var run = status!.Run!;
+            var expected = g.Last?.Steps.Count ?? 0;
+            @Bar(string.Format(Localizer["Extracting {0}…"], g.Game), expected > 0 ? Math.Min(99, run.Steps.Count * 100 / expected) : null, g.Game)
+            <ul class="mt-2 space-y-1 text-xs" aria-live="polite">
+                @foreach (var s in run.Steps)
+                {
+                    <li class="flex items-center gap-2">
+                        <Icon Name="@(s.Missing + s.Failed > 0 ? "alert" : "check")" Class="@($"size-4 {(s.Missing + s.Failed > 0 ? "text-amber-500" : "text-emerald-500")}")" />
+                        <span class="flex-1">@StepLabel(s.Label)</span>
+                        <span class="tabular-nums @Css.Muted">@((s.Written + s.UpToDate).ToString("N0"))</span>
+                    </li>
+                }
+            </ul>
+        }
+        else if (g.Last is { } last && state is "done" or "gap" or "failed")
+        {
+            if (unfolded || state == "gap")
+            {
+                @Results(g, last)
+            }
+            else
+            {
+                <button class="mt-1 inline-flex items-center gap-1 text-xs font-medium text-primary-600 hover:underline dark:text-primary-400"
+                        aria-expanded="@Css.Aria(open == g.Game)" @onclick="() => open = open == g.Game ? null : g.Game">
+                    @(open == g.Game ? Localizer["Hide"] : Localizer["What came out"])<Icon Name="chevDown" Class="@($"size-4 {(open == g.Game ? "rotate-180" : "")}")" />
+                </button>
+                if (open == g.Game)
+                {
+                    @Results(g, last)
+                }
+            }
+        }
+    };
+
+    private RenderFragment Bar(string label, int? percent, string game) => __builder =>
+    {
+        <div class="mt-3">
+            <div class="flex items-baseline justify-between text-xs">
+                <span class="font-medium">@label</span>
+                @if (percent is { } p)
+                {
+                    <span class="tabular-nums @Css.Muted">@p%</span>
+                }
+            </div>
+            <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800" role="progressbar"
+                 aria-label="@string.Format(Localizer["{0} extract progress"], game)" aria-valuemin="0" aria-valuemax="100" aria-valuenow="@percent">
+                <div class="@($"h-full rounded-full bg-primary-500 transition-[width] duration-300 {(percent is null ? "w-1/3 animate-pulse" : "")}")"
+                     style="@(percent is { } w ? $"width:{w}%" : null)"></div>
+            </div>
+        </div>
+    };
+
+    private RenderFragment Results(ExtractGame g, ExtractManifest last) => __builder =>
+    {
+        var lacking = last.Steps.Sum(s => s.Missing + s.Failed);
+        <p class="mt-2 text-xs @Css.Muted">
+            @string.Format(Localizer["Extracted {0}."], last.FinishedAt.ToLocalTime().ToString("g"))
+            @string.Join(" · ", last.Steps.Where(s => s.Written + s.UpToDate > 0).Select(s => $"{(s.Written + s.UpToDate):N0} {StepLabel(s.Label)}"))
+        </p>
+        @if (lacking > 0)
+        {
+            @Note("gap", string.Format(Localizer["{0} files were missing or failed. The report has the list."], lacking.ToString("N0")))
+        }
+        @foreach (var n in last.Notes)
+        {
+            @Note(n.Kind, NoteText(g.Game, n))
+        }
+    };
+
+    private RenderFragment Note(string kind, string text) => __builder =>
+    {
+        <p class="@($"mt-2 flex gap-2 rounded-lg px-2.5 py-1.5 text-xs {kind switch { "gap" => "bg-amber-500/10 text-amber-900 dark:text-amber-200", "included" => "bg-emerald-500/10 text-emerald-800 dark:text-emerald-200", _ => "bg-zinc-500/10 text-zinc-700 dark:text-zinc-300" }}")">
+            <Icon Name="@(kind switch { "gap" => "alert", "included" => "check", _ => "minus" })" Class="size-4 shrink-0" />
+            <span><span class="sr-only">@(kind switch { "gap" => Localizer["Gap:"], "included" => Localizer["Included:"], _ => Localizer["Note:"] }) </span>@text</span>
+        </p>
+    };
+
+    private string NoteText(string game, ExtractNote n) => n.Code switch
+    {
+        "early-config" => string.Format(Localizer["This is an early {0} (config {1}). Events and courses from later {0} updates aren't in it."], game, n.Detail),
+        "no-battle" => string.Format(Localizer["This copy has no battle mode files, so battle mode stays off on {0} cabinets."], game),
+        "no-title-plates" => string.Format(Localizer["{0} has no title plate art, so titles show without a plate."], game),
+        "no-costume-icons" => string.Format(Localizer["{0} has no costume icons, so costumes show their name."], game),
+        "names" => Localizer["Costume, title and drum sound names are included."],
+        _ => n.Detail is { Length: > 0 } d ? $"{n.Code}: {d}" : n.Code,
+    };
+
+    // extract's step labels, as the counts line says them; others as they are.
+    private string StepLabel(string label) => label switch
+    {
+        "server files" => Localizer["server files"],
+        "body models" => Localizer["bodies"],
+        "head models" => Localizer["heads"],
+        "cos models" => Localizer["kigurumi"],
+        "acce models" => Localizer["puchi"],
+        "paint textures" => Localizer["face paints"],
+        "face textures" => Localizer["faces"],
+        "animations" => Localizer["animations"],
+        "tones" => Localizer["drum sounds"],
+        "tone_icon" => Localizer["drum sound icons"],
+        "cos_icon" => Localizer["costume icons"],
+        "ui" => Localizer["interface images"],
+        _ => label,
+    };
+
+    private RenderFragment RunButton => __builder =>
+    {
+        var run = status!.Run;
+        if (Running)
+        {
+            var done = run is { Running: true } ? run.ExitCodes.Count + 1 : 1;
+            var of = run is { Running: true } ? run.Games.Count : Chosen.Count;
+            <button disabled class="@Css.PrimaryButton"><Icon Name="rotate" Class="size-4 animate-spin" />
+                @(of > 1 ? string.Format(Localizer["Extracting {0} of {1}…"], done, of) : Localizer["Extracting…"])</button>
+            return;
+        }
+        var n = Chosen.Count;
+        var label = Only is { } one
+            ? Shown.FirstOrDefault()?.Last is not null ? Localizer["Extract again"].Value : string.Format(Localizer["Extract {0}"], one)
+            : n == 0 ? Localizer["Pick a game"].Value : n == 1 ? Localizer["Extract 1 game"].Value : string.Format(Localizer["Extract {0} games"], n);
+        <button class="@Css.PrimaryButton" disabled="@(n == 0 || starting)" @onclick="Start"><Icon Name="@(Only is not null && Shown.FirstOrDefault()?.Last is not null ? "rotate" : "drum")" />@label</button>
+    };
+
+    private string Command(string game) => game == "Nijiiro"
+        ? "extract --game \"<Nijiiro game folder>\" --mods"
+        : $"extract --era {game.ToLowerInvariant()} --game \"<{game} RPCS3 folder>\" --out wwwroot";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Refresh();
+        if (status is null) return;
+        // The browser when it's allowed and the server knows none of the games' folders.
+        browser = status.RemoteGameDir && !Shown.Any(g => g.GamePathFound);
+        if (Bare) foreach (var g in Shown) ticked.Add(g.Game);
+        if (status.Run?.Running == true) _ = Poll();
+    }
+
+    private async Task Refresh() => status = await Client.GetFromJsonAsync<ExtractStatus>("api/Extract");
+
+    private void Tick(string game, bool on)
+    {
+        if (on) ticked.Add(game); else ticked.Remove(game);
+    }
+
+    private async Task Pick(string game)
+    {
+        error = null;
+        module ??= await Js.InvokeAsync<IJSObjectReference>("import", "./js/gamefolder.js");
+        var result = await module.InvokeAsync<PickResult>("pick", folderInputs[game], game, mods);
+        if (result.Error is { } e)
+        {
+            picks.Remove(game);
+            error = e == "no-game" ? string.Format(Localizer["That folder doesn't have {0} in it. Pick the game's folder (or its USRDIR or data folder)."], game) : e;
+            return;
+        }
+        picks[game] = new Picked(result.Files, result.Bytes, result.Folder);
+        ticked.Add(game);
+    }
+
+    private async Task Start()
+    {
+        error = null;
+        starting = true;
+        var games = Chosen.Select(g => g.Game).ToList();
+        var withMods = mods;
+        try
+        {
+            if (browser)
+            {
+                module ??= await Js.InvokeAsync<IJSObjectReference>("import", "./js/gamefolder.js");
+                self ??= DotNetObjectReference.Create(this);
+                foreach (var game in games)
+                {
+                    sending = game;
+                    sent = total = 0;
+                    StateHasChanged();
+                    var result = await module.InvokeAsync<SendResult>("send", game, self);
+                    if (result.Error is { } e)
+                    {
+                        error = string.Format(Localizer["Couldn't send {0}'s files: {1}"], game, e);
+                        return;
+                    }
+                    picks.Remove(game);
+                    // Data_mods may not be in the picked folder: extract then runs without it.
+                    if (game == "Nijiiro") withMods &= result.Mods;
+                }
+                sending = null;
+            }
+            var res = await Client.PostAsJsonAsync("api/Extract", new ExtractRequest(games, withMods, browser ? games : []));
+            if (!res.IsSuccessStatusCode)
+            {
+                error = (await res.Content.ReadFromJsonAsync<Dictionary<string, string>>())?.GetValueOrDefault("message") ?? Localizer["Couldn't start extract."];
+                return;
+            }
+            status = await res.Content.ReadFromJsonAsync<ExtractStatus>() ?? status;
+            _ = Poll();
+        }
+        catch (Exception e) when (e is HttpRequestException or System.Text.Json.JsonException or JSException)
+        {
+            error = e.Message;
+        }
+        finally
+        {
+            sending = null;
+            starting = false;
+        }
+    }
+
+    [JSInvokable]
+    public Task Progress(double done, double all)
+    {
+        sent = done;
+        total = all;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    // Once a second while it runs, for the current game's steps.
+    private async Task Poll()
+    {
+        polling?.Cancel();
+        polling = new CancellationTokenSource();
+        var token = polling.Token;
+        while (!token.IsCancellationRequested)
+        {
+            try
+            {
+                await Task.Delay(1000, token);
+                await Refresh();
+            }
+            catch (Exception e) when (e is TaskCanceledException or HttpRequestException)
+            {
+                if (token.IsCancellationRequested) return;
+                continue;
+            }
+            StateHasChanged();
+            if (status?.Run is not { Running: false } run) continue;
+            var failed = run.ExitCodes.Where(c => c.Value != 0).Select(c => c.Key).ToList();
+            ticked.Clear();
+            Toast.Show(failed.Count > 0
+                ? string.Format(Localizer["{0} didn't finish. The report says why."], string.Join(", ", failed))
+                : run.Games.Count == 1 ? string.Format(Localizer["Extracted {0}. The server reloaded its files."], run.Games[0])
+                : string.Format(Localizer["Extracted {0} games. The server reloaded their files."], run.Games.Count), failed.Count > 0);
+            StateHasChanged();
+            await OnFinished.InvokeAsync();
+            return;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        polling?.Cancel();
+        self?.Dispose();
+        if (module is not null)
+        {
+            try { await module.DisposeAsync(); } catch (JSDisconnectedException) { }
+        }
+    }
+}

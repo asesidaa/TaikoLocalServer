@@ -16,6 +16,7 @@
       "Green": {
         "Enabled": false,
         "AutoExtractCatalog": true,
+        "GamePath": "",
         "GameDataPath": "wwwroot/data/green/data",
         "CustomizationNameDataPath": "",
         "EnableShop": true,
@@ -24,6 +25,7 @@
       "Blue": {
         "Enabled": false,
         "AutoExtractCatalog": true,
+        "GamePath": "",
         "GameDataPath": "wwwroot/data/blue/data",
         "CustomizationNameDataPath": "",
         "EnableShop": true,
@@ -32,6 +34,7 @@
       "Yellow": {
         "Enabled": false,
         "AutoExtractCatalog": true,
+        "GamePath": "",
         "GameDataPath": "wwwroot/data/yellow/data",
         "CustomizationNameDataPath": "",
         "EnableShop": true,
@@ -40,6 +43,7 @@
       "Red": {
         "Enabled": false,
         "AutoExtractCatalog": true,
+        "GamePath": "",
         "GameDataPath": "wwwroot/data/red/data",
         "CustomizationNameDataPath": "",
         "EnableDonChallenge": true,
@@ -48,6 +52,7 @@
       "White": {
         "Enabled": false,
         "AutoExtractCatalog": true,
+        "GamePath": "",
         "GameDataPath": "wwwroot/data/white/data",
         "CustomizationNameDataPath": "",
         "EnableDonChallenge": true,
@@ -56,18 +61,21 @@
       "Murasaki": {
         "Enabled": false,
         "AutoExtractCatalog": true,
+        "GamePath": "",
         "GameDataPath": "wwwroot/data/murasaki/data",
         "CustomizationNameDataPath": ""
       },
       "Kimidori": {
         "Enabled": false,
         "AutoExtractCatalog": true,
+        "GamePath": "",
         "GameDataPath": "wwwroot/data/kimidori/data",
         "CustomizationNameDataPath": ""
       },
       "Momoiro": {
         "Enabled": false,
         "AutoExtractCatalog": true,
+        "GamePath": "",
         "GameDataPath": "wwwroot/data/momoiro/data",
         "CustomizationNameDataPath": ""
       }

@@ -1,9 +1,37 @@
-@* Server Management › Status: the games turned on in ServerSettings.json and whether each one's files loaded.
-   Read-only (it's config); an older game with a problem gets Check again, which re-reads its files without a restart. *@
+@* Server Management › Games: the games turned on in ServerSettings.json and whether each one's files loaded.
+   Read-only (it's config); an older game with a problem gets Check again, which re-reads its files without a restart.
+   With Summary (Server Management › Status), one line: the games that are on, how many need attention, a Games link. *@
 @inject HttpClient Client
 @inject ToastService Toast
 @inject NavigationManager Nav
 
+@if (Summary)
+{
+    <section class="@Css.Card flex flex-wrap items-center gap-x-3 gap-y-2 px-5 py-4 text-sm">
+        <h2 class="font-semibold">@Localizer["Games"]</h2>
+        @if (games is null)
+        {
+            <span class="min-w-24 flex-1"><Skeleton /></span>
+        }
+        else
+        {
+            var on = games.Where(g => g.Enabled).ToList();
+            var issues = on.Count(g => Checks(g).Any(c => c.Tone is Tone.Bad or Tone.Warn));
+            <span class="flex items-center gap-1" aria-hidden="true">
+                @foreach (var g in on)
+                {
+                    <GameDot Game="GameInfo.Of(g.Era)" />
+                }
+            </span>
+            <span class="@Css.Muted">@string.Format(Localizer["{0} of {1} games on"], on.Count, games.Count)</span>
+            <span class="@(issues > 0 ? "font-medium text-amber-700 dark:text-amber-300" : "font-medium text-emerald-700 dark:text-emerald-300")">
+                @(issues == 0 ? Localizer["All loaded"] : issues == 1 ? Localizer["1 needs attention"] : string.Format(Localizer["{0} need attention"], issues))
+            </span>
+            <a href="/Admin/Server/games" class="ml-auto inline-flex items-center gap-1 @Css.Link">@Localizer["Games"]<Icon Name="chevRight" Class="size-4" /></a>
+        }
+    </section>
+    return;
+}
 <section class="@Css.Card p-5 sm:p-6">
     @if (games is null)
     {
@@ -77,6 +105,7 @@
                         <p class="mt-2 rounded-xl bg-red-500/5 px-3 py-2 text-xs text-red-700 dark:text-red-300">
                             @((MarkupString)string.Format(Localizer["{0} players can still sign in, but its songs and events won't load. Copy {0}'s {1} folder to {2}. Then press Check again; no restart needed."],
                                 info.Name, "<span class=\"font-mono\">data</span>", $"<span class=\"font-mono\">{System.Net.WebUtility.HtmlEncode(g.Folder)}</span>"))
+                            <a href="@($"/Admin/Server/data?game={info.Name}")" class="ml-1 font-semibold underline underline-offset-2">@string.Format(Localizer["Or extract {0}"], info.Name)</a>
                         </p>
                     }
                 </li>
@@ -118,6 +147,9 @@
     private enum Tone { Ok, Warn, Bad, None }
 
     private sealed record Check(Tone Tone, string Label, string Detail);
+
+    /// <summary>One line for Server Management › Status, linking to the Games tab.</summary>
+    [Parameter] public bool Summary { get; set; }
 
     private List<GameStatus>? games;
     private string? checking;

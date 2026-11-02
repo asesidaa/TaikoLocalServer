@@ -48,9 +48,9 @@ Supported eras:
 4. Start the server: `TaikoLocalServer.exe` on Windows, which asks for administrator rights, or `./TaikoLocalServer` on Linux, as root or with permission to bind low ports. It listens on ports 80 and 443 as well as the game's ports. Then open [http://localhost](http://localhost).
    - **Server mode:** the web UI opens on a setup page until an admin exists. Enter the **setup code** printed in the server's console, then your card's access code and a password for the admin account (see [Web UI admins](#web-ui-admins-server-mode)).
    - **Local mode:** the web UI opens straight away.
-5. Add the game files. In Server mode this is the setup's **Game files** step. Afterwards, and in Local mode, use **Admin › Server Management › Game Data**; until it's done, admins see a "Game files are missing" banner. Press **Extract game files**: this runs `extract` (`extract.exe` on Windows, next to the server) on that folder. It copies the datatables the server needs and converts the don-chan models, textures and animations for the web UI's 3D preview (about 175 MB). It writes only into the server's `wwwroot` folder, never into your game folder. Run it again after a game update; files that are already up to date are skipped.
+5. Add the game files. In Server mode this is the setup's **Game files** step. Afterwards, and in Local mode, use **Admin › Server Management › Games**; until it's done, admins see a "Game files are missing" banner. Tick Nijiiro and press **Extract**: this runs `extract` (`extract.exe` on Windows, next to the server) on that folder. It copies the datatables the server needs and converts the don-chan models, textures and animations for the web UI's 3D preview (about 175 MB). It writes only into the server's `wwwroot` folder, never into your game folder. Run it again after a game update; files that are already up to date are skipped.
 
-   **The game is on another PC** (for example the server runs on a Linux box): with `"AllowRemoteGameDir": true`, open the web UI on the game PC and press **Choose game folder** instead. Pick the game folder (the one that contains `Data`, so `Data_mods` comes along). The browser sends only the files extract reads (about 600 MB of a 15 GB install), and the server runs extract on them, then deletes them.
+   **The game is on another PC** (for example the server runs on a Linux box): with `"AllowRemoteGameDir": true`, open the web UI on the game PC, switch to **From this browser** and press **Choose Nijiiro's folder…** instead. Pick the game folder (the one that contains `Data`, so `Data_mods` comes along). The browser sends only the files extract reads (about 600 MB of a 15 GB install), and the server runs extract on them, then deletes them.
 
    Or run extract yourself on the game PC, then copy its `wwwroot` output into the server's `wwwroot` folder:
    ```bash
@@ -61,7 +61,9 @@ Supported eras:
 
 ### Older games (AC15 eras)
 
-The server also runs Green, Blue, Yellow, Red, White, Murasaki, Kimidori and Momoiro cabinets. Each is off until you turn it on in [ServerSettings.json](./Host/Configurations/ServerSettings.json) (`"Eras"` › `"<Era>"` › `"Enabled": true`); at least one era must be on. For each one you turn on, put that game's original `USRDIR/data` folder at `wwwroot/data/<era>/data` (for example `wwwroot/data/green/data`), or set its `"GameDataPath"`.
+The server also runs Green, Blue, Yellow, Red, White, Murasaki, Kimidori and Momoiro cabinets. Each is off until you turn it on in [ServerSettings.json](./Host/Configurations/ServerSettings.json) (`"Eras"` › `"<Era>"` › `"Enabled": true`); at least one era must be on. For each one you turn on, the server needs that game's files at `wwwroot/data/<era>/data` (for example `wwwroot/data/green/data`):
+   - **Extract them (recommended):** set the game's `"GamePath"` to its RPCS3 install (or its `USRDIR/data` folder, or a `.zip` of it), restart, then in **Admin › Server Management › Games** tick the game and press **Extract**. Several games run one after another. Extract copies the files the server reads and converts the game's models, art and drum sounds for the web UI, and afterwards says what the copy lacks (an early Red's config, Blue's battle files). With `"AllowRemoteGameDir": true` you can pick the game's folder in the browser instead.
+   - **Or copy them:** put the game's original `USRDIR/data` folder there yourself, or set its `"GameDataPath"`.
 
 The files each era reads from it:
    - Green requires `config/S11100-1/musicinfo.xml`, `config/S11100-1/musicmedleyinfo.xml`, and `fumen/tuning.bin`.
@@ -81,6 +83,7 @@ Settings for each era:
 
 - `ServerSettings:Eras:<Era>:Enabled` - registers or removes era routes.
 - `ServerSettings:Eras:<Era>:GameDataPath` - AC15 source data path for Green, Blue, Yellow, Red, and White.
+- `ServerSettings:Eras:<Era>:GamePath` - the game's install (RPCS3 folder, its `USRDIR/data`, or a `.zip`), read by **Extract** in Server Management › Games.
 - `ServerSettings:Eras:<Era>:AutoExtractCatalog` - allows first-run AC15 customization catalog extraction.
 - `ServerSettings:Eras:<Era>:CustomizationNameDataPath` - optional override directory for AC15 customization display names.
 - `ServerSettings:Eras:<Era>:EnableShop` and `ActiveShopSeasonId` - controls Green, Blue, and Yellow item-shop availability.

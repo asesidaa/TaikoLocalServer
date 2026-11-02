@@ -4440,4 +4440,202 @@
   <data name="No plays in the last 7 days, in any game." xml:space="preserve">
     <value>最近 7 天在所有遊戲中都沒有遊玩。</value>
   </data>
+  <data name="{0} game files" xml:space="preserve">
+    <value>{0} 的遊戲檔案</value>
+  </data>
+  <data name="Pick the games to extract. They run one after another; the game folders aren't changed." xml:space="preserve">
+    <value>選擇要提取的遊戲。它們會依序提取，遊戲資料夾不會被更改。</value>
+  </data>
+  <data name="Extract again after a game update. The game folder isn't changed." xml:space="preserve">
+    <value>遊戲更新後請重新提取。遊戲資料夾不會被更改。</value>
+  </data>
+  <data name="Reads {0} and writes what the server and the Web UI need. The game folder isn't changed." xml:space="preserve">
+    <value>讀取 {0}，寫出伺服器和網頁介面需要的檔案。遊戲資料夾不會被更改。</value>
+  </data>
+  <data name="{0} is off in ServerSettings.json." xml:space="preserve">
+    <value>{0} 在 ServerSettings.json 中已關閉。</value>
+  </data>
+  <data name="Extract {0}" xml:space="preserve">
+    <value>提取 {0}</value>
+  </data>
+  <data name="Off, so not offered:" xml:space="preserve">
+    <value>已關閉，不可選：</value>
+  </data>
+  <data name="Nijiiro: include files from Data_mods over vanilla ones" xml:space="preserve">
+    <value>虹色版：用 Data_mods 中的檔案替換原版檔案</value>
+  </data>
+  <data name="Only the files extract needs are sent, and they're deleted after the run." xml:space="preserve">
+    <value>只傳送提取需要的檔案，提取完成後會刪除。</value>
+  </data>
+  <data name="Read the games from" xml:space="preserve">
+    <value>從哪裡讀取遊戲</value>
+  </data>
+  <data name="On the server" xml:space="preserve">
+    <value>伺服器上</value>
+  </data>
+  <data name="From this browser" xml:space="preserve">
+    <value>從此瀏覽器</value>
+  </data>
+  <data name="From this browser: {0} · {1} files to send" xml:space="preserve">
+    <value>從此瀏覽器：{0} · 要傳送 {1} 個檔案</value>
+  </data>
+  <data name="Choose {0}'s folder…" xml:space="preserve">
+    <value>選擇 {0} 的資料夾…</value>
+  </data>
+  <data name="{0} isn't there. Check {1} in ServerSettings.json." xml:space="preserve">
+    <value>找不到 {0}。請檢查 ServerSettings.json 中的 {1}。</value>
+  </data>
+  <data name="No game folder set. Add {0} to ServerSettings.json and restart." xml:space="preserve">
+    <value>未設定遊戲資料夾。請在 ServerSettings.json 中新增 {0} 並重新啟動。</value>
+  </data>
+  <data name=" Or pick it in this browser." xml:space="preserve">
+    <value> 或在此瀏覽器中選擇。</value>
+  </data>
+  <data name="Sending" xml:space="preserve">
+    <value>傳送中</value>
+  </data>
+  <data name="Waiting" xml:space="preserve">
+    <value>等待中</value>
+  </data>
+  <data name="Didn't finish" xml:space="preserve">
+    <value>未完成</value>
+  </data>
+  <data name="Extracted, with a gap" xml:space="preserve">
+    <value>已提取，有缺失</value>
+  </data>
+  <data name="Extracted" xml:space="preserve">
+    <value>已提取</value>
+  </data>
+  <data name="Not extracted" xml:space="preserve">
+    <value>未提取</value>
+  </data>
+  <data name="Sending {0} files…" xml:space="preserve">
+    <value>正在傳送 {0} 個檔案…</value>
+  </data>
+  <data name="Extracting {0}…" xml:space="preserve">
+    <value>正在提取 {0}…</value>
+  </data>
+  <data name="What came out" xml:space="preserve">
+    <value>提取結果</value>
+  </data>
+  <data name="{0} extract progress" xml:space="preserve">
+    <value>{0} 的提取進度</value>
+  </data>
+  <data name="Extracted {0}." xml:space="preserve">
+    <value>提取於 {0}。</value>
+  </data>
+  <data name="{0} files were missing or failed. The report has the list." xml:space="preserve">
+    <value>有 {0} 個檔案缺失或失敗。報告中有清單。</value>
+  </data>
+  <data name="Gap:" xml:space="preserve">
+    <value>缺失：</value>
+  </data>
+  <data name="Included:" xml:space="preserve">
+    <value>已包含：</value>
+  </data>
+  <data name="Note:" xml:space="preserve">
+    <value>注意：</value>
+  </data>
+  <data name="This is an early {0} (config {1}). Events and courses from later {0} updates aren't in it." xml:space="preserve">
+    <value>這是早期版本的 {0}（config {1}）。之後 {0} 更新中的活動和課程不在其中。</value>
+  </data>
+  <data name="This copy has no battle mode files, so battle mode stays off on {0} cabinets." xml:space="preserve">
+    <value>此副本沒有對戰模式檔案，所以 {0} 機台的對戰模式保持關閉。</value>
+  </data>
+  <data name="{0} has no title plate art, so titles show without a plate." xml:space="preserve">
+    <value>{0} 沒有稱號牌圖片，所以稱號不帶牌顯示。</value>
+  </data>
+  <data name="{0} has no costume icons, so costumes show their name." xml:space="preserve">
+    <value>{0} 沒有服裝圖示，所以服裝顯示名稱。</value>
+  </data>
+  <data name="Costume, title and drum sound names are included." xml:space="preserve">
+    <value>包含服裝、稱號和音色的名稱。</value>
+  </data>
+  <data name="server files" xml:space="preserve">
+    <value>伺服器檔案</value>
+  </data>
+  <data name="bodies" xml:space="preserve">
+    <value>身體</value>
+  </data>
+  <data name="heads" xml:space="preserve">
+    <value>頭部</value>
+  </data>
+  <data name="kigurumi" xml:space="preserve">
+    <value>套装</value>
+  </data>
+  <data name="puchi" xml:space="preserve">
+    <value>小角色</value>
+  </data>
+  <data name="face paints" xml:space="preserve">
+    <value>臉部彩繪</value>
+  </data>
+  <data name="faces" xml:space="preserve">
+    <value>臉</value>
+  </data>
+  <data name="animations" xml:space="preserve">
+    <value>動畫</value>
+  </data>
+  <data name="drum sounds" xml:space="preserve">
+    <value>音色</value>
+  </data>
+  <data name="drum sound icons" xml:space="preserve">
+    <value>音色圖示</value>
+  </data>
+  <data name="costume icons" xml:space="preserve">
+    <value>服裝圖示</value>
+  </data>
+  <data name="interface images" xml:space="preserve">
+    <value>介面圖片</value>
+  </data>
+  <data name="Extracting {0} of {1}…" xml:space="preserve">
+    <value>正在提取第 {0} 個，共 {1} 個…</value>
+  </data>
+  <data name="Extracting…" xml:space="preserve">
+    <value>提取中…</value>
+  </data>
+  <data name="Extract again" xml:space="preserve">
+    <value>重新提取</value>
+  </data>
+  <data name="Pick a game" xml:space="preserve">
+    <value>請選擇遊戲</value>
+  </data>
+  <data name="Extract 1 game" xml:space="preserve">
+    <value>提取 1 個遊戲</value>
+  </data>
+  <data name="Extract {0} games" xml:space="preserve">
+    <value>提取 {0} 個遊戲</value>
+  </data>
+  <data name="That folder doesn't have {0} in it. Pick the game's folder (or its USRDIR or data folder)." xml:space="preserve">
+    <value>該資料夾中沒有 {0}。請選擇遊戲的資料夾（或其 USRDIR 或 data 資料夾）。</value>
+  </data>
+  <data name="Couldn't send {0}'s files: {1}" xml:space="preserve">
+    <value>無法傳送 {0} 的檔案：{1}</value>
+  </data>
+  <data name="Couldn't start extract." xml:space="preserve">
+    <value>無法開始提取。</value>
+  </data>
+  <data name="{0} didn't finish. The report says why." xml:space="preserve">
+    <value>{0} 未完成。原因見報告。</value>
+  </data>
+  <data name="Extracted {0}. The server reloaded its files." xml:space="preserve">
+    <value>已提取 {0}。伺服器已重新載入其檔案。</value>
+  </data>
+  <data name="Extracted {0} games. The server reloaded their files." xml:space="preserve">
+    <value>已提取 {0} 個遊戲。伺服器已重新載入它們的檔案。</value>
+  </data>
+  <data name="{0} of {1} games on" xml:space="preserve">
+    <value>已開啟 {0}/{1} 個遊戲</value>
+  </data>
+  <data name="Or extract {0}" xml:space="preserve">
+    <value>或提取 {0}</value>
+  </data>
+  <data name="Song pickers can't show names until it loads. Extract it above, or fix it in Server Management › Games." xml:space="preserve">
+    <value>載入之前，歌曲選擇無法顯示名稱。請在上方提取，或在伺服器管理 › 遊戲中修復。</value>
+  </data>
+  <data name="Cabinets can't play until Nijiiro's are extracted." xml:space="preserve">
+    <value>提取虹色版的檔案之前，機台無法遊玩。</value>
+  </data>
+  <data name="A game that isn't ready can be extracted later in Server Management › Games." xml:space="preserve">
+    <value>未準備好的遊戲可以稍後在伺服器管理 › 遊戲中提取。</value>
+  </data>
 </root>

@@ -4440,4 +4440,202 @@
   <data name="No plays in the last 7 days, in any game." xml:space="preserve">
     <value>Aucune partie ces 7 derniers jours, dans aucun jeu.</value>
   </data>
+  <data name="{0} game files" xml:space="preserve">
+    <value>Fichiers de {0}</value>
+  </data>
+  <data name="Pick the games to extract. They run one after another; the game folders aren't changed." xml:space="preserve">
+    <value>Choisissez les jeux à extraire. Ils sont traités l'un après l'autre ; les dossiers des jeux ne sont pas modifiés.</value>
+  </data>
+  <data name="Extract again after a game update. The game folder isn't changed." xml:space="preserve">
+    <value>Extrayez à nouveau après une mise à jour du jeu. Le dossier du jeu n'est pas modifié.</value>
+  </data>
+  <data name="Reads {0} and writes what the server and the Web UI need. The game folder isn't changed." xml:space="preserve">
+    <value>Lit {0} et écrit ce dont le serveur et l'interface web ont besoin. Le dossier du jeu n'est pas modifié.</value>
+  </data>
+  <data name="{0} is off in ServerSettings.json." xml:space="preserve">
+    <value>{0} est désactivé dans ServerSettings.json.</value>
+  </data>
+  <data name="Extract {0}" xml:space="preserve">
+    <value>Extraire {0}</value>
+  </data>
+  <data name="Off, so not offered:" xml:space="preserve">
+    <value>Désactivés, donc non proposés :</value>
+  </data>
+  <data name="Nijiiro: include files from Data_mods over vanilla ones" xml:space="preserve">
+    <value>Nijiiro : utilise les fichiers de Data_mods à la place des originaux</value>
+  </data>
+  <data name="Only the files extract needs are sent, and they're deleted after the run." xml:space="preserve">
+    <value>Seuls les fichiers nécessaires sont envoyés, et ils sont supprimés après l'extraction.</value>
+  </data>
+  <data name="Read the games from" xml:space="preserve">
+    <value>Lire les jeux depuis</value>
+  </data>
+  <data name="On the server" xml:space="preserve">
+    <value>Sur le serveur</value>
+  </data>
+  <data name="From this browser" xml:space="preserve">
+    <value>Depuis ce navigateur</value>
+  </data>
+  <data name="From this browser: {0} · {1} files to send" xml:space="preserve">
+    <value>Depuis ce navigateur : {0} · {1} fichiers à envoyer</value>
+  </data>
+  <data name="Choose {0}'s folder…" xml:space="preserve">
+    <value>Choisir le dossier de {0}…</value>
+  </data>
+  <data name="{0} isn't there. Check {1} in ServerSettings.json." xml:space="preserve">
+    <value>{0} est introuvable. Vérifiez {1} dans ServerSettings.json.</value>
+  </data>
+  <data name="No game folder set. Add {0} to ServerSettings.json and restart." xml:space="preserve">
+    <value>Aucun dossier de jeu défini. Ajoutez {0} à ServerSettings.json et redémarrez.</value>
+  </data>
+  <data name=" Or pick it in this browser." xml:space="preserve">
+    <value> Ou choisissez-le dans ce navigateur.</value>
+  </data>
+  <data name="Sending" xml:space="preserve">
+    <value>Envoi</value>
+  </data>
+  <data name="Waiting" xml:space="preserve">
+    <value>En attente</value>
+  </data>
+  <data name="Didn't finish" xml:space="preserve">
+    <value>Non terminé</value>
+  </data>
+  <data name="Extracted, with a gap" xml:space="preserve">
+    <value>Extrait, avec un manque</value>
+  </data>
+  <data name="Extracted" xml:space="preserve">
+    <value>Extrait</value>
+  </data>
+  <data name="Not extracted" xml:space="preserve">
+    <value>Non extrait</value>
+  </data>
+  <data name="Sending {0} files…" xml:space="preserve">
+    <value>Envoi de {0} fichiers…</value>
+  </data>
+  <data name="Extracting {0}…" xml:space="preserve">
+    <value>Extraction de {0}…</value>
+  </data>
+  <data name="What came out" xml:space="preserve">
+    <value>Ce qui a été extrait</value>
+  </data>
+  <data name="{0} extract progress" xml:space="preserve">
+    <value>Progression de l'extraction de {0}</value>
+  </data>
+  <data name="Extracted {0}." xml:space="preserve">
+    <value>Extrait le {0}.</value>
+  </data>
+  <data name="{0} files were missing or failed. The report has the list." xml:space="preserve">
+    <value>{0} fichiers manquaient ou ont échoué. Le rapport en donne la liste.</value>
+  </data>
+  <data name="Gap:" xml:space="preserve">
+    <value>Manque :</value>
+  </data>
+  <data name="Included:" xml:space="preserve">
+    <value>Inclus :</value>
+  </data>
+  <data name="Note:" xml:space="preserve">
+    <value>Remarque :</value>
+  </data>
+  <data name="This is an early {0} (config {1}). Events and courses from later {0} updates aren't in it." xml:space="preserve">
+    <value>C'est une version ancienne de {0} (config {1}). Les événements et parcours des mises à jour suivantes de {0} n'y sont pas.</value>
+  </data>
+  <data name="This copy has no battle mode files, so battle mode stays off on {0} cabinets." xml:space="preserve">
+    <value>Cette copie n'a pas les fichiers du mode combat, donc le mode combat reste désactivé sur les bornes {0}.</value>
+  </data>
+  <data name="{0} has no title plate art, so titles show without a plate." xml:space="preserve">
+    <value>{0} n'a pas d'images de plaques de titre, donc les titres s'affichent sans plaque.</value>
+  </data>
+  <data name="{0} has no costume icons, so costumes show their name." xml:space="preserve">
+    <value>{0} n'a pas d'icônes de costumes, donc les costumes affichent leur nom.</value>
+  </data>
+  <data name="Costume, title and drum sound names are included." xml:space="preserve">
+    <value>Les noms des costumes, titres et sons de tambour sont inclus.</value>
+  </data>
+  <data name="server files" xml:space="preserve">
+    <value>fichiers serveur</value>
+  </data>
+  <data name="bodies" xml:space="preserve">
+    <value>corps</value>
+  </data>
+  <data name="heads" xml:space="preserve">
+    <value>têtes</value>
+  </data>
+  <data name="kigurumi" xml:space="preserve">
+    <value>kigurumi</value>
+  </data>
+  <data name="puchi" xml:space="preserve">
+    <value>puchi</value>
+  </data>
+  <data name="face paints" xml:space="preserve">
+    <value>peintures faciales</value>
+  </data>
+  <data name="faces" xml:space="preserve">
+    <value>visages</value>
+  </data>
+  <data name="animations" xml:space="preserve">
+    <value>animations</value>
+  </data>
+  <data name="drum sounds" xml:space="preserve">
+    <value>sons de tambour</value>
+  </data>
+  <data name="drum sound icons" xml:space="preserve">
+    <value>icônes de sons de tambour</value>
+  </data>
+  <data name="costume icons" xml:space="preserve">
+    <value>icônes de costumes</value>
+  </data>
+  <data name="interface images" xml:space="preserve">
+    <value>images d'interface</value>
+  </data>
+  <data name="Extracting {0} of {1}…" xml:space="preserve">
+    <value>Extraction {0} sur {1}…</value>
+  </data>
+  <data name="Extracting…" xml:space="preserve">
+    <value>Extraction…</value>
+  </data>
+  <data name="Extract again" xml:space="preserve">
+    <value>Extraire à nouveau</value>
+  </data>
+  <data name="Pick a game" xml:space="preserve">
+    <value>Choisissez un jeu</value>
+  </data>
+  <data name="Extract 1 game" xml:space="preserve">
+    <value>Extraire 1 jeu</value>
+  </data>
+  <data name="Extract {0} games" xml:space="preserve">
+    <value>Extraire {0} jeux</value>
+  </data>
+  <data name="That folder doesn't have {0} in it. Pick the game's folder (or its USRDIR or data folder)." xml:space="preserve">
+    <value>Ce dossier ne contient pas {0}. Choisissez le dossier du jeu (ou son dossier USRDIR ou data).</value>
+  </data>
+  <data name="Couldn't send {0}'s files: {1}" xml:space="preserve">
+    <value>Impossible d'envoyer les fichiers de {0} : {1}</value>
+  </data>
+  <data name="Couldn't start extract." xml:space="preserve">
+    <value>Impossible de lancer l'extraction.</value>
+  </data>
+  <data name="{0} didn't finish. The report says why." xml:space="preserve">
+    <value>{0} n'a pas abouti. Le rapport explique pourquoi.</value>
+  </data>
+  <data name="Extracted {0}. The server reloaded its files." xml:space="preserve">
+    <value>{0} extrait. Le serveur a rechargé ses fichiers.</value>
+  </data>
+  <data name="Extracted {0} games. The server reloaded their files." xml:space="preserve">
+    <value>{0} jeux extraits. Le serveur a rechargé leurs fichiers.</value>
+  </data>
+  <data name="{0} of {1} games on" xml:space="preserve">
+    <value>{0} jeux sur {1} activés</value>
+  </data>
+  <data name="Or extract {0}" xml:space="preserve">
+    <value>Ou extrayez {0}</value>
+  </data>
+  <data name="Song pickers can't show names until it loads. Extract it above, or fix it in Server Management › Games." xml:space="preserve">
+    <value>Les sélecteurs de morceaux ne peuvent pas afficher les noms tant qu'il n'est pas chargé. Extrayez-le ci-dessus, ou corrigez-le dans Gestion du serveur › Jeux.</value>
+  </data>
+  <data name="Cabinets can't play until Nijiiro's are extracted." xml:space="preserve">
+    <value>Les bornes ne peuvent pas jouer tant que les fichiers de Nijiiro ne sont pas extraits.</value>
+  </data>
+  <data name="A game that isn't ready can be extracted later in Server Management › Games." xml:space="preserve">
+    <value>Un jeu qui n'est pas prêt peut être extrait plus tard dans Gestion du serveur › Jeux.</value>
+  </data>
 </root>

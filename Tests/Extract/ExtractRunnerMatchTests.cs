@@ -38,4 +38,18 @@ public sealed class ExtractRunnerMatchTests
     [InlineData("/Data/x64/model/body/a")]
     [InlineData("Data/x64/model/body//a")]
     public void Others_Refused(string path) => Assert.Null(ExtractRunner.Match(Inputs, path));
+
+    // extract's report lines, read live for the Games tab's progress; an older game's labels lose its name, as in extract.json.
+    [Theory]
+    [InlineData("red server files: 1440 written, 0 already up to date, 0 missing, 0 failed", "Red", "server files", 1440, 0, 0, 0)]
+    [InlineData("momoiro body models: 3 written, 30 already up to date, 1 missing, 2 failed", "Momoiro", "body models", 3, 30, 1, 2)]
+    [InlineData("Datatables: 6 written, 0 already up to date, 0 missing, 0 failed", "Nijiiro", "Datatables", 6, 0, 0, 0)]
+    public void ParseStep_ReadsAReportLine(string line, string game, string label, int written, int upToDate, int missing, int failed) =>
+        Assert.Equal(new ExtractStep(label, written, upToDate, missing, failed), ExtractRunner.ParseStep(line, Enum.Parse<TaikoLocalServer.Domain.Enums.GameEra>(game)));
+
+    [Theory]
+    [InlineData("  MISSING  data/config/ST8100-1/musicinfo.xml")]
+    [InlineData("game:   D:/RPCS3/Taiko (red)")]
+    [InlineData("")]
+    public void ParseStep_IgnoresOtherLines(string line) => Assert.Null(ExtractRunner.ParseStep(line, TaikoLocalServer.Domain.Enums.GameEra.Red));
 }

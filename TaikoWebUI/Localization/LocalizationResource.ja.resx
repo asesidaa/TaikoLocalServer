@@ -4440,4 +4440,202 @@
   <data name="No plays in the last 7 days, in any game." xml:space="preserve">
     <value>この7日間、どのゲームでもプレイがありません。</value>
   </data>
+  <data name="{0} game files" xml:space="preserve">
+    <value>{0}のゲームファイル</value>
+  </data>
+  <data name="Pick the games to extract. They run one after another; the game folders aren't changed." xml:space="preserve">
+    <value>取り込むゲームを選んでください。1本ずつ順に取り込み、ゲームのフォルダーは変更しません。</value>
+  </data>
+  <data name="Extract again after a game update. The game folder isn't changed." xml:space="preserve">
+    <value>ゲームを更新したら取り込み直してください。ゲームのフォルダーは変更しません。</value>
+  </data>
+  <data name="Reads {0} and writes what the server and the Web UI need. The game folder isn't changed." xml:space="preserve">
+    <value>{0}を読み込み、サーバーとWeb UIに必要なファイルを書き出します。ゲームのフォルダーは変更しません。</value>
+  </data>
+  <data name="{0} is off in ServerSettings.json." xml:space="preserve">
+    <value>{0}はServerSettings.jsonでオフになっています。</value>
+  </data>
+  <data name="Extract {0}" xml:space="preserve">
+    <value>{0}を取り込む</value>
+  </data>
+  <data name="Off, so not offered:" xml:space="preserve">
+    <value>オフのため対象外:</value>
+  </data>
+  <data name="Nijiiro: include files from Data_mods over vanilla ones" xml:space="preserve">
+    <value>ニジイロ: 元のファイルの代わりにData_modsのファイルを使います</value>
+  </data>
+  <data name="Only the files extract needs are sent, and they're deleted after the run." xml:space="preserve">
+    <value>取り込みに必要なファイルだけを送り、終わったら削除します。</value>
+  </data>
+  <data name="Read the games from" xml:space="preserve">
+    <value>ゲームの読み込み元</value>
+  </data>
+  <data name="On the server" xml:space="preserve">
+    <value>サーバー上</value>
+  </data>
+  <data name="From this browser" xml:space="preserve">
+    <value>このブラウザーから</value>
+  </data>
+  <data name="From this browser: {0} · {1} files to send" xml:space="preserve">
+    <value>このブラウザーから: {0}・送るファイル {1}件</value>
+  </data>
+  <data name="Choose {0}'s folder…" xml:space="preserve">
+    <value>{0}のフォルダーを選ぶ…</value>
+  </data>
+  <data name="{0} isn't there. Check {1} in ServerSettings.json." xml:space="preserve">
+    <value>{0}が見つかりません。ServerSettings.jsonの{1}を確認してください。</value>
+  </data>
+  <data name="No game folder set. Add {0} to ServerSettings.json and restart." xml:space="preserve">
+    <value>ゲームのフォルダーが設定されていません。ServerSettings.jsonに{0}を追加して再起動してください。</value>
+  </data>
+  <data name=" Or pick it in this browser." xml:space="preserve">
+    <value> またはこのブラウザーで選んでください。</value>
+  </data>
+  <data name="Sending" xml:space="preserve">
+    <value>送信中</value>
+  </data>
+  <data name="Waiting" xml:space="preserve">
+    <value>待機中</value>
+  </data>
+  <data name="Didn't finish" xml:space="preserve">
+    <value>完了しませんでした</value>
+  </data>
+  <data name="Extracted, with a gap" xml:space="preserve">
+    <value>取り込み済み（欠けあり）</value>
+  </data>
+  <data name="Extracted" xml:space="preserve">
+    <value>取り込み済み</value>
+  </data>
+  <data name="Not extracted" xml:space="preserve">
+    <value>未取り込み</value>
+  </data>
+  <data name="Sending {0} files…" xml:space="preserve">
+    <value>{0}件のファイルを送信中…</value>
+  </data>
+  <data name="Extracting {0}…" xml:space="preserve">
+    <value>{0}を取り込み中…</value>
+  </data>
+  <data name="What came out" xml:space="preserve">
+    <value>取り込んだ内容</value>
+  </data>
+  <data name="{0} extract progress" xml:space="preserve">
+    <value>{0}の取り込みの進み具合</value>
+  </data>
+  <data name="Extracted {0}." xml:space="preserve">
+    <value>{0}に取り込みました。</value>
+  </data>
+  <data name="{0} files were missing or failed. The report has the list." xml:space="preserve">
+    <value>{0}件のファイルが見つからないか失敗しました。一覧はレポートにあります。</value>
+  </data>
+  <data name="Gap:" xml:space="preserve">
+    <value>欠け:</value>
+  </data>
+  <data name="Included:" xml:space="preserve">
+    <value>含まれるもの:</value>
+  </data>
+  <data name="Note:" xml:space="preserve">
+    <value>メモ:</value>
+  </data>
+  <data name="This is an early {0} (config {1}). Events and courses from later {0} updates aren't in it." xml:space="preserve">
+    <value>初期の{0}です（config {1}）。その後の{0}の更新で追加されたイベントやコースは含まれていません。</value>
+  </data>
+  <data name="This copy has no battle mode files, so battle mode stays off on {0} cabinets." xml:space="preserve">
+    <value>このコピーにはバトルモードのファイルがないため、{0}の筐体ではバトルモードはオフのままです。</value>
+  </data>
+  <data name="{0} has no title plate art, so titles show without a plate." xml:space="preserve">
+    <value>{0}には称号プレートの画像がないため、称号はプレートなしで表示されます。</value>
+  </data>
+  <data name="{0} has no costume icons, so costumes show their name." xml:space="preserve">
+    <value>{0}には衣装のアイコンがないため、衣装は名前で表示されます。</value>
+  </data>
+  <data name="Costume, title and drum sound names are included." xml:space="preserve">
+    <value>衣装・称号・音色の名前が含まれています。</value>
+  </data>
+  <data name="server files" xml:space="preserve">
+    <value>サーバー用ファイル</value>
+  </data>
+  <data name="bodies" xml:space="preserve">
+    <value>体</value>
+  </data>
+  <data name="heads" xml:space="preserve">
+    <value>頭</value>
+  </data>
+  <data name="kigurumi" xml:space="preserve">
+    <value>きぐるみ</value>
+  </data>
+  <data name="puchi" xml:space="preserve">
+    <value>ぷちキャラ</value>
+  </data>
+  <data name="face paints" xml:space="preserve">
+    <value>顔ペイント</value>
+  </data>
+  <data name="faces" xml:space="preserve">
+    <value>顔</value>
+  </data>
+  <data name="animations" xml:space="preserve">
+    <value>アニメーション</value>
+  </data>
+  <data name="drum sounds" xml:space="preserve">
+    <value>音色</value>
+  </data>
+  <data name="drum sound icons" xml:space="preserve">
+    <value>音色のアイコン</value>
+  </data>
+  <data name="costume icons" xml:space="preserve">
+    <value>衣装のアイコン</value>
+  </data>
+  <data name="interface images" xml:space="preserve">
+    <value>画面の画像</value>
+  </data>
+  <data name="Extracting {0} of {1}…" xml:space="preserve">
+    <value>{1}本中{0}本目を取り込み中…</value>
+  </data>
+  <data name="Extracting…" xml:space="preserve">
+    <value>取り込み中…</value>
+  </data>
+  <data name="Extract again" xml:space="preserve">
+    <value>取り込み直す</value>
+  </data>
+  <data name="Pick a game" xml:space="preserve">
+    <value>ゲームを選んでください</value>
+  </data>
+  <data name="Extract 1 game" xml:space="preserve">
+    <value>1本を取り込む</value>
+  </data>
+  <data name="Extract {0} games" xml:space="preserve">
+    <value>{0}本を取り込む</value>
+  </data>
+  <data name="That folder doesn't have {0} in it. Pick the game's folder (or its USRDIR or data folder)." xml:space="preserve">
+    <value>そのフォルダーには{0}がありません。ゲームのフォルダー（またはUSRDIRかdataフォルダー）を選んでください。</value>
+  </data>
+  <data name="Couldn't send {0}'s files: {1}" xml:space="preserve">
+    <value>{0}のファイルを送れませんでした: {1}</value>
+  </data>
+  <data name="Couldn't start extract." xml:space="preserve">
+    <value>取り込みを開始できませんでした。</value>
+  </data>
+  <data name="{0} didn't finish. The report says why." xml:space="preserve">
+    <value>{0}は完了しませんでした。理由はレポートにあります。</value>
+  </data>
+  <data name="Extracted {0}. The server reloaded its files." xml:space="preserve">
+    <value>{0}を取り込みました。サーバーはファイルを読み込み直しました。</value>
+  </data>
+  <data name="Extracted {0} games. The server reloaded their files." xml:space="preserve">
+    <value>{0}本を取り込みました。サーバーはファイルを読み込み直しました。</value>
+  </data>
+  <data name="{0} of {1} games on" xml:space="preserve">
+    <value>{1}本中{0}本がオン</value>
+  </data>
+  <data name="Or extract {0}" xml:space="preserve">
+    <value>または{0}を取り込む</value>
+  </data>
+  <data name="Song pickers can't show names until it loads. Extract it above, or fix it in Server Management › Games." xml:space="preserve">
+    <value>読み込まれるまで曲の選択に曲名が表示されません。上で取り込むか、サーバー管理 › ゲームで直してください。</value>
+  </data>
+  <data name="Cabinets can't play until Nijiiro's are extracted." xml:space="preserve">
+    <value>ニジイロのファイルを取り込むまで筐体はプレイできません。</value>
+  </data>
+  <data name="A game that isn't ready can be extracted later in Server Management › Games." xml:space="preserve">
+    <value>準備できていないゲームは、あとでサーバー管理 › ゲームで取り込めます。</value>
+  </data>
 </root>

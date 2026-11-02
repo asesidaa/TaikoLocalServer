@@ -16,8 +16,9 @@ public static partial class EraDataFiles
     // As the loaders read them (some allow comments and trailing commas).
     private static readonly JsonDocumentOptions Lenient = new() { CommentHandling = JsonCommentHandling.Skip, AllowTrailingCommas = true };
 
-    // The costume, title and drum sound names AutoExtractCatalog writes: generated, not edited here.
-    [GeneratedRegex(@"(costume|title|neiro)(_name)?_data\.json$")]
+    // Generated, not edited here: the costume, title and drum sound names AutoExtractCatalog writes, and extract.json
+    // (what extract wrote, shown in Server Management › Games).
+    [GeneratedRegex(@"((costume|title|neiro)(_name)?_data|^extract)\.json$")]
     private static partial Regex NameCache();
 
     public static IReadOnlyList<GameDataFileStatus> List(IGameDataCatalog catalog, GameEra era)

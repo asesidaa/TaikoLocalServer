@@ -44,13 +44,13 @@
                 }
             }
         </Rail>
+        @if (selected == "overview")
+        {
+            @* The game's own extract card, for re-extracting after an update (every game's are in Server Management › Games). *@
+            <ExtractChecklist @key="game" Only="@game" OnFinished="Reloaded" />
+        }
         @if (selected == "overview" && game == "Nijiiro")
         {
-            <section class="@Css.Card p-5 sm:p-6">
-                <h2 class="font-semibold">@Localizer["Game assets"]</h2>
-                <p class="mb-4 text-sm @Css.Muted">@Localizer["Game Assets Hint"]</p>
-                <ExtractPanel OnFinished="Reloaded" />
-            </section>
             @FileList
         }
         else if (selected == "overview")
@@ -61,7 +61,7 @@
                 <div role="alert" class="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-300">
                     <p class="font-semibold">@(status.FolderFound ? string.Format(Localizer["{0}'s game data didn't load"], game) : string.Format(Localizer["{0}'s game folder isn't there"], game))</p>
                     <p class="mt-1 break-words">@(status.FolderFound ? status.Error : string.Format(Localizer["Not found at {0}"], status.Folder))</p>
-                    <p class="mt-1 text-zinc-700 dark:text-zinc-300">@Localizer["Song pickers can't show names until it loads. Fix it in Server Management › Status › Games."]</p>
+                    <p class="mt-1 text-zinc-700 dark:text-zinc-300">@Localizer["Song pickers can't show names until it loads. Extract it above, or fix it in Server Management › Games."]</p>
                 </div>
             }
             @FileList

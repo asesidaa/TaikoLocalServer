@@ -12,8 +12,14 @@
     @if (Current == "status")
     {
         <ServerStateCard />
-        <div class="mt-4"><GamesCard /></div>
+        <div class="mt-4"><GamesCard Summary /></div>
         <div class="mt-4">@ConfigCard</div>
+    }
+    else if (Current == "games")
+    {
+        @* The games that are on and how their files loaded, then extracting their files. *@
+        <GamesCard />
+        <div class="mt-4"><ExtractChecklist /></div>
     }
     else if (Current == "settings")
     {
@@ -117,6 +123,7 @@
         tabs =
         [
             ("status", Localizer["Status"], "server"),
+            ("games", Localizer["Games"], "drum"),
             ("settings", Localizer["Player Settings"], "settings"),
             ("cabinets", Localizer["Cabinets"], "monitor"),
             ("data", Localizer["Game Data"], "database"),

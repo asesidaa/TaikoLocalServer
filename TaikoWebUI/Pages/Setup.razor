@@ -35,27 +35,17 @@
                     break;
                 case 2:
                     <h2 class="text-lg font-semibold">@Localizer["Game files"]</h2>
-                    @if (AuthService.NijiiroOn)
+                    <p class="mt-1 mb-4 text-sm @Css.Muted">@Localizer["Game Files Hint"]</p>
+                    @* Every game that's on, all ticked; Continue needs Nijiiro's, the others can be done later. *@
+                    <ExtractChecklist Bare OnFinished="CheckAssets" />
+                    @if (AuthService.NijiiroOn && assetsMissing != false)
                     {
-                        @if (older.Total > 0)
-                        {
-                            <h3 class="mt-3 flex items-center gap-2 text-sm font-semibold"><GameDot Game="GameInfo.All[0]" />Nijiiro</h3>
-                        }
-                        @if (assetsMissing == false)
-                        {
-                            <p class="mt-3 flex items-center gap-2 text-sm"><Icon Name="check" Class="size-5 text-emerald-500" />@Localizer["The game files are in place."]</p>
-                        }
-                        else
-                        {
-                            <p class="mt-1 mb-4 text-sm @Css.Muted">@Localizer["Game Files Hint"]</p>
-                            <ExtractPanel OnFinished="CheckAssets" />
-                            <p class="mt-3 text-xs @Css.Muted">@Localizer["Cabinets can't play until this is done."]</p>
-                        }
+                        <p class="mt-3 text-xs @Css.Muted">@Localizer["Cabinets can't play until Nijiiro's are extracted."]</p>
                     }
                     <OlderGamesList Class="mt-5" OnChecked="r => older = r" />
                     @if (older.Ready < older.Total)
                     {
-                        <p class="mt-2 text-xs @Css.Muted">@Localizer["A game that isn't ready can be fixed later in Server Management › Status."]</p>
+                        <p class="mt-2 text-xs @Css.Muted">@Localizer["A game that isn't ready can be extracted later in Server Management › Games."]</p>
                     }
                     break;
                 default:
