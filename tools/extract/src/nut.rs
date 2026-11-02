@@ -1,5 +1,5 @@
 //! The older games' textures: `NTP3` (`.nut`, PS3 NUT, big-endian) and the `NUT_PACK_TYPE1` packs (`.ndp`) that hold
-//! the costume and tone icons and the title, tone and costume names (rendered text, as images).
+//! the costume and drum-sound icons.
 
 use std::collections::BTreeMap;
 use std::fs;
@@ -82,22 +82,20 @@ pub fn pack(b: &[u8]) -> Result<Vec<(String, &[u8])>> {
     entries.into_iter().map(|(n, o, s)| Ok((n, b.get(base + o..base + o + s).context("pack entry out of range")?))).collect()
 }
 
-/// The `nutdata` folders converted to PNG, under `game_data/<era>/<folder>/<name>.png`.
-const KINDS: [&str; 5] = ["cos_icon", "tone_icon", "cos_name", "title_name", "tone_name"];
+/// The `nutdata` folders converted to PNG, under `game_data/<era>/<folder>/<name>.png`. The name images
+/// (`title_name`, `tone_name`, `cos_name`) aren't: the server has the names as text in `data/shared`.
+const KINDS: [&str; 2] = ["cos_icon", "tone_icon"];
 
 /// `nutdata/<kind>/`, `nutdata/pack/<…>/<kind>/` and `nutdata/<id>/appendable/<nn>/<kind>/`, as in `ac15::NAME_DIRS`.
 pub fn inputs(_era: Era) -> Vec<Rule> {
     ["nutdata/", "nutdata/*/*/", "nutdata/*/*/*/"].iter().flat_map(|d| KINDS.map(|k| Rule { path: format!("{d}{k}/"), names: false })).collect()
 }
 
-/// The output name of each item, and where its numbers start. Item `n` is `<prefix><n:03>`: what one-texture pack
-/// entries are called (`shougou_012.nut`), and the id the server reads from that name.
+/// The output name of each item, and where its numbers start. Item `n` is `<prefix><n:03>`, what one-texture pack
+/// entries are called (`icon_neiro_001.nut`).
 fn item_name(kind: &str) -> (&'static str, u32) {
     match kind {
         "cos_icon" => ("cos_icon_", 0),
-        "cos_name" => ("cos_name_", 0),
-        "title_name" => ("shougou_", 0),
-        "tone_name" => ("tone_name_", 0),
         // tone_icon.nut's textures are icon_neiro_001… (checked pixel for pixel against the packs).
         _ => ("icon_neiro_", 1),
     }
@@ -131,11 +129,9 @@ pub fn convert(era: Era, src: &Source, out: &Path) -> Result<Vec<Report>> {
                         images.insert(stem(&name), (rel.to_string(), textures.into_iter().next().unwrap().image));
                         continue;
                     }
-                    // One texture per item: `title_name_00649_00724.nut`, a `nutdatapack_00400_00402.ndp` holding one
-                    // `image.nut`, or `tone_name.nut` (from 0). The range is in the file's name.
-                    let start = range_start(stem(rel).as_str()).unwrap_or(first);
+                    // One texture per item, in order (`tone_icon.nut`).
                     for (k, t) in textures.into_iter().enumerate() {
-                        images.insert(format!("{prefix}{:03}", start + k as u32), (rel.to_string(), t.image));
+                        images.insert(format!("{prefix}{:03}", first + k as u32), (rel.to_string(), t.image));
                     }
                 }
                 Ok(())
@@ -165,11 +161,6 @@ pub fn convert(era: Era, src: &Source, out: &Path) -> Result<Vec<Report>> {
     Ok(reports)
 }
 
-/// The first of the last two numbers in a name (`title_name_00649_00724` → 649).
-fn range_start(name: &str) -> Option<u32> {
-    let numbers: Vec<u32> = name.split(|c: char| !c.is_ascii_digit()).filter(|s| !s.is_empty()).filter_map(|s| s.parse().ok()).collect();
-    (numbers.len() >= 2).then(|| numbers[numbers.len() - 2])
-}
 
 /// True when `dst` exists and is no older than the game file `rel`.
 pub fn is_fresh(dst: &Path, src: &Source, rel: &str) -> bool {
@@ -221,14 +212,6 @@ mod tests {
         for t in decode(&fs::read(file).unwrap()).unwrap() {
             t.image.save(Path::new(&out).join(format!("{:08x}.png", t.id))).unwrap();
         }
-    }
-
-    #[test]
-    fn item_ranges_come_from_file_names() {
-        assert_eq!(range_start("title_name_00649_00724"), Some(649));
-        assert_eq!(range_start("nutdatapack_00403_00404"), Some(403));
-        assert_eq!(range_start("tone_name"), None);
-        assert_eq!(range_start("nutdatapack"), None);
     }
 
     #[test]
