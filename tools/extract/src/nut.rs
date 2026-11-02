@@ -122,7 +122,7 @@ pub fn convert(era: Era, src: &Source, out: &Path) -> Result<Vec<Report>> {
         fs::create_dir_all(&dir)?;
         for (name, (rel, nut)) in images {
             let dst = dir.join(format!("{name}.png"));
-            if fs::metadata(&dst).and_then(|m| m.modified()).is_ok_and(|t| src.modified(&rel).is_ok_and(|s| t >= s)) {
+            if is_fresh(&dst, src, &rel) {
                 report.up_to_date.push(name);
                 continue;
             }
@@ -134,6 +134,11 @@ pub fn convert(era: Era, src: &Source, out: &Path) -> Result<Vec<Report>> {
         reports.push(report);
     }
     Ok(reports)
+}
+
+/// True when `dst` exists and is no older than the game file `rel`.
+pub fn is_fresh(dst: &Path, src: &Source, rel: &str) -> bool {
+    fs::metadata(dst).and_then(|m| m.modified()).is_ok_and(|t| src.modified(rel).is_ok_and(|s| t >= s))
 }
 
 fn stem(name: &str) -> String {

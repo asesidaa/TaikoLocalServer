@@ -80,6 +80,30 @@ Version `0x0100` lays them out header, data, header, data (data right after its 
 
 `NUT_PACK_TYPE1` is a boost `binary_oarchive` (big-endian, 32-bit PS3 sizes): the magic padded to 16 bytes, u32 22 + `serialization::archive`, the archive's header and class info, then at 0x3E the u32 entry count. From 0x4B each entry is a u32 name length, the name (`cos_icon_000.nut`), a u32 offset and a u32 size. The first entry has a 5-byte class header between its name and offset. The data starts 4 bytes after the last entry (a u32 blob size), and offsets count from there. Every entry is a whole NTP3. All 347 packs in Green and all 13 in Momoiro parse this way.
 
+| From `USRDIR/data/lumendata/packed/` | To `<out>/game_data/<era>/ui/` | |
+| --- | --- | --- |
+| `song_select/packeddata.ddp` | `crown_{none,silver,gold}.png`, `crown_course_{gold,silver}_{easy,normal,hard,mania,extreme}.png` | Crowns, and a crown beside each difficulty's face (Momoiro has no `extreme`) |
+| `song_select` (`courseicon`), else `enso_result` (`result.lm`, labels `easy,normal,hard,mania`) | `difficulty_{easy,normal,hard,mania}.png` | Green to Kimidori use the compact song-select icon; Momoiro the result screen's, with its caption |
+| `dani_result/packeddata.ddp` (`dani_title`) | `dan_{syokyuu,10kyuu…1kyuu,syodan,2dan…,tatsujin}.png` | The dan names as the Dojo result draws them. Older games have fewer ranks (Momoiro: 4kyuu–10dan) |
+| `enso_result/packeddata.ddp` (`titlepanel`) | `plate_{normal,gold,platinum,rainbow}.png` | Title plates by rarity. Momoiro has none |
+| | `ui.json` | Each set's labels, in the game's order |
+
+Every label of a set is drawn on one shared canvas, so they line up. Green, Blue, Yellow and Red: 47 images; Murasaki 39, Kimidori 36, Momoiro 32.
+
+### PS3 Lumen packs (`LM_NUT_TYPE1`, `src/lmpack.rs`)
+
+`lumendata/packed/<scene>/packeddata.ddp` holds a scene's `.lm` files and their atlases; `packlist.txt` beside it lists the same names (it isn't needed). It's a boost binary archive like the NUT packs: the `.lm` count at 0x3E, then from 0x4B per `.lm` its name (u32 length + bytes; the first one adds a 5-byte class header), u32 offset, u32 size and the `[from, to)` range of its textures in the texture list. Then 5 bytes, the u32 texture count, 9 bytes, and a u32 (offset, size) per texture. The data starts 16 bytes after the last pair: first the `.lm` files, then the textures, whose offsets count from the end of the last `.lm`. Each texture is a whole NTP3, and a `.lm`'s textures are its atlases in id order. All 230 packs in Green (765 `.lm`, 20,668 textures) and all 106 in Momoiro parse. `lm_data/output.ddp` and the loose `lm_data/don/` aren't used.
+
+### PS3 Lumen (`.lm`, `src/lumen.rs`)
+
+The same `LMB` tag stream as Nijiiro's `.nulm`, big-endian (the header's second word reads `0x10` either way, which tells them apart). The differences:
+
+- Graphics are tag `0xF023`, always 18 words: one quad, `x y u v` × 4 (floats), then u32 atlas id and u16 fill (`0x41` or `0x40` textured, `0` solid colour with the colour index in the atlas field). Triangles `0 1 2`, `0 2 3`. No `0xF024`.
+- `0xF007` lists one entry per atlas (id, name symbol, width, height), and each atlas is its own `.nut` at its own size (400×400, 64×64…), not layers of one texture. `Lumen::render_layers` samples them separately, and only the atlases a set uses are decoded (song select has 788).
+- u16 fields (place mode, depth, clip depth, colours) sit at the same byte offsets, so they read as-is in big-endian.
+
+To find a sprite in another scene, `LM_PACK=<packeddata.ddp> [LM_NAME=<lm>] [LM_SPRITE=<id> LM_OUT=<dir>] cargo test --release lm_ls -- --ignored --nocapture` lists every sprite's labels and the instance names it places, and renders a sprite's labels.
+
 In `--inputs` rules a `*` segment matches any one folder name (`data/config/*/musicinfo.xml`, `data/nutdata/*/*/title_name/`); `ExtractRunner.Match` and the WebUI's `gamefolder.js` match the same way.
 
 ## Game UI art (`src/lumen.rs`, `src/ui.rs`)

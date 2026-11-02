@@ -134,6 +134,7 @@ pub fn inputs(era: Era) -> serde_json::Value {
     let config = if era.config().is_some() { "config/*/" } else { "" };
     let mut rules: Vec<Rule> = server_rules(era, config).into_iter().map(|(r, _)| r).collect();
     rules.extend(crate::nut::inputs(era));
+    rules.extend(crate::lmpack::inputs());
     let pick = |names: bool| rules.iter().filter(|r| r.names == names).map(|r| format!("data/{}", r.path)).collect::<Vec<_>>();
     serde_json::json!({ "files": pick(false), "names": pick(true), "mods": null })
 }
@@ -146,6 +147,9 @@ pub fn run(era: Era, game: &Path, out: &Path) -> Result<Vec<Report>> {
     let mut reports = vec![copy_server_files(era, &src, &out.join("data").join(era.name()).join("data"))?];
     let assets = out.join(crate::GAME_DATA).join(era.name());
     reports.extend(crate::nut::convert(era, &src, &assets)?);
+    let mut ui = Report::new(&format!("{} ui", era.name()));
+    crate::lmpack::convert(&src, &assets, &mut ui)?;
+    reports.push(ui);
     Ok(reports)
 }
 

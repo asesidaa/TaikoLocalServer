@@ -2,6 +2,7 @@ mod ac15;
 mod anims;
 mod font;
 mod game;
+mod lmpack;
 mod lumen;
 mod models;
 mod movies;
