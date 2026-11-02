@@ -52,6 +52,34 @@ extract --era yellow --game "D:\Taiko no Tatsujin - Yellow Version.zip"
 
 That's 1.6 MB (Momoiro) to 8.3 MB (Green). When the game has only another variant of the config id, it's used and written under the id the server reads: Red 10.01 ships `ST8100-7` only (an early Red, 25 Dojo courses). The White zip we have is an incomplete dump (no `config`, `tuning.bin`, `don3d` or `lm_data`), so White reports them missing.
 
+| From `USRDIR/data/nutdata/` | To `<out>/game_data/<era>/` | |
+| --- | --- | --- |
+| `{cos_icon,tone_icon}/`, `pack/<…>/<nn>/tone_icon/`, `<id>/appendable/<nn>/tone_icon/` | `cos_icon/cos_icon_NNN.png`, `tone_icon/icon_neiro_NNN.png` | Costume and drum-sound icons. `cos_icon` exists only in Green (91); every game has its tone icons |
+| the same folders for `cos_name`, `title_name`, `tone_name` | `cos_name/`, `title_name/shougou_NNN.png`, `tone_name/` | The names, as the game draws them (text rendered to images). These are the only title names Momoiro has (284 images) |
+
+Packs are merged by file name. A game's own `nutdata/<id>/appendable` packs are applied last, so they win over the packs it inherited. Green: 91 costume icons, 7 tone icons, 418 titles; Momoiro: 5 tone icons, 284 titles; Blue: 7 and 364; Red 10.01: 1 and 11.
+
+### NTP3 textures (`.nut`, `src/nut.rs`)
+
+The PS3 NUT, big-endian. Header: `NTP3`, u16 version (`0x0100` or `0x0200`), u16 texture count, 8 bytes of padding. Then per texture, at 0x10:
+
+| Offset | |
+| --- | --- |
+| +0x00 | u32 total size (header + data) |
+| +0x08 | u32 data size |
+| +0x0C | u16 header size (0x50, more with a mip size table) |
+| +0x11 | u8 mip count |
+| +0x13 | u8 format: `0` DXT1, `1` DXT3, `2` DXT5, `14` A8R8G8B8, `17` R8G8B8A8 (bytes in that order). Data is linear, not swizzled |
+| +0x14 | u16 width, u16 height |
+| +0x20 | u32 data offset from this header (`0x0200` only) |
+| +0x30 | `eXt\0` block (0x10 bytes), then `GIDX`, u32 0x10, **u32 texture id** (what NUD materials refer to) |
+
+Version `0x0100` lays them out header, data, header, data (data right after its header, the next header after `total`). `0x0200` puts every header first (the next one `header size` later) and the data where +0x20 says. The base mip comes first.
+
+### NUT packs (`.ndp`)
+
+`NUT_PACK_TYPE1` is a boost `binary_oarchive` (big-endian, 32-bit PS3 sizes): the magic padded to 16 bytes, u32 22 + `serialization::archive`, the archive's header and class info, then at 0x3E the u32 entry count. From 0x4B each entry is a u32 name length, the name (`cos_icon_000.nut`), a u32 offset and a u32 size. The first entry has a 5-byte class header between its name and offset. The data starts 4 bytes after the last entry (a u32 blob size), and offsets count from there. Every entry is a whole NTP3. All 347 packs in Green and all 13 in Momoiro parse this way.
+
 In `--inputs` rules a `*` segment matches any one folder name (`data/config/*/musicinfo.xml`, `data/nutdata/*/*/title_name/`); `ExtractRunner.Match` and the WebUI's `gamefolder.js` match the same way.
 
 ## Game UI art (`src/lumen.rs`, `src/ui.rs`)

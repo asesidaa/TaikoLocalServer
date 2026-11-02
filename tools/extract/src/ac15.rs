@@ -37,7 +37,7 @@ impl Era {
     }
 
     /// The `config/<id>` folder the server reads (`*GameDataPaths.cs`). Kimidori and Momoiro keep it at the top of `data`.
-    fn config(self) -> Option<&'static str> {
+    pub fn config(self) -> Option<&'static str> {
         match self {
             Era::Green => Some("S11100-1"),
             Era::Blue => Some("S10100-1"),
@@ -132,7 +132,8 @@ fn config_dir(era: Era, game: &Source) -> (String, String) {
 /// variant is listed because the uploaded folder isn't known yet.
 pub fn inputs(era: Era) -> serde_json::Value {
     let config = if era.config().is_some() { "config/*/" } else { "" };
-    let rules: Vec<Rule> = server_rules(era, config).into_iter().map(|(r, _)| r).collect();
+    let mut rules: Vec<Rule> = server_rules(era, config).into_iter().map(|(r, _)| r).collect();
+    rules.extend(crate::nut::inputs(era));
     let pick = |names: bool| rules.iter().filter(|r| r.names == names).map(|r| format!("data/{}", r.path)).collect::<Vec<_>>();
     serde_json::json!({ "files": pick(false), "names": pick(true), "mods": null })
 }
@@ -142,7 +143,9 @@ pub fn run(era: Era, game: &Path, out: &Path) -> Result<Vec<Report>> {
     let src = Source::open(game)?;
     println!("game:   {} ({})", src.label, era.name());
     println!("output: {}", out.display());
-    let reports = vec![copy_server_files(era, &src, &out.join("data").join(era.name()).join("data"))?];
+    let mut reports = vec![copy_server_files(era, &src, &out.join("data").join(era.name()).join("data"))?];
+    let assets = out.join(crate::GAME_DATA).join(era.name());
+    reports.extend(crate::nut::convert(era, &src, &assets)?);
     Ok(reports)
 }
 
