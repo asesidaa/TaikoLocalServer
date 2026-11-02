@@ -51,10 +51,10 @@ fn to_rgba(format: u8, width: u32, height: u32, data: &[u8]) -> Result<RgbaImage
         0 => ImageFormat::BC1RgbaUnorm,
         1 => ImageFormat::BC2RgbaUnorm,
         2 => ImageFormat::BC3RgbaUnorm,
-        // 32-bit: 14 is A8R8G8B8 and 17 is R8G8B8A8, as bytes.
+        // 32-bit: both are A8R8G8B8, as bytes (in every format-17 texture byte 0 is the alpha, as in 14's).
         14 | 17 => {
             let px = data.get(..(width * height * 4) as usize).context("short RGBA data")?;
-            let rgba = px.chunks_exact(4).flat_map(|p| if format == 14 { [p[1], p[2], p[3], p[0]] } else { [p[0], p[1], p[2], p[3]] }).collect();
+            let rgba = px.chunks_exact(4).flat_map(|p| [p[1], p[2], p[3], p[0]]).collect();
             return RgbaImage::from_raw(width, height, rgba).context("bad size");
         }
         f => bail!("NTP3 format {f} isn't supported"),
@@ -176,8 +176,8 @@ fn stem(name: &str) -> String {
 mod tests {
     use super::*;
 
-    /// A one-texture v0x0100 NTP3: 2x1, format 14 (A8R8G8B8).
-    fn ntp3_argb() -> Vec<u8> {
+    /// A one-texture v0x0100 NTP3: 2x1, a 32-bit `format` (14 or 17, both A8R8G8B8).
+    fn ntp3_argb(format: u8) -> Vec<u8> {
         let mut b = b"NTP3".to_vec();
         b.extend([1, 0, 0, 1]);
         b.extend([0; 8]);
@@ -186,7 +186,7 @@ mod tests {
         h[8..12].copy_from_slice(&8u32.to_be_bytes());
         h[12..14].copy_from_slice(&0x50u16.to_be_bytes());
         h[17] = 1;
-        h[19] = 14;
+        h[19] = format;
         h[20..22].copy_from_slice(&2u16.to_be_bytes());
         h[22..24].copy_from_slice(&1u16.to_be_bytes());
         h[0x40..0x48].copy_from_slice(b"GIDX\0\0\0\x10");
@@ -197,11 +197,14 @@ mod tests {
     }
 
     #[test]
-    fn decodes_argb_and_reads_the_gidx_id() {
-        let t = decode(&ntp3_argb()).unwrap();
-        assert_eq!(t.len(), 1);
-        assert_eq!(t[0].id, 7);
-        assert_eq!(t[0].image.as_raw(), &[1, 2, 3, 0x80, 4, 5, 6, 0xFF]);
+    fn decodes_both_32_bit_formats_as_argb_and_reads_the_gidx_id() {
+        // 17 too: read as RGBA, the kigurumi's white suits came out black and their reds orange.
+        for format in [14, 17] {
+            let t = decode(&ntp3_argb(format)).unwrap();
+            assert_eq!(t.len(), 1);
+            assert_eq!(t[0].id, 7);
+            assert_eq!(t[0].image.as_raw(), &[1, 2, 3, 0x80, 4, 5, 6, 0xFF], "format {format}");
+        }
     }
 
     /// `NUT=<file.nut> NUT_OUT=<dir> cargo test --release dump_nut -- --ignored` writes each texture as `<id>.png`.
@@ -216,7 +219,7 @@ mod tests {
 
     #[test]
     fn reads_pack_entries() {
-        let nut = ntp3_argb();
+        let nut = ntp3_argb(14);
         let mut b = b"NUT_PACK_TYPE1\0\0".to_vec();
         b.resize(0x3E, 0);
         b.extend(2u32.to_be_bytes());

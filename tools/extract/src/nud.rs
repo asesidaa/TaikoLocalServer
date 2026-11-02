@@ -35,6 +35,8 @@ pub struct Part {
     pub blend: bool,
     /// Alpha test: the reference (0–255) a texel's alpha must reach.
     pub alpha_ref: Option<u16>,
+    /// The raw source and destination blend factors and alpha-test function, for `extras` (see the README).
+    pub raw: [u16; 3],
     /// A second pass culling front faces: the black outline shell.
     pub outline: bool,
 }
@@ -110,7 +112,7 @@ fn part(r: &R, h: usize, index_at: usize, vert_at: usize, add_at: usize) -> Resu
     ensure!(matches!(bones, 0 | 1) && matches!(normal, 1 | 6) && matches!(color, 0 | 2), "vertex type {vtype:#x}/{uvtype:#x} isn't supported");
     ensure!(r.u8(h + 34)? >> 4 != 4, "triangle-list polygons aren't supported");
 
-    let mut p = Part { positions: Vec::with_capacity(n * 3), normals: Vec::with_capacity(n * 3), colors: (color == 2).then(Vec::new), uvs: Vec::new(), joints: None, weights: None, indices: Vec::new(), texture: None, wrap: [1, 1], double_sided: false, flags: 0, blend: false, alpha_ref: None, outline: false };
+    let mut p = Part { positions: Vec::with_capacity(n * 3), normals: Vec::with_capacity(n * 3), colors: (color == 2).then(Vec::new), uvs: Vec::new(), joints: None, weights: None, indices: Vec::new(), texture: None, wrap: [1, 1], double_sided: false, flags: 0, blend: false, alpha_ref: None, raw: [0; 3], outline: false };
     // Colour and UVs: interleaved per vertex, after the position and normal when there are no bones.
     let uv_block = |p: &mut Part, mut o: usize| -> Result<usize> {
         if let Some(c) = p.colors.as_mut() {
@@ -170,7 +172,18 @@ fn part(r: &R, h: usize, index_at: usize, vert_at: usize, add_at: usize) -> Resu
     // Material: u32 flags, u32, u16 source blend, u16 texture count, u16 destination blend, u8 alpha test (2 on), u8
     // alpha function, u16 alpha reference, u16 cull mode (0x405 back, 0x404 front, 0 none), …; textures from +0x20,
     // 0x18 bytes each, the first u32 being the texture's GIDX id.
-    let mat = r.u32(h + 16)? as usize;
+    // Up to four passes; the outline shell is the one culling front faces, and it comes first in some kigurumi (3, 4,
+    // 8, 13, 16, 17, 59). The drawn pass is the first that doesn't.
+    let mats: Vec<usize> = (0..4).map(|k| r.u32(h + 16 + k * 4).map(|m| m as usize)).collect::<Result<Vec<_>>>()?.into_iter().filter(|&m| m != 0).collect();
+    let front = |m: usize| r.u16(m + 18).map(|c| c == 0x404);
+    let mut mat = 0;
+    for &m in &mats {
+        if front(m)? {
+            p.outline = true;
+        } else if mat == 0 {
+            mat = m;
+        }
+    }
     if mat != 0 {
         if r.u16(mat + 10)? > 0 {
             p.texture = Some(r.u32(mat + 0x20)?);
@@ -178,11 +191,10 @@ fn part(r: &R, h: usize, index_at: usize, vert_at: usize, add_at: usize) -> Resu
         }
         p.double_sided = r.u16(mat + 18)? == 0;
         p.flags = r.u32(mat)?;
-        p.blend = r.u16(mat + 8)? != 0 || r.u16(mat + 12)? != 0;
+        p.raw = [r.u16(mat + 8)?, r.u16(mat + 12)?, r.u8(mat + 15)? as u16];
+        p.blend = p.raw[0] != 0 || p.raw[1] != 0;
         p.alpha_ref = (r.u8(mat + 14)? != 0).then(|| r.u16(mat + 16)).transpose()?;
     }
-    let second = r.u32(h + 20)? as usize;
-    p.outline = second != 0 && r.u16(second + 18)? == 0x404;
     Ok(p)
 }
 
@@ -273,7 +285,7 @@ pub fn glb(objects: &[Object], textures: &[crate::nut::Texture], rig: Option<(&[
                 "alphaMode": mode,
                 "doubleSided": p.double_sided,
                 "pbrMetallicRoughness": pbr,
-                "extras": { "nudFlags": p.flags, "outline": p.outline },
+                "extras": { "nudFlags": p.flags, "outline": p.outline, "blend": [p.raw[0], p.raw[1]], "alphaTest": p.alpha_ref.map(|r| [p.raw[2], r]) },
             });
             if let Some(c) = cutoff {
                 material["alphaCutoff"] = json!(c);
@@ -376,7 +388,7 @@ mod tests {
 
     #[test]
     fn alpha_mode_follows_the_material_not_the_texture() {
-        let part = |blend, alpha_ref| Part { positions: vec![], normals: vec![], colors: None, uvs: vec![], joints: None, weights: None, indices: vec![], texture: None, wrap: [1, 1], double_sided: false, flags: 0x1000_0001, blend, alpha_ref, outline: true };
+        let part = |blend, alpha_ref| Part { positions: vec![], normals: vec![], colors: None, uvs: vec![], joints: None, weights: None, indices: vec![], texture: None, wrap: [1, 1], double_sided: false, flags: 0x1000_0001, blend, alpha_ref, raw: [0; 3], outline: true };
         assert_eq!(alpha_mode(&part(false, None)), ("OPAQUE", None), "the bodies' recolour pass: texture alpha is ignored");
         assert_eq!(alpha_mode(&part(false, Some(255))), ("MASK", Some(1.0)));
         assert_eq!(alpha_mode(&part(true, Some(255))), ("BLEND", None));
