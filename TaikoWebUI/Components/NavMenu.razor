@@ -16,6 +16,8 @@
     @if (Baid > 0)
     {
         @Link($"/Users/{Baid}/Profile", "profile", Localizer["Profile"])
+        @* The server's whole song list (with this player's results): its own item, not a Play Data page. *@
+        @Link(PlayDataPaths.Of(Baid, PlayDataPaths.Songs), "music", Localizer["Song List"], prefix: true)
         @* Play Data: the label opens its index, the chevron folds its pages away (they stay shown while one is open). *@
         var playDataShown = playDataOpen || OnPlayDataPage;
         <div class="flex items-center gap-0.5">
@@ -29,7 +31,6 @@
         {
             <div id="nav-play-data" class="fade space-y-0.5">
                 @Sub(PlayDataPaths.Stats, Localizer["Stats"])
-                @Sub(PlayDataPaths.Songs, Localizer["Song List"], prefix: true)
                 @Sub(PlayDataPaths.Favourites, Localizer["Favourites"])
                 @Sub(PlayDataPaths.HighScores, Localizer["High Scores"])
                 @Sub(PlayDataPaths.PlayHistory, Localizer["Play History"])
@@ -101,7 +102,8 @@ else if (!AuthService.LoginRequired)
     };
 
     private bool playDataOpen = true;
-    private bool OnPlayDataPage => ("/" + Nav.ToBaseRelativePath(Nav.Uri)).StartsWith(PlayDataPaths.Index(Baid) + "/", StringComparison.OrdinalIgnoreCase);
+    private bool OnPlayDataPage => ("/" + Nav.ToBaseRelativePath(Nav.Uri)) is var path
+        && path.StartsWith(PlayDataPaths.Index(Baid) + "/", StringComparison.OrdinalIgnoreCase) && !IsActive(PlayDataPaths.Of(Baid, PlayDataPaths.Songs), prefix: true);
 
     // A Play Data page, indented under it.
     private RenderFragment Sub(string page, string label, bool prefix = false) => __builder =>
