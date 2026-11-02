@@ -28,7 +28,9 @@ public static class Ac15CustomizationCatalogComposer
 
         return new Ac15CustomizationCatalog(
             ComposeCostumes(eraCostumes, nameCostumes),
-            ComposeTitles(eraTitles, nameTitles),
+            // A game whose title names are all packed (Momoiro's nutdatapack.ndp) has no title IDs of its own; the shared
+            // list numbers titles the same way, so it stands in. Nijiiro's (the fallback) are numbered differently.
+            ComposeTitles(eraTitles.Count > 0 ? eraTitles : effectiveSharedTitles, nameTitles),
             ComposeNeiros(eraNeiros, nameNeiros));
     }
 
