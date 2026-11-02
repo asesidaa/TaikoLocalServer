@@ -6,6 +6,7 @@
 @inject HttpClient Client
 @inject PageState Page
 @inject ToastService Toast
+@inject IJSRuntime Js
 
 <PageTitle>@Localizer["Profile"]</PageTitle>
 @* An older game's profile as one form: name and title, costume (unlocked items only), colours and game options.
@@ -45,14 +46,9 @@
                 </div>
                 @if (caps.SupportsTitle && settings.Customization?.Title is { } title)
                 {
-                    <label class="block text-xs @Css.Muted">@Localizer["Title"]
-                        <select class="@Css.Input mt-1" value="@form.TitleId" @onchange="e => PickTitle(uint.Parse(e.Value!.ToString()!))">
-                            @foreach (var id in title.UnlockedTitleIds.Append(title.TitleId).Distinct().Order())
-                            {
-                                <option value="@id">@TitleName(id)</option>
-                            }
-                        </select>
-                    </label>
+                    <div class="text-xs @Css.Muted">@Localizer["Title"]
+                        @ItemButton(Localizer["Title"], GameData.EraTitleName(GameName, form.TitleId), TitleClass, TitleName(form.TitleId), () => picking = "title")
+                    </div>
                 }
             </section>
 
@@ -74,14 +70,9 @@
                         }
                         @if (caps.SupportsTone && custom.Tone is { } tone)
                         {
-                            <label class="text-xs @Css.Muted">@Localizer["Drum sound"]
-                                <select class="@Css.Input mt-1" value="@form.ToneId" @onchange="e => form.ToneId = uint.Parse(e.Value!.ToString()!)">
-                                    @foreach (var id in tone.UnlockedToneIds.Append(tone.ToneId).Distinct().Order())
-                                    {
-                                        <option value="@id">@ToneName(id)</option>
-                                    }
-                                </select>
-                            </label>
+                            <div class="text-xs @Css.Muted">@Localizer["Drum sound"]
+                                @ItemButton(Localizer["Drum sound"], GameData.EraToneName(GameName, form.ToneId), "", ToneName(form.ToneId), () => picking = "tone")
+                            </div>
                         }
                     </div>
                     @if (costumes.Count == 0)
@@ -147,6 +138,18 @@
             }
         </div>
         <SaveBar Dirty="Dirty" Saving="saving" OnSave="Save" OnDiscard="Discard" />
+        @if (picking == "title" && settings.Customization?.Title is { } pickTitle)
+        {
+            <ItemPicker Title="@Localizer["Title"]" Items="@pickTitle.UnlockedTitleIds.Append(pickTitle.TitleId).Distinct().Order().Select(id => (id, TitleName(id))).ToList()"
+                        Image="id => GameData.EraTitleName(GameName, id)" ImageClass="@TitleClass"
+                        OnPick="id => { PickTitle(id); picking = null; }" OnClose="() => picking = null" />
+        }
+        else if (picking == "tone" && settings.Customization?.Tone is { } pickTone)
+        {
+            <ItemPicker Title="@Localizer["Drum sound"]" Items="@pickTone.UnlockedToneIds.Append(pickTone.ToneId).Distinct().Order().Select(id => (id, ToneName(id))).ToList()"
+                        Image="id => GameData.EraToneName(GameName, id)"
+                        OnPick="id => { form!.ToneId = id; picking = null; }" OnClose="() => picking = null" />
+        }
     }
 </div>
 
@@ -267,6 +270,25 @@
         }
     }
 
+    // Which item picker is open: "title", "tone" or none.
+    private string? picking;
+
+    // Title names are black lettering: a white chip keeps them readable in dark mode.
+    private const string TitleClass = "rounded bg-white px-1.5 py-0.5";
+
+    // The current title or drum sound: the game's own lettering when extracted (its text stays for screen readers),
+    // else the text; opens the picker.
+    private RenderFragment ItemButton(string label, string image, string imageClass, string text, Action open) => __builder =>
+    {
+        <button type="button" class="@Css.Input mt-1 flex min-h-10 items-center gap-2 text-left" aria-label="@($"{label}: {text}")" @onclick="open">
+            <img data-asset="@image" alt="" hidden class="@($"peer h-6 max-w-[80%] object-contain {imageClass}")" />
+            <span class="min-w-0 flex-1 truncate text-sm text-zinc-900 peer-[:not([hidden])]:sr-only dark:text-zinc-100">@text</span>
+            <Icon Name="chevDown" Class="ml-auto size-4 shrink-0 text-zinc-400" />
+        </button>
+    };
+
+    protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
+
     private void PickTitle(uint id)
     {
         form!.TitleId = id;
@@ -275,12 +297,13 @@
 
     private static string Name(string jp, string en) => en.Length > 0 ? en : jp;
 
-    private string TitleName(uint id) => titles.TryGetValue(id, out var t) ? Name(t.TitleName, t.TitleNameEN) : string.Format(Localizer["Title {0}"], id);
+    // An item without a catalogue name (most older games: their names are only images) shows its number.
+    private string TitleName(uint id) => titles.TryGetValue(id, out var t) && Name(t.TitleName, t.TitleNameEN) is { Length: > 0 } n ? n : string.Format(Localizer["Title {0}"], id);
 
-    private string ToneName(uint id) => tones.TryGetValue(id, out var t) ? Name(t.NeiroName, t.NeiroNameEN) : string.Format(Localizer["Drum sound {0}"], id);
+    private string ToneName(uint id) => tones.TryGetValue(id, out var t) && Name(t.NeiroName, t.NeiroNameEN) is { Length: > 0 } n ? n : string.Format(Localizer["Drum sound {0}"], id);
 
     private string CostumeName(string slot, uint id) =>
-        costumes.FirstOrDefault(c => c.CostumeType == slot && c.CostumeId == id) is { } c ? Name(c.CostumeName, c.CostumeNameEN) : $"{SlotLabel(slot)} {id}";
+        costumes.FirstOrDefault(c => c.CostumeType == slot && c.CostumeId == id) is { } c && Name(c.CostumeName, c.CostumeNameEN) is { Length: > 0 } n ? n : $"{SlotLabel(slot)} {id}";
 
     private string SlotLabel(string slot) => slot switch
     {

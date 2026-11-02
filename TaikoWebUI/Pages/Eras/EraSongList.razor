@@ -1,6 +1,7 @@
 @page "/Users/{baid:int}/{Game}/PlayData/Songs"
 @attribute [Authorize]
 @inject HttpClient Client
+@inject IJSRuntime Js
 @inject GameDataService GameDataService
 @inject PageState Page
 
@@ -29,7 +30,7 @@
                         <th class="px-4 py-2 font-medium">@Localizer["Song"]</th>
                         @foreach (var (d, _) in GameData.Difficulties)
                         {
-                            <th class="px-2 py-2 text-center font-medium"><DiffLabel Difficulty="d" Class="justify-center" /></th>
+                            <th class="px-2 py-2 text-center font-medium"><DiffLabel Game="@GameName" Difficulty="d" Class="justify-center" /></th>
                         }
                     </tr>
                 </thead>
@@ -51,7 +52,7 @@
                                         <span class="block text-xs tabular-nums">★@stars</span>
                                         @if (best is not null)
                                         {
-                                            <EraCrown Crown="best.BestCrown" />
+                                            <EraCrown Game="@GameName" Crown="best.BestCrown" />
                                         }
                                     }
                                 </td>
@@ -106,4 +107,6 @@
         }
         bests = scores.Bests.GroupBy(b => (b.SongId, b.Difficulty)).ToDictionary(g => g.Key, g => g.First());
     }
+    // The game's icons (DiffLabel, EraCrown) load from api/Assets once rendered.
+    protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
 }

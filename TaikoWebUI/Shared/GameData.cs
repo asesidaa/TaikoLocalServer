@@ -87,6 +87,27 @@ public static class GameData
         Difficulty.Easy => "easy", Difficulty.Normal => "normal", Difficulty.Hard => "hard", Difficulty.Oni => "oni", _ => "ura",
     }}.png";
 
+    // ---- An older game's own art (extract --era writes game_data/<game>/ui, labels in its ui.json) ----
+
+    /// <summary>The older game's difficulty icon; null for Ura, which they have none of (Nijiiro's stands in).</summary>
+    public static string? EraDifficultyIcon(string game, Difficulty d) => d switch
+    {
+        Difficulty.Easy => EraUi(game, "difficulty_easy"), Difficulty.Normal => EraUi(game, "difficulty_normal"),
+        Difficulty.Hard => EraUi(game, "difficulty_hard"), Difficulty.Oni => EraUi(game, "difficulty_mania"), _ => null,
+    };
+
+    /// <summary>The older game's crown: none (played), silver (clear) or gold (full combo). They have no Donderful.</summary>
+    public static string EraCrownIcon(string game, CrownType c) =>
+        EraUi(game, c switch { CrownType.None => "crown_none", CrownType.Clear => "crown_silver", _ => "crown_gold" });
+
+    /// <summary>A title's name as the older game draws it (black lettering); the file number is the title ID.</summary>
+    public static string EraTitleName(string game, uint id) => $"{game.ToLowerInvariant()}/title_name/shougou_{id:000}.png";
+
+    /// <summary>A drum sound's name as the older game draws it (outlined); the file number is the drum sound's ID.</summary>
+    public static string EraToneName(string game, uint id) => $"{game.ToLowerInvariant()}/tone_name/tone_name_{id:000}.png";
+
+    private static string EraUi(string game, string label) => $"{game.ToLowerInvariant()}/ui/{label}.png";
+
     /// <summary>1 = clear (silver), 2 = full combo (gold), 3 = donderful (rainbow).</summary>
     public static string CrownIcon(int crown) => $"ui/crown_badge_crown_{crown}.png";
 

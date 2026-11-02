@@ -30,7 +30,7 @@
                 <li>
                     <button class="flex w-full items-center gap-3 px-1 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
                             @onclick='() => Nav.NavigateTo(Session.Game == EraPaths.Nijiiro ? PlayDataPaths.Song(Baid, p.SongId, (int)p.Difficulty) : EraPaths.Of(Baid, Session.Game, PlayDataPaths.Songs))'>
-                        <img data-asset="@GameData.DifficultyIcon(p.Difficulty)" alt="@GameData.DifficultyName(p.Difficulty)" class="size-8 object-contain" />
+                        <img data-asset="@(Older ? GameData.EraDifficultyIcon(Session.Game, p.Difficulty) ?? GameData.DifficultyIcon(p.Difficulty) : GameData.DifficultyIcon(p.Difficulty))" data-asset-fallback="@GameData.DifficultyIcon(p.Difficulty)" alt="@GameData.DifficultyName(p.Difficulty)" class="size-8 object-contain" />
                         <span class="min-w-0 flex-1">
                             <span class="block truncate text-sm">@p.Name</span>
                             <span class="block truncate text-xs @Css.Muted">★@p.Stars@(p.NameEn.Length > 0 ? " · " + p.NameEn : "")</span>
@@ -40,7 +40,7 @@
                             <span class="whitespace-nowrap rounded-full bg-primary-500/10 px-2 py-0.5 text-[11px] font-medium text-primary-700 dark:text-primary-300">@Localizer["New best"]</span>
                         }
                         <span class="font-mono text-sm tabular-nums">@p.Score.ToString("N0")</span>
-                        <img data-asset="@GameData.CrownIcon(p.Crown)" alt="@Localizer[GameData.CrownName(p.Crown)]" title="@Localizer[GameData.CrownName(p.Crown)]" class="size-5" />
+                        <img data-asset="@(Older ? GameData.EraCrownIcon(Session.Game, p.Crown) : GameData.CrownIcon(p.Crown))" data-asset-fallback="@GameData.CrownIcon(p.Crown)" alt="@Localizer[GameData.CrownName(p.Crown)]" title="@Localizer[GameData.CrownName(p.Crown)]" class="size-5" />
                         @if (GameData.RankIcon(p.Rank) is { } rank)
                         {
                             <img data-asset="@rank" alt="@string.Format(Localizer["Rank {0}"], p.Rank)" class="hidden h-5 w-auto sm:block" />
@@ -71,6 +71,8 @@
     [Parameter] public int Preview { get; set; } = 5;
 
     private bool open;
+    // An older game's session: its own difficulty and crown art, Nijiiro's where it has none.
+    private bool Older => Session.Game != EraPaths.Nijiiro;
     private int Bests => Session.Plays.Count(p => p.NewBest);
 
     private string Title => Session.Start.ToString(Session.Start.Year == DateTime.Today.Year ? "ddd d MMM" : "ddd d MMM yyyy");
