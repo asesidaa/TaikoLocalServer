@@ -126,11 +126,12 @@ export function mount(el) {
       asset(`${base}animation/don.glb`), asset(`${base}animation/facekeys.json`),
     ]);
     if (id !== seq) return;
-    if (urls.some(u => !u)) return setStatus(false, "missing-assets");
+    // An older game's puchi (urls[5]) is optional: Kimidori and Momoiro have none.
+    if (urls.some((u, i) => !u && !(era && i === 5))) return setStatus(false, "missing-assets");
     let loadedParts;
     try {
       const [body, head, cos, face, paint, acce, anim, faceKeys] = urls;
-      loadedParts = await Promise.all([gltf(body), gltf(head), gltf(cos), texture(face), texture(paint), era ? gltf(acce) : texture(acce), gltf(anim), json(faceKeys)]);
+      loadedParts = await Promise.all([gltf(body), gltf(head), gltf(cos), texture(face), texture(paint), era ? (acce ? gltf(acce) : null) : texture(acce), gltf(anim), json(faceKeys)]);
     } catch {
       if (id === seq) setStatus(false, "load-failed");
       return;
@@ -180,12 +181,24 @@ export function mount(el) {
   // An older game's don-chan: its own models, rig and clips (game_data/<game>/), scaled to Nijiiro's units, and its
   // puchi a model with its own "loop" clip.
   function buildEra({ kig, roots, faceTex, paintTex, acce, animLib, faceKeys, urls }) {
-    const puchiRoot = cloneSkinned(acce.scene);
+    const puchiRoot = acce ? cloneSkinned(acce.scene) : null;
+    // Every PS3 puchi card is 22.6 units square, centred at (−15, 14.25, 10). As Nijiiro's: sized and placed where its
+    // puchi is, turned to face the camera, and drawn over don-chan (dressEra).
+    let pivot = null;
+    if (puchiRoot) {
+      const k = 0.2 / ERA_SCALE / 22.6;
+      puchiRoot.scale.setScalar(k);
+      puchiRoot.position.set(15 * k, -14.25 * k, -10 * k);
+      pivot = new THREE.Group();
+      pivot.position.set(-0.135 / ERA_SCALE, PUCHI_Y / ERA_SCALE, 0.06 / ERA_SCALE);
+      pivot.rotation.y = CAM_YAW;
+      pivot.add(puchiRoot);
+    }
     const shown = kig ? [roots.cos] : [roots.body, roots.head];
     const group = new THREE.Group();
     group.scale.setScalar(ERA_SCALE);
-    group.add(...shown, puchiRoot);
-    const next = { era: true, kig, roots: { ...roots, puchi: puchiRoot }, shown, group, faceTex, paintTex, puchiLib: acce, animLib, faceKeys, urls,
+    group.add(...shown, ...(pivot ? [pivot] : []));
+    const next = { era: true, kig, roots: puchiRoot ? { ...roots, puchi: puchiRoot } : roots, shown, group, faceTex, paintTex, puchiLib: acce, animLib, faceKeys, urls: urls.filter(Boolean),
       mixers: [], actions: [], faceTextures: [] };
     dressEra(next);
     bind(next);
@@ -225,6 +238,10 @@ export function mount(el) {
           if (obj.material.map) obj.material.map.colorSpace = THREE.SRGBColorSpace;
         }
         if (src.userData?.outline && !obj.userData.donEraOutlined) eraOutline(obj);
+        if (root === m.roots.puchi) {
+          obj.material.depthTest = obj.material.depthWrite = false;
+          obj.renderOrder = 1000;
+        }
       }
     }
   }
@@ -232,14 +249,17 @@ export function mount(el) {
   // color_change: rgb = t.r·limb + t.g·(body − limb) + t.b·(face − limb), opaque (the RGB under alpha 0 counts), unlit.
   function eraColorChange(src, c) {
     const map = src.map;
-    if (map) map.colorSpace = THREE.NoColorSpace;   // a mask: its channels are weights, not colours
+    // A mask: its channels are weights, not colours (no sRGB decode). They're only a few texels wide, so each channel is
+    // snapped at half (step below): blended as they are, the barrel's edge becomes a band of mixed colour; read texel
+    // by texel, the face's circle turns into steps.
+    if (map) map.colorSpace = THREE.NoColorSpace;
     const mat = new THREE.MeshBasicMaterial({ map, side: src.side });
     const limb = new THREE.Color(c.rim), body = new THREE.Color(c.body), face = new THREE.Color(c.face);
     mat.onBeforeCompile = shader => {
       Object.assign(shader.uniforms, { eraLimb: { value: limb }, eraBody: { value: body }, eraFace: { value: face } });
       shader.fragmentShader = shader.fragmentShader
         .replace("#include <common>", "#include <common>\nuniform vec3 eraLimb;\nuniform vec3 eraBody;\nuniform vec3 eraFace;")
-        .replace("#include <map_fragment>", `vec4 eraMask = texture2D(map, vMapUv);
+        .replace("#include <map_fragment>", `vec4 eraMask = step(0.5, texture2D(map, vMapUv));
           diffuseColor = vec4(eraMask.r * eraLimb + eraMask.g * (eraBody - eraLimb) + eraMask.b * (eraFace - eraLimb), 1.0);`);
     };
     mat.customProgramCacheKey = () => "eraColorChange";
@@ -294,14 +314,16 @@ export function mount(el) {
     for (const mixer of m.mixers) mixer.stopAllAction();
     m.mixers = [];
     m.actions = [];
-    const data = m.faceKeys?.animations?.[state.anim];
+    // A clip the game doesn't have (older games lack don_wait_loop) plays the clear loop, with that clip's face keys.
+    const clip = THREE.AnimationClip.findByName(m.animLib.animations, state.anim)
+      || THREE.AnimationClip.findByName(m.animLib.animations, "don_result_clear_loop") || m.animLib.animations[0];
+    const data = m.faceKeys?.animations?.[clip?.name ?? state.anim];
     const keys = Array.isArray(data?.keys)
       ? data.keys.map(k => ({ time: Number(k?.time) || 0, faceIndex: Math.max(0, Math.floor(Number(k?.faceIndex) || 0)) }))
         .sort((a, b) => a.time - b.time)
       : [];
     m.keys = keys.length ? keys : [{ time: 0, faceIndex: 0 }];
     m.frameCount = Math.max(1, Math.floor(Number(data?.frameCount) || 12));
-    const clip = THREE.AnimationClip.findByName(m.animLib.animations, state.anim) || m.animLib.animations[0];
     if (!clip) return;
     for (const root of m.shown) {
       const mixer = new THREE.AnimationMixer(root), action = mixer.clipAction(clip);
@@ -312,7 +334,7 @@ export function mount(el) {
     }
     // An older game's puchi plays its own loop (after the main actions, which the face keys follow).
     const loop = m.puchiLib?.animations.find(a => a.name === "loop") ?? m.puchiLib?.animations[0];
-    if (loop) {
+    if (loop && m.roots.puchi) {
       const mixer = new THREE.AnimationMixer(m.roots.puchi), action = mixer.clipAction(loop);
       action.setLoop(THREE.LoopRepeat, Infinity);
       action.play();
