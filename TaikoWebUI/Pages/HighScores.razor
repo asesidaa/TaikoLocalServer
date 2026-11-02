@@ -60,17 +60,19 @@
                 <option value="date">@Localizer["Recently set"]</option>
                 <option value="title">@Localizer["Song title"]</option>
             </select>
-            @if (others.Count > 0)
+            @if (CanCompare)
             {
                 <span class="flex items-center gap-2 sm:ml-auto">
-                    <select aria-label="@Localizer["Compare with…"]" class="@Css.Input !w-auto !py-2 @(vs != 0 ? "!border-primary-500 ring-1 ring-primary-500" : "")" value="@vs"
-                            @onchange='e => Compare(uint.Parse(e.Value?.ToString() ?? "0"))'>
-                        <option value="0">@Localizer["Compare with…"]</option>
-                        @foreach (var o in others)
+                    @* A search, not a list of everyone: a server can have thousands of players. Suggestions end in "#id". *@
+                    <input type="search" list="vs-players" aria-label="@Localizer["Compare with…"]" placeholder="@Localizer["Compare with…"]"
+                           class="@Css.Input !w-48 !py-2 @(vs != 0 ? "!border-primary-500 ring-1 ring-primary-500" : "")" value="@vsText"
+                           @oninput="SearchVs" @onchange="PickVs" />
+                    <datalist id="vs-players">
+                        @foreach (var o in vsMatches)
                         {
-                            <option value="@o.Baid">@(string.IsNullOrEmpty(o.UserSetting.MyDonName) ? $"#{o.Baid}" : o.UserSetting.MyDonName)</option>
+                            <option value="@VsLabel(o)"></option>
                         }
-                    </select>
+                    </datalist>
                     @if (vs != 0)
                     {
                         <label class="flex cursor-pointer items-center gap-1.5 whitespace-nowrap text-sm">
@@ -231,7 +233,12 @@
     private string query = "", sort = "stars";
     private bool behind;
     private uint vs;
-    private List<User> others = [];
+    private List<User> vsMatches = [];
+    private string vsText = "";
+    private CancellationTokenSource? vsTyping;
+
+    // Comparing needs access to the other player's scores: admins, or anyone in Local mode (friends later).
+    private bool CanCompare => !AuthService.LoginRequired || AuthService.IsAdmin;
     private CancellationTokenSource? typing;
 
     private string VsName => string.IsNullOrEmpty(data?.VsName) ? $"#{vs}" : data!.VsName!;
@@ -240,10 +247,8 @@
     {
         Page.Set(Localizer["Play Data"], Localizer["High Scores"]);
         if (VsQuery is > 0) { vs = (uint)VsQuery; crown = -1; query = ""; }
-        // Comparing needs access to the other player's scores: admins, or anyone in Local mode (friends later).
-        if (!AuthService.LoginRequired || AuthService.IsAdmin)
-            others = (await PlayerSelection.GetAllUsersAsync(Client)).Where(u => u.Baid != (uint)Baid).ToList();
         await Load();
+        if (vs != 0 && vsText.Length == 0) vsText = VsName;
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
@@ -269,7 +274,32 @@
     {
         vs = baid;
         behind = false;
+        if (baid == 0) vsText = "";
     });
+
+    private static string VsLabel(User u) => $"{(string.IsNullOrEmpty(u.UserSetting.MyDonName) ? "" : u.UserSetting.MyDonName + " ")}#{u.Baid}";
+
+    // The first 20 players matching the name or ID, searched on the server as you type.
+    private async Task SearchVs(ChangeEventArgs e)
+    {
+        vsText = e.Value?.ToString() ?? "";
+        vsTyping?.Cancel();
+        vsTyping = new CancellationTokenSource();
+        try { await Task.Delay(200, vsTyping.Token); } catch (TaskCanceledException) { return; }
+        var term = vsText.Trim().TrimStart('#');
+        var result = term.Length == 0 ? null
+            : await Client.GetFromJsonAsync<UsersResponse>($"api/Users?limit=21&searchTerm={Uri.EscapeDataString(term)}");
+        vsMatches = result?.Users.Where(u => u.Baid != (uint)Baid).Take(20).ToList() ?? [];
+    }
+
+    // A picked suggestion ("name #id") compares with that player; clearing the box stops comparing.
+    private Task PickVs(ChangeEventArgs e)
+    {
+        vsText = e.Value?.ToString() ?? "";
+        var hash = vsText.LastIndexOf('#');
+        if (vsText.Trim().Length == 0) return vs == 0 ? Task.CompletedTask : Compare(0);
+        return hash >= 0 && uint.TryParse(vsText[(hash + 1)..], out var baid) && baid != (uint)Baid && baid != vs ? Compare(baid) : Task.CompletedTask;
+    }
 
     private async Task OnSearch(ChangeEventArgs e)
     {
