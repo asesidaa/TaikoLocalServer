@@ -1,7 +1,5 @@
 @* Pick one item by name or ID (costumes, titles, plates). Like the song picker: search-first, 100 rows at a time,
-   items already in the list disabled. With Image (an older game's name as the game draws it), 40 rows: each is an
-   asset request, and api/Assets allows 300 a minute. *@
-@inject IJSRuntime Js
+   items already in the list disabled. *@
 <div class="fade fixed inset-0 z-[60] grid place-items-center bg-black/50 p-4" @onclick="Close" @onkeydown="OnKey">
     <div role="dialog" aria-modal="true" aria-labelledby="ip-h" @onclick:stopPropagation style="--origin:center"
          class="pop flex max-h-[min(680px,calc(100dvh-2rem))] w-full max-w-md flex-col rounded-2xl bg-white shadow-2xl dark:bg-zinc-900">
@@ -33,17 +31,7 @@
                 <li>
                     <button disabled="@taken" @onclick="() => OnPick.InvokeAsync(id)"
                             class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm hover:bg-zinc-100 disabled:opacity-45 disabled:hover:bg-transparent dark:hover:bg-zinc-800">
-                        @if (Image?.Invoke(id) is { } image)
-                        {
-                            <span class="flex min-w-0 flex-1 flex-col items-start gap-0.5">
-                                <img data-asset="@image" alt="" hidden class="@($"h-6 max-w-full object-contain {ImageClass}")" />
-                                <span class="truncate text-xs @Css.Muted">@(name.Length > 0 ? name : Localizer["(no name)"])</span>
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="min-w-0 flex-1 truncate">@(name.Length > 0 ? name : Localizer["(no name)"])</span>
-                        }
+                        <span class="min-w-0 flex-1 truncate">@(name.Length > 0 ? name : Localizer["(no name)"])</span>
                         @if (taken)
                         {
                             <span class="text-xs @Css.Muted">@TakenLabel</span>
@@ -61,7 +49,7 @@
 </div>
 
 @code {
-    private int Shown => Image is null ? 100 : 40;
+    private const int Shown = 100;
 
     [Parameter, EditorRequired] public string Title { get; set; } = "";
     [Parameter, EditorRequired] public IReadOnlyList<(uint Id, string Name)> Items { get; set; } = [];
@@ -69,16 +57,9 @@
     [Parameter] public string TakenLabel { get; set; } = "";
     [Parameter] public EventCallback<uint> OnPick { get; set; }
     [Parameter] public EventCallback OnClose { get; set; }
-    /// <summary>An asset to show for each item (its name as the game draws it), above its name; null for none.</summary>
-    [Parameter] public Func<uint, string?>? Image { get; set; }
-    /// <summary>Classes for the image, e.g. a white chip behind black lettering so it shows in dark mode.</summary>
-    [Parameter] public string ImageClass { get; set; } = "";
 
     private string query = "";
 
     private Task Close() => OnClose.InvokeAsync();
     private Task OnKey(KeyboardEventArgs e) => e.Key == "Escape" ? Close() : Task.CompletedTask;
-
-    // The rows change as you type: load the new ones' images.
-    protected override Task OnAfterRenderAsync(bool firstRender) => Image is null ? Task.CompletedTask : Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
 }
