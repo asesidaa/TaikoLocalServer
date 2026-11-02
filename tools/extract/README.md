@@ -59,7 +59,9 @@ That's 1.6 MB (Momoiro) to 8.3 MB (Green). When the game has only another varian
 | `{cos_icon,tone_icon}/`, `pack/<…>/<nn>/tone_icon/`, `<id>/appendable/<nn>/tone_icon/` | `cos_icon/cos_icon_NNN.png`, `tone_icon/icon_neiro_NNN.png` | Costume and drum-sound icons. `cos_icon` exists only in Green (91); every game has its tone icons |
 | the same folders for `cos_name`, `title_name`, `tone_name` | `cos_name/`, `title_name/shougou_NNN.png`, `tone_name/` | The names, as the game draws them (text rendered to images). These are the only title names Momoiro has (284 images) |
 
-Packs are merged by file name. A game's own `nutdata/<id>/appendable` packs are applied last, so they win over the packs it inherited. Green: 91 costume icons, 7 tone icons, 418 titles; Momoiro: 5 tone icons, 284 titles; Blue: 7 and 364; Red 10.01: 1 and 11.
+Every image is named `<prefix>_NNN.png` (`cos_icon_`, `cos_name_`, `shougou_`, `tone_name_`, `icon_neiro_`), and NNN is the number the game files give the item: what the server reads as the title and drum-sound id (`NdpReader`, last number in the name). Items come three ways: one-texture pack entries named that way (`shougou_012.nut`); loose `title_name_<A>_<B>.nut` files and `nutdatapack_<A>_<B>.ndp` packs holding one `image.nut`, whose texture k is item A + k; and `tone_name.nut` / `tone_icon.nut` (one texture per item, from 0, and from 001 for tone icons: checked pixel for pixel against the packs). A game's own folders (`nutdata/<id>/appendable`, `nutdata/pack/<id>`) are applied last, over the packs it inherited from older games, and other games' `appendable` folders are skipped: title numbers change between games (Green's title 100 isn't Momoiro's). Titles: Green 761 (000–760), Blue 566, Yellow 521, Red 476, White 421, Murasaki 374, Kimidori 321, Momoiro 284; tone names 16–17 and tone icons 5 in each. Green also has 91 costume icons and names.
+
+The numbers aren't costume ids: `cos_name_005`, `_020`, `_036` and `_040` are the kigurumi 4, 15, 26 and 30 of `shared/costume_name_data.json` (by name), with no fixed offset; the table between them isn't in the files decoded here. The 5 tone icons are categories (祭, a paw, a tomoe drum, a drum, a tambourine), not one per drum sound, and which drum sound shows which icon isn't in the data files either.
 
 ### NTP3 textures (`.nut`, `src/nut.rs`)
 
@@ -80,7 +82,7 @@ Version `0x0100` lays them out header, data, header, data (data right after its 
 
 ### NUT packs (`.ndp`)
 
-`NUT_PACK_TYPE1` is a boost `binary_oarchive` (big-endian, 32-bit PS3 sizes): the magic padded to 16 bytes, u32 22 + `serialization::archive`, the archive's header and class info, then at 0x3E the u32 entry count. From 0x4B each entry is a u32 name length, the name (`cos_icon_000.nut`), a u32 offset and a u32 size. The first entry has a 5-byte class header between its name and offset. The data starts 4 bytes after the last entry (a u32 blob size), and offsets count from there. Every entry is a whole NTP3. All 347 packs in Green and all 13 in Momoiro parse this way.
+`NUT_PACK_TYPE1` is a boost `binary_oarchive` (big-endian, 32-bit PS3 sizes): the magic padded to 16 bytes, u32 22 + `serialization::archive`, the archive's header and class info, then at 0x3E the u32 entry count. From 0x4B each entry is a u32 name length, the name (`cos_icon_000.nut`), a u32 offset and a u32 size. The first entry has a 5-byte class header between its name and offset. The data starts 4 bytes after the last entry (a u32 blob size), and offsets count from there. Every entry is a whole NTP3, usually of one texture; a range pack (`nutdatapack_<A>_<B>.ndp`) holds one `image.nut` with a texture per item. All 347 packs in Green and all 13 in Momoiro parse this way.
 
 | From `USRDIR/data/lumendata/packed/` | To `<out>/game_data/<era>/ui/` | |
 | --- | --- | --- |
