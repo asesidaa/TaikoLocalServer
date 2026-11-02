@@ -33,7 +33,7 @@ public partial class Stats
 
     protected override async Task OnInitializedAsync()
     {
-        Page.Set(Localizer["Play Data"], Localizer["Stats"]);
+        Page.SetPlayData(Localizer["Play Data"], Baid, Localizer["Stats"]);
         var settingTask = Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
         var dansTask = Client.GetFromJsonAsync<DanBestDataResponse>($"api/DanBestData/{Baid}");
         var ownTask = Client.GetFromJsonAsync<PlayerStatsSummary>($"api/Stats/{Baid}");

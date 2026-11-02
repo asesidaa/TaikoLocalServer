@@ -1,4 +1,4 @@
-@page "/Users/{baid:int}/HighScores"
+@page "/Users/{baid:int}/PlayData/HighScores"
 @attribute [Authorize]
 @implements IDisposable
 @inject PageState Page
@@ -245,7 +245,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        Page.Set(Localizer["Play Data"], Localizer["High Scores"]);
+        Page.SetPlayData(Localizer["Play Data"], Baid, Localizer["High Scores"]);
         if (VsQuery is > 0) { vs = (uint)VsQuery; crown = -1; query = ""; }
         await Load();
         if (vs != 0 && vsText.Length == 0) vsText = VsName;
@@ -318,7 +318,7 @@
         await Js.InvokeVoidAsync("scrollTo", new { top = 0, behavior = "instant" });
     }
 
-    private void Open(HighScoreRow r) => Nav.NavigateTo($"/Users/{Baid}/Songs/{r.SongId}?diff={diff}");
+    private void Open(HighScoreRow r) => Nav.NavigateTo(PlayDataPaths.Song(Baid, r.SongId, diff));
 
     private static RenderFragment Accuracy(HighScoreRow r) => __builder =>
     {

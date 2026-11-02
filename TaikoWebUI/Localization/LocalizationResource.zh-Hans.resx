@@ -3675,4 +3675,55 @@
   <data name="Removed an access code" xml:space="preserve">
     <value>移除了访问码</value>
   </data>
+  <data name="Your totals, how you compare with the server, and a year of activity." xml:space="preserve">
+    <value>你的总计、在服务器中的位置以及一年的活动。</value>
+  </data>
+  <data name="Every song with your best crown, score rank and play count." xml:space="preserve">
+    <value>每首歌的最佳王冠、分数等级和游玩次数。</value>
+  </data>
+  <data name="The songs in your in-game Favourites folder, in your order." xml:space="preserve">
+    <value>游戏内收藏夹中的歌曲,按你的顺序。</value>
+  </data>
+  <data name="Your best score on each chart, by difficulty." xml:space="preserve">
+    <value>每个谱面的最佳分数,按难度。</value>
+  </data>
+  <data name="A calendar of your sessions and every song you played." xml:space="preserve">
+    <value>你的游玩日历和每首玩过的歌。</value>
+  </data>
+  <data name="Your best run in each dan, with every exam's result." xml:space="preserve">
+    <value>每个段位的最佳挑战及每项课题的结果。</value>
+  </data>
+  <data name="clears" xml:space="preserve">
+    <value>通关</value>
+  </data>
+  <data name="Top {0}%" xml:space="preserve">
+    <value>前 {0}%</value>
+  </data>
+  <data name="on this server" xml:space="preserve">
+    <value>在本服务器</value>
+  </data>
+  <data name="songs" xml:space="preserve">
+    <value>首歌</value>
+  </data>
+  <data name="played" xml:space="preserve">
+    <value>已玩</value>
+  </data>
+  <data name="full combos" xml:space="preserve">
+    <value>全连</value>
+  </data>
+  <data name="last played" xml:space="preserve">
+    <value>最后游玩</value>
+  </data>
+  <data name="days played this year" xml:space="preserve">
+    <value>今年游玩天数</value>
+  </data>
+  <data name="top dan" xml:space="preserve">
+    <value>最高段位</value>
+  </data>
+  <data name="top dan, gold pass" xml:space="preserve">
+    <value>最高段位,金合格</value>
+  </data>
+  <data name="Back to {0}" xml:space="preserve">
+    <value>返回{0}</value>
+  </data>
 </root>

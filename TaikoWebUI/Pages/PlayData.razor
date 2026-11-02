@@ -1,0 +1,89 @@
+@page "/Users/{baid:int}/PlayData"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject PageState Page
+
+<PageTitle>@Localizer["Play Data"]</PageTitle>
+
+@* The Play Data index: a card per page, in the sidebar's order, each with a line on what's there and its headline
+   numbers (from the endpoints those pages use; each fills in when its own request returns). *@
+<div class="mx-auto max-w-6xl">
+    <h1 class="mb-5 text-2xl font-semibold tracking-tight">@Localizer["Play Data"]</h1>
+    <div class="grid grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        @Card(PlayDataPaths.Stats, "chart", Localizer["Stats"], Localizer["Your totals, how you compare with the server, and a year of activity."],
+            (summary is null ? Dash : Clears.ToString("N0"), Localizer["clears"]),
+            (server is null ? Dash : server.Rank == 0 ? Dash : string.Format(Localizer["Top {0}%"], Math.Max(1, (int)Math.Round(server.Rank * 100.0 / server.Players))), Localizer["on this server"]))
+        @Card(PlayDataPaths.Songs, "music", Localizer["Song List"], Localizer["Every song with your best crown, score rank and play count."],
+            (allSongs is null ? Dash : allSongs.Value.ToString("N0"), Localizer["songs"]),
+            (summary is null ? Dash : summary.Songs.Count.ToString("N0"), Localizer["played"]))
+        @Card(PlayDataPaths.Favourites, "heart", Localizer["Favourites"], Localizer["The songs in your in-game Favourites folder, in your order."],
+            (favourites is null ? Dash : favourites.Value.ToString("N0"), Localizer["songs"]))
+        @Card(PlayDataPaths.HighScores, "highScores", Localizer["High Scores"], Localizer["Your best score on each chart, by difficulty."],
+            (summary is null ? Dash : summary.Bests.Count(b => b.BestCrown >= CrownType.Gold).ToString("N0"), Localizer["full combos"]),
+            (summary is null ? Dash : summary.Bests.Count(b => b.BestCrown == CrownType.Dondaful).ToString("N0"), Localizer["Donderful"]))
+        @Card(PlayDataPaths.PlayHistory, "playHistory", Localizer["Play History"], Localizer["A calendar of your sessions and every song you played."],
+            (summary is null ? Dash : summary.Days.Count == 0 ? Dash : Ago(summary.Days.Max(d => d.Day)), Localizer["last played"]),
+            (summary is null ? Dash : summary.Days.Count(d => d.Plays > 0).ToString("N0"), Localizer["days played this year"]))
+        @Card(PlayDataPaths.DaniDojo, "dani", Localizer["Dani Dojo"], Localizer["Your best run in each dan, with every exam's result."],
+            (dans is null ? Dash : TopDan is { } top ? Localizer[GameData.Dans[top.DanId - 1].Key] : Dash,
+             TopDan is { } t && GameData.IsGold(t.ClearState) ? Localizer["top dan, gold pass"] : Localizer["top dan"]))
+    </div>
+</div>
+
+@code {
+    [Parameter] public int Baid { get; set; }
+
+    private const string Dash = "–";
+    private PlayerStatsSummary? summary;
+    private PlayerServerStats? server;
+    private int? allSongs, favourites;
+    private List<DanBestData>? dans;
+
+    private int Clears => summary?.Bests.Count(b => b.BestCrown >= CrownType.Clear) ?? 0;
+
+    private DanBestData? TopDan => dans?.Where(d => d.ClearState != DanClearState.NotClear && d.DanId is >= 1 and <= 19).MaxBy(d => d.DanId);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.SetPlayData(Localizer["Play Data"], Baid);
+        (summary, server, allSongs, favourites, dans) = (null, null, null, null, null);
+        await Task.WhenAll(
+            Fill(async () => summary = await Client.GetFromJsonAsync<PlayerStatsSummary>($"api/Stats/{Baid}")),
+            Fill(async () => server = await Client.GetFromJsonAsync<PlayerServerStats>($"api/Stats/{Baid}/Server")),
+            Fill(async () => allSongs = (await Client.GetFromJsonAsync<SongListPage>($"api/Songs/{Baid}?limit=1"))?.AllSongs),
+            Fill(async () => favourites = (await Client.GetFromJsonAsync<List<uint>>($"api/FavoriteSongs/{Baid}"))?.Count),
+            Fill(async () => dans = (await Client.GetFromJsonAsync<DanBestDataResponse>($"api/DanBestData/{Baid}"))?.DanBestDataList ?? []));
+    }
+
+    // One number's request: shown as soon as it's back; a failure leaves its dash (the card still links).
+    private async Task Fill(Func<Task> load)
+    {
+        try { await load(); }
+        catch (HttpRequestException) { }
+        StateHasChanged();
+    }
+
+    private string Ago(DateTime t)
+    {
+        var days = (DateTime.Now.Date - t.Date).Days;
+        return days <= 0 ? Localizer["Today"] : days == 1 ? Localizer["Yesterday"] : days < 30 ? string.Format(Localizer["{0} days ago"], days) : t.ToString("d MMM yyyy");
+    }
+
+    private RenderFragment Card(string page, string icon, string title, string text, params (string Value, string Label)[] facts) => __builder =>
+    {
+        <a href="@PlayDataPaths.Of(Baid, page)" class="@Css.Card group flex min-w-0 flex-col p-5 transition-colors hover:border-primary-500/40 hover:bg-primary-500/[.03] focus-visible:outline-2 focus-visible:outline-primary-500">
+            <span class="flex items-center gap-3">
+                <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-primary-500/10 text-primary-600 dark:text-primary-400"><Icon Name="@icon" Class="size-5" /></span>
+                <span class="min-w-0 flex-1 truncate font-semibold">@title</span>
+                <Icon Name="chevRight" Class="size-4 text-zinc-400 transition-transform group-hover:translate-x-0.5" />
+            </span>
+            <span class="mt-3 block text-sm @Css.Muted">@text</span>
+            <span class="mt-auto flex flex-wrap gap-x-5 gap-y-1 pt-4">
+                @foreach (var (value, label) in facts)
+                {
+                    <span><span class="block text-lg font-semibold tabular-nums">@value</span><span class="block text-xs @Css.Muted">@label</span></span>
+                }
+            </span>
+        </a>
+    };
+}

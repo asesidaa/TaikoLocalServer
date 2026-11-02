@@ -93,7 +93,7 @@
     @if (recent is not null)
     {
         <p class="pt-2 text-center text-sm">
-            <a href="/Users/@Baid/PlayHistory" class="@Css.Link">@Localizer["Older plays are in Play History"]</a>
+            <a href="@PlayDataPaths.Of(Baid, PlayDataPaths.PlayHistory)" class="@Css.Link">@Localizer["Older plays are in Play History"]</a>
         </p>
     }
 </div>

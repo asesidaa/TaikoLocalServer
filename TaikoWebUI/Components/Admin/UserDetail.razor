@@ -27,7 +27,7 @@
 </div>
 <div class="flex flex-wrap gap-2 px-5 py-4">
     <a href="@($"/Users/{User.Baid}/Profile")" class="@Outline"><Icon Name="profile" />@Localizer["Profile"]</a>
-    <a href="@($"/Users/{User.Baid}/Stats")" class="@Outline"><Icon Name="chart" />@Localizer["Play Data"]</a>
+    <a href="@PlayDataPaths.Of(User.Baid, PlayDataPaths.Stats)" class="@Outline"><Icon Name="chart" />@Localizer["Play Data"]</a>
     <a href="@($"/Users/{User.Baid}/QrCode")" class="@Outline"><Icon Name="qr" />@Localizer["QR code"]</a>
 </div>
 

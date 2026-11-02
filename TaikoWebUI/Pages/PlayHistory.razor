@@ -1,4 +1,4 @@
-@page "/Users/{baid:int}/PlayHistory"
+@page "/Users/{baid:int}/PlayData/PlayHistory"
 @attribute [Authorize]
 @inject PageState Page
 @inject HttpClient Client
@@ -125,7 +125,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        Page.Set(Localizer["Play Data"], Localizer["Play History"]);
+        Page.SetPlayData(Localizer["Play Data"], Baid, Localizer["Play History"]);
         await LoadMonth();
     }
 

@@ -1,4 +1,4 @@
-@page "/Users/{baid:int}/Songs"
+@page "/Users/{baid:int}/PlayData/Songs"
 @attribute [Authorize]
 @implements IDisposable
 @inject PageState Page
@@ -230,7 +230,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        Page.Set(Localizer["Song List"]);
+        Page.SetPlayData(Localizer["Play Data"], Baid, Localizer["Song List"]);
         await Load();
     }
 
@@ -280,7 +280,7 @@
         await Js.InvokeVoidAsync("scrollTo", new { top = 0, behavior = "instant" });
     }
 
-    private void Open(uint songId) => Nav.NavigateTo($"/Users/{Baid}/Songs/{songId}?diff={F.Difficulty}");
+    private void Open(uint songId) => Nav.NavigateTo(PlayDataPaths.Song(Baid, songId, F.Difficulty));
 
     private async Task ToggleFavorite(SongListItem s)
     {
@@ -410,7 +410,7 @@
     };
 
     // The Favourites page sets the order the cabinet's Favourites folder shows them in.
-    private RenderFragment ReorderLink => @<a href="/Users/@Baid/Favourites" class="self-center px-1 text-xs font-medium text-primary-600 hover:underline dark:text-primary-400">@Localizer["Reorder"]</a>;
+    private RenderFragment ReorderLink => @<a href="@PlayDataPaths.Of(Baid, PlayDataPaths.Favourites)" class="self-center px-1 text-xs font-medium text-primary-600 hover:underline dark:text-primary-400">@Localizer["Reorder"]</a>;
 
     private RenderFragment Chip(bool on, string label, string? color, Action pick, bool heart = false) => __builder =>
     {

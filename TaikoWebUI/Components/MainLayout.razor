@@ -41,15 +41,27 @@ else
         <header class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-zinc-200/80 bg-zinc-50/80 px-4 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/80 sm:px-6">
             <button class="@Css.IconButton lg:hidden" aria-label="@Localizer["Open navigation"]" aria-expanded="@Css.Aria(drawerOpen)" aria-controls="app-nav" @onclick="() => drawerOpen = !drawerOpen"><Icon Name="menu" /></button>
             <nav aria-label="Breadcrumb" class="flex min-w-0 items-center gap-1.5 text-sm">
+                @* Phones show only the page itself, with a back button when its parent is a page (Play Data, Song List); the trail from sm. *@
+                @if (Page.Crumbs.Count > 1 && Page.Crumbs[^2] is { Href: { } parent } up)
+                {
+                    <a href="@parent" aria-label="@string.Format(Localizer["Back to {0}"], up.Text)" class="-ml-1 grid size-8 shrink-0 place-items-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 sm:hidden"><Icon Name="chevLeft" Class="size-4" /></a>
+                }
                 @for (var i = 0; i < Page.Crumbs.Count; i++)
                 {
                     var last = i == Page.Crumbs.Count - 1;
-                    @* Phones show only the page itself; the trail from sm. *@
+                    var crumb = Page.Crumbs[i];
                     if (i > 0)
                     {
                         <Icon Name="chevRight" Class="size-4 shrink-0 text-zinc-400 max-sm:hidden" />
                     }
-                    <span class="truncate @(last ? "font-medium" : Css.Muted + " max-sm:hidden")" aria-current="@(last ? "page" : null)">@Page.Crumbs[i]</span>
+                    if (!last && crumb.Href is { } href)
+                    {
+                        <a href="@href" class="truncate @Css.Muted hover:text-zinc-900 hover:underline dark:hover:text-zinc-100 max-sm:hidden">@crumb.Text</a>
+                    }
+                    else
+                    {
+                        <span class="truncate @(last ? "font-medium" : Css.Muted + " max-sm:hidden")" aria-current="@(last ? "page" : null)">@crumb.Text</span>
+                    }
                 }
             </nav>
             <div class="ml-auto flex items-center gap-1">

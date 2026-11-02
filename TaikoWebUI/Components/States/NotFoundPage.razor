@@ -12,7 +12,7 @@
         <a href="/" class="@Css.PrimaryButton">@Localizer["Go to the Dashboard"]</a>
         @if (Baid > 0)
         {
-            <a href="/Users/@Baid/Songs" class="@Css.GhostButton">@Localizer["Song List"]</a>
+            <a href="@PlayDataPaths.Of(Baid, PlayDataPaths.Songs)" class="@Css.GhostButton">@Localizer["Song List"]</a>
         }
     </div>
 </div>

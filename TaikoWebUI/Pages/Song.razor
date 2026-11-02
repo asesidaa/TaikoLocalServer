@@ -1,4 +1,4 @@
-@page "/Users/{baid:int}/Songs/{songId:int}"
+@page "/Users/{baid:int}/PlayData/Songs/{songId:int}"
 @attribute [Authorize]
 @inject PageState Page
 @inject HttpClient Client
@@ -19,7 +19,7 @@ else
     var best = chart?.Best;
     var genre = GameData.Genre(song.Genre);
     <div class="mx-auto max-w-5xl space-y-4">
-        <a href="/Users/@Baid/Songs" class="inline-flex items-center gap-1 text-sm font-medium @Css.Muted hover:text-zinc-900 dark:hover:text-zinc-100">
+        <a href="@PlayDataPaths.Of(Baid, PlayDataPaths.Songs)" class="inline-flex items-center gap-1 text-sm font-medium @Css.Muted hover:text-zinc-900 dark:hover:text-zinc-100">
             <Icon Name="chevLeft" Class="size-4" />@Localizer["Song List"]
         </a>
         <section class="@Css.Card flex items-start gap-4 p-5">
@@ -200,12 +200,13 @@ else
         {
             song = null;
             missing = true;
-            Page.Set(Localizer["Song List"]);
+            Page.SetPlayData(Localizer["Play Data"], Baid, Localizer["Song List"]);
             return;
         }
         song = await res.Content.ReadFromJsonAsync<SongDetail>();
         if (song is null) return;
-        Page.Set(Localizer["Song List"], song.Name);
+        Page.Set(new PageState.Crumb(Localizer["Play Data"], PlayDataPaths.Index(Baid)),
+            new PageState.Crumb(Localizer["Song List"], PlayDataPaths.Of(Baid, PlayDataPaths.Songs)), new PageState.Crumb(song.Name));
         // The difficulty picked on the Song List, or Oni (or the hardest chart there is).
         var wanted = (Difficulty)(Diff ?? 4);
         difficulty = song.Charts.Any(c => c.Difficulty == wanted) ? wanted

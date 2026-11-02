@@ -3675,4 +3675,55 @@
   <data name="Removed an access code" xml:space="preserve">
     <value>アクセスコードを削除しました</value>
   </data>
+  <data name="Your totals, how you compare with the server, and a year of activity." xml:space="preserve">
+    <value>合計、サーバー内での順位、1年間のアクティビティ。</value>
+  </data>
+  <data name="Every song with your best crown, score rank and play count." xml:space="preserve">
+    <value>全曲のベスト王冠、スコアランク、プレイ回数。</value>
+  </data>
+  <data name="The songs in your in-game Favourites folder, in your order." xml:space="preserve">
+    <value>ゲーム内のお気に入りフォルダの曲(並び順どおり)。</value>
+  </data>
+  <data name="Your best score on each chart, by difficulty." xml:space="preserve">
+    <value>各譜面のベストスコア(難易度別)。</value>
+  </data>
+  <data name="A calendar of your sessions and every song you played." xml:space="preserve">
+    <value>セッションのカレンダーとプレイした全曲。</value>
+  </data>
+  <data name="Your best run in each dan, with every exam's result." xml:space="preserve">
+    <value>各段位のベスト記録と各課題の結果。</value>
+  </data>
+  <data name="clears" xml:space="preserve">
+    <value>クリア</value>
+  </data>
+  <data name="Top {0}%" xml:space="preserve">
+    <value>上位{0}%</value>
+  </data>
+  <data name="on this server" xml:space="preserve">
+    <value>このサーバー内</value>
+  </data>
+  <data name="songs" xml:space="preserve">
+    <value>曲</value>
+  </data>
+  <data name="played" xml:space="preserve">
+    <value>プレイ済み</value>
+  </data>
+  <data name="full combos" xml:space="preserve">
+    <value>フルコンボ</value>
+  </data>
+  <data name="last played" xml:space="preserve">
+    <value>最終プレイ</value>
+  </data>
+  <data name="days played this year" xml:space="preserve">
+    <value>今年のプレイ日数</value>
+  </data>
+  <data name="top dan" xml:space="preserve">
+    <value>最高段位</value>
+  </data>
+  <data name="top dan, gold pass" xml:space="preserve">
+    <value>最高段位・金合格</value>
+  </data>
+  <data name="Back to {0}" xml:space="preserve">
+    <value>{0}に戻る</value>
+  </data>
 </root>

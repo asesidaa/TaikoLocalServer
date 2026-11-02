@@ -16,11 +16,26 @@
     @if (Baid > 0)
     {
         @Link($"/Users/{Baid}/Profile", "profile", Localizer["Profile"])
-        @Link($"/Users/{Baid}/Songs", "music", Localizer["Song List"], prefix: true)
-        @Group("playData", Localizer["Play Data"], playDataOpen, () => playDataOpen = !playDataOpen,
-            [($"/Users/{Baid}/Stats", Localizer["Stats"]), ($"/Users/{Baid}/Favourites", Localizer["Favourites"]),
-             ($"/Users/{Baid}/HighScores", Localizer["High Scores"]), ($"/Users/{Baid}/PlayHistory", Localizer["Play History"]),
-             ($"/Users/{Baid}/DaniDojo", Localizer["Dani Dojo"])])
+        @* Play Data: the label opens its index, the chevron folds its pages away (they stay shown while one is open). *@
+        var playDataShown = playDataOpen || OnPlayDataPage;
+        <div class="flex items-center gap-0.5">
+            <div class="min-w-0 flex-1">@Link(PlayDataPaths.Index(Baid), "playData", Localizer["Play Data"])</div>
+            <button class="@Css.IconButton" aria-expanded="@Css.Aria(playDataShown)" aria-controls="nav-play-data"
+                    aria-label="@Localizer["Play Data"]" @onclick="() => playDataOpen = !playDataShown">
+                <span class="chev @(playDataShown ? "rotate-180" : "")"><Icon Name="chevDown" /></span>
+            </button>
+        </div>
+        @if (playDataShown)
+        {
+            <div id="nav-play-data" class="fade space-y-0.5">
+                @Sub(PlayDataPaths.Stats, Localizer["Stats"])
+                @Sub(PlayDataPaths.Songs, Localizer["Song List"], prefix: true)
+                @Sub(PlayDataPaths.Favourites, Localizer["Favourites"])
+                @Sub(PlayDataPaths.HighScores, Localizer["High Scores"])
+                @Sub(PlayDataPaths.PlayHistory, Localizer["Play History"])
+                @Sub(PlayDataPaths.DaniDojo, Localizer["Dani Dojo"])
+            </div>
+        }
         @Link(View.Baid > 0 ? $"/Users/{Baid}/Settings" : "/Settings", "settings", Localizer["Settings"], prefix: true)
     }
     @* Local mode has no accounts: the admin pages are open to everyone, and Access (sign-in rules) doesn't apply. *@
@@ -61,7 +76,6 @@ else if (!AuthService.LoginRequired)
 }
 
 @code {
-    private bool playDataOpen = true;
     private User? me;
 
     // Whose pages the player links open: the player in the admin view, else the signed-in user, or (Local mode) the
@@ -86,34 +100,22 @@ else if (!AuthService.LoginRequired)
         </a>
     };
 
-    private RenderFragment Group(string icon, string label, bool open, Action toggle, IEnumerable<(string Href, string Label)> kids) => __builder =>
+    private bool playDataOpen = true;
+    private bool OnPlayDataPage => ("/" + Nav.ToBaseRelativePath(Nav.Uri)).StartsWith(PlayDataPaths.Index(Baid) + "/", StringComparison.OrdinalIgnoreCase);
+
+    // A Play Data page, indented under it.
+    private RenderFragment Sub(string page, string label, bool prefix = false) => __builder =>
     {
-        var list = kids.ToList();
-        var expanded = open || list.Any(k => IsActive(k.Href));
-        <div>
-            <button aria-expanded="@Css.Aria(expanded)" @onclick="toggle"
-                    class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/70 dark:hover:text-zinc-100">
-                <Icon Name="@icon" /><span class="flex-1 text-left">@label</span>
-                <span class="chev @(expanded ? "rotate-180" : "")"><Icon Name="chevDown" /></span>
-            </button>
-            @if (expanded)
+        var href = PlayDataPaths.Of(Baid, page);
+        var active = IsActive(href, prefix);
+        <a href="@href" aria-current="@(active ? "page" : null)"
+           class="flex w-full items-center rounded-xl py-2 pl-10 pr-3 text-sm transition-colors @(active ? "bg-primary-500/10 font-medium text-primary-700 dark:text-primary-300" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/70 dark:hover:text-zinc-100")">
+            <span class="truncate">@label</span>
+            @if (active)
             {
-                <div class="fade mt-0.5 space-y-0.5">
-                    @foreach (var (href, text) in list)
-                    {
-                        var active = IsActive(href);
-                        <a href="@href" aria-current="@(active ? "page" : null)"
-                           class="flex w-full items-center rounded-xl py-2 pl-10 pr-3 text-sm transition-colors @(active ? "bg-primary-500/10 font-medium text-primary-700 dark:text-primary-300" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/70 dark:hover:text-zinc-100")">
-                            <span class="truncate">@text</span>
-                            @if (active)
-                            {
-                                <span class="ml-auto size-2 rounded-full bg-primary-500"></span>
-                            }
-                        </a>
-                    }
-                </div>
+                <span class="ml-auto size-2 rounded-full bg-primary-500"></span>
             }
-        </div>
+        </a>
     };
 
     protected override async Task OnInitializedAsync()

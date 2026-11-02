@@ -11,7 +11,10 @@ public sealed class PageState
 {
     public enum SaveStatus { Idle, Saving, Saved }
 
-    public IReadOnlyList<string> Crumbs { get; private set; } = [];
+    /// <summary>One step of the trail; with <see cref="Href"/> it links back there (e.g. "Play Data" to its index).</summary>
+    public sealed record Crumb(string Text, string? Href = null);
+
+    public IReadOnlyList<Crumb> Crumbs { get; private set; } = [];
 
     public SaveStatus? Save { get; private set; }
 
@@ -20,7 +23,13 @@ public sealed class PageState
 
     public event Action? Changed;
 
-    public void Set(params string[] crumbs)
+    public void Set(params string[] crumbs) => Set(crumbs.Select(c => new Crumb(c)).ToArray());
+
+    /// <summary>A Play Data page: "Play Data" (linking to the index) then the page's own steps.</summary>
+    public void SetPlayData(string playData, long baid, params string[] rest) =>
+        Set([new Crumb(playData, PlayDataPaths.Index(baid)), .. rest.Select(r => new Crumb(r))]);
+
+    public void Set(params Crumb[] crumbs)
     {
         Crumbs = crumbs;
         Save = null;

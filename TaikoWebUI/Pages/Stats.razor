@@ -1,4 +1,4 @@
-@page "/Users/{baid:int}/Stats"
+@page "/Users/{baid:int}/PlayData/Stats"
 @attribute [Authorize]
 @inject HttpClient Client
 @inject GameDataService GameDataService
@@ -329,7 +329,7 @@
     private RenderFragment GoalRow(uint songId, Difficulty d, string right, string sub) => __builder =>
     {
         <li>
-            <a href="@($"/Users/{Baid}/Songs/{songId}?diff={(int)d}")" class="flex w-full items-center gap-3 rounded-lg px-1 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+            <a href="@PlayDataPaths.Song(Baid, songId, (int)d)" class="flex w-full items-center gap-3 rounded-lg px-1 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
                 <img data-asset="@GameData.DifficultyIcon(d)" alt="@GameData.DifficultyName(d)" class="size-6 shrink-0 object-contain" />
                 <span class="min-w-0 flex-1">
                     <span class="block truncate text-sm">@SongName(songId)</span>
@@ -354,7 +354,7 @@
                 {
                     var days = (DateTime.Now.Date - p.PlayTime.Date).Days;
                     <li>
-                        <a href="@($"/Users/{Baid}/Songs/{p.SongId}?diff={(int)p.Difficulty}")" class="flex w-full items-center gap-3 border-b border-zinc-100 py-2 dark:border-zinc-800">
+                        <a href="@PlayDataPaths.Song(Baid, p.SongId, (int)p.Difficulty)" class="flex w-full items-center gap-3 border-b border-zinc-100 py-2 dark:border-zinc-800">
                             <img data-asset="@GameData.DifficultyIcon(p.Difficulty)" alt="@GameData.DifficultyName(p.Difficulty)" class="size-6 shrink-0 object-contain" />
                             <span class="min-w-0 flex-1">
                                 <span class="block truncate text-sm">@SongName(p.SongId)</span>

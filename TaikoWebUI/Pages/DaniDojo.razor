@@ -1,4 +1,4 @@
-@page "/Users/{baid:int}/DaniDojo"
+@page "/Users/{baid:int}/PlayData/DaniDojo"
 @attribute [Authorize]
 @inject HttpClient Client
 @inject IJSRuntime Js
@@ -81,7 +81,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Page.Set(Localizer["Play Data"], Localizer["Dani Dojo"]);
+        Page.SetPlayData(Localizer["Play Data"], Baid, Localizer["Dani Dojo"]);
         var settingTask = Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
         var dansTask = Client.GetFromJsonAsync<DanBestDataResponse>($"api/DanBestData/{Baid}");
         setting = await settingTask;

@@ -1,4 +1,4 @@
-@page "/Users/{baid:int}/Favourites"
+@page "/Users/{baid:int}/PlayData/Favourites"
 @attribute [Authorize]
 @implements IAsyncDisposable
 @inject PageState Page
@@ -165,7 +165,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        Page.Set(Localizer["Play Data"], Localizer["Favourites"]);
+        Page.SetPlayData(Localizer["Play Data"], Baid, Localizer["Favourites"]);
         songs = await GameDataService.GetMusicDetailDictionary();
         saved = await Client.GetFromJsonAsync<List<uint>>($"api/FavoriteSongs/{Baid}") ?? [];
         order = [.. saved];

@@ -1,0 +1,22 @@
+@* The Play Data pages' old addresses (before they moved under /Users/{baid}/PlayData): bookmarks and shared links
+   land on the same page at its new address, replacing the old one in the history. *@
+@page "/Users/{baid:int}/Stats"
+@page "/Users/{baid:int}/Songs"
+@page "/Users/{baid:int}/Songs/{songId:int}"
+@page "/Users/{baid:int}/Favourites"
+@page "/Users/{baid:int}/HighScores"
+@page "/Users/{baid:int}/PlayHistory"
+@page "/Users/{baid:int}/DaniDojo"
+@inject NavigationManager Nav
+
+@code {
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public int? SongId { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        // "Users/5/Songs/12?diff=4" → "/Users/5/PlayData/Songs/12?diff=4"
+        var rest = Nav.ToBaseRelativePath(Nav.Uri)[$"Users/{Baid}/".Length..];
+        Nav.NavigateTo($"{PlayDataPaths.Index(Baid)}/{rest}", replace: true);
+    }
+}
