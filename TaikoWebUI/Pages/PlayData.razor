@@ -13,9 +13,6 @@
         @Card(PlayDataPaths.Stats, "chart", Localizer["Stats"], Localizer["Your totals, how you compare with the server, and a year of activity."],
             (summary is null ? Dash : Clears.ToString("N0"), Localizer["clears"]),
             (server is null ? Dash : server.Rank == 0 ? Dash : string.Format(Localizer["Top {0}%"], Math.Max(1, (int)Math.Round(server.Rank * 100.0 / server.Players))), Localizer["on this server"]))
-        @Card(PlayDataPaths.Songs, "music", Localizer["Song List"], Localizer["Every song with your best crown, score rank and play count."],
-            (allSongs is null ? Dash : allSongs.Value.ToString("N0"), Localizer["songs"]),
-            (summary is null ? Dash : summary.Songs.Count.ToString("N0"), Localizer["played"]))
         @Card(PlayDataPaths.Favourites, "heart", Localizer["Favourites"], Localizer["The songs in your in-game Favourites folder, in your order."],
             (favourites is null ? Dash : favourites.Value.ToString("N0"), Localizer["songs"]))
         @Card(PlayDataPaths.HighScores, "highScores", Localizer["High Scores"], Localizer["Your best score on each chart, by difficulty."],
@@ -36,7 +33,7 @@
     private const string Dash = "–";
     private PlayerStatsSummary? summary;
     private PlayerServerStats? server;
-    private int? allSongs, favourites;
+    private int? favourites;
     private List<DanBestData>? dans;
 
     private int Clears => summary?.Bests.Count(b => b.BestCrown >= CrownType.Clear) ?? 0;
@@ -46,11 +43,10 @@
     protected override async Task OnParametersSetAsync()
     {
         Page.SetPlayData(Localizer["Play Data"], Baid);
-        (summary, server, allSongs, favourites, dans) = (null, null, null, null, null);
+        (summary, server, favourites, dans) = (null, null, null, null);
         await Task.WhenAll(
             Fill(async () => summary = await Client.GetFromJsonAsync<PlayerStatsSummary>($"api/Stats/{Baid}")),
             Fill(async () => server = await Client.GetFromJsonAsync<PlayerServerStats>($"api/Stats/{Baid}/Server")),
-            Fill(async () => allSongs = (await Client.GetFromJsonAsync<SongListPage>($"api/Songs/{Baid}?limit=1"))?.AllSongs),
             Fill(async () => favourites = (await Client.GetFromJsonAsync<List<uint>>($"api/FavoriteSongs/{Baid}"))?.Count),
             Fill(async () => dans = (await Client.GetFromJsonAsync<DanBestDataResponse>($"api/DanBestData/{Baid}"))?.DanBestDataList ?? []));
     }

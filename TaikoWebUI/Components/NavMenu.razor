@@ -21,6 +21,8 @@
             <GameMenu Games="AuthService.EnabledGames" Value="@Game" ValueChanged="SwitchGame" Class="my-1.5" />
         }
         @Link(EraPaths.Profile(Baid, Game), "profile", Localizer["Profile"])
+        @* The game's whole song list (with this player's results): its own item, not a Play Data page. *@
+        @Link(EraPaths.Of(Baid, Game, PlayDataPaths.Songs), "music", Localizer["Song List"], prefix: true)
         @* Play Data: the label opens its index, the chevron folds its pages away (they stay shown while one is open). *@
         var playDataShown = playDataOpen || OnPlayDataPage;
         <div class="flex items-center gap-0.5">
@@ -35,7 +37,7 @@
             <div id="nav-play-data" class="fade space-y-0.5">
                 @foreach (var page in EraPaths.PagesOf(Game))
                 {
-                    @Sub(page, PageLabel(page), prefix: page == PlayDataPaths.Songs)
+                    @Sub(page, PageLabel(page))
                 }
             </div>
         }
@@ -104,7 +106,8 @@ else if (!AuthService.LoginRequired)
     };
 
     private bool playDataOpen = true;
-    private bool OnPlayDataPage => ("/" + Nav.ToBaseRelativePath(Nav.Uri)).StartsWith(EraPaths.Index(Baid, Game) + "/", StringComparison.OrdinalIgnoreCase);
+    private bool OnPlayDataPage => ("/" + Nav.ToBaseRelativePath(Nav.Uri)) is var path
+        && path.StartsWith(EraPaths.Index(Baid, Game) + "/", StringComparison.OrdinalIgnoreCase) && !IsActive(EraPaths.Of(Baid, Game, PlayDataPaths.Songs), prefix: true);
 
     // The game the player pages are for: the page's own when it's in one, else the last one picked.
     private string picked = EraPaths.Nijiiro;

@@ -230,7 +230,8 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        Page.SetPlayData(Localizer["Play Data"], Baid, Localizer["Song List"]);
+        // Its own sidebar item (the server's whole song list), so the trail starts at Song List.
+        Page.Set(Localizer["Song List"]);
         await Load();
     }
 

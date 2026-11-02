@@ -200,13 +200,12 @@ else
         {
             song = null;
             missing = true;
-            Page.SetPlayData(Localizer["Play Data"], Baid, Localizer["Song List"]);
+            Page.Set(Localizer["Song List"]);
             return;
         }
         song = await res.Content.ReadFromJsonAsync<SongDetail>();
         if (song is null) return;
-        Page.Set(new PageState.Crumb(Localizer["Play Data"], PlayDataPaths.Index(Baid)),
-            new PageState.Crumb(Localizer["Song List"], PlayDataPaths.Of(Baid, PlayDataPaths.Songs)), new PageState.Crumb(song.Name));
+        Page.Set(new PageState.Crumb(Localizer["Song List"], PlayDataPaths.Of(Baid, PlayDataPaths.Songs)), new PageState.Crumb(song.Name));
         // The difficulty picked on the Song List, or Oni (or the hardest chart there is).
         var wanted = (Difficulty)(Diff ?? 4);
         difficulty = song.Charts.Any(c => c.Difficulty == wanted) ? wanted

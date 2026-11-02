@@ -93,7 +93,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        Page.SetEraPlayData(GameName, Localizer["Play Data"], Baid, Localizer["Song List"]);
+        Page.Set(GameName, Localizer["Song List"]);
         scores = null;
         if (EraPaths.Older(Game) is null) return;
         try

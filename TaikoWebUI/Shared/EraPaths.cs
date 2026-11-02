@@ -13,8 +13,8 @@ public static class EraPaths
 
     /// <summary>The Play Data pages each game has, in the sidebar's order.</summary>
     public static IReadOnlyList<string> PagesOf(string game) => game == Nijiiro
-        ? [PlayDataPaths.Stats, PlayDataPaths.Songs, PlayDataPaths.Favourites, PlayDataPaths.HighScores, PlayDataPaths.PlayHistory, PlayDataPaths.DaniDojo]
-        : [PlayDataPaths.Songs, PlayDataPaths.HighScores, PlayDataPaths.PlayHistory, PlayDataPaths.DaniDojo, .. HasDonChallenge(game) ? [DonChallenge] : Array.Empty<string>()];
+        ? [PlayDataPaths.Stats, PlayDataPaths.Favourites, PlayDataPaths.HighScores, PlayDataPaths.PlayHistory, PlayDataPaths.DaniDojo]
+        : [PlayDataPaths.HighScores, PlayDataPaths.PlayHistory, PlayDataPaths.DaniDojo, .. HasDonChallenge(game) ? [DonChallenge] : Array.Empty<string>()];
 
     public static bool HasDonChallenge(string game) => game is "Red" or "White";
 

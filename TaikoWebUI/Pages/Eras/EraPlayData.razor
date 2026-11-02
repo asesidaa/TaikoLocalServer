@@ -11,8 +11,6 @@
     <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Play Data"]</h1>
     <GameLine Game="@GameName" Class="mb-5" />
     <div class="grid grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        @Card(PlayDataPaths.Songs, "music", Localizer["Song List"], Localizer["Every song with your best crown on each difficulty."],
-            (scores?.Songs.Count.ToString("N0"), Localizer["songs"]), (scores?.Bests.Select(b => b.SongId).Distinct().Count().ToString("N0"), Localizer["played"]))
         @Card(PlayDataPaths.HighScores, "highScores", Localizer["High Scores"], Localizer["Your best score on each chart, by difficulty."],
             (scores?.Clears.ToString("N0"), Localizer["clears"]), (scores?.FullCombos.ToString("N0"), Localizer["full combos"]))
         @Card(PlayDataPaths.PlayHistory, "playHistory", Localizer["Play History"], Localizer["Every song you played, by day."],
