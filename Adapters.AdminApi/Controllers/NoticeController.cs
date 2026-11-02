@@ -11,14 +11,14 @@ public class NoticeController(ITaikoDbContext context) : BaseAdminController<Not
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var n = await context.DashboardNotices.AsNoTracking().FirstOrDefaultAsync(HttpContext.RequestAborted);
+        var n = await context.DashboardNotices.AsNoTracking().FirstOrDefaultAsync(x => x.Id == 1, HttpContext.RequestAborted);
         return n is { Show: true } && (n.Until is null || n.Until > DateTime.UtcNow) ? Ok(Settings(n)) : NoContent();
     }
 
     [HttpGet("Edit")]
     [Authorize(Policy = AuthPolicies.Admin)]
     public async Task<DashboardNoticeSettings> GetForEdit() =>
-        Settings(await context.DashboardNotices.AsNoTracking().FirstOrDefaultAsync(HttpContext.RequestAborted) ?? new DashboardNotice());
+        Settings(await context.DashboardNotices.AsNoTracking().FirstOrDefaultAsync(x => x.Id == 1, HttpContext.RequestAborted) ?? new DashboardNotice());
 
     [HttpPut]
     [Authorize(Policy = AuthPolicies.Admin)]

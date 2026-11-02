@@ -65,7 +65,7 @@ public sealed class ServerAccess(
             db.AccessRules.Add(rules);
         }
 
-        status = await db.ServerStatuses.AsNoTracking().FirstOrDefaultAsync(cancellationToken) ?? new ServerStatus();
+        status = await db.ServerStatuses.AsNoTracking().FirstOrDefaultAsync(s => s.Id == 1, cancellationToken) ?? new ServerStatus();
 
         if (await db.ServerSecrets.FindAsync([1], cancellationToken) is not { } secrets)
         {
