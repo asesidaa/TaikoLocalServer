@@ -200,11 +200,11 @@ try
         await next();
     });
     app.UseBlazorFrameworkFiles();
-    app.UseStaticFiles(new StaticFileOptions
+    // The WebUI's own files (index.html, js/ui.js, js/don-viewer.js, css/app.css, lib/three/…) keep fixed names, so
+    // without this browsers guess a cache lifetime and run stale scripts after an update. no-cache = revalidate each
+    // load (304 if unchanged). /_framework is left alone: Blazor's boot resources carry their own integrity hashes.
+    var webUiFiles = new StaticFileOptions
     {
-        // The WebUI's own files (js/ui.js, css/app.css, don-embed/…) keep fixed names, so without this browsers
-        // guess a cache lifetime and run stale scripts after an update. no-cache = revalidate each load (304 if
-        // unchanged). /_framework is left alone: Blazor's boot resources carry their own integrity hashes.
         OnPrepareResponse = ctx =>
         {
             if (!ctx.Context.Request.Path.StartsWithSegments("/_framework"))
@@ -212,7 +212,8 @@ try
                 ctx.Context.Response.Headers.CacheControl = "no-cache";
             }
         }
-    });
+    };
+    app.UseStaticFiles(webUiFiles);
     app.UseRouting();
 
     // Enable Authentication and Authorization middleware
@@ -246,7 +247,7 @@ try
         }
     });
     app.MapControllers();
-    app.MapFallbackToFile("index.html");
+    app.MapFallbackToFile("index.html", webUiFiles);
 
     app.UseAllnetMucha();
 

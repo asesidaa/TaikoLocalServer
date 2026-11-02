@@ -1,10 +1,11 @@
-// The game's material-name rules (normalize.ts materialFlags): how each blend suffix renders. `npm test`.
+// The game's material-name rules (wwwroot/js/don-normalize.js materialFlags): how each blend suffix renders.
+// Run with Node.js: node --test TaikoWebUI/don-normalize.test.mjs
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import * as THREE from 'three'
-import { materialFlags } from './normalize.ts'
+import * as THREE from './wwwroot/lib/three/three.module.min.js'
+import { materialFlags } from './wwwroot/js/don-normalize.js'
 
-const flags = (name: string, extras?: object) => {
+const flags = (name, extras) => {
   const m = new THREE.MeshBasicMaterial()
   m.name = name
   if (extras) m.userData = { extras }

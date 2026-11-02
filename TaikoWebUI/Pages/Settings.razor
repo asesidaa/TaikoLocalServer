@@ -9,8 +9,6 @@
 @inject HttpClient Client
 @inject AuthService AuthService
 @inject PlayerSelection Players
-@inject IOptions<WebUiSettings> WebUi
-@using Microsoft.Extensions.Options
 
 <PageTitle>@Localizer["Settings"]</PageTitle>
 
@@ -22,7 +20,7 @@
         <YourCards @key="Owner" Baid="Owner" Name="@name" />
     }
     @* Your own display choice (not on an admin's view of someone else's), and only while cards draw 3D. *@
-    @if (Baid is null && !AuthService.ServerStills && !string.IsNullOrWhiteSpace(WebUi.Value.DonEmbedUrl))
+    @if (Baid is null && !AuthService.ServerStills)
     {
         <DisplayCard />
     }

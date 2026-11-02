@@ -20,7 +20,7 @@ namespace TaikoLocalServer.Infrastructure.Avatars;
 
 /// <summary>
 /// <see cref="IAvatarRenderer"/> with a headless Edge or Chrome already on the machine (nothing is downloaded). It loads
-/// the WebUI's 3D embed from this server, asks it for the same snapshot the WebUI makes, and stores it in UserAvatars
+/// the WebUI's 3D viewer (don-render.html) from this server, asks it for a snapshot, and stores it in UserAvatars
 /// under the shared <see cref="AvatarKeys.Key"/>. One render at a time; the browser opens on demand and closes after a
 /// few idle minutes, so an idle server pays nothing.
 /// </summary>
@@ -230,16 +230,16 @@ public sealed class HeadlessAvatarRenderer(
     // The still: the whole figure with its puchi and some margin, 512px. Bump AvatarKeys.StillKey's version to change it.
     private static readonly object StillFraming = new { zoom = 0.26, camY = 0.15, camX = 0.02, puchi = true, size = 512 };
 
-    // Opens the embed on this costume; false when the model didn't load (e.g. a part's files are missing).
+    // Opens the viewer on this costume; false when the model didn't load (e.g. a part's files are missing).
     private async Task<bool> LoadAsync(IPage p, UserDatum user, CardAnimation animation, uint puchi)
     {
         var query = $"body={user.CurrentBody}&head={user.CurrentHead}&kigurumi={user.CurrentKigurumi}&face={user.CurrentFace}&puchi={puchi}" +
                     $"&bodyColor={user.ColorBody}&faceColor={user.ColorFace}&limbColor={user.ColorLimb}&anim={Uri.EscapeDataString(AvatarKeys.Clip(animation))}";
-        await p.GoToAsync($"{BaseUrl()}don-embed/embed.html?{query}", new NavigationOptions { Timeout = (int)RenderTimeout.TotalMilliseconds });
-        // The embed reports {loading:false} once the model is on screen, or an error (e.g. assets not extracted).
-        await p.WaitForFunctionAsync("() => window.__don && window.__don.loading === false",
+        await p.GoToAsync($"{BaseUrl()}don-render.html?{query}", new NavigationOptions { Timeout = (int)RenderTimeout.TotalMilliseconds });
+        // The viewer's status turns {loading:false} once the model is on screen, or has an error (e.g. assets not extracted).
+        await p.WaitForFunctionAsync("() => window.don && window.don.status.loading === false",
             new WaitForFunctionOptions { Timeout = (int)RenderTimeout.TotalMilliseconds });
-        var error = await p.EvaluateExpressionAsync<string>("window.__don.error || ''");
+        var error = await p.EvaluateExpressionAsync<string>("window.don.status.error || ''");
         if (error.Length > 0) logger.LogInformation("Avatar renderer: player {Baid}'s model didn't load with puchi {Puchi} ({Error})", user.Baid, puchi, error);
         return error.Length == 0;
     }
@@ -266,16 +266,11 @@ public sealed class HeadlessAvatarRenderer(
         p.EvaluateFunctionAsync<string>("""
                 async framing => {
                   const frame = () => new Promise(r => requestAnimationFrame(r));
-                  const snap = () => new Promise((resolve, reject) => {
-                    window.__snap = null;
-                    postMessage({ type: "don-snapshot", ...framing, size: framing.size * 2 }, location.origin);
-                    const start = Date.now();
-                    (function poll() {
-                      if (window.__snap) resolve(window.__snap);
-                      else if (Date.now() - start > 5000) reject(new Error("no snapshot"));
-                      else setTimeout(poll, 50);
-                    })();
-                  });
+                  const snap = () => {
+                    const url = window.don.snapshot({ ...framing, size: framing.size * 2 });
+                    if (!url) throw new Error("no snapshot");
+                    return url;
+                  };
                   const opaque = async url => {
                     const img = new Image(); img.src = url; await img.decode();
                     const c = new OffscreenCanvas(img.width, img.height), g = c.getContext("2d"); g.drawImage(img, 0, 0);
@@ -294,7 +289,7 @@ public sealed class HeadlessAvatarRenderer(
                   const start = Date.now();
                   while (Date.now() - start < 8000) {
                     for (let i = 0; i < 10; i++) await frame();
-                    const url = await snap();
+                    const url = snap();
                     if (await opaque(url)) return await shrink(url);
                   }
                   throw new Error("the snapshot stayed empty");
@@ -325,21 +320,15 @@ public sealed class HeadlessAvatarRenderer(
             UserDataDir = ProfileDir,
             // WebGL without a GPU falls back to SwiftShader; the server's own certificate may be self-signed.
             // Chrome refuses to start as root (a Linux server bound to ports 80/443) unless sandboxing is off; it only
-            // loads this server's own embed.
+            // loads this server's own viewer.
             Args = ["--enable-unsafe-swiftshader", "--ignore-certificate-errors", "--no-first-run", "--mute-audio", "--disable-extensions",
                     .. OperatingSystem.IsLinux() && Environment.UserName == "root" ? ["--no-sandbox"] : Array.Empty<string>()],
         });
         page = await browser.NewPageAsync();
         await page.SetViewportAsync(new ViewPortOptions { Width = 512, Height = 512 });
-        // Before the embed runs: its sign-in token (it reads authToken like the WebUI) and a record of its messages.
-        await page.EvaluateExpressionOnNewDocumentAsync($$"""
-            localStorage.setItem("authToken", {{JsonSerializer.Serialize(JsonSerializer.Serialize(token))}});
-            window.__don = null;
-            addEventListener("message", e => {
-              if (e.data?.type === "don-status") window.__don = e.data;
-              if (e.data?.type === "don-snapshot" && e.data.dataUrl) window.__snap = e.data.dataUrl;
-            });
-            """);
+        // Before the viewer runs: its sign-in token (it reads authToken like the WebUI).
+        await page.EvaluateExpressionOnNewDocumentAsync(
+            $"localStorage.setItem(\"authToken\", {JsonSerializer.Serialize(JsonSerializer.Serialize(token))});");
         logger.LogInformation("Avatar renderer: started {Browser}", browserPath);
         return page;
     }

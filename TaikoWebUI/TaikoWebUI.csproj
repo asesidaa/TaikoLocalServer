@@ -22,10 +22,10 @@
     <ProjectReference Include="..\Contracts.AdminApi\Contracts.AdminApi.csproj" />
   </ItemGroup>
 
-  <!-- Front-end tools. Their outputs (wwwroot/css/app.css, wwwroot/don-embed) are committed, so a build without
-       them still ships the last generated files. With WebUiToolRestore on (the default), the first build fetches them:
-       the pinned Tailwind CLI (checked against its published SHA-256) and DonEmbed's npm packages (npm ci, when Node.js
-       is installed). Builds that mustn't download anything (CI, offline): -p:WebUiToolRestore=false. -->
+  <!-- The one front-end tool, Tailwind. Its output (wwwroot/css/app.css) is committed, so a build without it still ships
+       the last generated file. With WebUiToolRestore on (the default), the first build fetches the pinned CLI (checked
+       against its published SHA-256). Builds that mustn't download anything (CI, offline): -p:WebUiToolRestore=false.
+       don-chan's 3D view (wwwroot/js/don-viewer.js, three.js in wwwroot/lib/three) is plain JS with no build. -->
   <PropertyGroup>
     <WebUiToolRestore Condition="'$(WebUiToolRestore)' == ''">true</WebUiToolRestore>
   </PropertyGroup>
@@ -66,26 +66,6 @@
   <Target Name="TailwindBuild" BeforeTargets="BeforeBuild" DependsOnTargets="TailwindRestore">
     <Exec Condition="Exists('$(TailwindCli)')" Command="&quot;$(TailwindCli)&quot; -i Styles/app.css -o wwwroot/css/app.css --minify" WorkingDirectory="$(MSBuildThisFileDirectory)" />
     <Warning Condition="!Exists('$(TailwindCli)')" Text="No Tailwind CLI at $(TailwindCli); using the committed wwwroot/css/app.css, so style changes won't show. Build with WebUiToolRestore on to fetch it, or put tailwindcss v$(TailwindVersion) there." />
-  </Target>
-
-  <!-- don-chan's 3D view (DonEmbed: React + three.js, built with Vite) → wwwroot/don-embed, the iframe the WebUI and the
-       avatar renderer load. It builds only when its sources are newer than the committed output; without Node.js that's a
-       warning, since the change wouldn't show. -->
-  <ItemGroup>
-    <Content Remove="DonEmbed/**" />
-    <None Remove="DonEmbed/**" />
-    <DonEmbedSource Include="DonEmbed/src/**;DonEmbed/embed.html;DonEmbed/vite.config.ts;DonEmbed/tsconfig.json;DonEmbed/package.json" />
-  </ItemGroup>
-  <Target Name="DonEmbedRestore" Condition="'$(WebUiToolRestore)' == 'true' And !Exists('DonEmbed/node_modules')">
-    <Exec Command="npm --version" IgnoreExitCode="true" StandardOutputImportance="low" StandardErrorImportance="low" EchoOff="true">
-      <Output TaskParameter="ExitCode" PropertyName="_NpmExit" />
-    </Exec>
-    <Exec Condition="'$(_NpmExit)' == '0'" Command="npm ci --no-fund --no-audit" WorkingDirectory="$(MSBuildThisFileDirectory)DonEmbed" />
-  </Target>
-  <Target Name="DonEmbedBuild" BeforeTargets="BeforeBuild" DependsOnTargets="DonEmbedRestore"
-          Inputs="@(DonEmbedSource)" Outputs="wwwroot/don-embed/assets/embed.js">
-    <Exec Condition="Exists('DonEmbed/node_modules')" Command="npm run build" WorkingDirectory="$(MSBuildThisFileDirectory)DonEmbed" />
-    <Warning Condition="!Exists('DonEmbed/node_modules')" Text="TaikoWebUI/DonEmbed changed but can't be rebuilt (no Node.js, or WebUiToolRestore off), so the committed wwwroot/don-embed is used and the change won't show. Install Node.js and build again, or run npm ci in TaikoWebUI/DonEmbed." />
   </Target>
 
   <ItemGroup>

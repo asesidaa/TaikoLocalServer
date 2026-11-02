@@ -11,6 +11,11 @@
   root.classList.toggle("dark", dark === null ? matchMedia("(prefers-color-scheme: dark)").matches : dark === "1");
   root.dataset.accent = store.get("ui.accent") || "don";
 
+  // three.js for don-chan in 3D (don-viewer.js): its addons import "three". Added here, before any module loads, rather
+  // than in index.html, which a browser may still have cached from before an update.
+  document.head.append(Object.assign(document.createElement("script"),
+    { type: "importmap", textContent: JSON.stringify({ imports: { three: new URL("lib/three/three.module.min.js", document.baseURI).href } }) }));
+
   // ---- The don note from the game (extract; api/Brand/Icon) as the favicon and logo, when it's there ----
   // The logo's <img> shows through CSS (html[data-brand-icon]), so Blazor's renders don't fight it.
   const brand = new Image();
@@ -139,23 +144,10 @@
     el.dataset.live = "1";   // hides the plain fallback plate
   }
 
-  // ---- 3D don-chan embed (display-only iframe; protocol in docs/webui-design-decisions.md) ----
-  // The embed listens only once mounted, so the last state is resent when it first reports in.
-  const donLast = new Map();
-  const donSend = (frame, msg) => {
-    if (!frame) return;
-    donLast.set(frame, msg);
-    try { frame.contentWindow?.postMessage(msg, new URL(frame.src).origin); } catch { }
-  };
-  addEventListener("message", e => {
-    if (e.data?.type !== "don-status") return;
-    for (const [frame, msg] of donLast) {
-      if (!frame.isConnected) { donLast.delete(frame); continue; }
-      if (frame.contentWindow !== e.source) continue;
-      if (!frame._ready) { frame._ready = true; donSend(frame, msg); }
-      frame._loading = e.data.loading || !!e.data.error;
-    }
-  });
+  // ---- 3D don-chan (don-viewer.js, three.js), loaded on first use like the nameplate player ----
+  let donModule = null;
+  const loadDon = () => donModule ??= import("./don-viewer.js")
+    .catch(err => { console.info("3D don-chan unavailable:", err.message); return null; });
 
   // <img data-asset="nameplate/dan_10dan_gold.png">: api/Assets needs the token, which <img src> can't send,
   // so fetch once and use a blob URL. A missing asset hides the element (any element: a button can depend on one).
@@ -189,13 +181,18 @@
     if (ka) setTimeout(() => new Audio(ka).play(), 350);
   };
 
-  // The 3D canvas covers the whole card; `anchor` is the box (in px, relative to the iframe) that zoom/camY frame.
-  const donFramed = (frame, anchorEl, msg) => {
-    onResize(frame, donFramed, [frame, anchorEl, msg]);
-    onResize(anchorEl, donFramed, [frame, anchorEl, msg]);
-    const f = frame?.getBoundingClientRect(), a = anchorEl?.getBoundingClientRect();
-    const anchor = f && a ? [a.left - f.left + a.width / 2, a.top - f.top + a.height / 2, a.height].map(Math.round) : null;
-    donSend(frame, { type: "don", ...msg, anchor });
+  // Draws don-chan in `el` (an element or a selector). The canvas covers the whole of it; `anchorEl`, when given, is the
+  // box zoom/camY frame, so don-chan keeps his size and place in the card.
+  const donFramed = async (el, anchorEl, state) => {
+    if (typeof el === "string") el = document.querySelector(el);
+    if (!el) return;
+    onResize(el, donFramed, [el, anchorEl, state]);
+    onResize(anchorEl, donFramed, [el, anchorEl, state]);
+    const m = await loadDon();
+    if (!m || !el.isConnected) return;
+    const f = el.getBoundingClientRect(), a = anchorEl?.getBoundingClientRect();
+    const anchor = a ? [a.left - f.left + a.width / 2, a.top - f.top + a.height / 2, a.height].map(Math.round) : null;
+    (el._don ??= m.mount(el)).set({ ...state, anchor });
   };
 
   // Tooltips for dense grids (heatmaps, calendars): an element's data-tip shows at once above it, on hover or tap.
@@ -321,7 +318,7 @@
     setDark: on => { root.classList.toggle("dark", on); store.set("ui.dark", on ? "1" : "0"); },
     isDark: () => root.classList.contains("dark"),
     setAccent: id => { root.dataset.accent = id; store.set("ui.accent", id); },
-    // The 3D don-chan's quality on player cards (the embed reads it): low, standard (the default) or high.
+    // The 3D don-chan's quality on player cards (don-viewer.js reads it): low, standard (the default) or high.
     getQuality3D: () => store.get("ui.quality3d") || "standard",
     setQuality3D: q => store.set("ui.quality3d", q),
     getAccent: () => root.dataset.accent,

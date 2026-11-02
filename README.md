@@ -87,11 +87,9 @@ This solution targets **.NET 10 LTS**. Install the .NET 10 SDK from <https://dot
 
 ### Building the Web UI
 
-`dotnet build` is all it takes. The Web UI has two front-end parts, and their built output is committed, so a build without their tools still works and ships the last built version:
+`dotnet build` is all it takes. No Node.js needed.
 
-- **Styles** (Tailwind, `TaikoWebUI/Styles/app.css` → `wwwroot/css/app.css`). The first build downloads the pinned Tailwind CLI into `tools/tailwindcss/` and checks it against the release's published SHA-256. No Node.js needed.
-- **don-chan's 3D view** (`TaikoWebUI/DonEmbed`, React + three.js → `wwwroot/don-embed`). With [Node.js](https://nodejs.org/) installed, the first build runs `npm ci` there; after that it rebuilds whenever its source changes. `npm test` in that folder checks its material rules. Without Node.js everything else still builds, but a change to `DonEmbed` gets a warning, since it can't show.
-
-To build without downloading anything (CI, offline), pass `-p:WebUiToolRestore=false`. Style changes then need `tools/tailwindcss/tailwindcss(.exe)` in place yourself, and 3D view changes need `npm ci` in `TaikoWebUI/DonEmbed`.
+- **Styles** (Tailwind, `TaikoWebUI/Styles/app.css` → `wwwroot/css/app.css`, committed). The first build downloads the pinned Tailwind CLI into `tools/tailwindcss/` and checks it against the release's published SHA-256. To build without downloading anything (CI, offline), pass `-p:WebUiToolRestore=false`; style changes then need `tools/tailwindcss/tailwindcss(.exe)` in place yourself.
+- **don-chan's 3D view** (`wwwroot/js/don-viewer.js` and `don-normalize.js`) is plain JavaScript on three.js, which is committed in `wwwroot/lib/three` (0.184.0, no CDN: servers are often offline). There's no build step: edit and reload. With Node.js, `node --test TaikoWebUI/don-normalize.test.mjs` checks its material rules.
 
 The admin UI uses **MudBlazor 9.x**. If you customize `TaikoWebUI/`, refer to the [MudBlazor v9 docs](https://mudblazor.com/) — components and parameters changed across the 7→8→9 majors compared to older forks.
