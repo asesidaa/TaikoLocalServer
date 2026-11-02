@@ -1,36 +1,32 @@
 # Domain
 
-Pure domain core — entities, value objects, enums, constants. The hexagonal
-inner ring; no project or package references at all.
+Domain is the pure core of the solution. It owns entities, enums, and constants, and has no project or package references.
 
 ## Role
 
-Holds the language of the game (`Card`, `UserData`, `DanType`, `CrownType`,
-`Difficulty`, `DomainConstants`, ...) free of any infrastructure concern.
-Migrations live in `Infrastructure/Persistence/Migrations/`; serialization
-shapes live in `Contracts.AdminApi`/`Application`.
+Domain names the durable state used by Application and Infrastructure without depending on HTTP, EF configuration, JSON contracts, or filesystem code.
 
-## Dependencies
+Era-scoped state uses era suffixes. Blue, Green, Yellow, Red, White, and Nijiiro state stays separate except where the data is shared identity state such as cards and users.
 
-- Inbound (transitively): every other project in the solution.
-- Outbound: none.
+## Key Folders
 
-## Key folders
+- `Entities/` - persistent entity types such as users, score rows, save data, item-shop rows, Tokkun rows, Don Challenge rows, and Blue battle rows.
+- `Enums/` - shared domain enums such as `GameEra`, `Difficulty`, and play/result classifications.
+- `DomainConstants.cs` - repo-wide constants.
 
-- `Entities/` — EF Core entity types (`UserData`, `SongBestData`,
-  `DanScoreData`, ...) annotated with data attributes and EF conventions.
-- `Enums/` — domain enums (`Difficulty`, `CrownType`, `ScoreRank`, `DanType`,
-  ...).
-- `DomainConstants.cs` — repo-wide constants (`MusicIdMax`,
-  `MusicIdMaxExpanded`, `DateTimeFormat`, ...).
+## Era Notes
 
-## When to add code here
+- Blue normal state uses Blue entities such as `UserSaveDataBlue`, `SongPlayDatumBlue`, `SongBestDatumBlue`, `DanScoreDatumBlue`, favorites, recent songs, and shop state.
+- Blue Tokkun state uses nullable `UserSaveDataBlue.TokkunTutorialFlg` plus `BlueTokkunStageResult` append-only raw history rows. Practiced Tokkun song numbers may also update `BlueRecentSongs`, but not normal score, best, or favorite state.
+- Blue battle state uses `BlueBattleUserState`, `BlueBattleNpcState`, `BlueBattleTokenState`, and `BlueBattleStageResult`.
+- Do not collapse Blue Tokkun or Blue battle state into Green AI Battle state, Green shop state, or normal Blue score state.
+- Yellow, Red, and White use their own save, score, history, favorite, recent, Dani, Tokkun, and Don Challenge entities where those features exist.
+- Red and White Don Challenge state uses era-owned raw-fact and progress entities. Do not share those tables across eras or treat ChallengeCompe protocol DTOs as the domain model.
+- White final and legacy protocol split does not change domain ownership; both route families feed White-owned domain entities when they are stateful.
 
-- New entity or aggregate.
-- Domain enum, value object, or constant.
+## When To Add Code Here
 
-Do **not** add: DTOs (→ `Contracts.AdminApi/Application`), port interfaces
-(→ `Application/Abstractions/`), settings (→ `Application/Settings/`), or
-EF Core configuration / migrations (→ `Infrastructure/Persistence/`).
+- Add a new entity or enum.
+- Add a domain constant used across layers.
 
-See the root `CLAUDE.md` for the full hexagonal layout.
+Do not add DTOs, port interfaces, settings, EF configuration, migrations, or protocol wire models here.

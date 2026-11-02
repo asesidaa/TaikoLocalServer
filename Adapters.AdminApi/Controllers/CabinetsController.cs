@@ -41,7 +41,7 @@ public class CabinetsController(ICabinetRegistry cabinets, IGameDataCatalog cata
     public async Task<IActionResult> SetSettings(string chassisId, CabinetSettingsRequest request)
     {
         if (cabinets.Find(chassisId) is null) return NotFound();
-        if (request.DanSet is { } set && catalog.GetDanSets().All(s => s.Id != set))
+        if (request.DanSet is { } set && catalog.Nijiiro().GetDanSets().All(s => s.Id != set))
             return BadRequest(new { message = "Unknown Dani Dojo course set." });
         await cabinets.UpdateAsync(chassisId, c =>
         {

@@ -1,13 +1,76 @@
 ﻿{
   "ServerSettings": {
     "Mode": "Local",
-    "GamePath": "",
     "AllowRemoteGameDir": false,
     "ApiTokens": false,
     "RestrictChassisIds": false,
-    "MuchaUrl": "https://v402-front.mucha-prd.nbgi-amnet.jp:10122",
+    "MuchaUrl": "v402-front.mucha-prd.nbgi-amnet.jp:10122",
     "GameUrl": "vsapi.taiko-p.jp",
     "EnableMoreSongs": false,
-    "MoreSongsSize": 9000
+    "MoreSongsSize": 9000,
+    "Eras": {
+      "Nijiiro": {
+        "Enabled": true,
+        "GameDataPath": ""
+      },
+      "Green": {
+        "Enabled": false,
+        "AutoExtractCatalog": true,
+        "GameDataPath": "wwwroot/data/green/data",
+        "CustomizationNameDataPath": "",
+        "EnableShop": true,
+        "ActiveShopSeasonId": 2
+      },
+      "Blue": {
+        "Enabled": false,
+        "AutoExtractCatalog": true,
+        "GameDataPath": "wwwroot/data/blue/data",
+        "CustomizationNameDataPath": "",
+        "EnableShop": true,
+        "ActiveShopSeasonId": 1
+      },
+      "Yellow": {
+        "Enabled": false,
+        "AutoExtractCatalog": true,
+        "GameDataPath": "wwwroot/data/yellow/data",
+        "CustomizationNameDataPath": "",
+        "EnableShop": true,
+        "ActiveShopSeasonId": 4
+      },
+      "Red": {
+        "Enabled": false,
+        "AutoExtractCatalog": true,
+        "GameDataPath": "wwwroot/data/red/data",
+        "CustomizationNameDataPath": "",
+        "EnableDonChallenge": true,
+        "ActiveDonChallengeBundleId": "red-2016-08"
+      },
+      "White": {
+        "Enabled": false,
+        "AutoExtractCatalog": true,
+        "GameDataPath": "wwwroot/data/white/data",
+        "CustomizationNameDataPath": "",
+        "EnableDonChallenge": true,
+        "ActiveDonChallengeBundleId": "white-2016-06"
+      },
+      "Murasaki": {
+        "Enabled": false,
+        "AutoExtractCatalog": true,
+        "GameDataPath": "wwwroot/data/murasaki/data",
+        "CustomizationNameDataPath": ""
+      },
+      "Kimidori": {
+        "Enabled": false,
+        "AutoExtractCatalog": true,
+        "GameDataPath": "wwwroot/data/kimidori/data",
+        "CustomizationNameDataPath": ""
+      },
+      "Momoiro": {
+        "Enabled": false,
+        "AutoExtractCatalog": true,
+        "GameDataPath": "wwwroot/data/momoiro/data",
+        "CustomizationNameDataPath": ""
+      }
+    }
   }
 }

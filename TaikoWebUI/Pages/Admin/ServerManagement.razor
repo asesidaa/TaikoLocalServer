@@ -76,7 +76,7 @@
                 [
                     ("ServerSettings:Mode", Localizer["Mode"], config.Mode == ServerMode.Server ? Localizer["Server"] : Localizer["Local"]),
                     ("DbFileName", Localizer["Database file"], config.DbFileName),
-                    ("ServerSettings:GamePath", Localizer["Game folder"], config.GamePath.Length > 0 ? config.GamePath : Localizer["Not set"]),
+                    ("ServerSettings:Eras:Nijiiro:GameDataPath", Localizer["Game folder"], config.GamePath.Length > 0 ? config.GamePath : Localizer["Not set"]),
                     ("Kestrel:Certificates:Default:Path", Localizer["Certificate"], config.CertificatePath),
                     ("ServerSettings:ApiTokens", Localizer["API tokens"], config.ApiTokens ? Localizer["On"] : Localizer["Off"]),
                 ])

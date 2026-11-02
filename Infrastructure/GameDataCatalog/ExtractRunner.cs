@@ -3,7 +3,9 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TaikoLocalServer.Application.Abstractions;
+using TaikoLocalServer.Application.Common;
 using TaikoLocalServer.Application.Settings;
+using TaikoLocalServer.Domain.Enums;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog;
@@ -27,7 +29,9 @@ public sealed class ExtractRunner(IOptions<ServerSettings> settings, IGameDataCa
 
     private static string ExePath => Path.Combine(AppContext.BaseDirectory, OperatingSystem.IsWindows() ? "extract.exe" : "extract");
     private static readonly string UploadPath = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "TaikoLocalServer-game-upload"));
-    private string GamePath => settings.Value.GamePath?.Trim() ?? "";
+    // Nijiiro's install (Eras.Nijiiro.GameDataPath); a relative path is from the server's folder, like the other games'.
+    private string GamePath => settings.Value.Eras.GetValueOrDefault(nameof(GameEra.Nijiiro))?.GameDataPath?.Trim() is { Length: > 0 } path
+        ? Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, path)) : "";
     private bool RemoteAllowed => settings.Value.AllowRemoteGameDir && File.Exists(ExePath);
 
     public ExtractStatus Status
@@ -45,7 +49,7 @@ public sealed class ExtractRunner(IOptions<ServerSettings> settings, IGameDataCa
         if (!File.Exists(ExePath)) return "extract isn't next to the server exe.";
         if (uploaded && !RemoteAllowed) return "Sending the game folder from the browser is off (AllowRemoteGameDir).";
         if (uploaded && !File.Exists(Path.Combine(UploadPath, "Data", "x64", "datatable", "musicinfo.bin"))) return "No game folder was sent.";
-        if (!uploaded && (GamePath.Length == 0 || !Directory.Exists(GamePath))) return "GamePath isn't set, or the folder doesn't exist.";
+        if (!uploaded && (GamePath.Length == 0 || !Directory.Exists(GamePath))) return "Eras.Nijiiro.GameDataPath isn't set, or the folder doesn't exist.";
 
         var info = new ProcessStartInfo(ExePath)
         {
@@ -147,7 +151,7 @@ public sealed class ExtractRunner(IOptions<ServerSettings> settings, IGameDataCa
             await process.WaitForExitAsync();
             code = process.ExitCode;
             logger.LogInformation("extract finished with exit code {ExitCode}", code);
-            await catalog.ReloadAsync();
+            await catalog.Nijiiro().ReloadAsync();
         }
         catch (Exception e)
         {

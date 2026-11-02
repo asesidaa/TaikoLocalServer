@@ -14,7 +14,7 @@ public class VerifyQrCodeController : BaseProtocolController<VerifyQrCodeControl
     [Produces("application/protobuf")]
     public IActionResult VerifyQrCodeCN00([FromBody] VerifyQrcodeRequest request)
     {
-        Logger.LogInformation("VerifyQrCode request : {Request}", request.Stringify());
+        Logger.LogInformation("VerifyQrCode request : {@Request}", request);
 
         var qrCodeId = VerifyQr(request.QrcodeSerial);
         var response = new VerifyQrcodeResponse
@@ -33,7 +33,7 @@ public class VerifyQrCodeController : BaseProtocolController<VerifyQrCodeControl
 
     private int VerifyQr(string serial)
     {
-        var qrCodeDataDictionary = gameDataService.GetQRCodeDataDictionary();
+        var qrCodeDataDictionary = gameDataService.Nijiiro().GetQRCodeDataDictionary();
 
         qrCodeDataDictionary.TryGetValue(serial, out var qrCodeId);
 

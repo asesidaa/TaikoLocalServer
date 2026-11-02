@@ -12,7 +12,7 @@ public class GetScoreRankController(ITaikoDbContext context, IOptions<ServerSett
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetScoreRank([FromBody] GetScoreRankRequest request)
     {
-        Logger.LogInformation("GetScoreRank request : {Request}", request.Stringify());
+        Logger.LogInformation("GetScoreRank request : {@Request}", request);
 
         var scoreRankData = await Handle(request.Baid);
         var response = new GetScoreRankResponse
@@ -34,7 +34,7 @@ public class GetScoreRankController(ITaikoDbContext context, IOptions<ServerSett
         var kiwamiScores = new byte[songIdMax   + 1];
         var miyabiScores = new ushort[songIdMax + 1];
         var ikiScores = new ushort[songIdMax    + 1];
-        var songBestData = await context.SongBestData
+        var songBestData = await context.SongBestDataNijiiro
             .Where(datum => datum.Baid == baid)
             .ToListAsync(HttpContext.RequestAborted);
 

@@ -1,4 +1,4 @@
-@* "Run extract": the server copies the game files in from GamePath. Without GamePath, the admin can send the game
+@* "Run extract": the server copies the game files in from Eras.Nijiiro.GameDataPath. Without it, the admin can send the game
    folder from this browser (AllowRemoteGameDir), or run the command by hand. Used by Server Management › Game data
    and the setup page. *@
 @implements IAsyncDisposable
@@ -71,7 +71,7 @@ else
             }
             else
             {
-                @((MarkupString)string.Format(Localizer["Set GamePath Hint"], "<code class=\"font-mono text-xs\">GamePath</code>", "<code class=\"font-mono text-xs\">Host/Configurations/ServerSettings.json</code>"))
+                @((MarkupString)string.Format(Localizer["Set GamePath Hint"], "<code class=\"font-mono text-xs\">Eras.Nijiiro.GameDataPath</code>", "<code class=\"font-mono text-xs\">Host/Configurations/ServerSettings.json</code>"))
                 <span class="mt-1 block">@((MarkupString)string.Format(Localizer["Allow Remote Game Dir Hint"], "<code class=\"font-mono text-xs\">\"AllowRemoteGameDir\": true</code>"))</span>
             }
         </p>

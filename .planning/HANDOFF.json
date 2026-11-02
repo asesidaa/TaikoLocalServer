@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-06-10T19:51:43.179Z",
+  "phase": "16.2",
+  "phase_name": "ac15-shared-core-simplification-and-reuse-cleanup",
+  "phase_dir": ".planning/phases/16.2-ac15-shared-core-simplification-and-reuse-cleanup",
+  "plan": "architecture-correction",
+  "task": 1,
+  "total_tasks": 1,
+  "status": "blocked",
+  "completed_tasks": [
+    {"id": "16.2-01", "name": "canonical AC15 domain enum values", "status": "done", "commit": "a93cac0e"},
+    {"id": "16.2-02", "name": "AC15 Dan helper and crown alias cleanup", "status": "done", "commit": "b3051ef0"},
+    {"id": "16.2-03", "name": "AC15 profile counter updater", "status": "done", "commit": "f6b073c0"},
+    {"id": "16.2-04", "name": "shop season seed policy", "status": "done", "commit": "779a3761"},
+    {"id": "16.2-05", "name": "AC15 item shop plumbing", "status": "done_with_architecture_issue", "commit": "5fe2bd16"},
+    {"id": "16.2-06", "name": "AC15 Dani contract/adapters", "status": "done_with_architecture_issue", "commit": "fa7880f3"},
+    {"id": "16.2-07", "name": "AC15 Dani save service", "status": "done_with_architecture_issue", "commit": "6f2b18c5"}
+  ],
+  "remaining_tasks": [
+    {"id": "16.2-00", "name": "correct rejected AC15 shared-core architecture", "status": "not_started"},
+    {"id": "16.2-08", "name": "Dani readback extraction", "status": "not_started"},
+    {"id": "16.2-09", "name": "normal-play adapter internals", "status": "not_started"},
+    {"id": "16.2-10", "name": "playresult prelude cleanup", "status": "not_started"},
+    {"id": "16.2-11", "name": "Common DTO field canonicalization", "status": "not_started"},
+    {"id": "16.2-12", "name": "folder/telop catalog cleanup", "status": "not_started"},
+    {"id": "16.2-13", "name": "remaining AC15 helper cleanup", "status": "not_started"}
+  ],
+  "blockers": [
+    {
+      "description": "Completed Phase 16.2 work introduced repository-shaped persistence interfaces/adapters and hand-written mapping that the user rejected.",
+      "type": "technical",
+      "workaround": "Execute 16.2-00-PLAN.md before any remaining phase plans."
+    }
+  ],
+  "human_actions_pending": [],
+  "decisions": [
+    {"decision": "No AC15 repository/persistence abstraction over EF", "rationale": "EF already provides repository/unit-of-work semantics and direct traceability matters.", "phase": "16.2"},
+    {"decision": "No era adapter classes for duplicated logic", "rationale": "Adapters whose only difference is DbSet/entity type make duplication harder to see.", "phase": "16.2"},
+    {"decision": "Use Mapperly for Application/Ac15 mapping projections", "rationale": "Phase 16.1 established Mapperly for AC15 mapping; hand-written mappers violate that direction.", "phase": "16.2"}
+  ],
+  "uncommitted_files": [
+    ".planning/agent-history.json",
+    ".planning/phases/16.2-ac15-shared-core-simplification-and-reuse-cleanup/.gitkeep"
+  ],
+  "next_action": "Execute .planning/phases/16.2-ac15-shared-core-simplification-and-reuse-cleanup/16.2-00-PLAN.md with gsd-executor, then resume 16.2-08 onward.",
+  "context_notes": "Normal Phase 16.2 execution is intentionally blocked until the architecture correction summary exists."
+}

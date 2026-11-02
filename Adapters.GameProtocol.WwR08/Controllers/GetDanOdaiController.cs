@@ -7,14 +7,14 @@ public class GetDanOdaiController : BaseProtocolController<GetDanOdaiController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetDanOdai([FromBody] GetDanOdaiRequest request)
     {
-        Logger.LogInformation("GetDanOdai request : {Request}", request.Stringify());
+        Logger.LogInformation("GetDanOdai request : {@Request}", request);
 
         var response = new GetDanOdaiResponse
         {
             Result = 1
         };
 
-        var odaiDataList = await Mediator.Send(new GetDanOdaiQuery(request.DanIds, request.Type, request.ChassisId), HttpContext.RequestAborted);
+        var odaiDataList = await Mediator.Send(new GetDanOdaiQuery(GameEra.Nijiiro, request.DanIds, request.Type, request.ChassisId), HttpContext.RequestAborted);
         response.AryOdaiDatas.AddRange(odaiDataList.Select(DanDataMappers.ToWW08OdaiData));
 
         return Ok(response);

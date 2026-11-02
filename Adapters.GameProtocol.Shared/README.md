@@ -38,3 +38,9 @@ Do **not** add: per-version wire types or mappers (→
 admin-API code (→ `Adapters.AdminApi`).
 
 See the root `CLAUDE.md` for the full hexagonal layout.
+
+## Eras
+
+Use this project only for behavior that genuinely applies across protocol adapters. Per-era wire types, mappers, controllers, and runtime semantics belong in their own adapter or Application era partials.
+
+AC15 eras share `/v01r00/chassis/*` startup/version behavior where current evidence supports it, while game endpoints remain era-owned: Green `/v11r01/chassis/*`, Blue `/v10r03/chassis/*`, Yellow `/v09r02/chassis/*`, Red `/v08r01/chassis/*`, White final `/v07r03/chassis/*`, White legacy compatibility `/v07r00/chassis/*`, and Murasaki `/v06r00/chassis/*`.

@@ -26,7 +26,7 @@ public class StatsController(ITaikoDbContext context, IMemoryCache cache) : Base
         var (allCharts, allPlays, allCredits) = (await cache.GetOrCreateAsync("stats.server", async entry =>
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
-            return (await ChartTotalsQuery(context.SongBestData).ToListAsync(ct), await PlayTotalsQuery(context.SongPlayData).ToListAsync(ct),
+            return (await ChartTotalsQuery(context.SongBestDataNijiiro).ToListAsync(ct), await PlayTotalsQuery(context.SongPlayDataNijiiro).ToListAsync(ct),
                 await context.CreditCountsAsync(null, PlayHistoryController.SessionGap, ct));
         }))!;
         var charts = allCharts.ToDictionary(c => c.Baid);
@@ -35,8 +35,8 @@ public class StatsController(ITaikoDbContext context, IMemoryCache cache) : Base
         charts.Remove(baid);
         plays.Remove(baid);
         credits.Remove(baid);
-        if (await ChartTotalsQuery(context.SongBestData.Where(b => b.Baid == baid)).FirstOrDefaultAsync(ct) is { } myCharts) charts[baid] = myCharts;
-        if (await PlayTotalsQuery(context.SongPlayData.Where(p => p.Baid == baid)).FirstOrDefaultAsync(ct) is { } myPlays) plays[baid] = myPlays;
+        if (await ChartTotalsQuery(context.SongBestDataNijiiro.Where(b => b.Baid == baid)).FirstOrDefaultAsync(ct) is { } myCharts) charts[baid] = myCharts;
+        if (await PlayTotalsQuery(context.SongPlayDataNijiiro.Where(p => p.Baid == baid)).FirstOrDefaultAsync(ct) is { } myPlays) plays[baid] = myPlays;
         foreach (var (who, n) in await context.CreditCountsAsync(baid, PlayHistoryController.SessionGap, ct)) credits[who] = n;
 
         PlayerTotals Totals(uint who)
@@ -80,8 +80,8 @@ public class StatsController(ITaikoDbContext context, IMemoryCache cache) : Base
 
         // Per chart of theirs, the players ahead: how many and the lowest of their bests (the place to take next).
         var ahead = await (
-            from m in context.SongBestData.Where(m => m.Baid == baid)
-            from o in context.SongBestData
+            from m in context.SongBestDataNijiiro.Where(m => m.Baid == baid)
+            from o in context.SongBestDataNijiiro
             where o.SongId == m.SongId && o.Difficulty == m.Difficulty && o.BestScore > m.BestScore
             group o.BestScore by new { m.SongId, m.Difficulty, m.BestScore } into g
             select new { g.Key.SongId, g.Key.Difficulty, Mine = g.Key.BestScore, Count = g.Count(), Next = g.Min() }
@@ -92,10 +92,10 @@ public class StatsController(ITaikoDbContext context, IMemoryCache cache) : Base
 
         foreach (var a in ahead.OrderBy(a => a.Next - a.Mine).Take(ClosestPlaces))
         {
-            var them = await context.SongBestData.Where(o => o.SongId == a.SongId && o.Difficulty == a.Difficulty && o.BestScore == a.Next)
+            var them = await context.SongBestDataNijiiro.Where(o => o.SongId == a.SongId && o.Difficulty == a.Difficulty && o.BestScore == a.Next)
                 .OrderBy(o => o.Baid).Select(o => o.Baid).FirstAsync(ct);
             var name = await context.UserData.Where(u => u.Baid == them).Select(u => u.MyDonName).FirstOrDefaultAsync(ct);
-            var theirRank = 1 + await context.SongBestData.CountAsync(o => o.SongId == a.SongId && o.Difficulty == a.Difficulty && o.BestScore > a.Next, ct);
+            var theirRank = 1 + await context.SongBestDataNijiiro.CountAsync(o => o.SongId == a.SongId && o.Difficulty == a.Difficulty && o.BestScore > a.Next, ct);
             stats.ClosestPlaces.Add(new PlaceGoal
             {
                 SongId = a.SongId, Difficulty = a.Difficulty, Gap = a.Next - a.Mine + 1,
@@ -113,10 +113,10 @@ public class StatsController(ITaikoDbContext context, IMemoryCache cache) : Base
             return forbid;
         var ct = HttpContext.RequestAborted;
         // Every play counts, skipped ones too, as api/PlayHistory (which this page used to sum) returns them.
-        var plays = context.SongPlayData.Where(p => p.Baid == baid);
+        var plays = context.SongPlayDataNijiiro.Where(p => p.Baid == baid);
         var today = DateTime.Now.Date;
 
-        var bests = await context.SongBestData.Where(b => b.Baid == baid)
+        var bests = await context.SongBestDataNijiiro.Where(b => b.Baid == baid)
             .Select(b => new StatsBest(b.SongId, b.Difficulty, b.BestCrown, b.BestScoreRank)).ToListAsync(ct);
         var totals = await plays.GroupBy(p => p.Baid).Select(g => new
         {
@@ -166,12 +166,12 @@ public class StatsController(ITaikoDbContext context, IMemoryCache cache) : Base
 
     // Per player: their charts (bests, as the leaderboards and the Crowns table count them) and their plays. One query
     // shape for everyone (cached) and for the viewer (fresh), so the two agree.
-    private static IQueryable<ChartTotals> ChartTotalsQuery(IQueryable<SongBestDatum> bests) =>
+    private static IQueryable<ChartTotals> ChartTotalsQuery(IQueryable<SongBestDatumNijiiro> bests) =>
         bests.GroupBy(b => b.Baid).Select(g => new ChartTotals(g.Key, g.Count(),
             g.Count(b => b.BestCrown >= CrownType.Clear), g.Count(b => b.BestCrown >= CrownType.Gold)));
 
     // Credits aren't here: they need the plays in order (ITaikoDbContext.CreditCountsAsync), as Play History counts them.
-    private static IQueryable<PlayTotals> PlayTotalsQuery(IQueryable<SongPlayDatum> plays) =>
+    private static IQueryable<PlayTotals> PlayTotalsQuery(IQueryable<SongPlayDatumNijiiro> plays) =>
         plays.Where(p => !p.Skipped).GroupBy(p => p.Baid).Select(g => new PlayTotals(g.Key, g.Sum(p => (long)p.GoodCount),
             g.Sum(p => (long)p.OkCount), g.Sum(p => (long)p.MissCount)));
 }

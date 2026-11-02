@@ -1,0 +1,61 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-15-green-song-category-fields/README.md",
+  "tasks": [
+    {
+      "id": 9,
+      "subject": "Task 1: DTO & Wire Mapper for IsPushed",
+      "status": "pending",
+      "description": "**Goal:** Capture the `is_pushed` proto field (Green stage wire member 16) end-to-end into `CommonPlayResultData.StageData` so downstream handlers can read it.\n\n**Files:**\n- Modify: `Application/Dtos/CommonPlayResultData.Green.cs`\n- Modify: `Adapters.GameProtocol.Green/Mappers/PlayResultMappers.cs`\n- Test: `Tests/Green/GreenPlayResultMapperTests.cs`\n\n**Verify:** `dotnet test Tests/Tests.csproj --filter \"FullyQualifiedName~GreenPlayResultMapperTests\"`\n\n**Steps:** see `docs/superpowers/plans/2026-05-15-green-song-category-fields/01-dto-and-wire-mapper.md`.\n\n```json:metadata\n{\"files\": [\"Application/Dtos/CommonPlayResultData.Green.cs\", \"Adapters.GameProtocol.Green/Mappers/PlayResultMappers.cs\", \"Tests/Green/GreenPlayResultMapperTests.cs\"], \"verifyCommand\": \"dotnet test Tests/Tests.csproj --filter \\\"FullyQualifiedName~GreenPlayResultMapperTests\\\"\", \"acceptanceCriteria\": [\"CommonPlayResultData.StageData has Green-only IsPushed bool\", \"PlayResultMappers.MapStage copies stage.IsPushed\", \"Test Map_GreenPlayResult_PreservesIsPushed passes\"]}\n```"
+    },
+    {
+      "id": 11,
+      "subject": "Task 2: Schema, Entities, and EF Migration",
+      "status": "pending",
+      "blockedBy": [9],
+      "description": "**Goal:** Add `IsPushed` to `SongPlayDatumGreen` and `LastPlayed` to `GreenRecentSongs`, then generate the EF Core migration.\n\n**Verify:** `dotnet test Tests/Tests.csproj --filter \"FullyQualifiedName~GreenPlayLog_StoresIsPushed Or FullyQualifiedName~GreenRecentSongs_StoresLastPlayed\"`\n\n**Steps:** see `docs/superpowers/plans/2026-05-15-green-song-category-fields/02-schema-entities-and-migration.md`.\n\n```json:metadata\n{\"files\": [\"Domain/Entities/SongPlayDatumGreen.cs\", \"Domain/Entities/GreenRecentSongs.cs\", \"Infrastructure/Persistence/TaikoDbContext.Green.cs\", \"Infrastructure/Persistence/Migrations/\", \"Tests/Green/GreenPlayResultHandlerTests.cs\"], \"verifyCommand\": \"dotnet test Tests/Tests.csproj --filter \\\"FullyQualifiedName~GreenPlayLog_StoresIsPushed Or FullyQualifiedName~GreenRecentSongs_StoresLastPlayed\\\"\", \"acceptanceCriteria\": [\"IsPushed column on SongPlayDatum_Green\", \"LastPlayed column on GreenRecentSongs\", \"EF migration generated\", \"Schema smoke tests pass\"]}\n```"
+    },
+    {
+      "id": 10,
+      "subject": "Task 3: GreenProfileCounters Helper",
+      "status": "pending",
+      "blockedBy": [11],
+      "description": "**Goal:** Pure static helper that increments the matching `Categ*Cnt` for `music_categ` 0..7 and bumps `Song(Pushed|Favorite|Recent)Cnt` per stage. Saturates at `uint.MaxValue`.\n\n**Verify:** `dotnet test Tests/Tests.csproj --filter \"FullyQualifiedName~GreenProfileCountersTests\"`\n\n**Steps:** see `docs/superpowers/plans/2026-05-15-green-song-category-fields/03-profile-counters-helper.md`.\n\n```json:metadata\n{\"files\": [\"Application/Common/GreenProfileCounters.cs\", \"Tests/Green/GreenProfileCountersTests.cs\"], \"verifyCommand\": \"dotnet test Tests/Tests.csproj --filter \\\"FullyQualifiedName~GreenProfileCountersTests\\\"\", \"acceptanceCriteria\": [\"Genre 0..7 increments correct counter\", \"Out-of-range no-op\", \"Song flag counters increment\", \"uint.MaxValue saturates\"]}\n```"
+    },
+    {
+      "id": 15,
+      "subject": "Task 4: Save-Handler Integration",
+      "status": "pending",
+      "blockedBy": [10],
+      "description": "**Goal:** Wire the new counters and `IsPushed` into the Green playresult save path: reject stages with `music_categ > 7`, invoke `GreenProfileCounters.ApplyStage` per stage, and persist `IsPushed` on the play log row.\n\n**Verify:** `dotnet test Tests/Tests.csproj --filter \"FullyQualifiedName~GreenPlayResultHandlerTests\"`\n\n**Steps:** see `docs/superpowers/plans/2026-05-15-green-song-category-fields/04-save-handler-integration.md`.\n\n```json:metadata\n{\"files\": [\"Application/Handlers/UpdatePlayResultCommand.Green.cs\", \"Tests/Green/GreenPlayResultHandlerTests.cs\"], \"verifyCommand\": \"dotnet test Tests/Tests.csproj --filter \\\"FullyQualifiedName~GreenPlayResultHandlerTests\\\"\", \"acceptanceCriteria\": [\"IsValidGreenStage rejects MusicCateg > 7\", \"Counters increment per stage\", \"IsPushed persisted on play log\"]}\n```"
+    },
+    {
+      "id": 16,
+      "subject": "Task 5: Recent-List Ordering & Favorites Cap",
+      "status": "pending",
+      "blockedBy": [15],
+      "description": "**Goal:** Make `GreenRecentSongs` server-tracked (upsert on every played stage, trim to 10 newest) and enforce the Green-era 5-favorite cap on the playresult write path.\n\n**Verify:** `dotnet test Tests/Tests.csproj --filter \"FullyQualifiedName~GreenPlayResultHandlerTests\"`\n\n**Steps:** see `docs/superpowers/plans/2026-05-15-green-song-category-fields/05-recent-list-and-favorites-cap.md`.\n\n```json:metadata\n{\"files\": [\"Application/Handlers/UpdatePlayResultCommand.Green.cs\", \"Tests/Green/GreenPlayResultHandlerTests.cs\"], \"verifyCommand\": \"dotnet test Tests/Tests.csproj --filter \\\"FullyQualifiedName~GreenPlayResultHandlerTests\\\"\", \"acceptanceCriteria\": [\"UpsertFavoriteAndRecentAsync takes playTime param\", \"Recents upsert every stage\", \"Recents trim to 10\", \"Favorites cap at 5\", \"Favorites remove works at cap\"]}\n```"
+    },
+    {
+      "id": 12,
+      "subject": "Task 6: Recommend-Songs Catalog",
+      "status": "pending",
+      "blockedBy": [16],
+      "description": "**Goal:** Allow operators to declare おすすめ曲 via `wwwroot/data/green/recommend_songs.json`. Expose through `IGreenCatalog.Recommend`. Wire `GetRecommendQuery.Green`.\n\n**Verify:** `dotnet test Tests/Tests.csproj --filter \"FullyQualifiedName~GreenRecommendCatalogLoaderTests Or FullyQualifiedName~GreenRecommend_ReturnsCatalogValues\"` + `dotnet build`.\n\n**Steps:** see `docs/superpowers/plans/2026-05-15-green-song-category-fields/06-recommend-catalog.md`.\n\n```json:metadata\n{\"files\": [\"Application/Catalog/Green/GreenRecommendEntry.cs\", \"Infrastructure/GameDataCatalog/Green/GreenRecommendLoader.cs\", \"Application/Abstractions/IGreenCatalog.cs\", \"Infrastructure/GameDataCatalog/Green/GreenEraGameDataCatalog.cs\", \"Tests/Green/GreenHandlerFixture.cs\", \"Tests/Green/GreenRecommendCatalogLoaderTests.cs\", \"Tests/Green/GreenPlayResultHandlerTests.cs\", \"Application/Handlers/GetRecommendQuery.cs\", \"Application/Handlers/GetRecommendQuery.Green.cs\", \"Host/wwwroot/data/green/recommend_songs.json\", \"Host/Host.csproj\"], \"verifyCommand\": \"dotnet test Tests/Tests.csproj --filter \\\"FullyQualifiedName~GreenRecommendCatalogLoaderTests Or FullyQualifiedName~GreenRecommend_ReturnsCatalogValues\\\"\", \"acceptanceCriteria\": [\"IGreenCatalog.Recommend exposed\", \"Loader filters by catalog + range\", \"Default JSON empty\", \"GetRecommendQuery.Green returns catalog values\", \"Host.csproj copies JSON\", \"TestGreenCatalog implements Recommend\"]}\n```"
+    },
+    {
+      "id": 13,
+      "subject": "Task 7: Userdata Load Path",
+      "status": "pending",
+      "blockedBy": [12],
+      "description": "**Goal:** Update `UserDataQuery.Green` to surface cumulative counter columns, populate `SongPushedCnt`, project recommend from the catalog, and order the recent-song response by `LastPlayed`.\n\n**Verify:** `dotnet test Tests/Tests.csproj --filter \"FullyQualifiedName~UserData_Green\"`\n\n**Steps:** see `docs/superpowers/plans/2026-05-15-green-song-category-fields/07-userdata-load-path.md`.\n\n```json:metadata\n{\"files\": [\"Application/Handlers/UserDataQuery.Green.cs\", \"Tests/Green/GreenIdentityHandlerTests.cs\"], \"verifyCommand\": \"dotnet test Tests/Tests.csproj --filter \\\"FullyQualifiedName~UserData_Green\\\"\", \"acceptanceCriteria\": [\"SongFavoriteCnt from save-data column\", \"SongRecentCnt from save-data column\", \"SongPushedCnt set\", \"Recommend echoes catalog\", \"Recents ordered by LastPlayed DESC\"]}\n```"
+    },
+    {
+      "id": 14,
+      "subject": "Task 8: End-to-End Verification",
+      "status": "pending",
+      "blockedBy": [13],
+      "description": "**Goal:** Build, run the full test suite, run the EF migration on a clean DB, and spot-check the userdata response shape.\n\n**Verify:** `dotnet build && dotnet test Tests/Tests.csproj`\n\n**Steps:** see `docs/superpowers/plans/2026-05-15-green-song-category-fields/08-verification.md`.\n\n```json:metadata\n{\"files\": [], \"verifyCommand\": \"dotnet build && dotnet test Tests/Tests.csproj\", \"acceptanceCriteria\": [\"Build clean\", \"All tests pass\", \"EF migration applies\", \"IsPushed and LastPlayed columns exist\", \"recommend_songs.json in publish output\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-15T12:00:00Z"
+}

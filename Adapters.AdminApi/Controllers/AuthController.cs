@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Caching.Memory;
 using OtpNet;
+using Microsoft.Extensions.Options;
+using TaikoLocalServer.Application.Ac15;
 using TaikoLocalServer.Application.Handlers;
+using TaikoLocalServer.Application.Settings;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
@@ -16,7 +19,8 @@ public class AuthController(
     IJwtTokenService jwtTokens,
     IServerAccess access,
     IAvatarRenderer avatars,
-    IMemoryCache pending) : BaseAdminController<AuthController>
+    IMemoryCache pending,
+    IOptions<ServerSettings> serverSettings) : BaseAdminController<AuthController>
 {
     // Login step 1 to step 2: who passed the password, kept briefly, with a few code tries.
     private sealed record PendingSignIn(uint Baid, string AccessCode, bool IsAdmin) { public int Tries; }
@@ -59,7 +63,21 @@ public class AuthController(
         return Ok(new ClientAuthConfigResponse(access.Mode, access.LoginRequired, rules.OnlyAdmin, rules.AccessCodeLimit,
             rules.SignUpMode, rules.AllowUserDelete, rules.AllowFreeProfileEditing, access.SetupPending, rules.TwoFactor,
             avatars.Status is { Enabled: true, Browser: not null },
-            avatars.Status is { Enabled: true, Browser: not null, Cards3D: false }, rules.AllowCustomTitles));
+            avatars.Status is { Enabled: true, Browser: not null, Cards3D: false }, rules.AllowCustomTitles,
+            EnabledEras(), FavoriteSongLimits()));
+    }
+
+    private List<string> EnabledEras() =>
+        serverSettings.Value.Eras.Where(pair => pair.Value.Enabled).Select(pair => pair.Key).OrderBy(era => era).ToList();
+
+    // Older games cap their favourite songs; Nijiiro has no known cap.
+    private Dictionary<string, int> FavoriteSongLimits()
+    {
+        var limits = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        foreach (var name in EnabledEras())
+            if (Enum.TryParse<GameEra>(name, ignoreCase: true, out var era) && Ac15EraProfiles.GetMaxFavoriteSongs(era) is { } limit)
+                limits[name] = limit;
+        return limits;
     }
 
     [HttpPost("Login")]
@@ -239,7 +257,7 @@ public class AuthController(
             if (!access.TryUseSetupCode(registerRequest.SetupCode))
                 return BadRequest(new { message = "Wrong Setup Code" });
             setupCodeUsed = true;
-            await Mediator.Send(new AddMyDonEntryCommand(accessCode, "Admin", 0), HttpContext.RequestAborted);
+            await Mediator.Send(new AddMyDonEntryCommand(GameEra.Nijiiro, accessCode, "Admin", 0), HttpContext.RequestAborted);
             card = await context.Cards.FindAsync(new object?[] { accessCode }, HttpContext.RequestAborted);
             if (card == null)
                 return BadRequest(new { message = "Access Code Not Found" });
@@ -270,7 +288,11 @@ public class AuthController(
                 if (user == null)
                     return BadRequest(new { message = "User Does Not Exist" });
 
-                var diffMinutes = (lastPlayDateTime - user.LastPlayDatetime).Duration().TotalMinutes;
+                // shortcut: Nijiiro's last play only; a card that has played only an older game can't prove itself this way yet.
+                var saveData = await context.UserSaveDataNijiiro.FirstOrDefaultAsync(s => s.Baid == card.Baid, HttpContext.RequestAborted);
+                if (saveData == null)
+                    return BadRequest(new { message = "Wrong Last Play Time" });
+                var diffMinutes = (lastPlayDateTime - saveData.LastPlayDatetime).Duration().TotalMinutes;
                 if (diffMinutes > 5)
                     return BadRequest(new { message = "Wrong Last Play Time" });
             }

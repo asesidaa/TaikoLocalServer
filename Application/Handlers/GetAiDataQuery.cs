@@ -2,9 +2,9 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetAiDataQuery(uint Baid) : IRequest<CommonAiDataResponse>;
+public readonly record struct GetAiDataQuery(uint Baid, GameEra Era) : IRequest<CommonAiDataResponse>;
 
-public class GetAiDataQueryHandler : IRequestHandler<GetAiDataQuery, CommonAiDataResponse>
+public partial class GetAiDataQueryHandler : IRequestHandler<GetAiDataQuery, CommonAiDataResponse>
 {
     private readonly ITaikoDbContext context;
     
@@ -17,17 +17,13 @@ public class GetAiDataQueryHandler : IRequestHandler<GetAiDataQuery, CommonAiDat
         this.logger = logger;
     }
 
-    public async ValueTask<CommonAiDataResponse> Handle(GetAiDataQuery request, CancellationToken cancellationToken)
+    public ValueTask<CommonAiDataResponse> Handle(GetAiDataQuery request, CancellationToken cancellationToken) => request.Era switch
     {
-        var user = await context.UserData.FirstOrDefaultAsync(datum => datum.Baid == request.Baid, cancellationToken);
-        user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
-        var response = new CommonAiDataResponse
-        {
-            Result = 1,
-            TotalWinnings = (uint)user.AiWinCount,
-            InputMedian = "1",
-            InputVariance = "0"
-        };
-        return response;
-    }
+        GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
+        GameEra.Green => HandleGreen(request, cancellationToken),
+        _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
+    };
+
+    private partial ValueTask<CommonAiDataResponse> HandleNijiiro(GetAiDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonAiDataResponse> HandleGreen(GetAiDataQuery request, CancellationToken cancellationToken);
 }

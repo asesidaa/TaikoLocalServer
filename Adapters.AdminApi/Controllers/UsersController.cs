@@ -24,13 +24,14 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
 
         var cardEntries = await context.Cards.Where(card => card.Baid == baid).ToListAsync();
         var profile = await context.UserWebProfiles.FindAsync(baid);
+        var save = await context.UserSaveDataNijiiro.AsNoTracking().FirstOrDefaultAsync(s => s.Baid == baid, HttpContext.RequestAborted) ?? new UserSaveDataNijiiro { Baid = baid };
         return new User
         {
             Baid = userDatum.Baid,
             AccessCodes = cardEntries.Select(card => card.AccessCode).ToList(),
             IsAdmin = userDatum.IsAdmin,
             // The sidebar shows the name and avatar from this.
-            UserSetting = UserSettingsController.BuildUserSetting(userDatum, profile),
+            UserSetting = UserSettingsController.BuildNijiiroUserSetting(userDatum, save, profile),
         };
     }
 
@@ -113,13 +114,14 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
             .ToListAsync();
         var pageBaids = userEntries.Select(user => user.Baid).ToList();
         var profiles = await context.UserWebProfiles.Where(p => pageBaids.Contains(p.Baid)).ToDictionaryAsync(p => p.Baid);
+        var saves = await context.UserSaveDataNijiiro.AsNoTracking().Where(s => pageBaids.Contains(s.Baid)).ToDictionaryAsync(s => s.Baid, HttpContext.RequestAborted);
         var cardEntries = await context.Cards.Where(card => pageBaids.Contains(card.Baid)).ToListAsync(HttpContext.RequestAborted);
 
         var registered = await context.Credentials.Where(c => pageBaids.Contains(c.Baid) && c.Password != "")
             .Select(c => c.Baid).ToListAsync(HttpContext.RequestAborted);
         var twoFactor = await context.Credentials.Where(c => pageBaids.Contains(c.Baid) && c.TotpSecret != null)
             .Select(c => c.Baid).ToListAsync(HttpContext.RequestAborted);
-        var plays = await context.SongPlayData.Where(p => pageBaids.Contains(p.Baid)).GroupBy(p => p.Baid)
+        var plays = await context.SongPlayDataNijiiro.Where(p => pageBaids.Contains(p.Baid)).GroupBy(p => p.Baid)
             .Select(g => new { g.Key, Count = g.Count() }).ToDictionaryAsync(g => g.Key, g => g.Count, HttpContext.RequestAborted);
 
         foreach (var user in userEntries)
@@ -132,7 +134,7 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
                 IsRegistered = registered.Contains(user.Baid),
                 TwoFactor = twoFactor.Contains(user.Baid),
                 Plays = plays.GetValueOrDefault(user.Baid),
-                UserSetting = UserSettingsController.BuildUserSetting(user, profiles.GetValueOrDefault(user.Baid))
+                UserSetting = UserSettingsController.BuildNijiiroUserSetting(user, saves.GetValueOrDefault(user.Baid) ?? new UserSaveDataNijiiro { Baid = user.Baid }, profiles.GetValueOrDefault(user.Baid))
             });
         }
 
@@ -239,15 +241,15 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
     [Authorize(Policy = AuthPolicies.Admin)]
     public async Task<IActionResult> RemoveScore(uint baid, uint songId, Difficulty difficulty)
     {
-        var best = await context.SongBestData.FindAsync(baid, songId, difficulty);
+        var best = await context.SongBestDataNijiiro.FindAsync(baid, songId, difficulty);
         if (best is null)
             return NotFound();
 
-        var plays = await context.SongPlayData
+        var plays = await context.SongPlayDataNijiiro
             .Where(p => p.Baid == baid && p.SongId == songId && p.Difficulty == difficulty)
             .ToListAsync(HttpContext.RequestAborted);
-        context.SongBestData.Remove(best);
-        context.SongPlayData.RemoveRange(plays);
+        context.SongBestDataNijiiro.Remove(best);
+        context.SongPlayDataNijiiro.RemoveRange(plays);
         this.LogActivity(context, "score.remove", baid, $"#{songId} {difficulty} · {best.BestScore:N0} · {plays.Count} {(plays.Count == 1 ? "play" : "plays")}");
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();

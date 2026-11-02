@@ -31,12 +31,12 @@ public class HighScoresController(ITaikoDbContext context, IGameDataCatalog cata
         if (diff is < 1 or > 5 || page < 1 || limit is < 1 or > 200) return BadRequest(new { message = "Bad paging or difficulty." });
 
         var d = (Difficulty)diff;
-        var songs = catalog.GetMusicDetailDictionary();
-        var mine = await context.SongBestData.Where(b => b.Baid == baid).ToListAsync(HttpContext.RequestAborted);
-        var theirs = vs == 0 ? [] : (await context.SongBestData.Where(b => b.Baid == vs && b.Difficulty == d).ToListAsync(HttpContext.RequestAborted))
+        var songs = catalog.Nijiiro().GetMusicDetailDictionary();
+        var mine = await context.SongBestDataNijiiro.Where(b => b.Baid == baid).ToListAsync(HttpContext.RequestAborted);
+        var theirs = vs == 0 ? [] : (await context.SongBestDataNijiiro.Where(b => b.Baid == vs && b.Difficulty == d).ToListAsync(HttpContext.RequestAborted))
             .ToDictionary(b => b.SongId);
         // When each best was set: the play with that score.
-        var setOn = (await context.SongPlayData.Where(p => p.Baid == baid && p.Difficulty == d && !p.Skipped)
+        var setOn = (await context.SongPlayDataNijiiro.Where(p => p.Baid == baid && p.Difficulty == d && !p.Skipped)
                 .Select(p => new { p.SongId, p.Score, p.PlayTime }).ToListAsync(HttpContext.RequestAborted))
             .GroupBy(p => p.SongId).ToDictionary(g => g.Key, g => g.MaxBy(p => p.Score)!.PlayTime);
 

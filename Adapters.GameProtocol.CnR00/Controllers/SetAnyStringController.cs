@@ -7,7 +7,7 @@ public class SetAnyStringController : BaseProtocolController<SetAnyStringControl
     [Produces("application/protobuf")]
     public IActionResult SetAnyStringCN00([FromBody] SetAnyStringRequest request)
     {
-        Logger.LogInformation("SetAnyString request : {Request}", request.Stringify());
+        Logger.LogInformation("SetAnyString request : {@Request}", request);
 
         var response = new SetAnyStringResponse
         {

@@ -12,7 +12,7 @@ public partial class TaikoDbContext
             SELECT COUNT(*) AS "Count", MAX(PlayTime) AS "Latest" FROM (
               SELECT PlayTime, Score, MAX(Score) OVER (PARTITION BY SongId, Difficulty ORDER BY PlayTime, Id
                 ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING) AS Before
-              FROM SongPlayData WHERE Baid = {baid} AND Skipped = 0 AND ({diff} = 0 OR Difficulty = {diff}))
+              FROM SongPlayDatum_Nijiiro WHERE Baid = {baid} AND Skipped = 0 AND ({diff} = 0 OR Difficulty = {diff}))
             WHERE Before IS NOT NULL AND Score > Before
             """).FirstAsync(cancellationToken);
         return (row.Count, row.Latest);
@@ -27,7 +27,7 @@ public partial class TaikoDbContext
               SELECT Baid, SongNumber, PlayTime,
                 LAG(SongNumber) OVER (PARTITION BY Baid ORDER BY PlayTime, Id) AS PrevNumber,
                 LAG(PlayTime) OVER (PARTITION BY Baid ORDER BY PlayTime, Id) AS PrevTime
-              FROM SongPlayData WHERE Skipped = 0 AND ({all} = 1 OR Baid = {baid ?? 0}))
+              FROM SongPlayDatum_Nijiiro WHERE Skipped = 0 AND ({all} = 1 OR Baid = {baid ?? 0}))
             WHERE PrevNumber IS NULL OR SongNumber = 0 OR SongNumber <= PrevNumber
               OR julianday(PlayTime) - julianday(PrevTime) > {gapDays}
             GROUP BY Baid

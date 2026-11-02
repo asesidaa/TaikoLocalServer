@@ -17,7 +17,7 @@ is the sibling for the CHN client.
 - Inbound: `Host` only.
 - Outbound: `Adapters.GameProtocol.Shared`, `Application`,
   `Contracts.AdminApi`.
-- Notable packages: `protobuf-net`, `Riok.Mapperly`, `Swan.Core`.
+- Notable packages: `protobuf-net`, `Riok.Mapperly`.
 
 ## Key folders
 

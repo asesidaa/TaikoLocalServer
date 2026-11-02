@@ -10,7 +10,17 @@ using Microsoft.IdentityModel.Tokens;
 using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Application.Settings;
 using TaikoLocalServer.Contracts.AdminApi.Authorization;
+using TaikoLocalServer.Domain.Enums;
 using TaikoLocalServer.Infrastructure.GameDataCatalog;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Blue;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Kimidori;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Momoiro;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Murasaki;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Nijiiro;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Red;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.White;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Yellow;
 using TaikoLocalServer.Infrastructure.Identity;
 using TaikoLocalServer.Infrastructure.Persistence;
 using TaikoLocalServer.Infrastructure.Settings;
@@ -20,10 +30,16 @@ namespace TaikoLocalServer.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        ISet<GameEra> enabledEras)
     {
         // Settings
-        services.Configure<ServerSettings>(configuration.GetSection(nameof(ServerSettings)));   // Application's portion (EnableMoreSongs / MoreSongsSize)
+        services.AddOptions<ServerSettings>()   // Application's portion (Mode, Eras, EnableMoreSongs / MoreSongsSize, …)
+            .Bind(configuration.GetSection(nameof(ServerSettings)))
+            .ValidateStartupSettings(enabledEras)
+            .ValidateOnStart();
         services.Configure<AllnetSettings>(configuration.GetSection(nameof(ServerSettings)));   // Infrastructure's portion (MuchaUrl / GameUrl) — same JSON section, different POCO
 
         // Persistence
@@ -43,9 +59,75 @@ public static class DependencyInjection
                     .Ignore(SqliteEventId.TableRebuildPendingWarning));
         });
         services.AddScoped<ITaikoDbContext>(sp => sp.GetRequiredService<TaikoDbContext>());
+        services.AddOptions<DatabaseStartupMigrationOptions>();
+        services.AddSingleton<DatabaseStartupMigrator>();
 
-        // Game data catalog (singleton: loaded at startup, reloaded from Server Management › Game data)
-        services.AddSingleton<IGameDataCatalog, FileGameDataCatalog>();
+        // Game data catalogs (singletons: loaded at startup; Nijiiro's reloads from Server Management › Game data)
+        if (enabledEras.Contains(GameEra.Nijiiro))
+        {
+            services.AddSingleton<NijiiroEraGameDataCatalog>();
+            services.AddSingleton<INijiiroCatalog>(sp => sp.GetRequiredService<NijiiroEraGameDataCatalog>());
+            services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<NijiiroEraGameDataCatalog>());
+        }
+
+        if (enabledEras.Contains(GameEra.Green))
+        {
+            services.AddSingleton<GreenEraGameDataCatalog>();
+            services.AddSingleton<IGreenCatalog>(sp => sp.GetRequiredService<GreenEraGameDataCatalog>());
+            services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<GreenEraGameDataCatalog>());
+        }
+
+        if (enabledEras.Contains(GameEra.Blue))
+        {
+            services.AddSingleton<BlueEraGameDataCatalog>();
+            services.AddSingleton<IBlueCatalog>(sp => sp.GetRequiredService<BlueEraGameDataCatalog>());
+            services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<BlueEraGameDataCatalog>());
+        }
+
+        if (enabledEras.Contains(GameEra.Yellow))
+        {
+            services.AddSingleton<YellowEraGameDataCatalog>();
+            services.AddSingleton<IYellowCatalog>(sp => sp.GetRequiredService<YellowEraGameDataCatalog>());
+            services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<YellowEraGameDataCatalog>());
+        }
+
+        if (enabledEras.Contains(GameEra.Red))
+        {
+            services.AddSingleton<RedEraGameDataCatalog>();
+            services.AddSingleton<IRedCatalog>(sp => sp.GetRequiredService<RedEraGameDataCatalog>());
+            services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<RedEraGameDataCatalog>());
+        }
+
+        if (enabledEras.Contains(GameEra.White))
+        {
+            services.AddSingleton<WhiteEraGameDataCatalog>();
+            services.AddSingleton<IWhiteCatalog>(sp => sp.GetRequiredService<WhiteEraGameDataCatalog>());
+            services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<WhiteEraGameDataCatalog>());
+        }
+
+        if (enabledEras.Contains(GameEra.Murasaki))
+        {
+            services.AddSingleton<MurasakiEraGameDataCatalog>();
+            services.AddSingleton<IMurasakiCatalog>(sp => sp.GetRequiredService<MurasakiEraGameDataCatalog>());
+            services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<MurasakiEraGameDataCatalog>());
+        }
+
+        if (enabledEras.Contains(GameEra.Kimidori))
+        {
+            services.AddSingleton<KimidoriEraGameDataCatalog>();
+            services.AddSingleton<IKimidoriCatalog>(sp => sp.GetRequiredService<KimidoriEraGameDataCatalog>());
+            services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<KimidoriEraGameDataCatalog>());
+        }
+
+        if (enabledEras.Contains(GameEra.Momoiro))
+        {
+            services.AddSingleton<MomoiroEraGameDataCatalog>();
+            services.AddSingleton<IMomoiroCatalog>(sp => sp.GetRequiredService<MomoiroEraGameDataCatalog>());
+            services.AddSingleton<IEraGameDataCatalog>(sp => sp.GetRequiredService<MomoiroEraGameDataCatalog>());
+        }
+
+        services.AddSingleton<IGameDataCatalog>(sp => new FileGameDataCatalog(
+            sp.GetServices<IEraGameDataCatalog>()));
         services.AddSingleton<IExtractRunner, ExtractRunner>();
 
         // Identity

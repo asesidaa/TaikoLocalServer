@@ -7,9 +7,9 @@ public class UserDataController : BaseProtocolController<UserDataController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetUserData([FromBody] UserDataRequest request)
     {
-        Logger.LogInformation("UserData request : {Request}", request.Stringify());
+        Logger.LogInformation("UserData request : {@Request}", request);
 
-        var commonResponse = await Mediator.Send(new UserDataQuery(request.Baid), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new UserDataQuery(request.Baid, GameEra.Nijiiro), HttpContext.RequestAborted);
         var response = UserDataMappers.MapToWW08(commonResponse);
 
         return Ok(response);

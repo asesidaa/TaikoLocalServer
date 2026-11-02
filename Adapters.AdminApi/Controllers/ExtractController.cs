@@ -1,7 +1,7 @@
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 /// <summary>
-/// "Run extract": copies the game files in from GamePath, or from a game folder an admin sends from their browser
+/// "Run extract": copies the game files in from Eras.Nijiiro.GameDataPath, or from a game folder an admin sends from their browser
 /// (AllowRemoteGameDir) (Server Management › Game data, setup). Admin only.
 /// </summary>
 [ApiController]
@@ -18,7 +18,7 @@ public class ExtractController(IExtractRunner extract, ITaikoDbContext context) 
 
     /// <summary>
     /// Starts a run; poll GET for its report. <paramref name="mods"/> layers the install's Data_mods.
-    /// <paramref name="uploaded"/> runs on the files sent to Upload instead of GamePath.
+    /// <paramref name="uploaded"/> runs on the files sent to Upload instead of Eras.Nijiiro.GameDataPath.
     /// </summary>
     [HttpPost]
     public async Task<IActionResult> Start([FromQuery] bool mods = true, [FromQuery] bool uploaded = false)

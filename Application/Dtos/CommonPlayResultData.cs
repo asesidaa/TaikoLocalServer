@@ -1,7 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
 namespace TaikoLocalServer.Application.Dtos;
 
-public class CommonPlayResultData
+public partial class CommonPlayResultData
 {
     public uint            Baid                   { get; set; }
     public string          ChassisId              { get; set; } = string.Empty;
@@ -12,7 +12,6 @@ public class CommonPlayResultData
     public bool            IsTwoPlayers           { get; set; }
     public List<StageData> AryStageInfoes         { get; set; } = [];
     public List<uint>      ReleaseSongNoes        { get; set; } = [];
-    public List<uint>      UraReleaseSongNoes     { get; set; } = [];
     public List<uint>      GetToneNoes            { get; set; } = [];
     public List<uint>      GetCostumeNo1s         { get; set; } = [];
     public List<uint>      GetCostumeNo2s         { get; set; } = [];
@@ -20,7 +19,6 @@ public class CommonPlayResultData
     public List<uint>      GetCostumeNo4s         { get; set; } = [];
     public List<uint>      GetCostumeNo5s         { get; set; } = [];
     public List<uint>      GetTitleNoes           { get; set; } = [];
-    public List<uint>      GetGenericInfoNoes     { get; set; } = [];
     public CostumeData     AryPlayCostume         { get; set; } = new();
     public CostumeData     AryCurrentCostume      { get; set; } = new();
     public string          Title                  { get; set; } = string.Empty;
@@ -34,21 +32,13 @@ public class CommonPlayResultData
     public bool            IsNotRecordedDan       { get; set; }
     public uint            AreaCode               { get; set; }
     public byte[]          Reserved               { get; set; } = [];
-    public uint            TournamentMode         { get; set; }
     public string          Accesstoken            { get; set; } = string.Empty;
     public byte[]          ContentInfo            { get; set; } = [];
-    public uint            DifficultyPlayedCourse { get; set; }
-    public uint            DifficultyPlayedStar   { get; set; }
-    public uint            DifficultyPlayedSort   { get; set; }
-    public uint            IsRandomUsePlay        { get; set; }
-    public string          InputMedian            { get; set; } = string.Empty;
-    public string          InputVariance          { get; set; } = string.Empty;
     
-    public class StageData
+    public partial class StageData
     {
         public uint SongNo { get; set; }
         public uint Level { get; set; }
-        public uint StageMode { get; set; }
         public uint PlayResult { get; set; }
         public uint PlayScore { get; set; }
         public uint ScoreRate { get; set; }
@@ -61,10 +51,6 @@ public class CommonPlayResultData
         public uint HitCnt { get; set; }
         public byte[] OptionFlg { get; set; } = [];
         public byte[] ToneFlg { get; set; } = [];
-        public int NotesPosition { get; set; }
-        public bool IsVoiceOn { get; set; }
-        public bool IsSkipOn { get; set; }
-        public bool IsSkipUse { get; set; }
         public uint SupportLevel { get; set; }
         public List<ResultcompeData> AryChallengeIds { get; set; } = [];
         public List<ResultcompeData> AryUserCompeIds { get; set; } = [];
@@ -73,8 +59,6 @@ public class CommonPlayResultData
         public bool IsFavorite { get; set; }
         public bool IsRecent { get; set; }
         public uint SelectedFolderId { get; set; }
-        public uint? IsRandomUseStage { get; set; }
-        public bool IsPapamama { get; set; }
         public uint StarLevel { get; set; }
         public bool IsWin { get; set; }
         public List<AiStageSectionData> ArySectionDatas { get; set; } = [];

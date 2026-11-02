@@ -1,14 +1,14 @@
 namespace TaikoLocalServer.Application.Dtos;
 
-public class CommonGetTelopResponse
+public sealed class CommonGetTelopResponse
 {
-    public uint Result { get; set; }
+    public uint Result { get; set; } = 1;
 
-    public uint VerupNo { get; set; }
+    public uint? VerupNo { get; set; }
 
-    public string StartDatetime { get; set; } = string.Empty;
+    public string? StartDatetime { get; set; }
 
-    public string EndDatetime { get; set; } = string.Empty;
+    public string? EndDatetime { get; set; }
 
-    public string Telop { get; set; } = string.Empty;
+    public string? Telop { get; set; }
 }

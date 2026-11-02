@@ -2,64 +2,32 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetSelfBestQuery(uint Baid, uint Difficulty, uint[] SongIdList) : IRequest<CommonSelfBestResponse>;
+public readonly record struct GetSelfBestQuery(uint Baid, GameEra Era, uint Difficulty, uint[] SongIdList) : IRequest<CommonSelfBestResponse>;
 
-public class GetSelfBestQueryHandler(IGameDataCatalog gameDataService, ITaikoDbContext context, ILogger<GetSelfBestQueryHandler> logger)
+public partial class GetSelfBestQueryHandler(IGameDataCatalog gameDataService, ITaikoDbContext context, ILogger<GetSelfBestQueryHandler> logger)
     : IRequestHandler<GetSelfBestQuery, CommonSelfBestResponse>
 {
-    public async ValueTask<CommonSelfBestResponse> Handle(GetSelfBestQuery request, CancellationToken cancellationToken)
+    public ValueTask<CommonSelfBestResponse> Handle(GetSelfBestQuery request, CancellationToken cancellationToken) => request.Era switch
     {
-        var requestDifficulty = (Difficulty)request.Difficulty;
-        requestDifficulty.Throw().IfOutOfRange();
+        GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
+        GameEra.Green => HandleGreen(request, cancellationToken),
+        GameEra.Blue => HandleBlue(request, cancellationToken),
+        GameEra.Yellow => HandleYellow(request, cancellationToken),
+        GameEra.Red => HandleRed(request, cancellationToken),
+        GameEra.White => HandleWhite(request, cancellationToken),
+        GameEra.Murasaki => HandleMurasaki(request, cancellationToken),
+        GameEra.Kimidori => HandleKimidori(request, cancellationToken),
+        GameEra.Momoiro => HandleMomoiro(request, cancellationToken),
+        _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
+    };
 
-        var allSongSet = gameDataService.GetMusicList().ToHashSet();
-        var requestSet = request.SongIdList.ToHashSet();
-        if (!requestSet.IsSubsetOf(allSongSet))
-        {
-            var invalidSongIds = requestSet.Except(allSongSet);
-            logger.LogWarning("Invalid song IDs: {InvalidSongIds}", string.Join(", ", invalidSongIds));
-            requestSet.ExceptWith(invalidSongIds);
-        }
-
-        var selfBestScores = await context.SongBestData
-            .Where(datum => datum.Baid == request.Baid &&
-                            requestSet.Contains(datum.SongId) &&
-                            (datum.Difficulty == requestDifficulty ||
-                             (datum.Difficulty == Difficulty.UraOni && requestDifficulty == Difficulty.Oni)))
-            .ToListAsync(cancellationToken);
-        var selfBestList = new List<CommonSelfBestResponse.SelfBestData>();
-        foreach (var songId in request.SongIdList)
-        {
-            var selfBest = new CommonSelfBestResponse.SelfBestData();
-            var selfBestScore = selfBestScores
-                .FirstOrDefault(datum => datum.SongId == songId &&
-                                         datum.Difficulty == requestDifficulty);
-            var uraSelfBestScore = selfBestScores
-                .FirstOrDefault(datum => datum.SongId == songId &&
-                                         datum.Difficulty == Difficulty.UraOni && requestDifficulty == Difficulty.Oni);
-
-            selfBest.SongNo = songId;
-            if (selfBestScore is not null)
-            {
-                selfBest.SelfBestScore = selfBestScore.BestScore;
-                selfBest.SelfBestScoreRate = selfBestScore.BestRate;
-            }
-            if (uraSelfBestScore is not null)
-            {
-                selfBest.UraBestScore = uraSelfBestScore.BestScore;
-                selfBest.UraBestScoreRate = uraSelfBestScore.BestRate;
-            }
-
-            selfBestList.Add(selfBest);
-        }
-
-        var response = new CommonSelfBestResponse
-        {
-            Result = 1,
-            Level = request.Difficulty,
-            ArySelfbestScores = selfBestList
-        };
-
-        return response;
-    }
+    private partial ValueTask<CommonSelfBestResponse> HandleNijiiro(GetSelfBestQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonSelfBestResponse> HandleGreen(GetSelfBestQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonSelfBestResponse> HandleBlue(GetSelfBestQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonSelfBestResponse> HandleYellow(GetSelfBestQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonSelfBestResponse> HandleRed(GetSelfBestQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonSelfBestResponse> HandleWhite(GetSelfBestQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonSelfBestResponse> HandleMurasaki(GetSelfBestQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonSelfBestResponse> HandleKimidori(GetSelfBestQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonSelfBestResponse> HandleMomoiro(GetSelfBestQuery request, CancellationToken cancellationToken);
 }

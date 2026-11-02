@@ -18,4 +18,8 @@ public sealed record ClientAuthConfigResponse(
     TwoFactorMode TwoFactor,
     bool ServerAvatars,
     bool ServerStills = false,
-    bool AllowCustomTitles = false);
+    bool AllowCustomTitles = false,
+    /// <summary>The games this server runs (ServerSettings.Eras), e.g. Nijiiro, Green.</summary>
+    IReadOnlyList<string>? EnabledEras = null,
+    /// <summary>Older games' favourite-song caps, by game.</summary>
+    IReadOnlyDictionary<string, int>? FavoriteSongLimits = null);

@@ -12,7 +12,7 @@ public class CrownsDataController(ITaikoDbContext context, IOptions<ServerSettin
     [Produces("application/protobuf")]
     public async Task<IActionResult> CrownsData([FromBody] CrownsDataRequest request)
     {
-        Logger.LogInformation("CrownsData request : {Request}", request.Stringify());
+        Logger.LogInformation("CrownsData request : {@Request}", request);
 
         var crownData = await Handle(request.Baid);
 
@@ -30,7 +30,7 @@ public class CrownsDataController(ITaikoDbContext context, IOptions<ServerSettin
 
     private async Task<CrownData> Handle(uint baid)
     {
-        var songBestData = await context.SongBestData
+        var songBestData = await context.SongBestDataNijiiro
             .Where(datum => datum.Baid == baid)
             .ToListAsync(HttpContext.RequestAborted);
 

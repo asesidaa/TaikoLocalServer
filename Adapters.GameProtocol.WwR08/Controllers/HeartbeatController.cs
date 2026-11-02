@@ -9,7 +9,7 @@ public class HeartbeatController(IServerAccess access) : BaseProtocolController<
     [Produces("application/protobuf")]
     public IActionResult HeartBeat([FromBody] HeartBeatRequest request)
     {
-        Logger.LogInformation("Heartbeat request: {Request}", request.Stringify());
+        Logger.LogInformation("Heartbeat request: {@Request}", request);
         var response = new HeartBeatResponse
         {
             Result = 1,

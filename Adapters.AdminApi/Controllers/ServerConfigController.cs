@@ -26,7 +26,7 @@ public class ServerConfigController(IConfiguration config, IServerAccess access)
             s["GameUrl"] ?? "",
             s.GetValue<bool>("EnableMoreSongs"),
             s.GetValue("MoreSongsSize", DomainConstants.MusicIdMaxExpanded),
-            s["GamePath"] ?? "",
+            s["Eras:Nijiiro:GameDataPath"] ?? "",
             s.GetValue<bool>("ApiTokens")));
     }
 }

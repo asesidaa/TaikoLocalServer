@@ -7,9 +7,9 @@ public class GetTokenCountController : BaseProtocolController<GetTokenCountContr
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetTokenCount([FromBody] GetTokenCountRequest request)
     {
-        Logger.LogInformation("GetTokenCount request : {Request}", request.Stringify());
+        Logger.LogInformation("GetTokenCount request : {@Request}", request);
 
-        var commonResponse = await Mediator.Send(new GetTokenCountQuery(request.Baid), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new GetTokenCountQuery(request.Baid, GameEra.Nijiiro), HttpContext.RequestAborted);
         var response = TokenCountDataMappers.MapToWW08(commonResponse);
 
         return Ok(response);

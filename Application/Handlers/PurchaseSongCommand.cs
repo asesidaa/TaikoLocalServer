@@ -2,92 +2,37 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct PurchaseSongCommand(uint Baid, uint SongNo, uint Type, uint TokenId, uint Price) : IRequest<CommonSongPurchaseResponse>;
+public readonly record struct PurchaseSongCommand(uint Baid, GameEra Era, uint SongNo, uint Type, uint TokenId, uint Price) : IRequest<CommonSongPurchaseResponse>;
 
-public readonly record struct PurchaseSongCommandCN(uint Baid, uint SongNo, uint TokenId, uint Price) : IRequest<CommonSongPurchaseResponse>;
+public readonly record struct PurchaseSongCommandCN(uint Baid, GameEra Era, uint SongNo, uint TokenId, uint Price) : IRequest<CommonSongPurchaseResponse>;
 
-public class PurchaseSongCommandHandler(ITaikoDbContext context, ILogger<PurchaseSongCommandHandler> logger) 
+public partial class PurchaseSongCommandHandler(ITaikoDbContext context, ILogger<PurchaseSongCommandHandler> logger) 
     : IRequestHandler<PurchaseSongCommand, CommonSongPurchaseResponse>
 {
 
-    public async ValueTask<CommonSongPurchaseResponse> Handle(PurchaseSongCommand request, CancellationToken cancellationToken)
+    public ValueTask<CommonSongPurchaseResponse> Handle(PurchaseSongCommand request, CancellationToken cancellationToken) => request.Era switch
     {
-        var user = await context.UserData
-            .Include(u => u.Tokens)
-            .FirstOrDefaultAsync(u => u.Baid == request.Baid, cancellationToken);
-        user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
-        
-        var token = user.Tokens.FirstOrDefault(t => t.Id == request.TokenId);
-        
-        if (token is not null && token.Count >= request.Price)
-        {
-            token.Count -= (int)request.Price;
-        }
-        else
-        {
-            logger.LogError("User with baid {Baid} does not have enough tokens to purchase song with id {SongNo}!", request.Baid, request.SongNo);
-            return new CommonSongPurchaseResponse { Result = 0 };
-        }
+        GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
+        GameEra.Green => HandleGreen(request, cancellationToken),
+        _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
+    };
 
-        if (request.Type == 1)
-        {
-            if (user.UnlockedUraSongIdList.Contains(request.SongNo))
-            {
-                logger.LogWarning("User with baid {Baid} already has song with id {SongNo} unlocked!", request.Baid, request.SongNo);
-                return new CommonSongPurchaseResponse { Result = 0 };
-            }
-            
-            user.UnlockedUraSongIdList.Add(request.SongNo);
-        }
-        else
-        {
-            if (user.UnlockedSongIdList.Contains(request.SongNo))
-            {
-                logger.LogWarning("User with baid {Baid} already has song with id {SongNo} unlocked!", request.Baid, request.SongNo);
-                return new CommonSongPurchaseResponse { Result = 0 };
-            }
-            
-            user.UnlockedSongIdList.Add(request.SongNo);
-        }
-        
-        context.UserData.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-        return new CommonSongPurchaseResponse { Result = 1, TokenCount = token.Count };
-    }
+    private partial ValueTask<CommonSongPurchaseResponse> HandleNijiiro(PurchaseSongCommand request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonSongPurchaseResponse> HandleGreen(PurchaseSongCommand request, CancellationToken cancellationToken);
 }
 
 
-public class PurchaseSongCommandHandlerCN(ITaikoDbContext context, ILogger<PurchaseSongCommandHandlerCN> logger) 
+public partial class PurchaseSongCommandHandlerCN(ITaikoDbContext context, ILogger<PurchaseSongCommandHandlerCN> logger) 
     : IRequestHandler<PurchaseSongCommandCN, CommonSongPurchaseResponse>
 {
 
-    public async ValueTask<CommonSongPurchaseResponse> Handle(PurchaseSongCommandCN request, CancellationToken cancellationToken)
+    public ValueTask<CommonSongPurchaseResponse> Handle(PurchaseSongCommandCN request, CancellationToken cancellationToken) => request.Era switch
     {
-        var user = await context.UserData
-            .Include(u => u.Tokens)
-            .FirstOrDefaultAsync(u => u.Baid == request.Baid, cancellationToken);
-        user.ThrowIfNull($"User with baid {request.Baid} does not exist!");
-        if (user.UnlockedSongIdList.Contains(request.SongNo))
-        {
-            logger.LogWarning("User with baid {Baid} already has song with id {SongNo} unlocked!", request.Baid, request.SongNo);
-            return new CommonSongPurchaseResponse { Result = 0 };
-        }
-        
-        var token = user.Tokens.FirstOrDefault(t => t.Id == request.TokenId);
-        if (token is not null && token.Count >= request.Price)
-        {
-            token.Count -= (int)request.Price;
-        }
-        else
-        {
-            logger.LogError("User with baid {Baid} does not have enough tokens to purchase song with id {SongNo}!", request.Baid, request.SongNo);
-            return new CommonSongPurchaseResponse { Result = 0 };
-        }
-        
-        user.UnlockedSongIdList.Add(request.SongNo);
-        
-        context.UserData.Update(user);
-        await context.SaveChangesAsync(cancellationToken);
-        return new CommonSongPurchaseResponse { Result = 1, TokenCount = token.Count };
-    }
+        GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
+        GameEra.Green => HandleGreen(request, cancellationToken),
+        _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
+    };
+
+    private partial ValueTask<CommonSongPurchaseResponse> HandleNijiiro(PurchaseSongCommandCN request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonSongPurchaseResponse> HandleGreen(PurchaseSongCommandCN request, CancellationToken cancellationToken);
 }

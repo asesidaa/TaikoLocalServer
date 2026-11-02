@@ -4,16 +4,31 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Route("api/[controller]")]
 [Authorize]
 [ApiScope(ApiScopes.ReadScores, ApiScopes.AdminUsers)]
-public class SongLeaderboardController(ITaikoDbContext context) : BaseAdminController<SongLeaderboardController>
+public partial class SongLeaderboardController(ITaikoDbContext context) : BaseAdminController<SongLeaderboardController>
 {
+    private readonly ITaikoDbContext context = context;
+
     [HttpGet("{songId}")]
+    public Task<ActionResult<SongLeaderboardResponse>> GetSongLeaderboard(
+        uint songId,
+        [FromQuery] uint baid,
+        [FromQuery] uint difficulty,
+        [FromQuery] int page = 1,
+        [FromQuery] int limit = 10)
+        => GetSongLeaderboard(nameof(GameEra.Nijiiro), songId, baid, difficulty, page, limit);
+
+    [HttpGet("/api/{era}/[controller]/{songId}")]
     public async Task<ActionResult<SongLeaderboardResponse>> GetSongLeaderboard(
+        string era,
         uint songId,
         [FromQuery] uint baid,
         [FromQuery] uint difficulty,
         [FromQuery] int page = 1,
         [FromQuery] int limit = 10)
     {
+        if (!EraRoute.TryParse(era, out var gameEra))
+            return EraRoute.BadEra(era);
+
         if (baid != 0 && this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
 
@@ -27,16 +42,32 @@ public class SongLeaderboardController(ITaikoDbContext context) : BaseAdminContr
             return BadRequest(new { Message = "Limit cannot be greater than 200." });
         }
 
-        if (difficulty < 1 || difficulty > 5)
+        var diff = Ac15Difficulty.FromProtocol(difficulty);
+        if (diff == Difficulty.None)
         {
             return BadRequest(new { Message = "Invalid difficulty. Please provide a number between 1-5." });
         }
 
-        var diff = (Difficulty)difficulty;
+        var rows = gameEra switch
+        {
+            GameEra.Nijiiro => await GetNijiiroLeaderboardRows(songId, diff),
+            GameEra.Green => await GetGreenLeaderboardRows(songId, diff),
+            GameEra.Blue => await GetBlueLeaderboardRows(songId, diff),
+            GameEra.Yellow => await GetYellowLeaderboardRows(songId, diff),
+            GameEra.Red => await GetRedLeaderboardRows(songId, diff),
+            GameEra.White => await GetWhiteLeaderboardRows(songId, diff),
+            GameEra.Murasaki => await GetMurasakiLeaderboardRows(songId, diff),
+            GameEra.Kimidori => await GetKimidoriLeaderboardRows(songId, diff),
+            GameEra.Momoiro => await GetMomoiroLeaderboardRows(songId, diff),
+            _ => null
+        };
 
-        var totalScores = await context.SongBestData
-            .Where(x => x.SongId == songId && x.Difficulty == diff)
-            .CountAsync();
+        if (rows is null)
+        {
+            return EraRoute.BadEra(era);
+        }
+
+        var totalScores = rows.Count;
 
         var totalPages = totalScores / limit;
         if (totalScores % limit > 0)
@@ -44,68 +75,76 @@ public class SongLeaderboardController(ITaikoDbContext context) : BaseAdminContr
             totalPages++;
         }
 
-        var scores = await context.SongBestData
-            .Where(x => x.SongId == songId && x.Difficulty == diff)
+        var orderedScores = rows
             .OrderByDescending(x => x.BestScore)
             .ThenByDescending(x => x.BestRate)
             .ThenByDescending(x => x.BestCrown)
             .Skip((page - 1) * limit)
             .Take(limit)
-            .ToListAsync();
+            .ToList();
 
-        // Two queries for the page, not two per row: names in one go, and ranks from the first row's (ties share a rank).
-        var pageBaids = scores.Select(s => s.Baid).ToList();
-        var names = await context.UserData.Where(u => pageBaids.Contains(u.Baid))
+        // Batch-resolve usernames for the page in a single query.
+        var pageBaids = orderedScores.Select(s => s.Baid).ToList();
+        var userNames = await context.UserData
+            .Where(u => pageBaids.Contains(u.Baid))
+            .AsNoTracking()
             .ToDictionaryAsync(u => u.Baid, u => u.MyDonName, HttpContext.RequestAborted);
-        var firstRank = scores.Count == 0 ? 0 : 1 + await context.SongBestData
-            .CountAsync(x => x.SongId == songId && x.Difficulty == diff && x.BestScore > scores[0].BestScore, HttpContext.RequestAborted);
 
-        var leaderboard = new List<SongLeaderboard>();
-        for (var i = 0; i < scores.Count; i++)
+        var pageScoreSet = orderedScores.Select(s => s.BestScore).ToHashSet();
+        var rankByScore = new Dictionary<uint, int>();
+        if (pageScoreSet.Count > 0)
         {
-            var score = scores[i];
-            // Below a lower score, everyone earlier (this page and the ones before) scored higher.
-            var rank = i == 0 ? firstRank
-                : score.BestScore != scores[i - 1].BestScore ? (page - 1) * limit + i + 1
-                : leaderboard[i - 1].Rank;
-            leaderboard.Add(new SongLeaderboard
+            var minPageScore = pageScoreSet.Min();
+            var scoreBuckets = rows
+                .Where(x => x.BestScore >= minPageScore)
+                .GroupBy(x => x.BestScore)
+                .Select(g => new { BestScore = g.Key, Count = g.Count() })
+                .ToList();
+
+            var aboveCount = 0;
+            foreach (var bucket in scoreBuckets.OrderByDescending(b => b.BestScore))
             {
-                Rank = rank,
-                Baid = score.Baid,
-                UserName = names.GetValueOrDefault(score.Baid),
-                BestScore = score.BestScore,
-                BestRate = score.BestRate,
-                BestCrown = score.BestCrown,
-                BestScoreRank = score.BestScoreRank
-            });
+                if (pageScoreSet.Contains(bucket.BestScore))
+                {
+                    rankByScore[bucket.BestScore] = aboveCount + 1;
+                }
+
+                aboveCount += bucket.Count;
+            }
         }
+
+        var leaderboard = orderedScores
+            .Select((s, i) => new SongLeaderboard
+            {
+                Rank = rankByScore.GetValueOrDefault(s.BestScore, (page - 1) * limit + i + 1),
+                Baid = s.Baid,
+                UserName = userNames.GetValueOrDefault(s.Baid),
+                BestScore = s.BestScore,
+                BestRate = s.BestRate,
+                BestCrown = s.BestCrown,
+                BestScoreRank = s.BestScoreRank
+            })
+            .ToList();
 
         SongLeaderboard? userScore = null;
         if (baid != 0)
         {
-            var score = await context.SongBestData
-                .Where(x => x.SongId == songId && x.Difficulty == diff && x.Baid == baid)
-                .FirstOrDefaultAsync();
+            var score = rows.FirstOrDefault(x => x.Baid == baid);
 
             if (score != null)
             {
+                var aboveCount = rows.Count(x => x.BestScore > score.BestScore);
+                // The list orders by score, then accuracy, then crown: the rows ahead of this one by that order.
+                var ahead = rows.Count(x => x.BestScore > score.BestScore ||
+                    x.BestScore == score.BestScore && (x.BestRate > score.BestRate || x.BestRate == score.BestRate && x.BestCrown > score.BestCrown));
                 var user = await context.UserData
                     .Where(x => x.Baid == baid)
-                    .FirstOrDefaultAsync();
-
-                var rank = await context.SongBestData
-                    .Where(x => x.SongId == songId && x.Difficulty == diff && x.BestScore > score.BestScore)
-                    .CountAsync();
-
-                // The list orders by score, then accuracy, then crown: count the rows ahead of this one by that order.
-                var ahead = await context.SongBestData.CountAsync(x => x.SongId == songId && x.Difficulty == diff &&
-                    (x.BestScore > score.BestScore ||
-                     x.BestScore == score.BestScore && (x.BestRate > score.BestRate || x.BestRate == score.BestRate && x.BestCrown > score.BestCrown)),
-                    HttpContext.RequestAborted);
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(HttpContext.RequestAborted);
 
                 userScore = new SongLeaderboard
                 {
-                    Rank = rank + 1,
+                    Rank = aboveCount + 1,
                     Position = ahead + 1,
                     Baid = score.Baid,
                     UserName = user?.MyDonName,
@@ -125,5 +164,66 @@ public class SongLeaderboardController(ITaikoDbContext context) : BaseAdminContr
             TotalPages = totalPages,
             TotalScores = totalScores
         });
+    }
+
+    private async Task<List<LeaderboardScoreRow>> GetNijiiroLeaderboardRows(uint songId, Difficulty difficulty)
+    {
+        return await context.SongBestDataNijiiro
+            .Where(x => x.SongId == songId && x.Difficulty == difficulty)
+            .AsNoTracking()
+            .Select(x => new LeaderboardScoreRow
+            {
+                Baid = x.Baid,
+                BestScore = x.BestScore,
+                BestRate = x.BestRate,
+                BestCrown = x.BestCrown,
+                BestScoreRank = x.BestScoreRank
+            })
+            .ToListAsync(HttpContext.RequestAborted);
+    }
+
+    private async Task<List<LeaderboardScoreRow>> GetGreenLeaderboardRows(uint songId, Difficulty difficulty)
+    {
+        return await context.SongBestDataGreen
+            .Where(x => x.SongId == songId && x.Difficulty == difficulty && !x.IsShin)
+            .AsNoTracking()
+            .Select(x => new LeaderboardScoreRow
+            {
+                Baid = x.Baid,
+                BestScore = x.BestScore,
+                BestRate = x.BestRate,
+                BestCrown = x.BestCrown,
+                BestScoreRank = ScoreRank.None
+            })
+            .ToListAsync(HttpContext.RequestAborted);
+    }
+
+    private async Task<List<LeaderboardScoreRow>> GetBlueLeaderboardRows(uint songId, Difficulty difficulty)
+    {
+        return await context.SongBestDataBlue
+            .Where(x => x.SongId == songId && x.Difficulty == difficulty && !x.IsShin)
+            .AsNoTracking()
+            .Select(x => new LeaderboardScoreRow
+            {
+                Baid = x.Baid,
+                BestScore = x.BestScore,
+                BestRate = x.BestRate,
+                BestCrown = x.BestCrown,
+                BestScoreRank = ScoreRank.None
+            })
+            .ToListAsync(HttpContext.RequestAborted);
+    }
+
+    private sealed class LeaderboardScoreRow
+    {
+        public uint Baid { get; init; }
+
+        public uint BestScore { get; init; }
+
+        public uint BestRate { get; init; }
+
+        public CrownType BestCrown { get; init; }
+
+        public ScoreRank BestScoreRank { get; init; }
     }
 }

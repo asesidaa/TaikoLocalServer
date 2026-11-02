@@ -1,76 +1,87 @@
-﻿using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Infrastructure.Persistence;
 
-public partial class TaikoDbContext : ITaikoDbContext
+// The server's own tables, the same for every game: the Web UI's player extras, access, sessions, cabinets.
+public partial class TaikoDbContext
 {
-    public virtual DbSet<DanScoreDatum> DanScoreData { get; set; } = null!;
-    public virtual DbSet<DanStageScoreDatum> DanStageScoreData { get; set; } = null!;
-    public virtual DbSet<AiScoreDatum> AiScoreData { get; set; } = null!;
-    public virtual DbSet<AiSectionScoreDatum> AiSectionScoreData { get; set; } = null!;
-    public virtual DbSet<Token> Tokens { get; set; } = null!;
+    public virtual DbSet<UserWebProfile> UserWebProfiles { get; set; } = null!;
+    public virtual DbSet<UserAvatar> UserAvatars { get; set; } = null!;
+    public virtual DbSet<UserStill> UserStills { get; set; } = null!;
+    public virtual DbSet<AccessRules> AccessRules { get; set; } = null!;
+    public virtual DbSet<ServerSecrets> ServerSecrets { get; set; } = null!;
+    public virtual DbSet<ActivityEntry> Activity { get; set; } = null!;
+    public virtual DbSet<SignInAttempt> SignInAttempts { get; set; } = null!;
+    public virtual DbSet<BannedCard> BannedCards { get; set; } = null!;
+    public virtual DbSet<WebSession> WebSessions { get; set; } = null!;
+    public virtual DbSet<ApiToken> ApiTokens { get; set; } = null!;
+    public virtual DbSet<DashboardNotice> DashboardNotices { get; set; } = null!;
+    public virtual DbSet<ServerStatus> ServerStatuses { get; set; } = null!;
+    public virtual DbSet<TrustedBrowser> TrustedBrowsers { get; set; } = null!;
+    public virtual DbSet<ServerOptions> ServerOptions { get; set; } = null!;
+    public virtual DbSet<Cabinet> Cabinets { get; set; } = null!;
+    public virtual DbSet<MovieLabel> MovieLabels { get; set; } = null!;
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<DanScoreDatum>(entity =>
+        // Single-row tables (Id 1), created by ServerAccess at first start.
+        modelBuilder.Entity<AccessRules>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
+        modelBuilder.Entity<ServerSecrets>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
+        modelBuilder.Entity<ActivityEntry>(entity => entity.HasIndex(e => e.Time));
+        modelBuilder.Entity<SignInAttempt>(entity =>
         {
-            entity.HasKey(e => new { e.Baid, e.DanId, e.DanType });
+            entity.HasIndex(e => e.Time);
+            entity.HasIndex(e => new { e.Baid, e.Time });
+        });
+        modelBuilder.Entity<BannedCard>(entity => entity.HasKey(e => e.AccessCode));
+        modelBuilder.Entity<WebSession>(entity => entity.HasIndex(e => e.Baid));
+        modelBuilder.Entity<ApiToken>(entity => entity.HasIndex(e => e.Hash).IsUnique());
+        modelBuilder.Entity<DashboardNotice>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
+        modelBuilder.Entity<ServerStatus>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
+        modelBuilder.Entity<TrustedBrowser>(entity => entity.HasIndex(e => e.TokenHash).IsUnique());
+        modelBuilder.Entity<ServerOptions>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
+        modelBuilder.Entity<Cabinet>(entity => entity.HasKey(e => e.ChassisId));
+        modelBuilder.Entity<MovieLabel>(entity =>
+        {
+            entity.HasKey(e => e.MovieId);
+            entity.Property(e => e.MovieId).ValueGeneratedNever();
+            entity.Property(e => e.Name).HasMaxLength(MovieLabel.MaxLength);
+        });
+
+        modelBuilder.Entity<UserWebProfile>(entity =>
+        {
+            entity.HasKey(e => e.Baid);
 
             entity.HasOne(d => d.Ba)
-                .WithMany()
-                .HasPrincipalKey(p => p.Baid)
-                .HasForeignKey(d => d.Baid)
+                .WithOne()
+                .HasForeignKey<UserWebProfile>(d => d.Baid)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            entity.Property(e => e.ClearState).HasConversion<uint>().HasDefaultValue(DanClearState.NotClear);
-            entity.Property(e => e.DanType).HasConversion<int>().HasDefaultValue(DanType.Normal).HasSentinel((DanType)0);
         });
 
-        modelBuilder.Entity<DanStageScoreDatum>(entity =>
+        modelBuilder.Entity<UserAvatar>(entity =>
         {
-            entity.HasKey(e => new { e.Baid, e.DanId, e.DanType, e.SongNumber });
+            entity.HasKey(e => e.Baid);
 
-            entity.HasOne(d => d.Parent)
-                .WithMany(p => p.DanStageScoreData)
-                .HasForeignKey(d => new { d.Baid, d.DanId, d.DanType })
-                .OnDelete(DeleteBehavior.Cascade);
-            entity.Property(e => e.DanType).HasConversion<int>().HasDefaultValue(DanType.Normal).HasSentinel((DanType)0);
-        });
-
-        modelBuilder.Entity<AiScoreDatum>(entity =>
-        {
-            entity.HasKey(e => new { e.Baid, e.SongId, e.Difficulty });
+            entity.Property(e => e.ContentType).HasMaxLength(16);
+            entity.Property(e => e.Key).HasMaxLength(UserAvatar.KeyMaxLength);
 
             entity.HasOne(d => d.Ba)
-                .WithMany()
-                .HasPrincipalKey(p => p.Baid)
-                .HasForeignKey(d => d.Baid)
+                .WithOne()
+                .HasForeignKey<UserAvatar>(d => d.Baid)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-
-        modelBuilder.Entity<AiSectionScoreDatum>(entity =>
+        modelBuilder.Entity<UserStill>(entity =>
         {
-            entity.HasKey(e => new { e.Baid, e.SongId, e.Difficulty, e.SectionIndex });
+            entity.HasKey(e => e.Baid);
 
-            entity.HasOne(d => d.Parent)
-                .WithMany(p => p.AiSectionScoreData)
-                .HasPrincipalKey(p => new { p.Baid, p.SongId, p.Difficulty })
-                .HasForeignKey(d => new { d.Baid, d.SongId, d.Difficulty })
-                .OnDelete(DeleteBehavior.Cascade);
-        });
+            entity.Property(e => e.ContentType).HasMaxLength(16);
+            entity.Property(e => e.Key).HasMaxLength(UserStill.KeyMaxLength);
 
-        modelBuilder.Entity<Token>(entity =>
-        {
-            entity.HasKey(e => new { e.Baid, e.Id });
-
-            entity.HasOne(d => d.Datum)
-                .WithMany(p => p.Tokens)
-                .HasPrincipalKey(p => p.Baid)
-                .HasForeignKey(d => d.Baid)
+            entity.HasOne(d => d.Ba)
+                .WithOne()
+                .HasForeignKey<UserStill>(d => d.Baid)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }

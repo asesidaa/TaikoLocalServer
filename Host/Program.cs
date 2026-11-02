@@ -3,9 +3,18 @@ using Serilog.Sinks.File.Header;
 using TaikoLocalServer.Adapters.AdminApi;
 using TaikoLocalServer.Adapters.AdminApi.Controllers;
 using TaikoLocalServer.Adapters.AllnetMucha;
+using TaikoLocalServer.Adapters.GameProtocol.Blue;
 using TaikoLocalServer.Adapters.GameProtocol.CnR00;
+using TaikoLocalServer.Adapters.GameProtocol.Green;
+using TaikoLocalServer.Adapters.GameProtocol.Kimidori;
+using TaikoLocalServer.Adapters.GameProtocol.Momoiro;
+using TaikoLocalServer.Adapters.GameProtocol.Murasaki;
+using TaikoLocalServer.Adapters.GameProtocol.Red;
+using TaikoLocalServer.Adapters.GameProtocol.White;
 using TaikoLocalServer.Adapters.GameProtocol.WwR08;
+using TaikoLocalServer.Adapters.GameProtocol.Yellow;
 using TaikoLocalServer.Application;
+using TaikoLocalServer.Domain.Enums;
 using TaikoLocalServer.Infrastructure;
 using TaikoLocalServer.Infrastructure.Identity;
 using TaikoLocalServer.Infrastructure.Persistence;
@@ -17,6 +26,7 @@ using Throw;
 using Serilog;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
+using TaikoLocalServer.Adapters.GameProtocol.Shared;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -40,13 +50,6 @@ Log.Information("Server starting up...");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-
-    builder.Services.AddHttpLogging(options =>
-    {
-        options.LoggingFields = HttpLoggingFields.All;
-        options.RequestBodyLogLimit = 32768;
-        options.ResponseBodyLogLimit = 32768;
-    });
 
     const string configurationsDirectory = "Configurations";
     builder.Configuration.AddJsonFile($"{configurationsDirectory}/Kestrel.json", optional: true, reloadOnChange: false);
@@ -80,6 +83,24 @@ try
         Log.Warning("Song limit expanded! Use at your own risk!");
     }
 
+    var serverSettingsConfig = builder.Configuration.GetSection("ServerSettings");
+    var enabledEras = GameProtocolApplicationParts.ReadEnabledEras(serverSettingsConfig);
+
+    if (enabledEras.Count == 0)
+    {
+        Log.Fatal("ServerSettings.Eras has no enabled era. At least one era (Nijiiro, Green, Blue, Yellow, Red, White, Murasaki, Kimidori, or Momoiro) must be enabled in Host/Configurations/ServerSettings.json. Refusing to start.");
+        throw new InvalidOperationException("No game eras enabled.");
+    }
+
+    Log.Information("Enabled game eras: {Eras}", string.Join(", ", enabledEras));
+
+    builder.Services.AddHttpLogging(options =>
+    {
+        options.LoggingFields = HttpLoggingFields.All;
+        options.RequestBodyLogLimit = 32768;
+        options.ResponseBodyLogLimit = 32768;
+    });
+
     // Add response compression services
     builder.Services.AddResponseCompression(options =>
     {
@@ -96,13 +117,55 @@ try
     // Add services to the container.
     builder.Services.AddOptions();
     builder.Services.AddApplication();
-    builder.Services.AddInfrastructure(builder.Configuration);
+    builder.Services.AddInfrastructure(builder.Configuration, enabledEras);
     builder.Services.AddAdminApi(builder.Configuration);
     builder.Services.AddAllnetMucha();
-    builder.Services.AddGameProtocolWwR08();
-    builder.Services.AddGameProtocolCnR00();
+    if (enabledEras.Contains(GameEra.Nijiiro))
+    {
+        builder.Services.AddGameProtocolWwR08();
+        builder.Services.AddGameProtocolCnR00();
+    }
+    if (enabledEras.Contains(GameEra.Green))
+    {
+        builder.Services.AddGameProtocolGreen();
+    }
+    if (enabledEras.Contains(GameEra.Blue))
+    {
+        builder.Services.AddGameProtocolBlue();
+    }
+    if (enabledEras.Contains(GameEra.Yellow))
+    {
+        builder.Services.AddGameProtocolYellow();
+    }
+    if (enabledEras.Contains(GameEra.Red))
+    {
+        builder.Services.AddGameProtocolRed();
+    }
+    if (enabledEras.Contains(GameEra.White))
+    {
+        builder.Services.AddGameProtocolWhite();
+    }
+    if (enabledEras.Contains(GameEra.Murasaki))
+    {
+        builder.Services.AddGameProtocolMurasaki();
+    }
+    if (enabledEras.Contains(GameEra.Kimidori))
+    {
+        builder.Services.AddGameProtocolKimidori();
+    }
+    if (enabledEras.Contains(GameEra.Momoiro))
+    {
+        builder.Services.AddGameProtocolMomoiro();
+    }
 
-    builder.Services.AddControllers().AddProtoBufNet();
+    builder.Services.AddControllers()
+        .AddProtoBufNet()
+        .ConfigureApplicationPartManager(apm =>
+        {
+            // Adapter assemblies referenced by Host are auto-discovered as ApplicationParts.
+            // Remove disabled-era assemblies so their controllers are not routed.
+            GameProtocolApplicationParts.RemoveDisabledGameProtocolApplicationParts(apm, enabledEras);
+        });
     builder.Services.AddMemoryCache();
     builder.Services.AddCors(options =>
     {
@@ -114,15 +177,14 @@ try
                 .AllowAnyHeader();
         });
     });
-    builder.Services.AddSingleton<SongBestResponseMapper>();
-
     var app = builder.Build();
 
     // Migrate db
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<TaikoDbContext>();
-        db.Database.Migrate();
+        var migrator = scope.ServiceProvider.GetRequiredService<DatabaseStartupMigrator>();
+        await migrator.MigrateAsync(db);
         // Access › Activity keeps a year, Sign-ins 90 days; sessions go a week after their last use (the token lifetime).
         db.Activity.Where(e => e.Time < DateTime.UtcNow.AddDays(-365)).ExecuteDelete();
         db.SignInAttempts.Where(e => e.Time < DateTime.UtcNow.AddDays(-90)).ExecuteDelete();
@@ -215,6 +277,7 @@ try
     };
     app.UseStaticFiles(webUiFiles);
     app.UseRouting();
+    app.UseGameProtocolProtobufRequestContentTypeFallback();
 
     // Enable Authentication and Authorization middleware
     app.UseAuthentication();

@@ -1,10 +1,7 @@
 namespace TaikoLocalServer.Application.Abstractions;
 
-public interface ITaikoDbContext
+public partial interface ITaikoDbContext
 {
-    DbSet<UserDatum> UserData { get; }
-    DbSet<Card> Cards { get; }
-    DbSet<Credential> Credentials { get; }
     DbSet<UserWebProfile> UserWebProfiles { get; }
     DbSet<UserAvatar> UserAvatars { get; }
     DbSet<UserStill> UserStills { get; }
@@ -21,17 +18,10 @@ public interface ITaikoDbContext
     DbSet<ServerOptions> ServerOptions { get; }
     DbSet<Cabinet> Cabinets { get; }
     DbSet<MovieLabel> MovieLabels { get; }
-    DbSet<Token> Tokens { get; }
-    DbSet<SongBestDatum> SongBestData { get; }
-    DbSet<SongPlayDatum> SongPlayData { get; }
-    DbSet<DanScoreDatum> DanScoreData { get; }
-    DbSet<DanStageScoreDatum> DanStageScoreData { get; }
-    DbSet<AiScoreDatum> AiScoreData { get; }
-    DbSet<AiSectionScoreDatum> AiSectionScoreData { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
-    // Questions about a player's plays in order, which the database answers in one pass (window functions) instead of
+    // Nijiiro: questions about a player's plays in order, which the database answers in one pass (window functions) instead of
     // every play being read: a heavy player has 100,000 of them. Skipped plays don't count, as in Play History.
 
     /// <summary>

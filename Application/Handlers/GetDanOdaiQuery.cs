@@ -2,10 +2,10 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-/// <param name="ChassisId">The asking cabinet: one with its own settings gets its own Dani Dojo course set.</param>
-public readonly record struct GetDanOdaiQuery(uint[] DanIds, uint Type, string ChassisId) : IRequest<List<DanData>>;
+/// <param name="ChassisId">Nijiiro: the asking cabinet; one with its own settings gets its own Dani Dojo course set.</param>
+public readonly record struct GetDanOdaiQuery(GameEra Era, uint[] DanIds, uint Type, string ChassisId = "") : IRequest<List<DanData>>;
 
-public class GetDanOdaiQueryHandler : IRequestHandler<GetDanOdaiQuery, List<DanData>>
+public partial class GetDanOdaiQueryHandler : IRequestHandler<GetDanOdaiQuery, List<DanData>>
 {
     private readonly IGameDataCatalog gameDataService;
     private readonly ICabinetRegistry cabinets;
@@ -16,41 +16,13 @@ public class GetDanOdaiQueryHandler : IRequestHandler<GetDanOdaiQuery, List<DanD
         this.cabinets = cabinets;
     }
 
-    public ValueTask<List<DanData>> Handle(GetDanOdaiQuery request, CancellationToken cancellationToken)
+    public ValueTask<List<DanData>> Handle(GetDanOdaiQuery request, CancellationToken cancellationToken) => request.Era switch
     {
-        var type = (DanType)request.Type;
-        type.Throw().IfOutOfRange();
-        var danDataList = new List<DanData>();
-        switch (type)
-        {
-            case DanType.Normal:
-                var danDataDictionary = cabinets.Find(request.ChassisId) is { OwnSettings: true } cabinet
-                    ? gameDataService.GetDanSet(cabinet.DanSet)
-                    : gameDataService.GetCommonDanDataDictionary();
+        GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
+        GameEra.Green => HandleGreen(request, cancellationToken),
+        _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
+    };
 
-                foreach (var danId in request.DanIds)
-                {
-                    if (danDataDictionary.TryGetValue(danId, out var danData))
-                    {
-                        danDataList.Add(danData);
-                    }
-                }
-                break;
-            case DanType.Gaiden:
-                var gaidenDataDictionary = gameDataService.GetCommonGaidenDataDictionary();
-                
-                foreach (var danId in request.DanIds)
-                {
-                    if (gaidenDataDictionary.TryGetValue(danId, out var danData))
-                    {
-                        danDataList.Add(danData);
-                    }
-                }
-                break;
-            default:
-                throw new ApplicationException("Impossible");
-        }
-
-        return ValueTask.FromResult(danDataList);
-    }
+    private partial ValueTask<List<DanData>> HandleNijiiro(GetDanOdaiQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<List<DanData>> HandleGreen(GetDanOdaiQuery request, CancellationToken cancellationToken);
 }

@@ -1,27 +1,52 @@
 ﻿namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetFolderQuery(uint[] FolderIds) : IRequest<CommonGetFolderResponse>;
+public readonly record struct GetFolderQuery(GameEra Era, uint[] FolderIds) : IRequest<CommonGetFolderResponse>;
 
-public class GetFolderQueryHandler(ILogger<GetFolderQueryHandler> logger, IGameDataCatalog gameDataService)
+public partial class GetFolderQueryHandler(ILogger<GetFolderQueryHandler> logger, IGameDataCatalog gameDataService)
     : IRequestHandler<GetFolderQuery, CommonGetFolderResponse>
 {
-    public ValueTask<CommonGetFolderResponse> Handle(GetFolderQuery request, CancellationToken cancellationToken)
+    public ValueTask<CommonGetFolderResponse> Handle(GetFolderQuery request, CancellationToken cancellationToken) => request.Era switch
+    {
+        GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
+        GameEra.Green => HandleGreen(request, cancellationToken),
+        GameEra.Blue => HandleBlue(request, cancellationToken),
+        GameEra.Yellow => HandleYellow(request, cancellationToken),
+        GameEra.Red => HandleRed(request, cancellationToken),
+        GameEra.White => HandleWhite(request, cancellationToken),
+        GameEra.Murasaki => HandleMurasaki(request, cancellationToken),
+        GameEra.Kimidori => HandleKimidori(request, cancellationToken),
+        _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
+    };
+
+    private CommonGetFolderResponse BuildFolderResponse(
+        IReadOnlyDictionary<uint, EventFolderData> eventFolders,
+        IEnumerable<uint> requestedFolderIds)
     {
         var response = new CommonGetFolderResponse
         {
             Result = 1
         };
-        var eventFolders = gameDataService.GetEventFolderDictionary();
-        foreach (var folderId in request.FolderIds)
+
+        foreach (var folderId in requestedFolderIds)
         {
-            eventFolders.TryGetValue(folderId, out var folderData);
-            if (folderData is null)
+            if (!eventFolders.TryGetValue(folderId, out var folderData))
             {
                 logger.LogWarning("Folder data for folder {FolderId} not found", folderId);
                 continue;
             }
+
             response.AryEventfolderDatas.Add(folderData);
         }
-        return ValueTask.FromResult(response);
+
+        return response;
     }
+
+    private partial ValueTask<CommonGetFolderResponse> HandleNijiiro(GetFolderQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonGetFolderResponse> HandleGreen(GetFolderQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonGetFolderResponse> HandleBlue(GetFolderQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonGetFolderResponse> HandleYellow(GetFolderQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonGetFolderResponse> HandleRed(GetFolderQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonGetFolderResponse> HandleWhite(GetFolderQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonGetFolderResponse> HandleMurasaki(GetFolderQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonGetFolderResponse> HandleKimidori(GetFolderQuery request, CancellationToken cancellationToken);
 }

@@ -7,9 +7,9 @@ public class GetAiScoreController : BaseProtocolController<GetAiScoreController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetAiScore([FromBody] GetAiScoreRequest request)
     {
-        Logger.LogInformation("GetAiScore request : {Request}", request.Stringify());
+        Logger.LogInformation("GetAiScore request : {@Request}", request);
 
-        var commonResponse = await Mediator.Send(new GetAiScoreQuery(request.Baid, request.SongNo, request.Level), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new GetAiScoreQuery(request.Baid, GameEra.Nijiiro, request.SongNo, request.Level), HttpContext.RequestAborted);
         var response = AiScoreMappers.MapToWW08(commonResponse);
 
         return Ok(response);

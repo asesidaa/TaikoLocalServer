@@ -4,7 +4,6 @@ global using Mediator;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Serilog;
-global using Swan.Formatters;
 global using TaikoLocalServer.Adapters.AdminApi;
 global using TaikoLocalServer.Adapters.AllnetMucha;
 global using TaikoLocalServer.Adapters.GameProtocol.CnR00;

@@ -1,108 +1,47 @@
-﻿using System.Buffers.Binary;
 using Microsoft.Extensions.Options;
+using TaikoLocalServer.Application.Dtos.Ac15;
 using TaikoLocalServer.Application.Settings;
-using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct UserDataQuery(uint Baid) : IRequest<CommonUserDataResponse>;
+public readonly record struct UserDataQuery(uint Baid, GameEra Era) : IRequest<CommonUserDataResponse>;
+public readonly record struct Ac15UserDataQuery(uint Baid, GameEra Era) : IRequest<Ac15UserDataResponse>;
 
-public class UserDataQueryHandler(ITaikoDbContext context, IGameDataCatalog gameDataService, ILogger<UserDataQueryHandler> logger, IOptions<ServerSettings> settings) 
-    : IRequestHandler<UserDataQuery, CommonUserDataResponse>
+public partial class UserDataQueryHandler(ITaikoDbContext context, IGameDataCatalog gameDataService, ILogger<UserDataQueryHandler> logger, IOptions<ServerSettings> settings) 
+    : IRequestHandler<UserDataQuery, CommonUserDataResponse>,
+      IRequestHandler<Ac15UserDataQuery, Ac15UserDataResponse>
 {
 
     private readonly ServerSettings settings = settings.Value;
 
-    public async ValueTask<CommonUserDataResponse> Handle(UserDataQuery request, CancellationToken cancellationToken)
+    public ValueTask<CommonUserDataResponse> Handle(UserDataQuery request, CancellationToken cancellationToken) => request.Era switch
     {
-        var userData = await context.UserData.FindAsync(request.Baid, cancellationToken);
-        userData.ThrowIfNull($"User not found for Baid {request.Baid}!");
-        
-        var unlockedSongIdList = userData.UnlockedSongIdList;
-        var unlockedUraSongIdList = userData.UnlockedUraSongIdList;
+        GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
+        GameEra.Green or GameEra.Blue or GameEra.Yellow or GameEra.Red or GameEra.White or GameEra.Murasaki or GameEra.Kimidori or GameEra.Momoiro => throw new InvalidOperationException($"Use {nameof(Ac15UserDataQuery)} for AC15 userdata era {request.Era}."),
+        _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
+    };
 
-        var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : DomainConstants.MusicIdMax;
+    public ValueTask<Ac15UserDataResponse> Handle(Ac15UserDataQuery request, CancellationToken cancellationToken) => request.Era switch
+    {
+        GameEra.Green => HandleGreen(request, cancellationToken),
+        GameEra.Blue => HandleBlue(request, cancellationToken),
+        GameEra.Yellow => HandleYellow(request, cancellationToken),
+        GameEra.Red => HandleRed(request, cancellationToken),
+        GameEra.White => HandleWhite(request, cancellationToken),
+        GameEra.Murasaki => HandleMurasaki(request, cancellationToken),
+        GameEra.Kimidori => HandleKimidori(request, cancellationToken),
+        GameEra.Momoiro => HandleMomoiro(request, cancellationToken),
+        GameEra.Nijiiro => throw new InvalidOperationException($"Use {nameof(UserDataQuery)} for Nijiiro userdata."),
+        _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
+    };
 
-        var musicList = gameDataService.GetMusicList();
-        var lockedSongsList = gameDataService.GetLockedSongsList().Except(unlockedSongIdList).ToList();
-        var lockedUraSongsList = gameDataService.GetLockedUraSongsList().Except(unlockedUraSongIdList).ToList();
-        var enabledMusicList = musicList.Except(lockedSongsList);
-        var releaseSongArray =
-            FlagCalculator.GetBitArrayFromIds(enabledMusicList, songIdMax, logger);
-
-        var defaultSongWithUraList = gameDataService.GetMusicWithUraList();
-        var enabledUraMusicList = defaultSongWithUraList.Except(lockedUraSongsList);
-        var uraSongArray =
-            FlagCalculator.GetBitArrayFromIds(enabledUraMusicList, songIdMax, logger);
-
-        if (userData.ToneFlgArray.Count == 0)
-        {
-            userData.ToneFlgArray = [0];
-            context.UserData.Update(userData);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-        
-        //var toneArray = FlagCalculator.GetBitArrayFromIds(userData.ToneFlgArray, gameDataService.GetToneFlagArraySize(), logger);
-        var toneArray = FlagCalculator.GetBitArrayTrue(gameDataService.GetToneFlagArraySize());
-        
-        var titleArray = FlagCalculator.GetBitArrayFromIds(userData.TitleFlgArray, gameDataService.GetTitleFlagArraySize(), logger);
-
-        var recentSongs = await context.SongPlayData
-            .Where(datum => datum.Baid == request.Baid)
-            .OrderByDescending(datum => datum.PlayTime)
-            .ThenByDescending(datum => datum.SongNumber)
-            .Select(datum => datum.SongId)
-            .ToArrayAsync(cancellationToken);
-
-        // Use custom implementation as distinctby cannot guarantee preserved element
-        var recentSet = new OrderedSet<uint>();
-        foreach (var id in recentSongs)
-        {
-            recentSet.Add(id);
-            if (recentSet.Count == 10)
-            {
-                break;
-            }
-        }
-
-        recentSongs = recentSet.ToArray();
-        
-        var defaultOptions = new byte[2];
-        BinaryPrimitives.WriteInt16LittleEndian(defaultOptions, userData.OptionSetting);
-
-        uint[] difficultySettingArray = [userData.DifficultySettingCourse, userData.DifficultySettingStar, userData.DifficultySettingSort];
-        for (int i = 0; i < 3; i++)
-        {
-            if (difficultySettingArray[i] >= 2)
-            {
-                difficultySettingArray[i] -= 1;
-            }
-        }
-        
-        var response = new CommonUserDataResponse
-        {
-            Result = 1,
-            ToneFlg = toneArray,
-            TitleFlg = titleArray,
-            ReleaseSongFlg = releaseSongArray,
-            UraReleaseSongFlg = uraSongArray,
-            AryFavoriteSongNoes = userData.FavoriteSongsArray.ToArray(),
-            AryRecentSongNoes = recentSongs,
-            DefaultOptionSetting = defaultOptions,
-            NotesPosition = userData.NotesPosition,
-            IsVoiceOn = userData.IsVoiceOn,
-            IsSkipOn = userData.IsSkipOn,
-            DifficultySettingCourse = difficultySettingArray[0],
-            DifficultySettingStar = difficultySettingArray[1],
-            DifficultySettingSort = difficultySettingArray[2],
-            DifficultyPlayedCourse = userData.DifficultyPlayedCourse,
-            DifficultyPlayedStar = userData.DifficultyPlayedStar,
-            DifficultyPlayedSort = userData.DifficultyPlayedSort,
-            SongRecentCnt = (uint)recentSongs.Length,
-            IsChallengecompe = false,
-            // TODO: Other fields
-        };
-
-        return response;
-    }
+    private partial ValueTask<CommonUserDataResponse> HandleNijiiro(UserDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15UserDataResponse> HandleGreen(Ac15UserDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15UserDataResponse> HandleBlue(Ac15UserDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15UserDataResponse> HandleYellow(Ac15UserDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15UserDataResponse> HandleRed(Ac15UserDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15UserDataResponse> HandleWhite(Ac15UserDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15UserDataResponse> HandleMurasaki(Ac15UserDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15UserDataResponse> HandleKimidori(Ac15UserDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15UserDataResponse> HandleMomoiro(Ac15UserDataQuery request, CancellationToken cancellationToken);
 }

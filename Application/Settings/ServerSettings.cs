@@ -1,6 +1,6 @@
 namespace TaikoLocalServer.Application.Settings;
 
-public class ServerSettings
+public sealed class ServerSettings
 {
     /// <summary>
     /// Local (no accounts or login) or Server (accounts, login, admin role). Unset on installs from before the
@@ -8,12 +8,9 @@ public class ServerSettings
     /// </summary>
     public ServerMode? Mode { get; set; }
 
-    /// <summary>The game install extract reads from (the folder containing Data/x64); enables "Run extract".</summary>
-    public string? GamePath { get; set; }
-
     /// <summary>
     /// Let admins send the game files from their browser (Server Management › Game data: pick the game folder) when
-    /// the game isn't on this machine. Off: only GamePath, or extract run by hand.
+    /// the game isn't on this machine. Off: only Eras.Nijiiro.GameDataPath, or extract run by hand.
     /// </summary>
     public bool AllowRemoteGameDir { get; set; }
 
@@ -29,4 +26,31 @@ public class ServerSettings
     public bool EnableMoreSongs { get; set; }
 
     public int MoreSongsSize { get; set; } = TaikoLocalServer.Domain.DomainConstants.MusicIdMaxExpanded;
+
+    public Dictionary<string, EraSettings> Eras { get; set; } = new();
+}
+
+public sealed class EraSettings
+{
+    public bool Enabled { get; set; }
+
+    public bool AutoExtractCatalog { get; set; } = true;
+
+    public string GameDataPath { get; set; } = string.Empty;
+
+    public string? CustomizationNameDataPath { get; set; }
+
+    public bool? EnableShop { get; set; }
+
+    public uint? ActiveShopSeasonId { get; set; }
+
+    public bool? EnableDonChallenge { get; set; }
+
+    public string? ActiveDonChallengeBundleId { get; set; }
+
+    public bool IsDonChallengeEnabled()
+        => EnableDonChallenge.GetValueOrDefault();
+
+    public string? GetActiveDonChallengeBundleId()
+        => ActiveDonChallengeBundleId;
 }

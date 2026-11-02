@@ -39,3 +39,9 @@ JSON shapes (→ `Application/ServerData/`), or anything depending on
 `Application`/`Infrastructure`.
 
 See the root `CLAUDE.md` for the full hexagonal layout.
+
+## Era Notes
+
+Admin contracts may carry era values or era-scoped fields when the WebUI needs them. Keep AC15 era-specific contract data explicit; do not overload another era's fields for Blue, Yellow, Red, or White behavior.
+
+Dedicated Don Challenge contracts are shared by Red and White AdminApi/WebUI surfaces. They describe server-side stage-derived progress/rewards, not cabinet ChallengeCompe protocol state.

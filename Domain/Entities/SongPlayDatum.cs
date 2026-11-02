@@ -1,8 +1,8 @@
-﻿using TaikoLocalServer.Domain.Enums;
+using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Domain.Entities;
 
-public partial class SongPlayDatum
+public partial class SongPlayDatumNijiiro
 {
     public long Id { get; set; }
     public uint Baid { get; set; }

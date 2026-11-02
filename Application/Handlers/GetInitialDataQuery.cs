@@ -1,13 +1,13 @@
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Microsoft.Extensions.Options;
 using TaikoLocalServer.Application.Settings;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-/// <param name="ChassisId">The asking cabinet: one with its own settings gets its own Dani Dojo set and movies.</param>
-public readonly record struct GetInitialDataQuery(string ChassisId) : IRequest<CommonInitialDataCheckResponse>;
+/// <param name="ChassisId">Nijiiro: the asking cabinet; one with its own settings gets its own Dani Dojo set and movies.</param>
+public readonly record struct GetInitialDataQuery(GameEra Era, string ChassisId = "") : IRequest<CommonInitialDataCheckResponse>;
 
-public class GetInitialDataQueryHandler(IGameDataCatalog gameDataService, ICabinetRegistry cabinets,
+public partial class GetInitialDataQueryHandler(IGameDataCatalog gameDataService, ICabinetRegistry cabinets,
     ILogger<GetInitialDataQueryHandler>                  logger,
     IOptions<ServerSettings>                             settings) 
     : IRequestHandler<GetInitialDataQuery, CommonInitialDataCheckResponse>
@@ -15,111 +15,27 @@ public class GetInitialDataQueryHandler(IGameDataCatalog gameDataService, ICabin
 
     private readonly ServerSettings settings = settings.Value;
     
-    public ValueTask<CommonInitialDataCheckResponse> Handle(GetInitialDataQuery request, CancellationToken cancellationToken)
+    public ValueTask<CommonInitialDataCheckResponse> Handle(GetInitialDataQuery request, CancellationToken cancellationToken) => request.Era switch
     {
-        var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : DomainConstants.MusicIdMax;
+        GameEra.Nijiiro => HandleNijiiro(request, cancellationToken),
+        GameEra.Green => HandleGreen(request, cancellationToken),
+        GameEra.Blue => HandleBlue(request, cancellationToken),
+        GameEra.Yellow => HandleYellow(request, cancellationToken),
+        GameEra.Red => HandleRed(request, cancellationToken),
+        GameEra.White => HandleWhite(request, cancellationToken),
+        GameEra.Murasaki => HandleMurasaki(request, cancellationToken),
+        GameEra.Kimidori => HandleKimidori(request, cancellationToken),
+        GameEra.Momoiro => HandleMomoiro(request, cancellationToken),
+        _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
+    };
 
-        var musicList = gameDataService.GetMusicList();
-        var lockedSongsList = gameDataService.GetLockedSongsList();
-        var lockedUraSongsList = gameDataService.GetLockedUraSongsList();
-
-        var enabledArray =
-            FlagCalculator.GetBitArrayFromIds(musicList, songIdMax, logger);
-
-        var defaultSongList = musicList.Except(lockedSongsList);
-        var defaultSongFlg =
-            FlagCalculator.GetBitArrayFromIds(defaultSongList, songIdMax, logger);
-
-        var defaultSongWithUraList = gameDataService.GetMusicWithUraList().Except(lockedUraSongsList);
-        var uraReleaseBit =
-            FlagCalculator.GetBitArrayFromIds(defaultSongWithUraList, songIdMax, logger);
-
-        var response = new CommonInitialDataCheckResponse
-        {
-            Result = 1,
-            DefaultSongFlg = defaultSongFlg,
-            AchievementSongBit = enabledArray,
-            UraReleaseBit = uraReleaseBit,
-            SongIntroductionEndDatetime = DateTime.Now.AddYears(10).ToString(Constants.DateTimeFormat),
-            ServerCurrentDatetime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds()
-        };
-
-        var cabinet = cabinets.Find(request.ChassisId) is { OwnSettings: true } own ? own : null;
-        var movieDataDictionary = gameDataService.GetMovieDataDictionary();
-        if (cabinet is not null)
-        {
-            // Its own movie list; enable_days as the defaults have it, else 0.
-            movieDataDictionary = cabinet.Movies.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(uint.Parse)
-                .ToImmutableDictionary(id => id, id => movieDataDictionary.TryGetValue(id, out var m) ? m : new MovieData { MovieId = id });
-        }
-        foreach (var movieData in movieDataDictionary)
-        {
-            response.AryMovieInfoes.Add(movieData.Value);
-        }
-
-        // TODO: Figure out what they are individually
-        var verupNo1 = new uint[] { 2, 3, 4, 5, 6, 7, 8, 13, 15, 24, 25, 26, 27, 28, 29, 30, 31 };
-        var aryVerUp = verupNo1.Select(i => new CommonInitialDataCheckResponse.VerupNoData1
-        {
-            MasterType = i,
-            VerupNo = 1
-        }).ToList();
-        CommonInitialDataCheckResponse.VerupNoData1[] verupNo1List =
-        [
-            GetVerupNoData1(DomainConstants.ShopVerupMasterType, gameDataService.GetShopFolderVerup()),
-        ];
-        response.AryVerupNoData1s.AddRange(aryVerUp);
-        response.AryVerupNoData1s.AddRange(verupNo1List);
-        
-        var telopDataDictionary = gameDataService.GetTelopDataDictionary();
-        var commonDanDataDictionary = cabinet is not null ? gameDataService.GetDanSet(cabinet.DanSet) : gameDataService.GetCommonDanDataDictionary();
-        var commonGaidenDataDictionary = gameDataService.GetCommonGaidenDataDictionary();
-        var eventFolderDictionary = gameDataService.GetEventFolderDictionary();
-        var songIntroDictionary = gameDataService.GetSongIntroductionDictionary();
-
-        CommonInitialDataCheckResponse.VerupNoData2[] verupNo2List =
-        [
-            GetVerupNoData2(DomainConstants.TelopVerupMasterType, telopDataDictionary),
-            GetVerupNoData2(DomainConstants.DanVerupMasterType, commonDanDataDictionary),
-            GetVerupNoData2(DomainConstants.GaidenVerupMasterType, commonGaidenDataDictionary),
-            GetVerupNoData2(DomainConstants.FolderVerupMasterType, eventFolderDictionary),
-            GetVerupNoData2(DomainConstants.IntroVerupMasterType, songIntroDictionary)
-        ];
-        response.AryVerupNoData2s.AddRange(verupNo2List);
-
-        response.AryChassisFunctionIds = 
-        [
-            DomainConstants.FunctionIdDaniAvailable,
-            DomainConstants.FunctionIdDaniFolderAvailable,
-            DomainConstants.FunctionIdAiBattleAvailable
-        ];
-
-        return ValueTask.FromResult(response);
-    }
-
-    private CommonInitialDataCheckResponse.VerupNoData1 GetVerupNoData1(uint masterType, uint verup)
-    {
-        return new CommonInitialDataCheckResponse.VerupNoData1
-        {
-            MasterType = masterType,
-            VerupNo = verup
-        };
-    }
-    
-    private CommonInitialDataCheckResponse.VerupNoData2 GetVerupNoData2<T>(uint masterType, ImmutableDictionary<uint, T> dictionary) 
-        where T:IVerupNo
-    {
-        var infoData = dictionary.Select(pair => new CommonInitialDataCheckResponse.VerupNoData2.InformationData
-        {
-            InfoId = pair.Key,
-            VerupNo = pair.Value.VerupNo
-        }).ToList();
-        return new CommonInitialDataCheckResponse.VerupNoData2
-        {
-            MasterType = masterType,
-            AryInformationDatas = infoData
-        };
-    }
-    
-    
+    private partial ValueTask<CommonInitialDataCheckResponse> HandleNijiiro(GetInitialDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonInitialDataCheckResponse> HandleGreen(GetInitialDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonInitialDataCheckResponse> HandleBlue(GetInitialDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonInitialDataCheckResponse> HandleYellow(GetInitialDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonInitialDataCheckResponse> HandleRed(GetInitialDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonInitialDataCheckResponse> HandleWhite(GetInitialDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonInitialDataCheckResponse> HandleMurasaki(GetInitialDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonInitialDataCheckResponse> HandleKimidori(GetInitialDataQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<CommonInitialDataCheckResponse> HandleMomoiro(GetInitialDataQuery request, CancellationToken cancellationToken);
 }

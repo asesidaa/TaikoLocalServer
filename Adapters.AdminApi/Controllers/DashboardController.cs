@@ -20,6 +20,6 @@ public class DashboardController(ITaikoDbContext context, ICabinetRegistry cabin
             access.Status.At(now),
             list.Count(c => c.LastSeen is { } seen && now - seen < OnlineWindow),
             list.Count,
-            await context.SongPlayData.CountAsync(p => p.PlayTime >= today, HttpContext.RequestAborted));
+            await context.SongPlayDataNijiiro.CountAsync(p => p.PlayTime >= today, HttpContext.RequestAborted));
     }
 }

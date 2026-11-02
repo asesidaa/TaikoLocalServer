@@ -1,0 +1,148 @@
+---
+phase: 41
+slug: momoiro-identity-userdata-self-best-and-crown-readback
+status: passed
+nyquist_compliant: true
+wave_0_complete: true
+created: 2026-06-26
+---
+
+# Phase 41 - Validation Strategy
+
+> Per-phase validation contract for MOMOIRO identity, userdata, self-best, favorite/recent, release-song, song-hash, and crown readback.
+
+---
+
+## Test Infrastructure
+
+| Property | Value |
+|----------|-------|
+| **Framework** | xUnit 2.9.3 with Microsoft.NET.Test.Sdk 17.14.1 |
+| **Config file** | `Tests/Tests.csproj` |
+| **Quick run command** | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroReadback|FullyQualifiedName~MomoiroUserData|FullyQualifiedName~MomoiroSelfBest|FullyQualifiedName~MomoiroBaid|FullyQualifiedName~MomoiroCrown" --no-restore -- RunConfiguration.DisableParallelization=true` |
+| **Full suite command** | `dotnet test Tests/Tests.csproj --no-restore -- RunConfiguration.DisableParallelization=true` |
+| **Estimated runtime** | focused under 2 minutes; full serialized suite under 1 minute on current machine |
+
+---
+
+## Sampling Rate
+
+- **After every task commit:** Run the focused Momoiro readback test filter once relevant tests exist.
+- **After each plan wave:** Run the plan-specific tests plus the project or adapter build listed in the plan.
+- **Before phase verification:** Run focused Momoiro readback tests, full serialized test suite, solution build, Momoiro adapter generated-source build, proto cleanliness, unsupported-route absence, and no-cross-era/source-scope gates.
+- **Max feedback latency:** one task or one wave, whichever is shorter.
+
+---
+
+## Per-Task Verification Map
+
+| Task ID | Plan | Wave | Requirement | Secure Behavior | Test Type | Automated Command | File Exists | Status |
+|---------|------|------|-------------|-----------------|-----------|-------------------|-------------|--------|
+| 41-W0-01 | 41-05 | final | MORDB-01 | MOMOIRO baid/mydon flow creates shared identity plus `UserSaveData_Momoiro` only; adjacent era save tables remain untouched. | handler/controller integration | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroReadback|FullyQualifiedName~MomoiroControllerReadback|FullyQualifiedName~MomoiroCrown|FullyQualifiedName~MomoiroRouteSurface|FullyQualifiedName~Ac15CrownService|FullyQualifiedName~Ac15SongHashCodec" --no-restore -- RunConfiguration.DisableParallelization=true`; `dotnet test Tests/Tests.csproj --no-restore -- RunConfiguration.DisableParallelization=true` | `Tests/Momoiro/MomoiroReadbackHandlerTests.cs`; `Tests/Momoiro/MomoiroControllerReadbackTests.cs` | GREEN - focused suite PASS 20/20 and full serialized suite PASS 918/918. |
+| 41-W0-02 | 41-05 | final | MORDB-02 | `selfbest.php` reads only `SongBestDatum_Momoiro`, including normal, ura, and shin rows mapped through current MOMOIRO wire. | handler/controller integration | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroReadback|FullyQualifiedName~MomoiroControllerReadback|FullyQualifiedName~MomoiroCrown|FullyQualifiedName~MomoiroRouteSurface|FullyQualifiedName~Ac15CrownService|FullyQualifiedName~Ac15SongHashCodec" --no-restore -- RunConfiguration.DisableParallelization=true`; `dotnet test Tests/Tests.csproj --no-restore -- RunConfiguration.DisableParallelization=true` | `Tests/Momoiro/MomoiroReadbackHandlerTests.cs`; `Tests/Momoiro/MomoiroControllerReadbackTests.cs` | GREEN - focused suite PASS 20/20 and full serialized suite PASS 918/918. |
+| 41-W0-03 | 41-05 | final | MORDB-03 | Favorite and recent readback uses MOMOIRO-owned rows, Phase 40 limits, persisted favorite `DisplayOrder` ordering with `SongNo` tie-breaker, recent `LastPlayed` ordering, truncation, and no adjacent-era leakage. | handler/controller integration | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroReadback|FullyQualifiedName~MomoiroControllerReadback|FullyQualifiedName~MomoiroCrown|FullyQualifiedName~MomoiroRouteSurface|FullyQualifiedName~Ac15CrownService|FullyQualifiedName~Ac15SongHashCodec" --no-restore -- RunConfiguration.DisableParallelization=true`; `dotnet test Tests/Tests.csproj --no-restore -- RunConfiguration.DisableParallelization=true` | `Tests/Momoiro/MomoiroHandlerFixture.cs`; `Tests/Momoiro/MomoiroReadbackHandlerTests.cs`; `Tests/Momoiro/MomoiroControllerReadbackTests.cs` | GREEN - focused suite PASS 20/20 and full serialized suite PASS 918/918. |
+| 41-W0-04 | 41-05 | final | MORDB-04 | `userdata.php` returns `hash_crown_flg` packed by MOMOIRO catalog/hash order and does not expose `crownsdata.php`. | byte packing/regression | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroReadback|FullyQualifiedName~MomoiroControllerReadback|FullyQualifiedName~MomoiroCrown|FullyQualifiedName~MomoiroRouteSurface|FullyQualifiedName~Ac15CrownService|FullyQualifiedName~Ac15SongHashCodec" --no-restore -- RunConfiguration.DisableParallelization=true`; `$routeHits = rg -n "shoppingresult\.php|bestscore\.php|communicationlog\.php|mainichisong\.php|crownsdata\.php" Adapters.GameProtocol.Momoiro/Controllers; if ($LASTEXITCODE -eq 0) { $routeHits; exit 1 }; if ($LASTEXITCODE -eq 1) { exit 0 }; exit $LASTEXITCODE` | `Tests/Momoiro/MomoiroCrownReadbackTests.cs`; `Tests/Momoiro/MomoiroRouteSurfaceTests.cs` | GREEN - focused suite PASS 20/20 and unsupported route gate PASS with no hits. |
+| 41-W0-05 | 41-05 | final | MORDB-05 | `userdata.php` returns MOMOIRO catalog-order release-song bytes and binary-backed song hash version/table. | handler/controller integration | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroReadback|FullyQualifiedName~MomoiroControllerReadback|FullyQualifiedName~MomoiroCrown|FullyQualifiedName~MomoiroRouteSurface|FullyQualifiedName~Ac15CrownService|FullyQualifiedName~Ac15SongHashCodec" --no-restore -- RunConfiguration.DisableParallelization=true`; `dotnet test Tests/Tests.csproj --no-restore -- RunConfiguration.DisableParallelization=true` | `Tests/Momoiro/MomoiroReadbackHandlerTests.cs`; `Tests/Momoiro/MomoiroControllerReadbackTests.cs` | GREEN - focused suite PASS 20/20 and full serialized suite PASS 918/918. |
+| 41-FINAL-01 | 41-05 | final | MORDB-01..05 | Generated Mapperly source for new MOMOIRO mappers assigns only proven response fields. | generated-source inspection | `dotnet build Adapters.GameProtocol.Momoiro/Adapters.GameProtocol.Momoiro.csproj /p:EmitCompilerGeneratedFiles=true --no-restore`; `rg -n "MydonName|HashReleaseSongFlg|HashCrownFlg|ArySelfbestScores|AryShinSelfbestScores" Adapters.GameProtocol.Momoiro/obj/Debug/net10.0/generated/Riok.Mapperly` | `Adapters.GameProtocol.Momoiro/obj/Debug/net10.0/generated/Riok.Mapperly/Riok.Mapperly.MapperGenerator/BaidResponseMapper.g.cs`; `Adapters.GameProtocol.Momoiro/obj/Debug/net10.0/generated/Riok.Mapperly/Riok.Mapperly.MapperGenerator/UserDataMappers.g.cs`; `Adapters.GameProtocol.Momoiro/obj/Debug/net10.0/generated/Riok.Mapperly/Riok.Mapperly.MapperGenerator/SelfBestMappers.g.cs` | GREEN - adapter build PASS 0 warnings/0 errors; generated-source grep PASS and inspected files assign only Phase 41 readback fields. |
+
+*Status: pending - green - red - flaky*
+
+---
+
+## Wave 0 Requirements
+
+- [x] RED tests compile without future-symbol failures and fail only for missing MOMOIRO readback behavior. Current status recorded by plan `41-01`.
+- [x] Tests cover shared identity plus MOMOIRO-owned save creation, and prove adjacent era saves remain untouched.
+- [x] Tests cover `userdata.php` and `selfbest.php` controller behavior through response objects, not source strings.
+- [x] Tests cover catalog/hash-order crown packing so high MOMOIRO song IDs are not dropped by raw song-id indexing.
+- [x] Tests cover absence of `crownsdata.php` and other unsupported/proto-only route families.
+
+---
+
+## Manual-Only Verifications
+
+| Behavior | Requirement | Why Manual | Test Instructions |
+|----------|-------------|------------|-------------------|
+| Exact native source of favorite ordering | MORDB-03 | Generated wire exposes `ary_favorite_song_no` as an ordered array but IDA did not prove whether native mutation stores selection order, UI order, or another source. Phase 41 therefore persists an explicit `DisplayOrder` and tests response ordering from that stored value. | If new client/log evidence appears, update favorite writer behavior before changing the Phase 41 readback contract. |
+| Exact native crown byte constant | MORDB-04 | Field and inferred envelope are backed by generated wire and song count math; exact native constant is not tied to code flow. | Keep crown packing tests tied to 380-song catalog order and 475-byte output; do not claim native constant proof. |
+| Cabinet/RPCS3 readback acceptance | MORDB-01..05 | Phase 41 is server-side readback implementation and regression coverage; milestone cabinet acceptance is Phase 44. | Do not claim cabinet acceptance in Phase 41 summaries unless the user explicitly provides runtime evidence. |
+
+---
+
+## Validation Sign-Off
+
+- [x] All Phase 41 requirements have automated verify targets or explicit manual-only rationale.
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify.
+- [x] Wave 0 covers missing tests before production implementation.
+- [x] No watch-mode flags.
+- [x] Feedback latency bounded to one task or one wave.
+- [x] `nyquist_compliant: true` set in frontmatter.
+
+**Approval:** draft for planner consumption 2026-06-26
+
+---
+
+## Plan 41-05 Final Gate Evidence
+
+### Task 1 - Focused Readback and Mapperly Gates
+
+**Recorded:** 2026-06-26T09:29:16Z
+
+| Gate | Command | Result |
+|------|---------|--------|
+| Focused Momoiro readback/controller/crown/route/AC15 codec tests | `dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~MomoiroReadback|FullyQualifiedName~MomoiroControllerReadback|FullyQualifiedName~MomoiroCrown|FullyQualifiedName~MomoiroRouteSurface|FullyQualifiedName~Ac15CrownService|FullyQualifiedName~Ac15SongHashCodec" --no-restore -- RunConfiguration.DisableParallelization=true` | PASS: 20 passed, 0 failed, 0 skipped. |
+| Momoiro adapter generated-source build | `dotnet build Adapters.GameProtocol.Momoiro/Adapters.GameProtocol.Momoiro.csproj /p:EmitCompilerGeneratedFiles=true --no-restore` | PASS: build succeeded with 0 warnings and 0 errors. |
+| Mapperly generated-source grep | `rg -n "MydonName|HashReleaseSongFlg|HashCrownFlg|ArySelfbestScores|AryShinSelfbestScores" Adapters.GameProtocol.Momoiro/obj/Debug/net10.0/generated/Riok.Mapperly` | PASS: expected assignments found in `BaidResponseMapper.g.cs`, `UserDataMappers.g.cs`, and `SelfBestMappers.g.cs`. |
+
+Generated Mapperly files inspected:
+
+- `Adapters.GameProtocol.Momoiro/obj/Debug/net10.0/generated/Riok.Mapperly/Riok.Mapperly.MapperGenerator/BaidResponseMapper.g.cs`
+- `Adapters.GameProtocol.Momoiro/obj/Debug/net10.0/generated/Riok.Mapperly/Riok.Mapperly.MapperGenerator/UserDataMappers.g.cs`
+- `Adapters.GameProtocol.Momoiro/obj/Debug/net10.0/generated/Riok.Mapperly/Riok.Mapperly.MapperGenerator/SelfBestMappers.g.cs`
+
+Generated-source findings:
+
+- `BaidResponseMapper.g.cs` assigns `MydonName`, title/color fields, selected costume data, update datetime, costume flags, Dan display/default flags, and `RewardPtn`.
+- `UserDataMappers.g.cs` assigns `SongHashVer`, `HashReleaseSongFlg`, option/tone/title flags, favorite and recent arrays, recommendations, profile counters, display settings, mode flags, reward fields, and `HashCrownFlg` via `MapRequiredBytes(source.HashCrownFlg)`.
+- `SelfBestMappers.g.cs` assigns response `Result` and `Level`, appends mapped rows to `ArySelfbestScores` and `AryShinSelfbestScores`, and maps each row's `SongNo`, `SelfBestScore`, and `UraBestScore`.
+- Generated source does not add playresult mutation, AdminApi/WebUI behavior, unsupported route families, or proto-derived challenge/friend route behavior.
+
+Mapperly documentation checked before inspection: current official Mapperly stable docs for null-value behavior, constant/generated values, and generated-source inspection:
+
+- `https://mapperly.riok.app/docs/configuration/mapper/#null-values`
+- `https://mapperly.riok.app/docs/configuration/constant-generated-values/`
+- `https://mapperly.riok.app/docs/configuration/generated-source/`
+
+### Task 2 - Full Build/Test and Scope Guards
+
+**Recorded:** 2026-06-26T09:29:16Z
+
+| Gate | Command | Result |
+|------|---------|--------|
+| Full serialized test suite | `dotnet test Tests/Tests.csproj --no-restore -- RunConfiguration.DisableParallelization=true` | PASS: 918 passed, 0 failed, 0 skipped. |
+| Solution build | `dotnet build TaikoLocalServer.slnx --no-restore` | PASS: build succeeded with 0 warnings and 0 errors. |
+| Temp-output Host build | `dotnet build Host/Host.csproj -o "$env:TEMP\TaikoLocalServer-host-build" --no-restore` | PASS: build succeeded with 0 warnings and 0 errors. |
+| Proto cleanliness | `$status = git status --porcelain -- proto\momoiro; if ($status) { $status; exit 1 }; exit 0` | PASS: no output; `proto/momoiro` is clean. |
+| Path abstraction | `$hits = rg -n "Host/wwwroot/data/momoiro|wwwroot\\data\\momoiro|File\.|Directory\.|Path\.Combine" Adapters.GameProtocol.Momoiro Application/Handlers Application/Ac15; if ($LASTEXITCODE -eq 0) { $hits; exit 1 }; if ($LASTEXITCODE -eq 1) { exit 0 }; exit $LASTEXITCODE` | PASS: no hardcoded Momoiro data paths or handler/controller filesystem access. |
+| `Host/.gitignore` staged-clean check | `$staged = git diff --cached --name-only -- Host/.gitignore; if ($staged) { $staged; exit 1 }; exit 0` | PASS: no output; pre-existing `Host/.gitignore` modification is not staged. |
+
+Unsupported-state/source gate notes:
+
+- The plan's broad gate command was run and failed with false positives from `Infrastructure/Persistence/Migrations/20260626082924_AddMomoiroReadbackState.Designer.cs`, because EF migration designer files contain the full model snapshot for adjacent eras including existing Blue battle, Tokkun, Dan, Don Challenge, and play-history entities.
+- The same broad command also matched `Application/Ac15/MomoiroAc15UserDataAdapter.cs:48` where Phase 41 readback explicitly sets `IsChallengeCompe = false`; that is an absence/default, not unsupported ChallengeCompe behavior.
+- No production code was changed for these false positives.
+
+Intent-focused source gates were rerun against the Phase 41 boundary:
+
+| Gate | Command | Result |
+|------|---------|--------|
+| Momoiro unsupported state absence | `$hits = rg -n "SongPlayDatumMomoiro|DanScoreDatumMomoiro|DanStageScoreDatumMomoiro|Momoiro.*Tokkun|Momoiro.*Battle|Momoiro.*Banacoin|Momoiro.*ChallengeCompe|ChallengeCompe.*Momoiro|Momoiro.*DonChallenge|DonChallenge.*Momoiro|IsChallengeCompe\s*=\s*true" Application/Handlers Application/Ac15 Domain/Entities Infrastructure/Persistence; if ($LASTEXITCODE -eq 0) { $hits; exit 1 }; if ($LASTEXITCODE -eq 1) { exit 0 }; exit $LASTEXITCODE` | PASS: no hits. |
+| Unsupported Momoiro route absence | `$routeHits = rg -n "shoppingresult\.php|bestscore\.php|communicationlog\.php|mainichisong\.php|crownsdata\.php" Adapters.GameProtocol.Momoiro/Controllers; if ($LASTEXITCODE -eq 0) { $routeHits; exit 1 }; if ($LASTEXITCODE -eq 1) { exit 0 }; exit $LASTEXITCODE` | PASS: no hits. |
+| Momoiro schema surface review | `rg -n "Momoiro" Infrastructure/Persistence/Migrations/20260626082924_AddMomoiroReadbackState.cs Infrastructure/Persistence/Migrations/20260626082924_AddMomoiroReadbackState.Designer.cs Infrastructure/Persistence/TaikoDbContext.Momoiro.cs Application/Abstractions/ITaikoDbContext.Momoiro.cs Domain/Entities/UserSaveDataMomoiro.cs Domain/Entities/SongBestDatumMomoiro.cs Domain/Entities/MomoiroFavoriteSongs.cs Domain/Entities/MomoiroRecentSongs.cs` | PASS: Momoiro-specific schema surface is limited to `UserSaveData_Momoiro`, `SongBestDatum_Momoiro`, `MomoiroFavoriteSongs`, and `MomoiroRecentSongs`. |
+
+Task 2 scope result:
+
+- MORDB-01 through MORDB-05 remain server-verified by the full test/build gates.
+- No `proto/` changes were introduced.
+- No `Host/.gitignore` staging occurred.
+- No Phase 42 playresult mutation, Phase 43 AdminApi/WebUI, or Phase 44 cabinet/RPCS3 acceptance is claimed here.

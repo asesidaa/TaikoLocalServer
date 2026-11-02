@@ -5,6 +5,17 @@ Server is implemented with ASP.NET Core 10. ORM is Entity Framework Core 10. Dat
 As the game uses protobuf, `protobuf-net` is used for serializing and deserializing the data.  
 
 - [Taiko Local Server](#taiko-local-server)
+  - [Data file layout (per-era)](#data-file-layout-per-era)
+  - [AC15 Setup](#ac15-setup)
+    - [Required files](#required-files)
+    - [Symlink or copy AC15 game data](#symlink-or-copy-ac15-game-data)
+    - [Customization catalogs](#customization-catalogs)
+    - [AC15 optional JSON](#ac15-optional-json)
+    - [AC15 item shop](#ac15-item-shop)
+    - [AC15 Don Challenge](#ac15-don-challenge)
+    - [Blue battle and Tokkun](#blue-battle-and-tokkun)
+    - [White final and legacy routes](#white-final-and-legacy-routes)
+    - [Murasaki routes and split metadata](#murasaki-routes-and-split-metadata)
   - [Datatable documentation](#datatable-documentation)
     - [dan\_data.json](#dan_datajson)
     - [event\_folder\_data.json](#event_folder_datajson)
@@ -16,10 +27,480 @@ As the game uses protobuf, `protobuf-net` is used for serializing and deserializ
     - [shop\_folder\_data.json](#shop_folder_datajson)
     - [token\_data.json](#token_datajson)
 
+## Data file layout (per-era)
+
+`wwwroot/data/` is partitioned by game era. In a source checkout this tree
+lives under `Host/wwwroot/data/`; in a published release it lives next to the
+server executable under `wwwroot/data/`.
+
+```text
+wwwroot/data/
+|-- nijiiro/                    Nijiiro-era operator-edited datatables
+|   |-- dan_data.json
+|   |-- event_folder_data.json
+|   |-- movie_data.json
+|   |-- intro_data.json
+|   |-- locked_*_data.json
+|   |-- shop_folder_data.json
+|   |-- special_songs_data.json
+|   |-- gaiden_data.json
+|   `-- datatable/              Operator-supplied Nijiiro game binaries
+|       |-- musicinfo.bin
+|       |-- music_order.bin
+|       |-- wordlist.bin
+|       |-- don_cos_reward.bin
+|       |-- shougou.bin
+|       `-- neiro.bin
+|-- green/                      Green AC15 server-owned JSON plus game data link/copy
+|   |-- telop_data.json         Optional Green telops
+|   |-- movie_data.json         Green attract movie permissions
+|   |-- green_item_shop_data.json Green item-shop seasons and item rows
+|   |-- green_event_folder_data.json Optional Green event folders
+|   |-- green_taikojuku_verup_data.json Green Taikojuku verup metadata
+|   |-- green_costume_data.json Generated or curated Green customization catalog
+|   |-- green_title_data.json   Generated or curated Green title catalog
+|   |-- green_neiro_data.json   Generated or curated Green tone catalog
+|   `-- data/                   Green game USRDIR/data tree, usually symlinked
+|       |-- config/S11100-1/
+|       |   |-- musicinfo.xml
+|       |   `-- musicmedleyinfo.xml
+|       `-- fumen/
+|           `-- tuning.bin
+|-- blue/                       Blue AC15 server-owned JSON plus game data link/copy
+|   |-- blue_event_folder_data.json Optional Blue event folders
+|   |-- blue_telop_data.json        Optional Blue telops
+|   |-- blue_movie_data.json        Blue attract movie permissions
+|   |-- blue_item_shop_data.json    Blue item shop seasons and item rows
+|   |-- blue_taikojuku_verup_data.json Blue Taikojuku verup metadata
+|   |-- blue_costume_data.json      Generated or curated Blue customization catalog
+|   |-- blue_title_data.json        Generated or curated Blue title catalog
+|   |-- blue_neiro_data.json        Generated or curated Blue tone catalog
+|   `-- data/                       Blue game USRDIR/data tree, usually symlinked
+|       |-- config/S10100-1/
+|       |   |-- musicinfo.xml
+|       |   |-- musicmedleyinfo.xml
+|       |   `-- battle/             Blue battle XML files
+|       `-- fumen/
+|           `-- tuning.bin
+|-- yellow/                     Yellow AC15 server-owned JSON plus game data link/copy
+|   |-- yellow_event_folder_data.json
+|   |-- yellow_telop_data.json
+|   |-- yellow_movie_data.json
+|   |-- yellow_item_shop_data.json
+|   |-- yellow_taikojuku_verup_data.json
+|   `-- data/
+|       |-- config/ST9100-1/
+|       |   |-- musicinfo.xml
+|       |   |-- musicmedleyinfo.xml
+|       |   `-- defmusic.bin
+|       `-- fumen/
+|           `-- tuning.bin
+|-- red/                        Red AC15 server-owned JSON plus game data link/copy
+|   |-- red_event_folder_data.json
+|   |-- red_telop_data.json
+|   |-- red_movie_data.json
+|   |-- red_taikojuku_verup_data.json
+|   |-- red_don_challenge_data.json
+|   `-- data/
+|       |-- config/ST8100-1/
+|       |   |-- musicinfo.xml
+|       |   |-- musicmedleyinfo.xml
+|       |   `-- defmusic.bin
+|       `-- fumen/
+|           `-- tuning.bin
+|-- white/                      White AC15 server-owned JSON plus game data link/copy
+|   |-- white_event_folder_data.json
+|   |-- white_telop_data.json
+|   |-- white_movie_data.json
+|   |-- white_taikojuku_verup_data.json
+|   |-- white_don_challenge_data.json
+|   `-- data/
+|       |-- config/ST7100-1/
+|       |   |-- musicinfo.xml
+|       |   |-- musicmedleyinfo.xml
+|       |   |-- defmusic.bin
+|       |   |-- present.xml
+|       |   `-- spacialbaid.xml
+|       `-- fumen/
+|           `-- tuning.bin
+|-- murasaki/                   Murasaki AC15 server-owned JSON plus game data link/copy
+|   |-- murasaki_event_folder_data.json
+|   |-- murasaki_telop_data.json
+|   |-- murasaki_movie_data.json
+|   |-- murasaki_taikojuku_verup_data.json
+|   `-- data/
+|       |-- config/ST6100-1/
+|       |   |-- musicinfo.xml
+|       |   |-- musicmedleyinfo.xml
+|       |   |-- defmusic.bin
+|       |   |-- present.xml
+|       |   `-- spacialbaid.xml
+|       `-- fumen/
+|           `-- tuning.bin
+`-- shared/                     Cross-era operator-edited tables and AC15 name overrides
+    |-- token_data.json
+    |-- qrcode_data.json
+    |-- costume_name_data.json
+    |-- title_name_data.json
+    `-- neiro_name_data.json
+```
+
+Era availability is controlled by `Configurations/ServerSettings.json` under
+`ServerSettings:Eras`. At least one of `Nijiiro`, `Green`, `Blue`, `Yellow`,
+`Red`, `White`, or `Murasaki` must be enabled or the host refuses to start. Disabled-era
+controller assemblies are removed from ASP.NET Core routing at startup.
+
+## AC15 Setup
+
+Green, Blue, Yellow, Red, White, and Murasaki AC15 use the same setup shape:
+
+- Enable the era in `Configurations/ServerSettings.json`.
+- Point `ServerSettings:Eras:<Era>:GameDataPath` at that era's `USRDIR/data`
+  tree. The default value is `wwwroot/data/<era>/data`.
+- Provide the server-owned JSON files under `wwwroot/data/<era>/`.
+- Keep the game-owned `USRDIR/data` tree local, either copied or linked under
+  `wwwroot/data/<era>/data`.
+
+### Required files
+
+When `ServerSettings:Eras:Green:Enabled` is `true`, Green startup requires:
+
+- `wwwroot/data/green/data/config/S11100-1/musicinfo.xml`
+- `wwwroot/data/green/data/config/S11100-1/musicmedleyinfo.xml`
+- `wwwroot/data/green/data/fumen/tuning.bin`
+
+When `ServerSettings:Eras:Blue:Enabled` is `true`, normal Blue startup requires:
+
+- `wwwroot/data/blue/data/config/S10100-1/musicinfo.xml`
+- `wwwroot/data/blue/data/config/S10100-1/musicmedleyinfo.xml`
+- `wwwroot/data/blue/data/fumen/tuning.bin`
+
+When `ServerSettings:Eras:Yellow:Enabled` is `true`, Yellow startup requires:
+
+- `wwwroot/data/yellow/data/config/ST9100-1/musicinfo.xml`
+- `wwwroot/data/yellow/data/config/ST9100-1/musicmedleyinfo.xml`
+- `wwwroot/data/yellow/data/config/ST9100-1/defmusic.bin`
+- `wwwroot/data/yellow/data/fumen/tuning.bin`
+
+When `ServerSettings:Eras:Red:Enabled` is `true`, Red startup requires:
+
+- `wwwroot/data/red/data/config/ST8100-1/musicinfo.xml`
+- `wwwroot/data/red/data/config/ST8100-1/musicmedleyinfo.xml`
+- `wwwroot/data/red/data/config/ST8100-1/defmusic.bin`
+- `wwwroot/data/red/data/fumen/tuning.bin`
+
+When `ServerSettings:Eras:White:Enabled` is `true`, White startup requires:
+
+- `wwwroot/data/white/data/config/ST7100-1/musicinfo.xml`
+- `wwwroot/data/white/data/config/ST7100-1/musicmedleyinfo.xml`
+- `wwwroot/data/white/data/config/ST7100-1/defmusic.bin`
+- `wwwroot/data/white/data/config/ST7100-1/present.xml`
+- `wwwroot/data/white/data/config/ST7100-1/spacialbaid.xml`
+- `wwwroot/data/white/data/fumen/tuning.bin`
+
+When `ServerSettings:Eras:Murasaki:Enabled` is `true`, Murasaki startup requires:
+
+- `wwwroot/data/murasaki/data/config/ST6100-1/musicinfo.xml`
+- `wwwroot/data/murasaki/data/config/ST6100-1/musicmedleyinfo.xml`
+- `wwwroot/data/murasaki/data/config/ST6100-1/defmusic.bin`
+- `wwwroot/data/murasaki/data/config/ST6100-1/present.xml`
+- `wwwroot/data/murasaki/data/config/ST6100-1/spacialbaid.xml`
+- `wwwroot/data/murasaki/data/fumen/tuning.bin`
+
+The build excludes `wwwroot/data/<era>/data/**` AC15 game-data trees from
+publish output. Operator game data should not be committed or shipped by the
+project.
+
+### Symlink or copy AC15 game data
+
+From a source checkout, run these from the repository root and point each link
+at the matching AC15 dump:
+
+
+```powershell
+New-Item -ItemType SymbolicLink -Target 'path\to\green\USRDIR\data\' -Path '.\Host\wwwroot\data\green\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\blue\USRDIR\data\' -Path '.\Host\wwwroot\data\blue\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\yellow\USRDIR\data\' -Path '.\Host\wwwroot\data\yellow\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\red\USRDIR\data\' -Path '.\Host\wwwroot\data\red\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\white\USRDIR\data\' -Path '.\Host\wwwroot\data\white\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\murasaki\USRDIR\data\' -Path '.\Host\wwwroot\data\murasaki\data'
+```
+
+From an extracted release folder, run these from the folder containing
+`TaikoLocalServer.exe`:
+
+```powershell
+New-Item -ItemType SymbolicLink -Target 'path\to\green\USRDIR\data\' -Path '.\wwwroot\data\green\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\blue\USRDIR\data\' -Path '.\wwwroot\data\blue\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\yellow\USRDIR\data\' -Path '.\wwwroot\data\yellow\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\red\USRDIR\data\' -Path '.\wwwroot\data\red\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\white\USRDIR\data\' -Path '.\wwwroot\data\white\data'
+New-Item -ItemType SymbolicLink -Target 'path\to\murasaki\USRDIR\data\' -Path '.\wwwroot\data\murasaki\data'
+```
+
+If you prefer copying for a release instead of linking:
+
+```powershell
+New-Item -ItemType Directory -Force -Path '.\wwwroot\data\green' | Out-Null
+Copy-Item -Recurse -Path 'path\to\green\USRDIR\data' -Destination '.\wwwroot\data\green\data'
+New-Item -ItemType Directory -Force -Path '.\wwwroot\data\blue' | Out-Null
+Copy-Item -Recurse -Path 'path\to\blue\USRDIR\data' -Destination '.\wwwroot\data\blue\data'
+New-Item -ItemType Directory -Force -Path '.\wwwroot\data\yellow' | Out-Null
+Copy-Item -Recurse -Path 'path\to\yellow\USRDIR\data' -Destination '.\wwwroot\data\yellow\data'
+New-Item -ItemType Directory -Force -Path '.\wwwroot\data\red' | Out-Null
+Copy-Item -Recurse -Path 'path\to\red\USRDIR\data' -Destination '.\wwwroot\data\red\data'
+New-Item -ItemType Directory -Force -Path '.\wwwroot\data\white' | Out-Null
+Copy-Item -Recurse -Path 'path\to\white\USRDIR\data' -Destination '.\wwwroot\data\white\data'
+New-Item -ItemType Directory -Force -Path '.\wwwroot\data\murasaki' | Out-Null
+Copy-Item -Recurse -Path 'path\to\murasaki\USRDIR\data' -Destination '.\wwwroot\data\murasaki\data'
+```
+
+PowerShell may need to run as Administrator, unless Windows Developer Mode
+allows unprivileged symlink creation.
+
+In Debug builds, if an AC15 source data folder exists under
+`Host/wwwroot/data/<era>/data`, MSBuild creates a matching output junction under
+`Host/bin/Debug/net10.0/wwwroot/data/<era>/data` so `dotnet run --project Host`
+can use the source checkout data layout.
+
+### Customization catalogs
+
+AC15 eras compose customization names from generated era catalogs plus shared or
+override name JSON. The shared name files live under
+`wwwroot/data/shared/`:
+
+- `costume_name_data.json`
+- `title_name_data.json`
+- `neiro_name_data.json`
+
+Set `ServerSettings:Eras:<Era>:CustomizationNameDataPath` to an override
+directory when an era needs different display names. If the setting is blank,
+the shared name files are used.
+
+With `ServerSettings:Eras:<Era>:AutoExtractCatalog` enabled, the server can
+bootstrap missing generated AC15 customization catalogs from the configured
+game-data path on first startup.
+
+Green can also be extracted manually:
+
+```powershell
+dotnet run --project GreenCatalogExtractor -- extract --game-data Host/wwwroot/data/green/data --out Host/wwwroot/data/green
+```
+
+The extractor reads the game-data tree and writes only generated JSON files
+under `wwwroot/data/green`. It does not modify the operator's game-data tree.
+The server and WebUI do not need further changes when generated JSON gains
+better names or slot types.
+
+### AC15 optional JSON
+
+AC15 optional sidecar file names are era-specific:
+
+| Feature | Green file | Blue file | Yellow file | Red file | White file | Murasaki file | Missing-file behavior |
+|---------|------------|-----------|-------------|----------|------------|---------------|-----------------------|
+| Telops | `telop_data.json` | `blue_telop_data.json` | `yellow_telop_data.json` | `red_telop_data.json` | `white_telop_data.json` | `murasaki_telop_data.json` | No telops |
+| Attract movies | `movie_data.json` | `blue_movie_data.json` | `yellow_movie_data.json` | `red_movie_data.json` | `white_movie_data.json` | `murasaki_movie_data.json` | Auto-discover nonzero `attract_cm_###.pam` files |
+| Event folders | `green_event_folder_data.json` | `blue_event_folder_data.json` | `yellow_event_folder_data.json` | `red_event_folder_data.json` | `white_event_folder_data.json` | `murasaki_event_folder_data.json` | No event folders |
+| Taikojuku verup | `green_taikojuku_verup_data.json` | `blue_taikojuku_verup_data.json` | `yellow_taikojuku_verup_data.json` | `red_taikojuku_verup_data.json` | `white_taikojuku_verup_data.json` | `murasaki_taikojuku_verup_data.json` | XML-loaded Taikojuku packs keep `verup_no = 0` |
+| Item shop | `green_item_shop_data.json` | `blue_item_shop_data.json` | `yellow_item_shop_data.json` | none | none | none | Required only when shop is enabled |
+| Don Challenge | none | none | none | `red_don_challenge_data.json` | `white_don_challenge_data.json` | none | Disabled unless enabled with an active bundle |
+
+Taikojuku packs come from `musicmedleyinfo.xml`, but that original AC15 file
+does not carry the protocol `verup_no`. Use the era sidecar to set one default
+for all packs and optional overrides by Taikojuku `challengeLevel`:
+
+```json
+{
+  "defaultVerupNo": 1,
+  "packs": [
+    { "challengeLevel": 21, "verupNo": 2 }
+  ]
+}
+```
+
+AC15 movie files use the same object shape:
+
+
+```json
+{
+  "override_default": false,
+  "movies": []
+}
+```
+
+When `override_default` is `false`, the server ignores `movies` and sends all
+discovered nonzero movie IDs with `enable_days = 999`. When
+`override_default` is `true`, the server sends only the listed movies. An empty
+`movies` array disables attract movies for that era.
+
+Example override:
+
+```json
+{
+  "override_default": true,
+  "movies": [
+    { "movie_id": 100, "enable_days": 999 },
+    { "movie_id": 102, "enable_days": 999 }
+  ]
+}
+```
+
+ID `0` is ignored because `attract_cm_000.pam` is a fallback asset, not a
+startup permission candidate. Duplicate nonzero IDs are rejected at startup.
+
+### AC15 item shop
+
+Green, Blue, and Yellow item-shop support is controlled by
+`Configurations/ServerSettings.json`:
+
+```json
+{
+  "ServerSettings": {
+    "Eras": {
+      "Green": {
+        "EnableShop": true,
+        "ActiveShopSeasonId": 2
+      },
+      "Blue": {
+        "EnableShop": true,
+        "ActiveShopSeasonId": 1
+      },
+      "Yellow": {
+        "EnableShop": true,
+        "ActiveShopSeasonId": 4
+      }
+    }
+  }
+}
+```
+
+When Green, Blue, or Yellow is enabled, `EnableShop` must be present or startup
+fails options validation. When `EnableShop` is `false`, the server does not
+advertise the item shop for that era. When `EnableShop` is `true`,
+`ActiveShopSeasonId` must be present and match a season in the era's item-shop
+JSON file.
+
+The shop data file stores protocol data only:
+
+```json
+{
+  "seasons": [
+    {
+      "season_id": 1,
+      "verup_no": 1,
+      "telop": "Spring reward shop",
+      "start_datetime": "20190314000000",
+      "end_datetime": "20190626075959",
+      "afterstart_days": 7,
+      "beforeclose_days": 7,
+      "items": [
+        { "item_type": 4, "item_id": 117, "item_price": 500 }
+      ]
+    }
+  ]
+}
+```
+
+`item_no` is inferred from 1-based row order. `item_type` accepts the shared
+AC15 string enum form and numeric compatibility values at the loader edge.
+Item rows must not contain names or source metadata.
+
+The current Green implementation still provides a small deterministic starter
+state for new users. New Green users receive starter song flags, best scores,
+crowns, and the first Dan on first known-card login after registration.
+
+### AC15 Don Challenge
+
+Red and White Don Challenge support is controlled by
+`Configurations/ServerSettings.json`:
+
+```json
+{
+  "ServerSettings": {
+    "Eras": {
+      "Red": {
+        "EnableDonChallenge": true,
+        "ActiveDonChallengeBundleId": "red-2016-08"
+      },
+      "White": {
+        "EnableDonChallenge": true,
+        "ActiveDonChallengeBundleId": "white-2016-06"
+      }
+    }
+  }
+}
+```
+
+When `EnableDonChallenge` is `true`, `ActiveDonChallengeBundleId` must be set
+and match a bundle in the era's Don Challenge JSON file. Don Challenge progress
+is server-side and stage-derived from normal playresult stages; it is exposed to
+operators through dedicated AdminApi/WebUI contracts. It is not a standalone
+cabinet ChallengeCompe route/readback model.
+
+### Blue battle and Tokkun
+
+Blue adds these setup notes on top of the shared AC15 flow:
+
+- Blue game endpoints are direct protobuf under `/v10r03/chassis/*`.
+- Shared AC15 startup/version endpoints remain under `/v01r00/chassis/*`.
+- `getbanacoininfo.php`, `banacoinpayment.php`, and `banacoinerrorlog.php`
+  are stateless compatibility routes. They do not model real Banacoin wallet
+  or payment state.
+- Tokkun uploads are accepted through Blue `playresult.php` using
+  `PlayMode.Tokkun = 3`. The server persists only protocol-backed Tokkun
+  tutorial/history facts and reads back `tokkun_tutorial_flg` through
+  `userdata.php`.
+- Tokkun playresults must not write normal Blue score, crown, Dani, profile,
+  favorite, recent, normal unlock, battle, or shop state.
+
+Blue battle availability is data-driven. Keep the complete battle XML folder at
+`wwwroot/data/blue/data/config/S10100-1/battle`:
+
+- `battleadjsetting.xml`
+- `battlenpcinfo.xml`
+- `battlestageinfo.xml`
+- `battlesupportinfo.xml`
+- `battletokeninfo.xml`
+
+If the battle XML set is missing or malformed, normal Blue data can still load
+but battle availability remains off. Blue battle state is persisted in
+Blue-owned database tables and read back through `battleuserdata.php`;
+unresolved battle reward, token, boss, and stage-graph semantics remain
+store-and-echo rather than server-calculated behavior.
+
+### White final and legacy routes
+
+White has two game-route families:
+
+- `/v07r03/chassis/*` is the final-version route family and uses
+  `Adapters.GameProtocol.White.Wire`.
+- `/v07r00/chassis/*` is the legacy compatibility route family and uses
+  `Adapters.GameProtocol.White.LegacyWire`.
+
+Do not share generated DTOs or final-only fields across the two route families.
+Final White support includes proven Tokkun, stateless Banacoin-adjacent routes,
+difficulty panel state, and heartbeat Banacoin status fields. Legacy White
+compatibility keeps the older wire shape.
+
+### Murasaki routes and split metadata
+
+Murasaki game endpoints are direct protobuf under `/v06r00/chassis/*`.
+Shared AC15 startup/version endpoints remain under `/v01r00/chassis/*`.
+
+Murasaki does not expose a White-style `initialdatacheck.php` route. Startup
+metadata is split across Murasaki-owned route files such as `defaultsong.php`,
+`mainichisong.php`, `foldercheck.php`, `getfolder.php`, `telopcheck.php`, and
+`gettelop.php`.
+
+Special or older-version surfaces such as `bestscore.php`, `songhash.php`,
+`shoppingresult.php`, challenge arrays, `content_info`,
+`default_option_setting`, and reserved byte payloads remain evidence-gated.
+
 ## Datatable documentation
 
 The server sends a variety of information to the game that you can edit.  
-You'll find a list of all the files bellow!
+You'll find a list of all the files bellow. Nijiiro-specific JSON files live
+under `wwwroot/data/nijiiro/`; shared files live under `wwwroot/data/shared/`.
 
 The documentation is updated to reflect 39.06 files but most of it is similar for CHN.
 
@@ -259,7 +740,9 @@ This is used to customize locked songs.
 
 ### movie_data.json
 
-This is used to control which in-game movie is displayed before entering the game
+For Nijiiro, this array controls which in-game movie is displayed before entering the game.
+AC15 era movie files use the `override_default` object format documented in
+[AC15 optional JSON](#ac15-optional-json).
 
 ```json
 [

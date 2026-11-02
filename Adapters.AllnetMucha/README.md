@@ -16,7 +16,7 @@ base64-encoded form bodies before the controller sees them.
 - Inbound: `Host` only.
 - Outbound: `Adapters.GameProtocol.Shared` (for shared compression and
   controller scaffolding), `Application`, `Infrastructure`.
-- Notable packages: `SharpZipLib`, `Swan.Core`.
+- Notable packages: `SharpZipLib`.
 
 ## Key folders
 

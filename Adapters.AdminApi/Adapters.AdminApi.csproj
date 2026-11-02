@@ -21,7 +21,6 @@
     <PackageReference Include="Otp.NET" />
     <PackageReference Include="QRCoder" />
     <PackageReference Include="Riok.Mapperly" />
-    <PackageReference Include="Swan.Core" />
     <PackageReference Include="Throw" />
   </ItemGroup>
 

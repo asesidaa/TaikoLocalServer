@@ -1,162 +1,85 @@
 using Throw;
+using TaikoLocalServer.Application.Dtos.Ac15;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct BaidQuery(string AccessCode) : IRequest<CommonBaidResponse>;
+public readonly record struct BaidQuery(GameEra Era, string AccessCode) : IRequest<CommonBaidResponse>;
+public readonly record struct Ac15BaidQuery(GameEra Era, string AccessCode) : IRequest<Ac15BaidResponse>;
 
-public class BaidQueryHandler(
+public partial class BaidQueryHandler(
     ITaikoDbContext context,
     ILogger<BaidQueryHandler> logger,
     IGameDataCatalog gameDataService)
-    : IRequestHandler<BaidQuery, CommonBaidResponse>
+    : IRequestHandler<BaidQuery, CommonBaidResponse>,
+      IRequestHandler<Ac15BaidQuery, Ac15BaidResponse>
 {
     public async ValueTask<CommonBaidResponse> Handle(BaidQuery request, CancellationToken cancellationToken)
     {
-        // A banned card is refused before anything else, so it can't become a new user either.
-        var ban = await context.BannedCards.FindAsync([request.AccessCode], cancellationToken);
-        if (ban is not null && (ban.Until is null || ban.Until > DateTime.UtcNow))
+        // Taiko.exe 39.06 (the BAIDResponse handler): any Result but 1 is kServerAccess, which card_load.tlb shows as a
+        // network error; com_svr_result 300 is kDataFail instead, shown as "this card can't be used". CHN (no such
+        // field) still gets the network error.
+        if (await RefuseBannedAsync(request.AccessCode, cancellationToken)) return new CommonBaidResponse { Result = 0, ComSvrResult = 300 };
+        await MarkScannedAsync(request.AccessCode, cancellationToken);
+        return request.Era switch
         {
-            ban.RefusedCount++;
-            await context.SaveChangesAsync(cancellationToken);
-            logger.LogWarning("Refused banned card {AccessCode}", request.AccessCode);
-            // Taiko.exe 39.06 (the BAIDResponse handler): any Result but 1 is kServerAccess, which card_load.tlb shows as a
-            // network error; com_svr_result 300 is kDataFail instead, shown as "this card can't be used". CHN (no such
-            // field) still gets the network error.
-            return new CommonBaidResponse { Result = 0, ComSvrResult = 300 };
-        }
-
-        var card = await context.Cards.FindAsync([request.AccessCode], cancellationToken);
-        if (card is null)
-        {
-            logger.LogInformation("New user with access code {AccessCode}", request.AccessCode);
-            return new CommonBaidResponse
-            {
-                Result = 1,
-                IsNewUser = true,
-                // The number AddMyDonEntryCommand will give them: after the highest player, not the highest card
-                // (a player whose cards were all removed keeps their number).
-                Baid = await context.UserData.Select(user => user.Baid).DefaultIfEmpty().MaxAsync(cancellationToken) + 1
-            };
-        }
-
-        card.LastScanAt = DateTime.UtcNow;
-        await context.SaveChangesAsync(cancellationToken);
-
-        var baid = card.Baid;
-        var userData = await context.UserData.FindAsync(baid, cancellationToken);
-        userData.ThrowIfNull($"User not found for card with Baid {baid}!");
-
-        var timeLimitSongsList = gameDataService.GetTimeLimitedSongsList();
-
-        var songBestData = context.SongBestData.Where(datum => datum.Baid == baid).ToList();
-        var achievementDisplayDifficulty = userData.AchievementDisplayDifficulty;
-        var isDispAchievementTypeSet = true;
-        if (achievementDisplayDifficulty == Difficulty.None)
-        {
-            isDispAchievementTypeSet = false;
-            achievementDisplayDifficulty = songBestData
-                .Where(datum => datum.BestCrown >= CrownType.Clear)
-                .Select(datum => datum.Difficulty)
-                .DefaultIfEmpty(Difficulty.Easy)
-                .Max();
-        }
-        // For each crown type, calculate how many songs have that crown type
-        var crownCountData = songBestData
-            .Where(datum => !timeLimitSongsList.Contains(datum.SongId) && (datum.Difficulty == achievementDisplayDifficulty || (achievementDisplayDifficulty == Difficulty.UraOni && datum.Difficulty == Difficulty.Oni)))
-            .GroupBy(datum => datum.BestCrown)
-            .ToDictionary(datums => datums.Key, datums => (uint)datums.Count());
-        var crownCount = new uint[3];
-        foreach (var crownType in Enum.GetValues<CrownType>())
-        {
-            if (crownType != CrownType.None)
-            {
-                crownCount[(int)crownType - 1] = crownCountData.GetValueOrDefault(crownType, (uint)0);
-            }
-        }
-        
-        var scoreRankData = songBestData
-            .Where(datum => !timeLimitSongsList.Contains(datum.SongId) && (datum.Difficulty == achievementDisplayDifficulty || (achievementDisplayDifficulty == Difficulty.UraOni && datum.Difficulty == Difficulty.Oni)))
-            .GroupBy(datum => datum.BestScoreRank)
-            .ToDictionary(datums => datums.Key, datums => (uint)datums.Count());
-        var scoreRankCount = new uint[7];
-        foreach (var scoreRank in Enum.GetValues<ScoreRank>())
-        {
-            if (scoreRank != ScoreRank.None)
-            {
-                scoreRankCount[(int)scoreRank - 2] = scoreRankData.GetValueOrDefault(scoreRank, (uint)0);
-            }
-        }
-        
-        List<uint> costumeData = [userData.CurrentKigurumi, userData.CurrentHead, userData.CurrentBody, userData.CurrentFace, userData.CurrentPuchi];
-        
-        List<List<uint>> costumeArrays = 
-            [userData.UnlockedKigurumi, userData.UnlockedHead, userData.UnlockedBody, userData.UnlockedFace, userData.UnlockedPuchi];
-
-        var costumeFlagArrays = gameDataService.GetCostumeFlagArraySizes()
-            .Select((size, index) => FlagCalculator.GetBitArrayFromIds(costumeArrays[index], size, logger))
-            .ToList();
-
-        var danData = await context.DanScoreData
-            .Where(datum => datum.Baid == baid && datum.DanType == DanType.Normal)
-            .Include(datum => datum.DanStageScoreData).ToListAsync(cancellationToken);
-        var gaidenData = await context.DanScoreData
-            .Where(datum => datum.Baid == baid && datum.DanType == DanType.Gaiden)
-            .Include(datum => datum.DanStageScoreData).ToListAsync(cancellationToken);
-        
-        var maxDan = danData.Where(datum => datum.ClearState != DanClearState.NotClear)
-            .Select(datum => datum.DanId)
-            .DefaultIfEmpty()
-            .Max();
-        
-        var danDataDictionary = gameDataService.GetCommonDanDataDictionary();
-        var danIdList = danDataDictionary.Keys.ToList();
-        var gotDanFlagArray = FlagCalculator.ComputeGotDanFlags(danData, danIdList);
-        
-        var gaidenDataDictionary = gameDataService.GetCommonGaidenDataDictionary();
-        var gaidenIdList = gaidenDataDictionary.Keys.ToList();
-        var gotGaidenFlagArray = FlagCalculator.ComputeGotDanFlags(gaidenData, gaidenIdList);
-
-        var genericInfoFlg = userData.GenericInfoFlgArray;
-
-        var genericInfoFlgLength = genericInfoFlg.Any() ? genericInfoFlg.Max() + 1 : 0;
-        var genericInfoFlgArray = FlagCalculator.GetBitArrayFromIds(genericInfoFlg, (int)genericInfoFlgLength, logger);
-
-        var aiRank = (uint)(userData.AiWinCount / 10);
-        if (aiRank > 10)
-        {
-            aiRank = 10;
-        }
-
-        return new CommonBaidResponse
-        {
-            Result = 1,
-            IsNewUser = false,
-            Baid = baid,
-            MyDonName = userData.MyDonName,
-            MyDonNameLanguage = userData.MyDonNameLanguage,
-            AryCrownCounts = crownCount,
-            AryScoreRankCounts = scoreRankCount,
-            ColorBody = userData.ColorBody,
-            ColorFace = userData.ColorFace,
-            ColorLimb = userData.ColorLimb,
-            CostumeData = costumeData,
-            CostumeFlagArrays = costumeFlagArrays,
-            DisplayDan = userData.DisplayDan,
-            IsDispSouuchiOn = userData.DisplaySouUchi,
-            DispAchievementType = (uint)achievementDisplayDifficulty,
-            IsDispAchievementTypeSet = isDispAchievementTypeSet,
-            GenericInfoFlg = genericInfoFlgArray,
-            GotDanFlg = gotDanFlagArray,
-            GotDanMax = maxDan,
-            GotGaidenFlg = gotGaidenFlagArray,
-            IsDispAchievementOn = userData.DisplayAchievement,
-            LastPlayDatetime = userData.LastPlayDatetime.ToString(Constants.DateTimeFormat),
-            LastPlayMode = userData.LastPlayMode,
-            SelectedToneId = userData.SelectedToneId,
-            Title = userData.Title,
-            TitlePlateId = userData.TitlePlateId,
-            AiTotalWin = (uint)userData.AiWinCount,
-            AiRank = aiRank
+            GameEra.Nijiiro => await HandleNijiiro(request, cancellationToken),
+            _ => throw new InvalidOperationException($"Use {nameof(Ac15BaidQuery)} for AC15 era: {request.Era}")
         };
     }
+
+    public async ValueTask<Ac15BaidResponse> Handle(Ac15BaidQuery request, CancellationToken cancellationToken)
+    {
+        // shortcut: older games get a plain failure (Result 0); what their cabinets show for it isn't checked yet.
+        if (await RefuseBannedAsync(request.AccessCode, cancellationToken)) return new Ac15BaidResponse { Result = 0 };
+        await MarkScannedAsync(request.AccessCode, cancellationToken);
+        return await HandleAc15(request, cancellationToken);
+    }
+
+    private ValueTask<Ac15BaidResponse> HandleAc15(Ac15BaidQuery request, CancellationToken cancellationToken) => request.Era switch
+    {
+        GameEra.Green => HandleGreen(request, cancellationToken),
+        GameEra.Blue => HandleBlue(request, cancellationToken),
+        GameEra.Yellow => HandleYellow(request, cancellationToken),
+        GameEra.Red => HandleRed(request, cancellationToken),
+        GameEra.White => HandleWhite(request, cancellationToken),
+        GameEra.Murasaki => HandleMurasaki(request, cancellationToken),
+        GameEra.Kimidori => HandleKimidori(request, cancellationToken),
+        GameEra.Momoiro => HandleMomoiro(request, cancellationToken),
+        _ => throw new InvalidOperationException($"Unsupported era: {request.Era}")
+    };
+
+    // A banned card is refused before anything else, so it can't become a new user either.
+    private async Task<bool> RefuseBannedAsync(string accessCode, CancellationToken cancellationToken)
+    {
+        var ban = await context.BannedCards.FindAsync([accessCode], cancellationToken);
+        if (ban is null || (ban.Until is not null && ban.Until <= DateTime.UtcNow)) return false;
+        ban.RefusedCount++;
+        await context.SaveChangesAsync(cancellationToken);
+        logger.LogWarning("Refused banned card {AccessCode}", accessCode);
+        return true;
+    }
+
+    private async Task MarkScannedAsync(string accessCode, CancellationToken cancellationToken)
+    {
+        if (await context.Cards.FindAsync([accessCode], cancellationToken) is not { } card) return;
+        card.LastScanAt = DateTime.UtcNow;
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// The number AddMyDonEntryCommand will give a new player: after the highest player, not the highest card (a player
+    /// whose cards were all removed keeps their number).
+    /// </summary>
+    private async Task<uint> NextBaidAsync(CancellationToken cancellationToken) =>
+        await context.UserData.Select(user => user.Baid).DefaultIfEmpty().MaxAsync(cancellationToken) + 1;
+
+    private partial ValueTask<CommonBaidResponse> HandleNijiiro(BaidQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15BaidResponse> HandleGreen(Ac15BaidQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15BaidResponse> HandleBlue(Ac15BaidQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15BaidResponse> HandleYellow(Ac15BaidQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15BaidResponse> HandleRed(Ac15BaidQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15BaidResponse> HandleWhite(Ac15BaidQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15BaidResponse> HandleMurasaki(Ac15BaidQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15BaidResponse> HandleKimidori(Ac15BaidQuery request, CancellationToken cancellationToken);
+    private partial ValueTask<Ac15BaidResponse> HandleMomoiro(Ac15BaidQuery request, CancellationToken cancellationToken);
 }

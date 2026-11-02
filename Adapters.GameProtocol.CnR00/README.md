@@ -17,7 +17,7 @@ This is one of two parallel game-protocol adapters;
 - Inbound: `Host` only.
 - Outbound: `Adapters.GameProtocol.Shared`, `Application`,
   `Contracts.AdminApi`.
-- Notable packages: `protobuf-net`, `Riok.Mapperly`, `Swan.Core`.
+- Notable packages: `protobuf-net`, `Riok.Mapperly`.
 
 ## Key folders
 

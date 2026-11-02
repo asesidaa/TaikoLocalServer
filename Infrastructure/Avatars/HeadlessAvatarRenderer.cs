@@ -170,7 +170,8 @@ public sealed class HeadlessAvatarRenderer(
     {
         using var scope = scopes.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ITaikoDbContext>();
-        var user = await db.UserData.AsNoTracking().FirstOrDefaultAsync(u => u.Baid == baid, cancellationToken);
+        // Nijiiro's costume (the 3D models are Nijiiro's); a player who has only played older games has none.
+        var user = await db.UserSaveDataNijiiro.AsNoTracking().FirstOrDefaultAsync(u => u.Baid == baid, cancellationToken);
         if (user is null) return;
         var profile = await db.UserWebProfiles.AsNoTracking().FirstOrDefaultAsync(p => p.Baid == baid, cancellationToken);
         var animation = profile?.CardAnimation ?? default;
@@ -231,7 +232,7 @@ public sealed class HeadlessAvatarRenderer(
     private static readonly object StillFraming = new { zoom = 0.26, camY = 0.15, camX = 0.02, puchi = true, size = 512 };
 
     // Opens the viewer on this costume; false when the model didn't load (e.g. a part's files are missing).
-    private async Task<bool> LoadAsync(IPage p, UserDatum user, CardAnimation animation, uint puchi)
+    private async Task<bool> LoadAsync(IPage p, UserSaveDataNijiiro user, CardAnimation animation, uint puchi)
     {
         var query = $"body={user.CurrentBody}&head={user.CurrentHead}&kigurumi={user.CurrentKigurumi}&face={user.CurrentFace}&puchi={puchi}" +
                     $"&bodyColor={user.ColorBody}&faceColor={user.ColorFace}&limbColor={user.ColorLimb}&anim={Uri.EscapeDataString(AvatarKeys.Clip(animation))}";
@@ -246,7 +247,7 @@ public sealed class HeadlessAvatarRenderer(
 
     // A snapshot that stays empty gets one more try on a freshly loaded page (the first snapshot after a load is the
     // dependable one).
-    private async Task<string> SnapshotOrReloadAsync(IPage p, UserDatum user, CardAnimation animation, object framing)
+    private async Task<string> SnapshotOrReloadAsync(IPage p, UserSaveDataNijiiro user, CardAnimation animation, object framing)
     {
         try
         {

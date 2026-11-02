@@ -1,7 +1,7 @@
 
 namespace TaikoLocalServer.Application.Dtos;
 
-public class CommonInitialDataCheckResponse
+public partial class CommonInitialDataCheckResponse
 {
     public uint   Result             { get; set; }
     public byte[] DefaultSongFlg     { get; set; } = [];
@@ -18,6 +18,26 @@ public class CommonInitialDataCheckResponse
     public uint[]             AryChassisFunctionIds { get; set; } = [1, 2, 3];
     
     public ulong ServerCurrentDatetime { get; set; } = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+
+    public uint SongHashVer { get; set; }
+
+    public bool IsDanplay { get; set; }
+
+    public bool IsClose { get; set; }
+
+    public bool IsItemshop { get; set; }
+
+    public bool IsGhostbattleplay { get; set; }
+
+    public List<InformationData> AryTelopDatas { get; set; } = [];
+
+    public List<InformationData> AryEventFolderDatas { get; set; } = [];
+
+    public List<InformationData> AryTaikojukuDatas { get; set; } = [];
+
+    public List<InformationData> AryItemShopDatas { get; set; } = [];
+
+    public List<InformationData> AryLegaltermsDatas { get; set; } = [];
 
     public class AiEventData
     {
@@ -41,5 +61,12 @@ public class CommonInitialDataCheckResponse
             public uint InfoId  { get; set; }
             public uint VerupNo { get; set; }
         }
+    }
+
+    public class InformationData
+    {
+        public uint InfoId { get; set; }
+
+        public uint VerupNo { get; set; }
     }
 }

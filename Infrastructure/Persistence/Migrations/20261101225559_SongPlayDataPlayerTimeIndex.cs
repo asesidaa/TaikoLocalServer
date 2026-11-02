@@ -8,20 +8,15 @@ namespace TaikoLocalServer.Infrastructure.Persistence.Migrations
     public partial class SongPlayDataPlayerTimeIndex : Migration
     {
         /// <inheritdoc />
+        // A no-op since the eras merge: this was written for the table before green's AddGreenEraSupport renamed it to
+        // *_Nijiiro, and runs after that rename, so on a fresh database it would fail. IX_SongPlayData_Baid_PlayTime: made by NijiiroScoreIndexes on SongPlayDatum_Nijiiro.
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateIndex(
-                name: "IX_SongPlayData_Baid_PlayTime",
-                table: "SongPlayData",
-                columns: new[] { "Baid", "PlayTime" });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_SongPlayData_Baid_PlayTime",
-                table: "SongPlayData");
         }
     }
 }

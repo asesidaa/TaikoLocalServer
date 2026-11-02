@@ -26,7 +26,7 @@
     "Certificates": {
       "Default": {
         "Path": "Certificates/cert.pfx",
-        "Password": "",
+        "Password": "taiko",
         "AllowInvalid": true
       }
     }

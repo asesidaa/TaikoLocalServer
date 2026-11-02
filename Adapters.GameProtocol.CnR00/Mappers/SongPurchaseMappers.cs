@@ -7,5 +7,6 @@ public static partial class SongPurchaseMappers
 {
     public static partial SongPurchaseResponse MapToCN00(CommonSongPurchaseResponse response);
 
-    public static partial PurchaseSongCommandCN MapToCommand(SongPurchaseRequest request);
+    public static PurchaseSongCommandCN MapToCommand(SongPurchaseRequest request) =>
+        new((uint)request.Baid, GameEra.Nijiiro, request.SongNo, request.TokenId, request.Price);
 }

@@ -1,8 +1,8 @@
-﻿using TaikoLocalServer.Domain.Enums;
+using TaikoLocalServer.Domain.Enums;
 
 namespace TaikoLocalServer.Domain.Entities;
 
-public class AiScoreDatum
+public class AiScoreDatumNijiiro
 {
     public uint Baid { get; set; }
 
@@ -12,7 +12,7 @@ public class AiScoreDatum
 
     public bool IsWin { get; set; }
 
-    public List<AiSectionScoreDatum> AiSectionScoreData { get; set; } = new();
+    public List<AiSectionScoreDatumNijiiro> AiSectionScoreData { get; set; } = new();
 
     public virtual UserDatum? Ba { get; set; }
 }

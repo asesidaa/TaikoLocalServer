@@ -7,9 +7,9 @@ public class GetTelopController : BaseProtocolController<GetTelopController>
     [Produces("application/protobuf")]
     public async Task<IActionResult> GetTelop([FromBody] GettelopRequest request)
     {
-        Logger.LogInformation("GetTelop request : {Request}", request.Stringify());
+        Logger.LogInformation("GetTelop request : {@Request}", request);
 
-        var commonResponse = await Mediator.Send(new GetTelopQuery(request.TelopId), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new GetTelopQuery(GameEra.Nijiiro, request.TelopId), HttpContext.RequestAborted);
 
         var response = new GettelopResponse
         {
@@ -17,7 +17,7 @@ public class GetTelopController : BaseProtocolController<GetTelopController>
             StartDatetime = commonResponse.StartDatetime,
             EndDatetime = commonResponse.EndDatetime,
             Telop = commonResponse.Telop,
-            VerupNo = commonResponse.VerupNo
+            VerupNo = commonResponse.VerupNo ?? 0
         };
 
         return Ok(response);

@@ -30,18 +30,20 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
             return forbid;
         var user = await context.UserData.FindAsync([baid], HttpContext.RequestAborted);
         if (user is null) return NotFound();
+        // Favourites and the Sou-uchi switch are Nijiiro's; a player who hasn't played it has the defaults.
+        var save = await context.UserSaveDataNijiiro.AsNoTracking().FirstOrDefaultAsync(s => s.Baid == baid, HttpContext.RequestAborted) ?? new UserSaveDataNijiiro();
         if (diff is < 1 or > 5 || page < 1 || limit is < 1 or > MaxLimit) return BadRequest(new { message = "Bad paging or difficulty." });
 
-        var songs = catalog.GetMusicDetailDictionary().Values;
-        var best = (await context.SongBestData.Where(b => b.Baid == baid).Select(b => new { b.SongId, b.Difficulty, b.BestCrown })
+        var songs = catalog.Nijiiro().GetMusicDetailDictionary().Values;
+        var best = (await context.SongBestDataNijiiro.Where(b => b.Baid == baid).Select(b => new { b.SongId, b.Difficulty, b.BestCrown })
                 .ToListAsync(HttpContext.RequestAborted))
             .ToDictionary(b => (b.SongId, b.Difficulty), b => b.BestCrown);
-        var ai = (await context.AiScoreData.Where(a => a.Baid == baid).Include(a => a.AiSectionScoreData).ToListAsync(HttpContext.RequestAborted))
+        var ai = (await context.AiScoreDataNijiiro.Where(a => a.Baid == baid).Include(a => a.AiSectionScoreData).ToListAsync(HttpContext.RequestAborted))
             .ToDictionary(a => (a.SongId, a.Difficulty), a => new AiResult
             {
                 Win = a.IsWin, Sections = a.AiSectionScoreData.Count, SectionsWon = a.AiSectionScoreData.Count(s => s.IsWin),
             });
-        var favorites = user.FavoriteSongsArray.ToHashSet();
+        var favorites = save.FavoriteSongsArray.ToHashSet();
         var d = (Difficulty)diff;
 
         var query = q?.Trim() ?? "";
@@ -50,7 +52,7 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
             (!fav || favorites.Contains(s.SongId)) &&
             (!isNew || s.IsNew) &&
             // Like the game: Sou-uchi charts only for players who turned them on (Profile › Show Sou-uchi songs).
-            (user.DisplaySouUchi || !s.IsSouUchi) &&
+            (save.DisplaySouUchi || !s.IsSouUchi) &&
             // The picked difficulty also filters: only songs with that chart (in practice Ura Oni).
             Stars(s)[diff - 1] > 0 &&
             (query.Length == 0 || s.SongId.ToString() == query ||
@@ -102,11 +104,12 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
         var user = await context.UserData.FindAsync([baid], HttpContext.RequestAborted);
-        if (user is null || !catalog.GetMusicDetailDictionary().TryGetValue(songId, out var s)) return NotFound();
+        if (user is null || !catalog.Nijiiro().GetMusicDetailDictionary().TryGetValue(songId, out var s)) return NotFound();
+        var save = await context.UserSaveDataNijiiro.AsNoTracking().FirstOrDefaultAsync(x => x.Baid == baid, HttpContext.RequestAborted) ?? new UserSaveDataNijiiro();
 
         // One read of this player's plays of the song (just the numbers, in the order of the Baid/SongId/Difficulty/PlayTime
         // index) gives each chart's totals, best and score line; the plays themselves come a page at a time from Plays().
-        var plays = (await context.SongPlayData.Where(p => p.Baid == baid && p.SongId == songId && !p.Skipped)
+        var plays = (await context.SongPlayDataNijiiro.Where(p => p.Baid == baid && p.SongId == songId && !p.Skipped)
                 .OrderBy(p => p.Difficulty).ThenBy(p => p.PlayTime)
                 .Select(p => new { p.Difficulty, Play = new SongChartPlay
                 {
@@ -114,14 +117,14 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
                     Good = p.GoodCount, Ok = p.OkCount, Bad = p.MissCount, Combo = p.ComboCount, Drumroll = p.DrumrollCount,
                 } }).ToListAsync(HttpContext.RequestAborted))
             .GroupBy(p => p.Difficulty).ToDictionary(g => g.Key, g => g.Select(p => p.Play).ToList());
-        var ai = await context.AiScoreData.Where(a => a.Baid == baid && a.SongId == songId).Include(a => a.AiSectionScoreData)
+        var ai = await context.AiScoreDataNijiiro.Where(a => a.Baid == baid && a.SongId == songId).Include(a => a.AiSectionScoreData)
             .ToListAsync(HttpContext.RequestAborted);
         var stars = Stars(s);
         return new SongDetail
         {
             SongId = s.SongId, Name = s.SongName, NameEn = s.SongNameEN, Genre = s.Genre, Stars = stars,
-            Favorite = user.FavoriteSongsArray.Contains(songId), IsNew = s.IsNew,
-            TotalPlays = await context.SongPlayData.CountAsync(p => p.SongId == songId && !p.Skipped, HttpContext.RequestAborted),
+            Favorite = save.FavoriteSongsArray.Contains(songId), IsNew = s.IsNew,
+            TotalPlays = await context.SongPlayDataNijiiro.CountAsync(p => p.SongId == songId && !p.Skipped, HttpContext.RequestAborted),
             Charts = Enumerable.Range(1, 5).Where(i => stars[i - 1] > 0).Select(i =>
             {
                 var d = (Difficulty)i;
@@ -154,9 +157,9 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         var d = (Difficulty)difficulty;
         var ct = HttpContext.RequestAborted;
         // One row per player each: their best (the leaderboard's rows) and their play totals.
-        var bests = await context.SongBestData.Where(b => b.SongId == songId && b.Difficulty == d)
+        var bests = await context.SongBestDataNijiiro.Where(b => b.SongId == songId && b.Difficulty == d)
             .Select(b => new { b.Baid, b.BestScore, b.BestCrown }).ToListAsync(ct);
-        var players = await context.SongPlayData.Where(p => p.SongId == songId && p.Difficulty == d && !p.Skipped)
+        var players = await context.SongPlayDataNijiiro.Where(p => p.SongId == songId && p.Difficulty == d && !p.Skipped)
             .GroupBy(p => p.Baid).Select(g => new
             {
                 Baid = g.Key, Plays = g.Count(), Good = g.Sum(p => (long)p.GoodCount), Ok = g.Sum(p => (long)p.OkCount),
@@ -204,7 +207,7 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
 
     /// <summary>Every player's plays per song (skipped songs don't count), for <paramref name="songs"/> or every song.</summary>
     private Task<Dictionary<uint, int>> PlayCounts(List<uint>? songs) =>
-        context.SongPlayData.Where(p => (songs == null || songs.Contains(p.SongId)) && !p.Skipped)
+        context.SongPlayDataNijiiro.Where(p => (songs == null || songs.Contains(p.SongId)) && !p.Skipped)
             .GroupBy(p => p.SongId).Select(g => new { g.Key, Count = g.Count() })
             .ToDictionaryAsync(x => x.Key, x => x.Count, HttpContext.RequestAborted);
 
@@ -218,7 +221,7 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         if (difficulty is < 1 or > 5 || page < 1 || limit is < 1 or > MaxLimit) return BadRequest(new { message = "Bad paging or difficulty." });
 
         var d = (Difficulty)difficulty;
-        var plays = context.SongPlayData.Where(p => p.Baid == baid && p.SongId == songId && p.Difficulty == d && !p.Skipped);
+        var plays = context.SongPlayDataNijiiro.Where(p => p.Baid == baid && p.SongId == songId && p.Difficulty == d && !p.Skipped);
         var total = await plays.CountAsync(HttpContext.RequestAborted);
         var pages = Math.Max(1, (total + limit - 1) / limit);
         page = Math.Min(page, pages);
@@ -252,7 +255,7 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         BestCombo = plays.Max(p => p.Combo), FirstPlayed = plays[0].PlayTime, TopCrown = plays.Max(p => p.Crown),
     };
 
-    private static readonly Expression<Func<SongPlayDatum, SongChartPlay>> ToPlay = p => new SongChartPlay
+    private static readonly Expression<Func<SongPlayDatumNijiiro, SongChartPlay>> ToPlay = p => new SongChartPlay
     {
         PlayTime = p.PlayTime, Score = p.Score, Crown = p.Crown, Rank = p.ScoreRank,
         Good = p.GoodCount, Ok = p.OkCount, Bad = p.MissCount, Combo = p.ComboCount, Drumroll = p.DrumrollCount,

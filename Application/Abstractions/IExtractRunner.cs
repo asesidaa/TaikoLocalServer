@@ -3,14 +3,14 @@ using TaikoLocalServer.Contracts.AdminApi.Responses;
 namespace TaikoLocalServer.Application.Abstractions;
 
 /// <summary>
-/// Runs tools/extract, one run at a time, then reloads the game data: on the configured GamePath, or on game files an
+/// Runs tools/extract, one run at a time, then reloads the game data: on the configured Eras.Nijiiro.GameDataPath, or on game files an
 /// admin sent from their browser (ServerSettings.AllowRemoteGameDir).
 /// </summary>
 public interface IExtractRunner
 {
     ExtractStatus Status { get; }
 
-    /// <summary>Starts a run in the background on GamePath, or on the uploaded files. Returns null when it started, else why it didn't.</summary>
+    /// <summary>Starts a run in the background on Eras.Nijiiro.GameDataPath, or on the uploaded files. Returns null when it started, else why it didn't.</summary>
     string? Start(bool mods, bool uploaded = false);
 
     /// <summary>The files to send (<c>extract --inputs</c>), or null with why not.</summary>

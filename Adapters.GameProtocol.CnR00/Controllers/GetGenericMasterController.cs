@@ -7,7 +7,7 @@ public class GetGenericMasterController : BaseProtocolController<GetGenericMaste
     [Produces("application/protobuf")]
     public IActionResult GetGenericMaster([FromBody] GetGenericMasterRequest request)
     {
-        Logger.LogInformation("GetGenericMasterCN00Request: {Request}", request.Stringify());
+        Logger.LogInformation("GetGenericMasterCN00Request: {@Request}", request);
 
         var response = new GetGenericMasterResponse
         {

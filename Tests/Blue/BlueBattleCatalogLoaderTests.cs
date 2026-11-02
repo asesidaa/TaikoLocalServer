@@ -1,0 +1,109 @@
+using TaikoLocalServer.Application.Catalog.Blue;
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Blue;
+
+namespace TaikoLocalServer.Tests.Blue;
+
+[Collection("Blue runtime catalog tests")]
+public sealed class BlueBattleCatalogLoaderTests
+{
+    private static readonly string[] ExpectedFileNames =
+    [
+        "battleadjsetting.xml",
+        "battlenpcinfo.xml",
+        "battlestageinfo.xml",
+        "battlesupportinfo.xml",
+        "battletokeninfo.xml"
+    ];
+
+    [Fact]
+    public async Task LoadFromDirectoryAsync_InventoriesFiveKnownBattleXmlFilesWhenPresent()
+    {
+        using var scope = BattleDataScope.WithFiles();
+
+        var catalog = await BlueBattleDataLoader.LoadFromDirectoryAsync(scope.BattleRoot, CancellationToken.None);
+
+        Assert.True(catalog.IsRawDataAvailable);
+        Assert.True(catalog.EnablesBattleAdvertisement);
+        Assert.Equal(ExpectedFileNames, catalog.Files.Select(file => file.FileName).Order(StringComparer.Ordinal));
+        Assert.All(catalog.Files, file =>
+        {
+            Assert.True(file.IsPresent);
+            Assert.True(file.IsXmlParsed);
+            Assert.Null(file.ParseError);
+            Assert.True(file.ElementCount > 0);
+        });
+        Assert.Equal(2, catalog.Files.Single(file => file.FileName == "battlestageinfo.xml").RowCount);
+        Assert.Equal(2, catalog.Files.Single(file => file.FileName == "battletokeninfo.xml").RowCount);
+        Assert.Equal([0u], catalog.BattleNpcIds);
+        var npc = Assert.Single(catalog.BattleNpcs);
+        Assert.Equal(0u, npc.NpcId);
+        Assert.Equal(5u, npc.StartExp);
+        Assert.Equal(30u, npc.InitialDpn);
+        Assert.Equal([1u, 33u], catalog.ReleaseBattleStageIds);
+        Assert.Equal([1u, 10u, 11u, 15u], catalog.ReleaseBattleSpecialIds);
+        Assert.Equal(3u, catalog.BattleBondsLvCap);
+    }
+
+    [Fact]
+    public async Task LoadFromDirectoryAsync_MissingBattleXmlYieldsRawUnavailableCatalog()
+    {
+        using var scope = BattleDataScope.Missing();
+
+        var catalog = await BlueBattleDataLoader.LoadFromDirectoryAsync(scope.BattleRoot, CancellationToken.None);
+
+        Assert.False(catalog.IsRawDataAvailable);
+        Assert.False(catalog.EnablesBattleAdvertisement);
+        Assert.Equal(ExpectedFileNames, catalog.Files.Select(file => file.FileName).Order(StringComparer.Ordinal));
+        Assert.All(catalog.Files, file =>
+        {
+            Assert.False(file.IsPresent);
+            Assert.False(file.IsXmlParsed);
+            Assert.Equal(0, file.ElementCount);
+            Assert.Equal(0, file.RowCount);
+        });
+    }
+
+    [Fact]
+    public void BlueCatalogWiring_ExposesRawBattleCatalogWithoutAdvertisementDefaults()
+    {
+        var catalog = new BlueHandlerFixture.TestBlueCatalog();
+
+        Assert.Same(BlueBattleCatalog.Unavailable, catalog.BattleCatalog);
+        Assert.False(catalog.BattleCatalog.IsRawDataAvailable);
+        Assert.False(catalog.BattleCatalog.EnablesBattleAdvertisement);
+    }
+
+    private sealed class BattleDataScope : IDisposable
+    {
+        private readonly string root;
+
+        private BattleDataScope(bool writeFiles)
+        {
+            root = Path.Combine(Path.GetTempPath(), "TaikoLocalServer-BlueBattleCatalog", Guid.NewGuid().ToString("N"));
+            BattleRoot = Path.Combine(root, "battle");
+            if (writeFiles)
+            {
+                Directory.CreateDirectory(BattleRoot);
+                File.WriteAllText(Path.Combine(BattleRoot, "battleadjsetting.xml"), "<root><adjustedsetting id=\"1\" /></root>");
+                File.WriteAllText(Path.Combine(BattleRoot, "battlenpcinfo.xml"), "<root><npcinfo><id>1</id><start_exp>5</start_exp><atk>30</atk><requred_exp>10</requred_exp><requred_exp>20</requred_exp><requred_exp>30</requred_exp></npcinfo></root>");
+                File.WriteAllText(Path.Combine(BattleRoot, "battlestageinfo.xml"), "<root><stageinfo id=\"1\" /><stageinfo id=\"33\" /></root>");
+                File.WriteAllText(Path.Combine(BattleRoot, "battlesupportinfo.xml"), "<root><supportinfo musicid=\"a\"><coursepatterns><coursepattern><items><item>11</item><item>15</item></items></coursepattern></coursepatterns></supportinfo></root>");
+                File.WriteAllText(Path.Combine(BattleRoot, "battletokeninfo.xml"), "<root><tokeninfo><id>1</id><rewardtbl><reward><id>1</id></reward><reward><id>10</id></reward></rewardtbl></tokeninfo><tokeninfo><id>17</id><rewardtbl /></tokeninfo></root>");
+            }
+        }
+
+        public string BattleRoot { get; }
+
+        public static BattleDataScope WithFiles() => new(writeFiles: true);
+
+        public static BattleDataScope Missing() => new(writeFiles: false);
+
+        public void Dispose()
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+}

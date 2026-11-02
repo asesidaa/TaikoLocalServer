@@ -7,7 +7,7 @@ public class HeadClerk2Controller : BaseProtocolController<HeadClerk2Controller>
     [Produces("application/protobuf")]
     public IActionResult UploadHeadClert2([FromBody] HeadClerk2Request request)
     {
-        Logger.LogInformation("HeadClerk2 request : {Request}", request.Stringify());
+        Logger.LogInformation("HeadClerk2 request : {@Request}", request);
         var response = new HeadClerk2Response
         {
             Result = 1

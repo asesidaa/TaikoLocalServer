@@ -4,11 +4,20 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Route("api/[controller]")]
 [Authorize]
 [ApiScope(ApiScopes.ReadScores, ApiScopes.AdminUsers)]
-public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog catalog) : BaseAdminController<PlayHistoryController>
+public partial class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog catalog) : BaseAdminController<PlayHistoryController>
 {
+    private readonly ITaikoDbContext context = context;
+
     [HttpGet("{baid}")]
-    public async Task<ActionResult<SongHistoryResponse>> GetSongHistory(uint baid)
+    public Task<ActionResult<SongHistoryResponse>> GetSongHistory(uint baid)
+        => GetSongHistory(nameof(GameEra.Nijiiro), baid);
+
+    [HttpGet("/api/{era}/[controller]/{baid}")]
+    public async Task<ActionResult<SongHistoryResponse>> GetSongHistory(string era, uint baid)
     {
+        if (!EraRoute.TryParse(era, out var gameEra))
+            return EraRoute.BadEra(era);
+
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
 
@@ -18,7 +27,30 @@ public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog cat
             return NotFound();
         }
 
-        var playLogs = await context.SongPlayData.Where(d => d.Baid == baid).ToListAsync();
+        return gameEra switch
+        {
+            GameEra.Nijiiro => Ok(await BuildNijiiroSongHistory(baid)),
+            GameEra.Green => Ok(await BuildGreenSongHistory(baid)),
+            GameEra.Blue => Ok(await BuildBlueSongHistory(baid)),
+            GameEra.Yellow => Ok(await BuildYellowSongHistory(baid)),
+            GameEra.Red => Ok(await BuildRedSongHistory(baid)),
+            GameEra.White => Ok(await BuildWhiteSongHistory(baid)),
+            GameEra.Murasaki => Ok(await BuildMurasakiSongHistory(baid)),
+            GameEra.Kimidori => Ok(await BuildKimidoriSongHistory(baid)),
+            GameEra.Momoiro => Ok(await BuildMomoiroSongHistory(baid)),
+            _ => EraRoute.BadEra(era)
+        };
+    }
+
+    private async Task<SongHistoryResponse> BuildNijiiroSongHistory(uint baid)
+    {
+        var saveData = await context.GetOrCreateNijiiroSaveDataAsync(baid, HttpContext.RequestAborted);
+
+        var favoriteSet = saveData.FavoriteSongsArray.ToHashSet();
+        var playLogs = await context.SongPlayDataNijiiro
+            .Where(d => d.Baid == baid)
+            .AsNoTracking()
+            .ToListAsync(HttpContext.RequestAborted);
         var songHistory = playLogs.Select(play => new SongHistoryData
             {
                 SongId = play.SongId,
@@ -34,17 +66,78 @@ public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog cat
                 ComboCount = play.ComboCount,
                 PlayTime = play.PlayTime,
                 SongNumber = play.SongNumber,
-                PlaySetting = PlaySettingConverter.ShortToPlaySetting((short)play.OptionSetting)
+                PlaySetting = PlaySettingConverter.ShortToPlaySetting((short)play.OptionSetting),
+                IsFavorite = favoriteSet.Contains(play.SongId)
             })
             .ToList();
 
-        var favoriteSet = user.FavoriteSongsArray.ToHashSet();
-        foreach (var song in songHistory.Where(song => favoriteSet.Contains(song.SongId)))
-        {
-            song.IsFavorite = true;
-        }
+        return new SongHistoryResponse { SongHistoryData = songHistory };
+    }
 
-        return Ok(new SongHistoryResponse { SongHistoryData = songHistory });
+    private async Task<SongHistoryResponse> BuildGreenSongHistory(uint baid)
+    {
+        var playLogs = await context.SongPlayDataGreen
+            .Where(d => d.Baid == baid)
+            .AsNoTracking()
+            .ToListAsync(HttpContext.RequestAborted);
+        var favoriteSet = await context.GreenFavoriteSongs
+            .Where(d => d.Baid == baid)
+            .Select(d => d.SongNo)
+            .ToHashSetAsync(HttpContext.RequestAborted);
+
+        var songHistory = playLogs.Select(play => new SongHistoryData
+            {
+                SongId = play.SongId,
+                Difficulty = play.Difficulty,
+                Score = play.Score,
+                ScoreRank = ScoreRank.None,
+                Crown = play.Crown,
+                GoodCount = play.GoodCount,
+                OkCount = play.OkCount,
+                MissCount = play.MissCount,
+                HitCount = play.HitCount,
+                DrumrollCount = play.PoundCount,
+                ComboCount = play.ComboCount,
+                PlayTime = play.PlayTime,
+                SongNumber = play.SongId,
+                IsFavorite = favoriteSet.Contains(play.SongId)
+            })
+            .ToList();
+
+        return new SongHistoryResponse { SongHistoryData = songHistory };
+    }
+
+    private async Task<SongHistoryResponse> BuildBlueSongHistory(uint baid)
+    {
+        var playLogs = await context.SongPlayDataBlue
+            .Where(d => d.Baid == baid)
+            .AsNoTracking()
+            .ToListAsync(HttpContext.RequestAborted);
+        var favoriteSet = await context.BlueFavoriteSongs
+            .Where(d => d.Baid == baid)
+            .Select(d => d.SongNo)
+            .ToHashSetAsync(HttpContext.RequestAborted);
+
+        var songHistory = playLogs.Select(play => new SongHistoryData
+            {
+                SongId = play.SongId,
+                Difficulty = play.Difficulty,
+                Score = play.Score,
+                ScoreRank = ScoreRank.None,
+                Crown = play.Crown,
+                GoodCount = play.GoodCount,
+                OkCount = play.OkCount,
+                MissCount = play.MissCount,
+                HitCount = play.HitCount,
+                DrumrollCount = play.PoundCount,
+                ComboCount = play.ComboCount,
+                PlayTime = play.PlayTime,
+                SongNumber = play.SongId,
+                IsFavorite = favoriteSet.Contains(play.SongId)
+            })
+            .ToList();
+
+        return new SongHistoryResponse { SongHistoryData = songHistory };
     }
 
     // Plays further apart than this start a new session.
@@ -72,7 +165,7 @@ public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog cat
         }
         else
         {
-            var all = context.SongPlayData.Where(p => p.Baid == baid && !p.Skipped && (diff == 0 || p.Difficulty == (Difficulty)diff));
+            var all = context.SongPlayDataNijiiro.Where(p => p.Baid == baid && !p.Skipped && (diff == 0 || p.Difficulty == (Difficulty)diff));
             total = await all.CountAsync(HttpContext.RequestAborted);
             latest = await all.MaxAsync(p => (DateTime?)p.PlayTime, HttpContext.RequestAborted);
         }
@@ -108,7 +201,7 @@ public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog cat
     // Groups plays into sessions (newest first), keeping the plays that match the filters; sessions left empty are dropped.
     private List<PlaySession> Sessions(List<Row> plays, int diff, bool best)
     {
-        var songs = catalog.GetMusicDetailDictionary();
+        var songs = catalog.Nijiiro().GetMusicDetailDictionary();
         var sessions = new List<List<Row>>();
         foreach (var p in plays.OrderBy(p => p.PlayTime))
         {
@@ -165,14 +258,14 @@ public class PlayHistoryController(ITaikoDbContext context, IGameDataCatalog cat
     private async Task<List<Row>> Plays(uint baid, DateTime from, DateTime to)
     {
         var ct = HttpContext.RequestAborted;
-        var rows = await context.SongPlayData.Where(p => p.Baid == baid && !p.Skipped && p.PlayTime >= from && p.PlayTime < to)
+        var rows = await context.SongPlayDataNijiiro.Where(p => p.Baid == baid && !p.Skipped && p.PlayTime >= from && p.PlayTime < to)
             // A credit's songs share one PlayTime (the game saves them together), so the save order (Id) keeps them in
             // song order; without it the order depended on the index SQLite picked and credits were miscounted.
             .OrderBy(p => p.PlayTime).ThenBy(p => p.Id)
             .Select(p => new { p.SongId, p.Difficulty, p.PlayTime, p.Score, p.Crown, p.ScoreRank, p.SongNumber })
             .ToListAsync(ct);
         var songs = rows.Select(p => p.SongId).Distinct().ToList();
-        var bestSoFar = songs.Count == 0 ? [] : await context.SongPlayData
+        var bestSoFar = songs.Count == 0 ? [] : await context.SongPlayDataNijiiro
             .Where(p => p.Baid == baid && !p.Skipped && p.PlayTime < from && songs.Contains(p.SongId))
             .GroupBy(p => new { p.SongId, p.Difficulty }).Select(g => new { g.Key.SongId, g.Key.Difficulty, Top = g.Max(p => p.Score) })
             .ToDictionaryAsync(g => (g.SongId, g.Difficulty), g => g.Top, ct);

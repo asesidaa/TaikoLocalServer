@@ -1,0 +1,5333 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "costumeId": 0,
+      "costumeType": "body",
+      "costumeName": "素どん",
+      "costumeNameEN": "素どん",
+      "costumeNameCN": "素どん",
+      "costumeNameKO": "素どん"
+    },
+    {
+      "costumeId": 1,
+      "costumeType": "body",
+      "costumeName": "もりのなかま",
+      "costumeNameEN": "もりのなかま",
+      "costumeNameCN": "もりのなかま",
+      "costumeNameKO": "もりのなかま"
+    },
+    {
+      "costumeId": 2,
+      "costumeType": "body",
+      "costumeName": "ビッグリボン",
+      "costumeNameEN": "ビッグリボン",
+      "costumeNameCN": "ビッグリボン",
+      "costumeNameKO": "ビッグリボン"
+    },
+    {
+      "costumeId": 3,
+      "costumeType": "body",
+      "costumeName": "てんぐ",
+      "costumeNameEN": "てんぐ",
+      "costumeNameCN": "てんぐ",
+      "costumeNameKO": "てんぐ"
+    },
+    {
+      "costumeId": 4,
+      "costumeType": "body",
+      "costumeName": "にんじゃ",
+      "costumeNameEN": "にんじゃ",
+      "costumeNameCN": "にんじゃ",
+      "costumeNameKO": "にんじゃ"
+    },
+    {
+      "costumeId": 5,
+      "costumeType": "body",
+      "costumeName": "ロケット",
+      "costumeNameEN": "ロケット",
+      "costumeNameCN": "ロケット",
+      "costumeNameKO": "ロケット"
+    },
+    {
+      "costumeId": 6,
+      "costumeType": "body",
+      "costumeName": "ボウリング",
+      "costumeNameEN": "ボウリング",
+      "costumeNameCN": "ボウリング",
+      "costumeNameKO": "ボウリング"
+    },
+    {
+      "costumeId": 7,
+      "costumeType": "body",
+      "costumeName": "かじきまぐろ",
+      "costumeNameEN": "かじきまぐろ",
+      "costumeNameCN": "かじきまぐろ",
+      "costumeNameKO": "かじきまぐろ"
+    },
+    {
+      "costumeId": 8,
+      "costumeType": "body",
+      "costumeName": "やたい",
+      "costumeNameEN": "やたい",
+      "costumeNameCN": "やたい",
+      "costumeNameKO": "やたい"
+    },
+    {
+      "costumeId": 9,
+      "costumeType": "body",
+      "costumeName": "ジッパー",
+      "costumeNameEN": "ジッパー",
+      "costumeNameCN": "ジッパー",
+      "costumeNameKO": "ジッパー"
+    },
+    {
+      "costumeId": 10,
+      "costumeType": "body",
+      "costumeName": "くじゃく",
+      "costumeNameEN": "くじゃく",
+      "costumeNameCN": "くじゃく",
+      "costumeNameKO": "くじゃく"
+    },
+    {
+      "costumeId": 11,
+      "costumeType": "body",
+      "costumeName": "カメラ",
+      "costumeNameEN": "カメラ",
+      "costumeNameCN": "カメラ",
+      "costumeNameKO": "カメラ"
+    },
+    {
+      "costumeId": 12,
+      "costumeType": "body",
+      "costumeName": "セーラーふく",
+      "costumeNameEN": "セーラーふく",
+      "costumeNameCN": "セーラーふく",
+      "costumeNameKO": "セーラーふく"
+    },
+    {
+      "costumeId": 13,
+      "costumeType": "body",
+      "costumeName": "学ラン",
+      "costumeNameEN": "学ラン",
+      "costumeNameCN": "学ラン",
+      "costumeNameKO": "学ラン"
+    },
+    {
+      "costumeId": 14,
+      "costumeType": "body",
+      "costumeName": "メイドふく",
+      "costumeNameEN": "メイドふく",
+      "costumeNameCN": "メイドふく",
+      "costumeNameKO": "メイドふく"
+    },
+    {
+      "costumeId": 15,
+      "costumeType": "body",
+      "costumeName": "あおハッピ",
+      "costumeNameEN": "あおハッピ",
+      "costumeNameCN": "あおハッピ",
+      "costumeNameKO": "あおハッピ"
+    },
+    {
+      "costumeId": 16,
+      "costumeType": "body",
+      "costumeName": "はかま",
+      "costumeNameEN": "はかま",
+      "costumeNameCN": "はかま",
+      "costumeNameKO": "はかま"
+    },
+    {
+      "costumeId": 17,
+      "costumeType": "body",
+      "costumeName": "金棒",
+      "costumeNameEN": "金棒",
+      "costumeNameCN": "金棒",
+      "costumeNameKO": "金棒"
+    },
+    {
+      "costumeId": 18,
+      "costumeType": "body",
+      "costumeName": "おひなさま",
+      "costumeNameEN": "おひなさま",
+      "costumeNameCN": "おひなさま",
+      "costumeNameKO": "おひなさま"
+    },
+    {
+      "costumeId": 19,
+      "costumeType": "body",
+      "costumeName": "あかハッピ",
+      "costumeNameEN": "あかハッピ",
+      "costumeNameCN": "あかハッピ",
+      "costumeNameKO": "あかハッピ"
+    },
+    {
+      "costumeId": 20,
+      "costumeType": "body",
+      "costumeName": "ねこと杓子",
+      "costumeNameEN": "ねこと杓子",
+      "costumeNameCN": "ねこと杓子",
+      "costumeNameKO": "ねこと杓子"
+    },
+    {
+      "costumeId": 21,
+      "costumeType": "body",
+      "costumeName": "むしゃ",
+      "costumeNameEN": "むしゃ",
+      "costumeNameCN": "むしゃ",
+      "costumeNameKO": "むしゃ"
+    },
+    {
+      "costumeId": 22,
+      "costumeType": "body",
+      "costumeName": "サッカーボール",
+      "costumeNameEN": "サッカーボール",
+      "costumeNameCN": "サッカーボール",
+      "costumeNameKO": "サッカーボール"
+    },
+    {
+      "costumeId": 23,
+      "costumeType": "body",
+      "costumeName": "黒太鼓",
+      "costumeNameEN": "黒太鼓",
+      "costumeNameCN": "黒太鼓",
+      "costumeNameKO": "黒太鼓"
+    },
+    {
+      "costumeId": 24,
+      "costumeType": "body",
+      "costumeName": "豪華な太鼓",
+      "costumeNameEN": "豪華な太鼓",
+      "costumeNameCN": "豪華な太鼓",
+      "costumeNameKO": "豪華な太鼓"
+    },
+    {
+      "costumeId": 25,
+      "costumeType": "body",
+      "costumeName": "ゴールドン",
+      "costumeNameEN": "ゴールドン",
+      "costumeNameCN": "ゴールドン",
+      "costumeNameKO": "ゴールドン"
+    },
+    {
+      "costumeId": 26,
+      "costumeType": "body",
+      "costumeName": "ちきゅう",
+      "costumeNameEN": "ちきゅう",
+      "costumeNameCN": "ちきゅう",
+      "costumeNameKO": "ちきゅう"
+    },
+    {
+      "costumeId": 27,
+      "costumeType": "body",
+      "costumeName": "テツオライド",
+      "costumeNameEN": "テツオライド",
+      "costumeNameCN": "テツオライド",
+      "costumeNameKO": "テツオライド"
+    },
+    {
+      "costumeId": 28,
+      "costumeType": "body",
+      "costumeName": "たこやき",
+      "costumeNameEN": "たこやき",
+      "costumeNameCN": "たこやき",
+      "costumeNameKO": "たこやき"
+    },
+    {
+      "costumeId": 29,
+      "costumeType": "body",
+      "costumeName": "おつきさま",
+      "costumeNameEN": "おつきさま",
+      "costumeNameCN": "おつきさま",
+      "costumeNameKO": "おつきさま"
+    },
+    {
+      "costumeId": 30,
+      "costumeType": "body",
+      "costumeName": "ちびどん",
+      "costumeNameEN": "ちびどん",
+      "costumeNameCN": "ちびどん",
+      "costumeNameKO": "ちびどん"
+    },
+    {
+      "costumeId": 31,
+      "costumeType": "body",
+      "costumeName": "秋のなかま",
+      "costumeNameEN": "秋のなかま",
+      "costumeNameCN": "秋のなかま",
+      "costumeNameKO": "秋のなかま"
+    },
+    {
+      "costumeId": 32,
+      "costumeType": "body",
+      "costumeName": "スイカ",
+      "costumeNameEN": "スイカ",
+      "costumeNameCN": "スイカ",
+      "costumeNameKO": "スイカ"
+    },
+    {
+      "costumeId": 33,
+      "costumeType": "body",
+      "costumeName": "さくらもち",
+      "costumeNameEN": "さくらもち",
+      "costumeNameCN": "さくらもち",
+      "costumeNameKO": "さくらもち"
+    },
+    {
+      "costumeId": 34,
+      "costumeType": "body",
+      "costumeName": "レースカー",
+      "costumeNameEN": "レースカー",
+      "costumeNameCN": "レースカー",
+      "costumeNameKO": "レースカー"
+    },
+    {
+      "costumeId": 35,
+      "costumeType": "body",
+      "costumeName": "かたつむり",
+      "costumeNameEN": "かたつむり",
+      "costumeNameCN": "かたつむり",
+      "costumeNameKO": "かたつむり"
+    },
+    {
+      "costumeId": 36,
+      "costumeType": "body",
+      "costumeName": "黒の覚醒",
+      "costumeNameEN": "黒の覚醒",
+      "costumeNameCN": "黒の覚醒",
+      "costumeNameKO": "黒の覚醒"
+    },
+    {
+      "costumeId": 37,
+      "costumeType": "body",
+      "costumeName": "白の覚醒",
+      "costumeNameEN": "白の覚醒",
+      "costumeNameCN": "白の覚醒",
+      "costumeNameKO": "白の覚醒"
+    },
+    {
+      "costumeId": 38,
+      "costumeType": "body",
+      "costumeName": "お祭りおうぎ",
+      "costumeNameEN": "お祭りおうぎ",
+      "costumeNameCN": "お祭りおうぎ",
+      "costumeNameKO": "お祭りおうぎ"
+    },
+    {
+      "costumeId": 39,
+      "costumeType": "body",
+      "costumeName": "イカロスのつばさ",
+      "costumeNameEN": "イカロスのつばさ",
+      "costumeNameCN": "イカロスのつばさ",
+      "costumeNameKO": "イカロスのつばさ"
+    },
+    {
+      "costumeId": 40,
+      "costumeType": "body",
+      "costumeName": "かせき",
+      "costumeNameEN": "かせき",
+      "costumeNameCN": "かせき",
+      "costumeNameKO": "かせき"
+    },
+    {
+      "costumeId": 41,
+      "costumeType": "body",
+      "costumeName": "ミイラ",
+      "costumeNameEN": "ミイラ",
+      "costumeNameCN": "ミイラ",
+      "costumeNameKO": "ミイラ"
+    },
+    {
+      "costumeId": 42,
+      "costumeType": "body",
+      "costumeName": "かいぞくせん",
+      "costumeNameEN": "かいぞくせん",
+      "costumeNameCN": "かいぞくせん",
+      "costumeNameKO": "かいぞくせん"
+    },
+    {
+      "costumeId": 43,
+      "costumeType": "body",
+      "costumeName": "たこ",
+      "costumeNameEN": "たこ",
+      "costumeNameCN": "たこ",
+      "costumeNameKO": "たこ"
+    },
+    {
+      "costumeId": 44,
+      "costumeType": "body",
+      "costumeName": "ひこうき",
+      "costumeNameEN": "ひこうき",
+      "costumeNameCN": "ひこうき",
+      "costumeNameKO": "ひこうき"
+    },
+    {
+      "costumeId": 45,
+      "costumeType": "body",
+      "costumeName": "ガーディアン",
+      "costumeNameEN": "ガーディアン",
+      "costumeNameCN": "ガーディアン",
+      "costumeNameKO": "ガーディアン"
+    },
+    {
+      "costumeId": 46,
+      "costumeType": "body",
+      "costumeName": "きのたて",
+      "costumeNameEN": "きのたて",
+      "costumeNameCN": "きのたて",
+      "costumeNameKO": "きのたて"
+    },
+    {
+      "costumeId": 47,
+      "costumeType": "body",
+      "costumeName": "おすもうさん",
+      "costumeNameEN": "おすもうさん",
+      "costumeNameCN": "おすもうさん",
+      "costumeNameKO": "おすもうさん"
+    },
+    {
+      "costumeId": 48,
+      "costumeType": "body",
+      "costumeName": "ほうせき",
+      "costumeNameEN": "ほうせき",
+      "costumeNameCN": "ほうせき",
+      "costumeNameKO": "ほうせき"
+    },
+    {
+      "costumeId": 49,
+      "costumeType": "body",
+      "costumeName": "こじか",
+      "costumeNameEN": "こじか",
+      "costumeNameCN": "こじか",
+      "costumeNameKO": "こじか"
+    },
+    {
+      "costumeId": 50,
+      "costumeType": "body",
+      "costumeName": "ウェディングドレス",
+      "costumeNameEN": "ウェディングドレス",
+      "costumeNameCN": "ウェディングドレス",
+      "costumeNameKO": "ウェディングドレス"
+    },
+    {
+      "costumeId": 51,
+      "costumeType": "body",
+      "costumeName": "めでたい熊手",
+      "costumeNameEN": "めでたい熊手",
+      "costumeNameCN": "めでたい熊手",
+      "costumeNameKO": "めでたい熊手"
+    },
+    {
+      "costumeId": 52,
+      "costumeType": "body",
+      "costumeName": "はたけしごと",
+      "costumeNameEN": "はたけしごと",
+      "costumeNameCN": "はたけしごと",
+      "costumeNameKO": "はたけしごと"
+    },
+    {
+      "costumeId": 53,
+      "costumeType": "body",
+      "costumeName": "この木なんの木",
+      "costumeNameEN": "この木なんの木",
+      "costumeNameCN": "この木なんの木",
+      "costumeNameKO": "この木なんの木"
+    },
+    {
+      "costumeId": 54,
+      "costumeType": "body",
+      "costumeName": "ケモノのころも",
+      "costumeNameEN": "ケモノのころも",
+      "costumeNameCN": "ケモノのころも",
+      "costumeNameKO": "ケモノのころも"
+    },
+    {
+      "costumeId": 55,
+      "costumeType": "body",
+      "costumeName": "ダミー",
+      "costumeNameEN": "ダミー",
+      "costumeNameCN": "ダミー",
+      "costumeNameKO": "ダミー"
+    },
+    {
+      "costumeId": 56,
+      "costumeType": "body",
+      "costumeName": "タックンライド",
+      "costumeNameEN": "タックンライド",
+      "costumeNameCN": "タックンライド",
+      "costumeNameKO": "タックンライド"
+    },
+    {
+      "costumeId": 57,
+      "costumeType": "body",
+      "costumeName": "チャンピオン",
+      "costumeNameEN": "チャンピオン",
+      "costumeNameCN": "チャンピオン",
+      "costumeNameKO": "チャンピオン"
+    },
+    {
+      "costumeId": 58,
+      "costumeType": "body",
+      "costumeName": "せんじゅかんのん",
+      "costumeNameEN": "せんじゅかんのん",
+      "costumeNameCN": "せんじゅかんのん",
+      "costumeNameKO": "せんじゅかんのん"
+    },
+    {
+      "costumeId": 59,
+      "costumeType": "body",
+      "costumeName": "カメ",
+      "costumeNameEN": "カメ",
+      "costumeNameCN": "カメ",
+      "costumeNameKO": "カメ"
+    },
+    {
+      "costumeId": 60,
+      "costumeType": "body",
+      "costumeName": "巫女のはかま",
+      "costumeNameEN": "巫女のはかま",
+      "costumeNameCN": "巫女のはかま",
+      "costumeNameKO": "巫女のはかま"
+    },
+    {
+      "costumeId": 61,
+      "costumeType": "body",
+      "costumeName": "シンデレラ",
+      "costumeNameEN": "シンデレラ",
+      "costumeNameCN": "シンデレラ",
+      "costumeNameKO": "シンデレラ"
+    },
+    {
+      "costumeId": 62,
+      "costumeType": "body",
+      "costumeName": "かみなり太鼓",
+      "costumeNameEN": "かみなり太鼓",
+      "costumeNameCN": "かみなり太鼓",
+      "costumeNameKO": "かみなり太鼓"
+    },
+    {
+      "costumeId": 63,
+      "costumeType": "body",
+      "costumeName": "夏休み",
+      "costumeNameEN": "夏休み",
+      "costumeNameCN": "夏休み",
+      "costumeNameKO": "夏休み"
+    },
+    {
+      "costumeId": 64,
+      "costumeType": "body",
+      "costumeName": "テニス",
+      "costumeNameEN": "テニス",
+      "costumeNameCN": "テニス",
+      "costumeNameKO": "テニス"
+    },
+    {
+      "costumeId": 65,
+      "costumeType": "body",
+      "costumeName": "絵描き",
+      "costumeNameEN": "絵描き",
+      "costumeNameCN": "絵描き",
+      "costumeNameKO": "絵描き"
+    },
+    {
+      "costumeId": 66,
+      "costumeType": "body",
+      "costumeName": "黒ゴス",
+      "costumeNameEN": "黒ゴス",
+      "costumeNameCN": "黒ゴス",
+      "costumeNameKO": "黒ゴス"
+    },
+    {
+      "costumeId": 67,
+      "costumeType": "body",
+      "costumeName": "アルパカ",
+      "costumeNameEN": "アルパカ",
+      "costumeNameCN": "アルパカ",
+      "costumeNameKO": "アルパカ"
+    },
+    {
+      "costumeId": 68,
+      "costumeType": "body",
+      "costumeName": "芸者",
+      "costumeNameEN": "芸者",
+      "costumeNameCN": "芸者",
+      "costumeNameKO": "芸者"
+    },
+    {
+      "costumeId": 69,
+      "costumeType": "body",
+      "costumeName": "ジェットパイロット",
+      "costumeNameEN": "ジェットパイロット",
+      "costumeNameCN": "ジェットパイロット",
+      "costumeNameKO": "ジェットパイロット"
+    },
+    {
+      "costumeId": 70,
+      "costumeType": "body",
+      "costumeName": "おちごさん",
+      "costumeNameEN": "おちごさん",
+      "costumeNameCN": "おちごさん",
+      "costumeNameKO": "おちごさん"
+    },
+    {
+      "costumeId": 71,
+      "costumeType": "body",
+      "costumeName": "ふうせん",
+      "costumeNameEN": "ふうせん",
+      "costumeNameCN": "ふうせん",
+      "costumeNameKO": "ふうせん"
+    },
+    {
+      "costumeId": 72,
+      "costumeType": "body",
+      "costumeName": "マント",
+      "costumeNameEN": "マント",
+      "costumeNameCN": "マント",
+      "costumeNameKO": "マント"
+    },
+    {
+      "costumeId": 73,
+      "costumeType": "body",
+      "costumeName": "クマのぬいぐるみ",
+      "costumeNameEN": "クマのぬいぐるみ",
+      "costumeNameCN": "クマのぬいぐるみ",
+      "costumeNameKO": "クマのぬいぐるみ"
+    },
+    {
+      "costumeId": 74,
+      "costumeType": "body",
+      "costumeName": "ティラノサウルス",
+      "costumeNameEN": "ティラノサウルス",
+      "costumeNameCN": "ティラノサウルス",
+      "costumeNameKO": "ティラノサウルス"
+    },
+    {
+      "costumeId": 75,
+      "costumeType": "body",
+      "costumeName": "アイス",
+      "costumeNameEN": "アイス",
+      "costumeNameCN": "アイス",
+      "costumeNameKO": "アイス"
+    },
+    {
+      "costumeId": 76,
+      "costumeType": "body",
+      "costumeName": "ユーレイボディ",
+      "costumeNameEN": "ユーレイボディ",
+      "costumeNameCN": "ユーレイボディ",
+      "costumeNameKO": "ユーレイボディ"
+    },
+    {
+      "costumeId": 77,
+      "costumeType": "body",
+      "costumeName": "お祭り太鼓",
+      "costumeNameEN": "お祭り太鼓",
+      "costumeNameCN": "お祭り太鼓",
+      "costumeNameKO": "お祭り太鼓"
+    },
+    {
+      "costumeId": 78,
+      "costumeType": "body",
+      "costumeName": "かぐや姫",
+      "costumeNameEN": "かぐや姫",
+      "costumeNameCN": "かぐや姫",
+      "costumeNameKO": "かぐや姫"
+    },
+    {
+      "costumeId": 79,
+      "costumeType": "body",
+      "costumeName": "ハロウィンボディ",
+      "costumeNameEN": "ハロウィンボディ",
+      "costumeNameCN": "ハロウィンボディ",
+      "costumeNameKO": "ハロウィンボディ"
+    },
+    {
+      "costumeId": 80,
+      "costumeType": "body",
+      "costumeName": "ししまい",
+      "costumeNameEN": "ししまい",
+      "costumeNameCN": "ししまい",
+      "costumeNameKO": "ししまい"
+    },
+    {
+      "costumeId": 81,
+      "costumeType": "body",
+      "costumeName": "スイーツ",
+      "costumeNameEN": "スイーツ",
+      "costumeNameCN": "スイーツ",
+      "costumeNameKO": "スイーツ"
+    },
+    {
+      "costumeId": 82,
+      "costumeType": "body",
+      "costumeName": "かぶきはかま",
+      "costumeNameEN": "かぶきはかま",
+      "costumeNameCN": "かぶきはかま",
+      "costumeNameKO": "かぶきはかま"
+    },
+    {
+      "costumeId": 83,
+      "costumeType": "body",
+      "costumeName": "らくだのこぶ",
+      "costumeNameEN": "らくだのこぶ",
+      "costumeNameCN": "らくだのこぶ",
+      "costumeNameKO": "らくだのこぶ"
+    },
+    {
+      "costumeId": 84,
+      "costumeType": "body",
+      "costumeName": "パワーアーム",
+      "costumeNameEN": "パワーアーム",
+      "costumeNameCN": "パワーアーム",
+      "costumeNameKO": "パワーアーム"
+    },
+    {
+      "costumeId": 85,
+      "costumeType": "body",
+      "costumeName": "けんきゅうじょ",
+      "costumeNameEN": "けんきゅうじょ",
+      "costumeNameCN": "けんきゅうじょ",
+      "costumeNameKO": "けんきゅうじょ"
+    },
+    {
+      "costumeId": 86,
+      "costumeType": "body",
+      "costumeName": "かぶとむし",
+      "costumeNameEN": "かぶとむし",
+      "costumeNameCN": "かぶとむし",
+      "costumeNameKO": "かぶとむし"
+    },
+    {
+      "costumeId": 87,
+      "costumeType": "body",
+      "costumeName": "うちゅうふく",
+      "costumeNameEN": "うちゅうふく",
+      "costumeNameCN": "うちゅうふく",
+      "costumeNameKO": "うちゅうふく"
+    },
+    {
+      "costumeId": 88,
+      "costumeType": "body",
+      "costumeName": "水兵さん",
+      "costumeNameEN": "水兵さん",
+      "costumeNameCN": "水兵さん",
+      "costumeNameKO": "水兵さん"
+    },
+    {
+      "costumeId": 89,
+      "costumeType": "body",
+      "costumeName": "サンタクロース",
+      "costumeNameEN": "サンタクロース",
+      "costumeNameCN": "サンタクロース",
+      "costumeNameKO": "サンタクロース"
+    },
+    {
+      "costumeId": 90,
+      "costumeType": "body",
+      "costumeName": "スケーターボディ",
+      "costumeNameEN": "スケーターボディ",
+      "costumeNameCN": "スケーターボディ",
+      "costumeNameKO": "スケーターボディ"
+    },
+    {
+      "costumeId": 91,
+      "costumeType": "body",
+      "costumeName": "はらじゅくドレス",
+      "costumeNameEN": "はらじゅくドレス",
+      "costumeNameCN": "はらじゅくドレス",
+      "costumeNameKO": "はらじゅくドレス"
+    },
+    {
+      "costumeId": 92,
+      "costumeType": "body",
+      "costumeName": "バカンスパラソル",
+      "costumeNameEN": "バカンスパラソル",
+      "costumeNameCN": "バカンスパラソル",
+      "costumeNameKO": "バカンスパラソル"
+    },
+    {
+      "costumeId": 93,
+      "costumeType": "body",
+      "costumeName": "UFO",
+      "costumeNameEN": "UFO",
+      "costumeNameCN": "UFO",
+      "costumeNameKO": "UFO"
+    },
+    {
+      "costumeId": 94,
+      "costumeType": "body",
+      "costumeName": "カメレオン",
+      "costumeNameEN": "カメレオン",
+      "costumeNameCN": "カメレオン",
+      "costumeNameKO": "カメレオン"
+    },
+    {
+      "costumeId": 95,
+      "costumeType": "body",
+      "costumeName": "ヒーロー",
+      "costumeNameEN": "ヒーロー",
+      "costumeNameCN": "ヒーロー",
+      "costumeNameKO": "ヒーロー"
+    },
+    {
+      "costumeId": 96,
+      "costumeType": "body",
+      "costumeName": "わたがし",
+      "costumeNameEN": "わたがし",
+      "costumeNameCN": "わたがし",
+      "costumeNameKO": "わたがし"
+    },
+    {
+      "costumeId": 97,
+      "costumeType": "body",
+      "costumeName": "落武者",
+      "costumeNameEN": "落武者",
+      "costumeNameCN": "落武者",
+      "costumeNameKO": "落武者"
+    },
+    {
+      "costumeId": 98,
+      "costumeType": "body",
+      "costumeName": "自転車",
+      "costumeNameEN": "自転車",
+      "costumeNameCN": "自転車",
+      "costumeNameKO": "自転車"
+    },
+    {
+      "costumeId": 99,
+      "costumeType": "body",
+      "costumeName": "海の仲間たち",
+      "costumeNameEN": "海の仲間たち",
+      "costumeNameCN": "海の仲間たち",
+      "costumeNameKO": "海の仲間たち"
+    },
+    {
+      "costumeId": 100,
+      "costumeType": "body",
+      "costumeName": "兵士長",
+      "costumeNameEN": "兵士長",
+      "costumeNameCN": "兵士長",
+      "costumeNameKO": "兵士長"
+    },
+    {
+      "costumeId": 101,
+      "costumeType": "body",
+      "costumeName": "クレープやたい",
+      "costumeNameEN": "クレープやたい",
+      "costumeNameCN": "クレープやたい",
+      "costumeNameKO": "クレープやたい"
+    },
+    {
+      "costumeId": 102,
+      "costumeType": "body",
+      "costumeName": "こおりのドレス",
+      "costumeNameEN": "こおりのドレス",
+      "costumeNameCN": "こおりのドレス",
+      "costumeNameKO": "こおりのドレス"
+    },
+    {
+      "costumeId": 103,
+      "costumeType": "body",
+      "costumeName": "メイプルライド",
+      "costumeNameEN": "メイプルライド",
+      "costumeNameCN": "メイプルライド",
+      "costumeNameKO": "メイプルライド"
+    },
+    {
+      "costumeId": 104,
+      "costumeType": "body",
+      "costumeName": "幸運ドラゴン",
+      "costumeNameEN": "幸運ドラゴン",
+      "costumeNameCN": "幸運ドラゴン",
+      "costumeNameKO": "幸運ドラゴン"
+    },
+    {
+      "costumeId": 105,
+      "costumeType": "body",
+      "costumeName": "ノイズ",
+      "costumeNameEN": "ノイズ",
+      "costumeNameCN": "ノイズ",
+      "costumeNameKO": "ノイズ"
+    },
+    {
+      "costumeId": 106,
+      "costumeType": "body",
+      "costumeName": "お医者さん",
+      "costumeNameEN": "お医者さん",
+      "costumeNameCN": "お医者さん",
+      "costumeNameKO": "お医者さん"
+    },
+    {
+      "costumeId": 107,
+      "costumeType": "body",
+      "costumeName": "ミツバチ",
+      "costumeNameEN": "ミツバチ",
+      "costumeNameCN": "ミツバチ",
+      "costumeNameKO": "ミツバチ"
+    },
+    {
+      "costumeId": 108,
+      "costumeType": "body",
+      "costumeName": "ブルドッグ",
+      "costumeNameEN": "ブルドッグ",
+      "costumeNameCN": "ブルドッグ",
+      "costumeNameKO": "ブルドッグ"
+    },
+    {
+      "costumeId": 109,
+      "costumeType": "body",
+      "costumeName": "ネコのしっぽ",
+      "costumeNameEN": "ネコのしっぽ",
+      "costumeNameCN": "ネコのしっぽ",
+      "costumeNameKO": "ネコのしっぽ"
+    },
+    {
+      "costumeId": 110,
+      "costumeType": "body",
+      "costumeName": "プリースト",
+      "costumeNameEN": "プリースト",
+      "costumeNameCN": "プリースト",
+      "costumeNameKO": "プリースト"
+    },
+    {
+      "costumeId": 111,
+      "costumeType": "body",
+      "costumeName": "トレジャーハンター",
+      "costumeNameEN": "トレジャーハンター",
+      "costumeNameCN": "トレジャーハンター",
+      "costumeNameKO": "トレジャーハンター"
+    },
+    {
+      "costumeId": 112,
+      "costumeType": "body",
+      "costumeName": "アコースティックギター",
+      "costumeNameEN": "アコースティックギター",
+      "costumeNameCN": "アコースティックギター",
+      "costumeNameKO": "アコースティックギター"
+    },
+    {
+      "costumeId": 113,
+      "costumeType": "body",
+      "costumeName": "幸せの青い鳥",
+      "costumeNameEN": "幸せの青い鳥",
+      "costumeNameCN": "幸せの青い鳥",
+      "costumeNameKO": "幸せの青い鳥"
+    },
+    {
+      "costumeId": 114,
+      "costumeType": "body",
+      "costumeName": "火炎ほうしゃ器",
+      "costumeNameEN": "火炎ほうしゃ器",
+      "costumeNameCN": "火炎ほうしゃ器",
+      "costumeNameKO": "火炎ほうしゃ器"
+    },
+    {
+      "costumeId": 115,
+      "costumeType": "body",
+      "costumeName": "いわ",
+      "costumeNameEN": "いわ",
+      "costumeNameCN": "いわ",
+      "costumeNameKO": "いわ"
+    },
+    {
+      "costumeId": 116,
+      "costumeType": "body",
+      "costumeName": "ドドドド",
+      "costumeNameEN": "ドドドド",
+      "costumeNameCN": "ドドドド",
+      "costumeNameKO": "ドドドド"
+    },
+    {
+      "costumeId": 117,
+      "costumeType": "body",
+      "costumeName": "おかしの家",
+      "costumeNameEN": "おかしの家",
+      "costumeNameCN": "おかしの家",
+      "costumeNameKO": "おかしの家"
+    },
+    {
+      "costumeId": 118,
+      "costumeType": "body",
+      "costumeName": "アフロディーテ",
+      "costumeNameEN": "アフロディーテ",
+      "costumeNameCN": "アフロディーテ",
+      "costumeNameKO": "アフロディーテ"
+    },
+    {
+      "costumeId": 119,
+      "costumeType": "body",
+      "costumeName": "牧場",
+      "costumeNameEN": "牧場",
+      "costumeNameCN": "牧場",
+      "costumeNameKO": "牧場"
+    },
+    {
+      "costumeId": 120,
+      "costumeType": "body",
+      "costumeName": "かりうど",
+      "costumeNameEN": "かりうど",
+      "costumeNameCN": "かりうど",
+      "costumeNameKO": "かりうど"
+    },
+    {
+      "costumeId": 121,
+      "costumeType": "body",
+      "costumeName": "イリュージョン",
+      "costumeNameEN": "イリュージョン",
+      "costumeNameCN": "イリュージョン",
+      "costumeNameKO": "イリュージョン"
+    },
+    {
+      "costumeId": 122,
+      "costumeType": "body",
+      "costumeName": "ダンボール",
+      "costumeNameEN": "ダンボール",
+      "costumeNameCN": "ダンボール",
+      "costumeNameKO": "ダンボール"
+    },
+    {
+      "costumeId": 123,
+      "costumeType": "body",
+      "costumeName": "塗り途中",
+      "costumeNameEN": "塗り途中",
+      "costumeNameCN": "塗り途中",
+      "costumeNameKO": "塗り途中"
+    },
+    {
+      "costumeId": 124,
+      "costumeType": "body",
+      "costumeName": "コンサートライト",
+      "costumeNameEN": "コンサートライト",
+      "costumeNameCN": "コンサートライト",
+      "costumeNameKO": "コンサートライト"
+    },
+    {
+      "costumeId": 125,
+      "costumeType": "body",
+      "costumeName": "ちょうちょのはね",
+      "costumeNameEN": "ちょうちょのはね",
+      "costumeNameCN": "ちょうちょのはね",
+      "costumeNameKO": "ちょうちょのはね"
+    },
+    {
+      "costumeId": 126,
+      "costumeType": "body",
+      "costumeName": "チャリオット",
+      "costumeNameEN": "チャリオット",
+      "costumeNameCN": "チャリオット",
+      "costumeNameKO": "チャリオット"
+    },
+    {
+      "costumeId": 127,
+      "costumeType": "body",
+      "costumeName": "ブロック",
+      "costumeNameEN": "ブロック",
+      "costumeNameCN": "ブロック",
+      "costumeNameKO": "ブロック"
+    },
+    {
+      "costumeId": 128,
+      "costumeType": "body",
+      "costumeName": "そんごくう",
+      "costumeNameEN": "そんごくう",
+      "costumeNameCN": "そんごくう",
+      "costumeNameKO": "そんごくう"
+    },
+    {
+      "costumeId": 129,
+      "costumeType": "body",
+      "costumeName": "虹",
+      "costumeNameEN": "虹",
+      "costumeNameCN": "虹",
+      "costumeNameKO": "虹"
+    },
+    {
+      "costumeId": 130,
+      "costumeType": "body",
+      "costumeName": "もりもりやさい",
+      "costumeNameEN": "もりもりやさい",
+      "costumeNameCN": "もりもりやさい",
+      "costumeNameKO": "もりもりやさい"
+    },
+    {
+      "costumeId": 131,
+      "costumeType": "body",
+      "costumeName": "ハート",
+      "costumeNameEN": "ハート",
+      "costumeNameCN": "ハート",
+      "costumeNameKO": "ハート"
+    },
+    {
+      "costumeId": 132,
+      "costumeType": "body",
+      "costumeName": "女子高校生に大人気",
+      "costumeNameEN": "女子高校生に大人気",
+      "costumeNameCN": "女子高校生に大人気",
+      "costumeNameKO": "女子高校生に大人気"
+    },
+    {
+      "costumeId": 133,
+      "costumeType": "body",
+      "costumeName": "わくせい",
+      "costumeNameEN": "わくせい",
+      "costumeNameCN": "わくせい",
+      "costumeNameKO": "わくせい"
+    },
+    {
+      "costumeId": 134,
+      "costumeType": "body",
+      "costumeName": "ネコの集会",
+      "costumeNameEN": "ネコの集会",
+      "costumeNameCN": "ネコの集会",
+      "costumeNameKO": "ネコの集会"
+    },
+    {
+      "costumeId": 135,
+      "costumeType": "body",
+      "costumeName": "神器ボディ",
+      "costumeNameEN": "神器ボディ",
+      "costumeNameCN": "神器ボディ",
+      "costumeNameKO": "神器ボディ"
+    },
+    {
+      "costumeId": 136,
+      "costumeType": "body",
+      "costumeName": "太鼓の公式マイバチ",
+      "costumeNameEN": "太鼓の公式マイバチ",
+      "costumeNameCN": "太鼓の公式マイバチ",
+      "costumeNameKO": "太鼓の公式マイバチ"
+    },
+    {
+      "costumeId": 137,
+      "costumeType": "body",
+      "costumeName": "ジャングル",
+      "costumeNameEN": "ジャングル",
+      "costumeNameCN": "ジャングル",
+      "costumeNameKO": "ジャングル"
+    },
+    {
+      "costumeId": 138,
+      "costumeType": "body",
+      "costumeName": "おかねもち",
+      "costumeNameEN": "おかねもち",
+      "costumeNameCN": "おかねもち",
+      "costumeNameKO": "おかねもち"
+    },
+    {
+      "costumeId": 139,
+      "costumeType": "body",
+      "costumeName": "みなみのしま",
+      "costumeNameEN": "みなみのしま",
+      "costumeNameCN": "みなみのしま",
+      "costumeNameKO": "みなみのしま"
+    },
+    {
+      "costumeId": 140,
+      "costumeType": "body",
+      "costumeName": "メキシカン",
+      "costumeNameEN": "メキシカン",
+      "costumeNameCN": "メキシカン",
+      "costumeNameKO": "メキシカン"
+    },
+    {
+      "costumeId": 141,
+      "costumeType": "body",
+      "costumeName": "せんごくぶしょう",
+      "costumeNameEN": "せんごくぶしょう",
+      "costumeNameCN": "せんごくぶしょう",
+      "costumeNameKO": "せんごくぶしょう"
+    },
+    {
+      "costumeId": 142,
+      "costumeType": "body",
+      "costumeName": "アイスドーム",
+      "costumeNameEN": "アイスドーム",
+      "costumeNameCN": "アイスドーム",
+      "costumeNameKO": "アイスドーム"
+    },
+    {
+      "costumeId": 143,
+      "costumeType": "body",
+      "costumeName": "火消し",
+      "costumeNameEN": "火消し",
+      "costumeNameCN": "火消し",
+      "costumeNameKO": "火消し"
+    },
+    {
+      "costumeId": 144,
+      "costumeType": "body",
+      "costumeName": "ポセイドン",
+      "costumeNameEN": "ポセイドン",
+      "costumeNameCN": "ポセイドン",
+      "costumeNameKO": "ポセイドン"
+    },
+    {
+      "costumeId": 145,
+      "costumeType": "body",
+      "costumeName": "コックさん",
+      "costumeNameEN": "コックさん",
+      "costumeNameCN": "コックさん",
+      "costumeNameKO": "コックさん"
+    },
+    {
+      "costumeId": 146,
+      "costumeType": "body",
+      "costumeName": "まほうつかい",
+      "costumeNameEN": "まほうつかい",
+      "costumeNameCN": "まほうつかい",
+      "costumeNameKO": "まほうつかい"
+    },
+    {
+      "costumeId": 147,
+      "costumeType": "body",
+      "costumeName": "赤ずきんボディ",
+      "costumeNameEN": "赤ずきんボディ",
+      "costumeNameCN": "赤ずきんボディ",
+      "costumeNameKO": "赤ずきんボディ"
+    },
+    {
+      "costumeId": 148,
+      "costumeType": "body",
+      "costumeName": "男子高校生に大人気",
+      "costumeNameEN": "男子高校生に大人気",
+      "costumeNameCN": "男子高校生に大人気",
+      "costumeNameKO": "男子高校生に大人気"
+    },
+    {
+      "costumeId": 149,
+      "costumeType": "body",
+      "costumeName": "きのこ",
+      "costumeNameEN": "きのこ",
+      "costumeNameCN": "きのこ",
+      "costumeNameKO": "きのこ"
+    },
+    {
+      "costumeId": 150,
+      "costumeType": "body",
+      "costumeName": "皇帝",
+      "costumeNameEN": "皇帝",
+      "costumeNameCN": "皇帝",
+      "costumeNameKO": "皇帝"
+    },
+    {
+      "costumeId": 151,
+      "costumeType": "body",
+      "costumeName": "ショベルカーボディ",
+      "costumeNameEN": "ショベルカーボディ",
+      "costumeNameCN": "ショベルカーボディ",
+      "costumeNameKO": "ショベルカーボディ"
+    },
+    {
+      "costumeId": 152,
+      "costumeType": "body",
+      "costumeName": "世界一決定戦2016(どん)",
+      "costumeNameEN": "世界一決定戦2016(どん)",
+      "costumeNameCN": "世界一決定戦2016(どん)",
+      "costumeNameKO": "世界一決定戦2016(どん)"
+    },
+    {
+      "costumeId": 153,
+      "costumeType": "body",
+      "costumeName": "世界一決定戦2016(かつ)",
+      "costumeNameEN": "世界一決定戦2016(かつ)",
+      "costumeNameCN": "世界一決定戦2016(かつ)",
+      "costumeNameKO": "世界一決定戦2016(かつ)"
+    },
+    {
+      "costumeId": 154,
+      "costumeType": "body",
+      "costumeName": "しば犬",
+      "costumeNameEN": "しば犬",
+      "costumeNameCN": "しば犬",
+      "costumeNameKO": "しば犬"
+    },
+    {
+      "costumeId": 155,
+      "costumeType": "body",
+      "costumeName": "みけにゃん",
+      "costumeNameEN": "みけにゃん",
+      "costumeNameCN": "みけにゃん",
+      "costumeNameKO": "みけにゃん"
+    },
+    {
+      "costumeId": 156,
+      "costumeType": "body",
+      "costumeName": "公式マイバチストラップ（朱）",
+      "costumeNameEN": "公式マイバチストラップ（朱）",
+      "costumeNameCN": "公式マイバチストラップ（朱）",
+      "costumeNameKO": "公式マイバチストラップ（朱）"
+    },
+    {
+      "costumeId": 157,
+      "costumeType": "body",
+      "costumeName": "公式マイバチストラップ（蒼）",
+      "costumeNameEN": "公式マイバチストラップ（蒼）",
+      "costumeNameCN": "公式マイバチストラップ（蒼）",
+      "costumeNameKO": "公式マイバチストラップ（蒼）"
+    },
+    {
+      "costumeId": 158,
+      "costumeType": "body",
+      "costumeName": "公式マイバチストラップ（山吹）",
+      "costumeNameEN": "公式マイバチストラップ（山吹）",
+      "costumeNameCN": "公式マイバチストラップ（山吹）",
+      "costumeNameKO": "公式マイバチストラップ（山吹）"
+    },
+    {
+      "costumeId": 159,
+      "costumeType": "body",
+      "costumeName": "公式マイバチストラップ（蓬）",
+      "costumeNameEN": "公式マイバチストラップ（蓬）",
+      "costumeNameCN": "公式マイバチストラップ（蓬）",
+      "costumeNameKO": "公式マイバチストラップ（蓬）"
+    },
+    {
+      "costumeId": 160,
+      "costumeType": "body",
+      "costumeName": "公式マイバチストラップ（蜜柑）",
+      "costumeNameEN": "公式マイバチストラップ（蜜柑）",
+      "costumeNameCN": "公式マイバチストラップ（蜜柑）",
+      "costumeNameKO": "公式マイバチストラップ（蜜柑）"
+    },
+    {
+      "costumeId": 161,
+      "costumeType": "body",
+      "costumeName": "公式マイバチストラップ（桜）",
+      "costumeNameEN": "公式マイバチストラップ（桜）",
+      "costumeNameCN": "公式マイバチストラップ（桜）",
+      "costumeNameKO": "公式マイバチストラップ（桜）"
+    },
+    {
+      "costumeId": 162,
+      "costumeType": "body",
+      "costumeName": "公式マイバチストラップ（墨）",
+      "costumeNameEN": "公式マイバチストラップ（墨）",
+      "costumeNameCN": "公式マイバチストラップ（墨）",
+      "costumeNameKO": "公式マイバチストラップ（墨）"
+    },
+    {
+      "costumeId": 0,
+      "costumeType": "face",
+      "costumeName": "素どん",
+      "costumeNameEN": "素どん",
+      "costumeNameCN": "素どん",
+      "costumeNameKO": "素どん"
+    },
+    {
+      "costumeId": 1,
+      "costumeType": "face",
+      "costumeName": "イケイケサングラス",
+      "costumeNameEN": "イケイケサングラス",
+      "costumeNameCN": "イケイケサングラス",
+      "costumeNameKO": "イケイケサングラス"
+    },
+    {
+      "costumeId": 2,
+      "costumeType": "face",
+      "costumeName": "男気まゆげ",
+      "costumeNameEN": "男気まゆげ",
+      "costumeNameCN": "男気まゆげ",
+      "costumeNameKO": "男気まゆげ"
+    },
+    {
+      "costumeId": 3,
+      "costumeType": "face",
+      "costumeName": "まんまるひげ",
+      "costumeNameEN": "まんまるひげ",
+      "costumeNameCN": "まんまるひげ",
+      "costumeNameKO": "まんまるひげ"
+    },
+    {
+      "costumeId": 4,
+      "costumeType": "face",
+      "costumeName": "三本ひげ",
+      "costumeNameEN": "三本ひげ",
+      "costumeNameCN": "三本ひげ",
+      "costumeNameKO": "三本ひげ"
+    },
+    {
+      "costumeId": 5,
+      "costumeType": "face",
+      "costumeName": "もえる目",
+      "costumeNameEN": "もえる目",
+      "costumeNameCN": "もえる目",
+      "costumeNameKO": "もえる目"
+    },
+    {
+      "costumeId": 6,
+      "costumeType": "face",
+      "costumeName": "ぐるぐるほっぺ",
+      "costumeNameEN": "ぐるぐるほっぺ",
+      "costumeNameCN": "ぐるぐるほっぺ",
+      "costumeNameKO": "ぐるぐるほっぺ"
+    },
+    {
+      "costumeId": 7,
+      "costumeType": "face",
+      "costumeName": "眼帯",
+      "costumeNameEN": "眼帯",
+      "costumeNameCN": "眼帯",
+      "costumeNameKO": "眼帯"
+    },
+    {
+      "costumeId": 8,
+      "costumeType": "face",
+      "costumeName": "ヘビメタ",
+      "costumeNameEN": "ヘビメタ",
+      "costumeNameCN": "ヘビメタ",
+      "costumeNameKO": "ヘビメタ"
+    },
+    {
+      "costumeId": 9,
+      "costumeType": "face",
+      "costumeName": "りきし",
+      "costumeNameEN": "りきし",
+      "costumeNameCN": "りきし",
+      "costumeNameKO": "りきし"
+    },
+    {
+      "costumeId": 10,
+      "costumeType": "face",
+      "costumeName": "ハート眼帯",
+      "costumeNameEN": "ハート眼帯",
+      "costumeNameCN": "ハート眼帯",
+      "costumeNameKO": "ハート眼帯"
+    },
+    {
+      "costumeId": 11,
+      "costumeType": "face",
+      "costumeName": "セレブメガネ",
+      "costumeNameEN": "セレブメガネ",
+      "costumeNameCN": "セレブメガネ",
+      "costumeNameKO": "セレブメガネ"
+    },
+    {
+      "costumeId": 12,
+      "costumeType": "face",
+      "costumeName": "パンダ顔",
+      "costumeNameEN": "パンダ顔",
+      "costumeNameCN": "パンダ顔",
+      "costumeNameKO": "パンダ顔"
+    },
+    {
+      "costumeId": 13,
+      "costumeType": "face",
+      "costumeName": "まつげ",
+      "costumeNameEN": "まつげ",
+      "costumeNameCN": "まつげ",
+      "costumeNameKO": "まつげ"
+    },
+    {
+      "costumeId": 14,
+      "costumeType": "face",
+      "costumeName": "真実の目",
+      "costumeNameEN": "真実の目",
+      "costumeNameCN": "真実の目",
+      "costumeNameKO": "真実の目"
+    },
+    {
+      "costumeId": 15,
+      "costumeType": "face",
+      "costumeName": "マロまゆげ",
+      "costumeNameEN": "マロまゆげ",
+      "costumeNameCN": "マロまゆげ",
+      "costumeNameKO": "マロまゆげ"
+    },
+    {
+      "costumeId": 16,
+      "costumeType": "face",
+      "costumeName": "ハート",
+      "costumeNameEN": "ハート",
+      "costumeNameCN": "ハート",
+      "costumeNameKO": "ハート"
+    },
+    {
+      "costumeId": 17,
+      "costumeType": "face",
+      "costumeName": "アニ目",
+      "costumeNameEN": "アニ目",
+      "costumeNameCN": "アニ目",
+      "costumeNameKO": "アニ目"
+    },
+    {
+      "costumeId": 18,
+      "costumeType": "face",
+      "costumeName": "うさぎ顔",
+      "costumeNameEN": "うさぎ顔",
+      "costumeNameCN": "うさぎ顔",
+      "costumeNameKO": "うさぎ顔"
+    },
+    {
+      "costumeId": 19,
+      "costumeType": "face",
+      "costumeName": "ガーン･･･",
+      "costumeNameEN": "ガーン･･･",
+      "costumeNameCN": "ガーン･･･",
+      "costumeNameKO": "ガーン･･･"
+    },
+    {
+      "costumeId": 20,
+      "costumeType": "face",
+      "costumeName": "ハートのほっぺ",
+      "costumeNameEN": "ハートのほっぺ",
+      "costumeNameCN": "ハートのほっぺ",
+      "costumeNameKO": "ハートのほっぺ"
+    },
+    {
+      "costumeId": 21,
+      "costumeType": "face",
+      "costumeName": "目かくし",
+      "costumeNameEN": "目かくし",
+      "costumeNameCN": "目かくし",
+      "costumeNameKO": "目かくし"
+    },
+    {
+      "costumeId": 22,
+      "costumeType": "face",
+      "costumeName": "つぎはぎ",
+      "costumeNameEN": "つぎはぎ",
+      "costumeNameCN": "つぎはぎ",
+      "costumeNameKO": "つぎはぎ"
+    },
+    {
+      "costumeId": 23,
+      "costumeType": "face",
+      "costumeName": "メタリック",
+      "costumeNameEN": "メタリック",
+      "costumeNameCN": "メタリック",
+      "costumeNameKO": "メタリック"
+    },
+    {
+      "costumeId": 24,
+      "costumeType": "face",
+      "costumeName": "マスク",
+      "costumeNameEN": "マスク",
+      "costumeNameCN": "マスク",
+      "costumeNameKO": "マスク"
+    },
+    {
+      "costumeId": 25,
+      "costumeType": "face",
+      "costumeName": "音符目",
+      "costumeNameEN": "音符目",
+      "costumeNameCN": "音符目",
+      "costumeNameKO": "音符目"
+    },
+    {
+      "costumeId": 26,
+      "costumeType": "face",
+      "costumeName": "キラ目",
+      "costumeNameEN": "キラ目",
+      "costumeNameCN": "キラ目",
+      "costumeNameKO": "キラ目"
+    },
+    {
+      "costumeId": 27,
+      "costumeType": "face",
+      "costumeName": "○×",
+      "costumeNameEN": "○×",
+      "costumeNameCN": "○×",
+      "costumeNameKO": "○×"
+    },
+    {
+      "costumeId": 28,
+      "costumeType": "face",
+      "costumeName": "的",
+      "costumeNameEN": "的",
+      "costumeNameCN": "的",
+      "costumeNameKO": "的"
+    },
+    {
+      "costumeId": 29,
+      "costumeType": "face",
+      "costumeName": "くまどり",
+      "costumeNameEN": "くまどり",
+      "costumeNameCN": "くまどり",
+      "costumeNameKO": "くまどり"
+    },
+    {
+      "costumeId": 30,
+      "costumeType": "face",
+      "costumeName": "ねこ顔",
+      "costumeNameEN": "ねこ顔",
+      "costumeNameCN": "ねこ顔",
+      "costumeNameKO": "ねこ顔"
+    },
+    {
+      "costumeId": 31,
+      "costumeType": "face",
+      "costumeName": "三つ巴",
+      "costumeNameEN": "三つ巴",
+      "costumeNameCN": "三つ巴",
+      "costumeNameKO": "三つ巴"
+    },
+    {
+      "costumeId": 32,
+      "costumeType": "face",
+      "costumeName": "ふくめん",
+      "costumeNameEN": "ふくめん",
+      "costumeNameCN": "ふくめん",
+      "costumeNameKO": "ふくめん"
+    },
+    {
+      "costumeId": 33,
+      "costumeType": "face",
+      "costumeName": "第三の目",
+      "costumeNameEN": "第三の目",
+      "costumeNameCN": "第三の目",
+      "costumeNameKO": "第三の目"
+    },
+    {
+      "costumeId": 34,
+      "costumeType": "face",
+      "costumeName": "しろひげ",
+      "costumeNameEN": "しろひげ",
+      "costumeNameCN": "しろひげ",
+      "costumeNameKO": "しろひげ"
+    },
+    {
+      "costumeId": 35,
+      "costumeType": "face",
+      "costumeName": "キバ",
+      "costumeNameEN": "キバ",
+      "costumeNameCN": "キバ",
+      "costumeNameKO": "キバ"
+    },
+    {
+      "costumeId": 36,
+      "costumeType": "face",
+      "costumeName": "インテリめがね",
+      "costumeNameEN": "インテリめがね",
+      "costumeNameCN": "インテリめがね",
+      "costumeNameKO": "インテリめがね"
+    },
+    {
+      "costumeId": 37,
+      "costumeType": "face",
+      "costumeName": "芸者",
+      "costumeNameEN": "芸者",
+      "costumeNameCN": "芸者",
+      "costumeNameKO": "芸者"
+    },
+    {
+      "costumeId": 38,
+      "costumeType": "face",
+      "costumeName": "ねぶそく",
+      "costumeNameEN": "ねぶそく",
+      "costumeNameCN": "ねぶそく",
+      "costumeNameKO": "ねぶそく"
+    },
+    {
+      "costumeId": 39,
+      "costumeType": "face",
+      "costumeName": "十字傷の男",
+      "costumeNameEN": "十字傷の男",
+      "costumeNameCN": "十字傷の男",
+      "costumeNameKO": "十字傷の男"
+    },
+    {
+      "costumeId": 40,
+      "costumeType": "face",
+      "costumeName": "みけんにシワ",
+      "costumeNameEN": "みけんにシワ",
+      "costumeNameCN": "みけんにシワ",
+      "costumeNameKO": "みけんにシワ"
+    },
+    {
+      "costumeId": 41,
+      "costumeType": "face",
+      "costumeName": "フランケン",
+      "costumeNameEN": "フランケン",
+      "costumeNameCN": "フランケン",
+      "costumeNameKO": "フランケン"
+    },
+    {
+      "costumeId": 42,
+      "costumeType": "face",
+      "costumeName": "キラーン",
+      "costumeNameEN": "キラーン",
+      "costumeNameCN": "キラーン",
+      "costumeNameKO": "キラーン"
+    },
+    {
+      "costumeId": 43,
+      "costumeType": "face",
+      "costumeName": "フルメイク",
+      "costumeNameEN": "フルメイク",
+      "costumeNameCN": "フルメイク",
+      "costumeNameKO": "フルメイク"
+    },
+    {
+      "costumeId": 44,
+      "costumeType": "face",
+      "costumeName": "ギラギラ",
+      "costumeNameEN": "ギラギラ",
+      "costumeNameCN": "ギラギラ",
+      "costumeNameKO": "ギラギラ"
+    },
+    {
+      "costumeId": 45,
+      "costumeType": "face",
+      "costumeName": "困りまゆ",
+      "costumeNameEN": "困りまゆ",
+      "costumeNameCN": "困りまゆ",
+      "costumeNameKO": "困りまゆ"
+    },
+    {
+      "costumeId": 46,
+      "costumeType": "face",
+      "costumeName": "怒り",
+      "costumeNameEN": "怒り",
+      "costumeNameCN": "怒り",
+      "costumeNameKO": "怒り"
+    },
+    {
+      "costumeId": 47,
+      "costumeType": "face",
+      "costumeName": "クンクン",
+      "costumeNameEN": "クンクン",
+      "costumeNameCN": "クンクン",
+      "costumeNameKO": "クンクン"
+    },
+    {
+      "costumeId": 48,
+      "costumeType": "face",
+      "costumeName": "てへぺろどん",
+      "costumeNameEN": "てへぺろどん",
+      "costumeNameCN": "てへぺろどん",
+      "costumeNameKO": "てへぺろどん"
+    },
+    {
+      "costumeId": 49,
+      "costumeType": "face",
+      "costumeName": "ニセどん",
+      "costumeNameEN": "ニセどん",
+      "costumeNameCN": "ニセどん",
+      "costumeNameKO": "ニセどん"
+    },
+    {
+      "costumeId": 50,
+      "costumeType": "face",
+      "costumeName": "コインを入れてね！",
+      "costumeNameEN": "コインを入れてね！",
+      "costumeNameCN": "コインを入れてね！",
+      "costumeNameKO": "コインを入れてね！"
+    },
+    {
+      "costumeId": 51,
+      "costumeType": "face",
+      "costumeName": "メガネメガネ",
+      "costumeNameEN": "メガネメガネ",
+      "costumeNameCN": "メガネメガネ",
+      "costumeNameKO": "メガネメガネ"
+    },
+    {
+      "costumeId": 52,
+      "costumeType": "face",
+      "costumeName": "カッ!!",
+      "costumeNameEN": "カッ!!",
+      "costumeNameCN": "カッ!!",
+      "costumeNameKO": "カッ!!"
+    },
+    {
+      "costumeId": 53,
+      "costumeType": "face",
+      "costumeName": "メロメロ",
+      "costumeNameEN": "メロメロ",
+      "costumeNameCN": "メロメロ",
+      "costumeNameKO": "メロメロ"
+    },
+    {
+      "costumeId": 54,
+      "costumeType": "face",
+      "costumeName": "ゲッソリ",
+      "costumeNameEN": "ゲッソリ",
+      "costumeNameCN": "ゲッソリ",
+      "costumeNameKO": "ゲッソリ"
+    },
+    {
+      "costumeId": 55,
+      "costumeType": "face",
+      "costumeName": "涙",
+      "costumeNameEN": "涙",
+      "costumeNameCN": "涙",
+      "costumeNameKO": "涙"
+    },
+    {
+      "costumeId": 56,
+      "costumeType": "face",
+      "costumeName": "ねじれまゆ",
+      "costumeNameEN": "ねじれまゆ",
+      "costumeNameCN": "ねじれまゆ",
+      "costumeNameKO": "ねじれまゆ"
+    },
+    {
+      "costumeId": 57,
+      "costumeType": "face",
+      "costumeName": "宇宙人",
+      "costumeNameEN": "宇宙人",
+      "costumeNameCN": "宇宙人",
+      "costumeNameKO": "宇宙人"
+    },
+    {
+      "costumeId": 0,
+      "costumeType": "head",
+      "costumeName": "素どん",
+      "costumeNameEN": "素どん",
+      "costumeNameCN": "素どん",
+      "costumeNameKO": "素どん"
+    },
+    {
+      "costumeId": 1,
+      "costumeType": "head",
+      "costumeName": "ひまわり",
+      "costumeNameEN": "ひまわり",
+      "costumeNameCN": "ひまわり",
+      "costumeNameKO": "ひまわり"
+    },
+    {
+      "costumeId": 2,
+      "costumeType": "head",
+      "costumeName": "らいおん",
+      "costumeNameEN": "らいおん",
+      "costumeNameCN": "らいおん",
+      "costumeNameKO": "らいおん"
+    },
+    {
+      "costumeId": 3,
+      "costumeType": "head",
+      "costumeName": "てんぐ",
+      "costumeNameEN": "てんぐ",
+      "costumeNameCN": "てんぐ",
+      "costumeNameKO": "てんぐ"
+    },
+    {
+      "costumeId": 4,
+      "costumeType": "head",
+      "costumeName": "にんじゃ",
+      "costumeNameEN": "にんじゃ",
+      "costumeNameCN": "にんじゃ",
+      "costumeNameKO": "にんじゃ"
+    },
+    {
+      "costumeId": 5,
+      "costumeType": "head",
+      "costumeName": "ロケット",
+      "costumeNameEN": "ロケット",
+      "costumeNameCN": "ロケット",
+      "costumeNameKO": "ロケット"
+    },
+    {
+      "costumeId": 6,
+      "costumeType": "head",
+      "costumeName": "姫ヘアー（金）",
+      "costumeNameEN": "姫ヘアー（金）",
+      "costumeNameCN": "姫ヘアー（金）",
+      "costumeNameKO": "姫ヘアー（金）"
+    },
+    {
+      "costumeId": 7,
+      "costumeType": "head",
+      "costumeName": "かじきまぐろ",
+      "costumeNameEN": "かじきまぐろ",
+      "costumeNameCN": "かじきまぐろ",
+      "costumeNameKO": "かじきまぐろ"
+    },
+    {
+      "costumeId": 8,
+      "costumeType": "head",
+      "costumeName": "イケメンヘアー（銀）",
+      "costumeNameEN": "イケメンヘアー（銀）",
+      "costumeNameCN": "イケメンヘアー（銀）",
+      "costumeNameKO": "イケメンヘアー（銀）"
+    },
+    {
+      "costumeId": 9,
+      "costumeType": "head",
+      "costumeName": "お面小僧（きつね）",
+      "costumeNameEN": "お面小僧（きつね）",
+      "costumeNameCN": "お面小僧（きつね）",
+      "costumeNameKO": "お面小僧（きつね）"
+    },
+    {
+      "costumeId": 10,
+      "costumeType": "head",
+      "costumeName": "ちょんまげ",
+      "costumeNameEN": "ちょんまげ",
+      "costumeNameCN": "ちょんまげ",
+      "costumeNameKO": "ちょんまげ"
+    },
+    {
+      "costumeId": 11,
+      "costumeType": "head",
+      "costumeName": "カメラレンズ",
+      "costumeNameEN": "カメラレンズ",
+      "costumeNameCN": "カメラレンズ",
+      "costumeNameKO": "カメラレンズ"
+    },
+    {
+      "costumeId": 12,
+      "costumeType": "head",
+      "costumeName": "サイドテール",
+      "costumeNameEN": "サイドテール",
+      "costumeNameCN": "サイドテール",
+      "costumeNameKO": "サイドテール"
+    },
+    {
+      "costumeId": 13,
+      "costumeType": "head",
+      "costumeName": "学生帽",
+      "costumeNameEN": "学生帽",
+      "costumeNameCN": "学生帽",
+      "costumeNameKO": "学生帽"
+    },
+    {
+      "costumeId": 14,
+      "costumeType": "head",
+      "costumeName": "メイドヘアー（黒）",
+      "costumeNameEN": "メイドヘアー（黒）",
+      "costumeNameCN": "メイドヘアー（黒）",
+      "costumeNameKO": "メイドヘアー（黒）"
+    },
+    {
+      "costumeId": 15,
+      "costumeType": "head",
+      "costumeName": "水玉はちまき",
+      "costumeNameEN": "水玉はちまき",
+      "costumeNameCN": "水玉はちまき",
+      "costumeNameKO": "水玉はちまき"
+    },
+    {
+      "costumeId": 16,
+      "costumeType": "head",
+      "costumeName": "門松",
+      "costumeNameEN": "門松",
+      "costumeNameCN": "門松",
+      "costumeNameKO": "門松"
+    },
+    {
+      "costumeId": 17,
+      "costumeType": "head",
+      "costumeName": "かみなりさま",
+      "costumeNameEN": "かみなりさま",
+      "costumeNameCN": "かみなりさま",
+      "costumeNameKO": "かみなりさま"
+    },
+    {
+      "costumeId": 18,
+      "costumeType": "head",
+      "costumeName": "おひなさま",
+      "costumeNameEN": "おひなさま",
+      "costumeNameCN": "おひなさま",
+      "costumeNameKO": "おひなさま"
+    },
+    {
+      "costumeId": 19,
+      "costumeType": "head",
+      "costumeName": "金魚ねぶた",
+      "costumeNameEN": "金魚ねぶた",
+      "costumeNameCN": "金魚ねぶた",
+      "costumeNameKO": "金魚ねぶた"
+    },
+    {
+      "costumeId": 20,
+      "costumeType": "head",
+      "costumeName": "かいぞく",
+      "costumeNameEN": "かいぞく",
+      "costumeNameCN": "かいぞく",
+      "costumeNameKO": "かいぞく"
+    },
+    {
+      "costumeId": 21,
+      "costumeType": "head",
+      "costumeName": "はなかざり",
+      "costumeNameEN": "はなかざり",
+      "costumeNameCN": "はなかざり",
+      "costumeNameKO": "はなかざり"
+    },
+    {
+      "costumeId": 22,
+      "costumeType": "head",
+      "costumeName": "むしゃ",
+      "costumeNameEN": "むしゃ",
+      "costumeNameCN": "むしゃ",
+      "costumeNameKO": "むしゃ"
+    },
+    {
+      "costumeId": 23,
+      "costumeType": "head",
+      "costumeName": "さくら",
+      "costumeNameEN": "さくら",
+      "costumeNameCN": "さくら",
+      "costumeNameKO": "さくら"
+    },
+    {
+      "costumeId": 24,
+      "costumeType": "head",
+      "costumeName": "レースカー",
+      "costumeNameEN": "レースカー",
+      "costumeNameCN": "レースカー",
+      "costumeNameKO": "レースカー"
+    },
+    {
+      "costumeId": 25,
+      "costumeType": "head",
+      "costumeName": "かたつむり",
+      "costumeNameEN": "かたつむり",
+      "costumeNameCN": "かたつむり",
+      "costumeNameKO": "かたつむり"
+    },
+    {
+      "costumeId": 26,
+      "costumeType": "head",
+      "costumeName": "黒の覚醒",
+      "costumeNameEN": "黒の覚醒",
+      "costumeNameCN": "黒の覚醒",
+      "costumeNameKO": "黒の覚醒"
+    },
+    {
+      "costumeId": 27,
+      "costumeType": "head",
+      "costumeName": "白の覚醒",
+      "costumeNameEN": "白の覚醒",
+      "costumeNameCN": "白の覚醒",
+      "costumeNameKO": "白の覚醒"
+    },
+    {
+      "costumeId": 28,
+      "costumeType": "head",
+      "costumeName": "うますず",
+      "costumeNameEN": "うますず",
+      "costumeNameCN": "うますず",
+      "costumeNameKO": "うますず"
+    },
+    {
+      "costumeId": 29,
+      "costumeType": "head",
+      "costumeName": "げっけいじゅ",
+      "costumeNameEN": "げっけいじゅ",
+      "costumeNameCN": "げっけいじゅ",
+      "costumeNameKO": "げっけいじゅ"
+    },
+    {
+      "costumeId": 30,
+      "costumeType": "head",
+      "costumeName": "かせき",
+      "costumeNameEN": "かせき",
+      "costumeNameCN": "かせき",
+      "costumeNameKO": "かせき"
+    },
+    {
+      "costumeId": 31,
+      "costumeType": "head",
+      "costumeName": "ミイラ",
+      "costumeNameEN": "ミイラ",
+      "costumeNameCN": "ミイラ",
+      "costumeNameKO": "ミイラ"
+    },
+    {
+      "costumeId": 32,
+      "costumeType": "head",
+      "costumeName": "プロペラ",
+      "costumeNameEN": "プロペラ",
+      "costumeNameCN": "プロペラ",
+      "costumeNameKO": "プロペラ"
+    },
+    {
+      "costumeId": 33,
+      "costumeType": "head",
+      "costumeName": "ガーディアン",
+      "costumeNameEN": "ガーディアン",
+      "costumeNameCN": "ガーディアン",
+      "costumeNameKO": "ガーディアン"
+    },
+    {
+      "costumeId": 34,
+      "costumeType": "head",
+      "costumeName": "てつのかぶと",
+      "costumeNameEN": "てつのかぶと",
+      "costumeNameCN": "てつのかぶと",
+      "costumeNameKO": "てつのかぶと"
+    },
+    {
+      "costumeId": 35,
+      "costumeType": "head",
+      "costumeName": "おすもうさん",
+      "costumeNameEN": "おすもうさん",
+      "costumeNameCN": "おすもうさん",
+      "costumeNameKO": "おすもうさん"
+    },
+    {
+      "costumeId": 36,
+      "costumeType": "head",
+      "costumeName": "ほうせき",
+      "costumeNameEN": "ほうせき",
+      "costumeNameCN": "ほうせき",
+      "costumeNameKO": "ほうせき"
+    },
+    {
+      "costumeId": 37,
+      "costumeType": "head",
+      "costumeName": "こじか",
+      "costumeNameEN": "こじか",
+      "costumeNameCN": "こじか",
+      "costumeNameKO": "こじか"
+    },
+    {
+      "costumeId": 38,
+      "costumeType": "head",
+      "costumeName": "ウェディングドレス",
+      "costumeNameEN": "ウェディングドレス",
+      "costumeNameCN": "ウェディングドレス",
+      "costumeNameKO": "ウェディングドレス"
+    },
+    {
+      "costumeId": 39,
+      "costumeType": "head",
+      "costumeName": "まねきねこ",
+      "costumeNameEN": "まねきねこ",
+      "costumeNameCN": "まねきねこ",
+      "costumeNameKO": "まねきねこ"
+    },
+    {
+      "costumeId": 40,
+      "costumeType": "head",
+      "costumeName": "ほっかむり",
+      "costumeNameEN": "ほっかむり",
+      "costumeNameCN": "ほっかむり",
+      "costumeNameKO": "ほっかむり"
+    },
+    {
+      "costumeId": 41,
+      "costumeType": "head",
+      "costumeName": "きりかぶ",
+      "costumeNameEN": "きりかぶ",
+      "costumeNameCN": "きりかぶ",
+      "costumeNameKO": "きりかぶ"
+    },
+    {
+      "costumeId": 42,
+      "costumeType": "head",
+      "costumeName": "ワイルドヘア",
+      "costumeNameEN": "ワイルドヘア",
+      "costumeNameCN": "ワイルドヘア",
+      "costumeNameKO": "ワイルドヘア"
+    },
+    {
+      "costumeId": 43,
+      "costumeType": "head",
+      "costumeName": "ダミー",
+      "costumeNameEN": "ダミー",
+      "costumeNameCN": "ダミー",
+      "costumeNameKO": "ダミー"
+    },
+    {
+      "costumeId": 44,
+      "costumeType": "head",
+      "costumeName": "チックン",
+      "costumeNameEN": "チックン",
+      "costumeNameCN": "チックン",
+      "costumeNameKO": "チックン"
+    },
+    {
+      "costumeId": 45,
+      "costumeType": "head",
+      "costumeName": "うさみみ",
+      "costumeNameEN": "うさみみ",
+      "costumeNameCN": "うさみみ",
+      "costumeNameKO": "うさみみ"
+    },
+    {
+      "costumeId": 46,
+      "costumeType": "head",
+      "costumeName": "ゆきだるま",
+      "costumeNameEN": "ゆきだるま",
+      "costumeNameCN": "ゆきだるま",
+      "costumeNameKO": "ゆきだるま"
+    },
+    {
+      "costumeId": 47,
+      "costumeType": "head",
+      "costumeName": "ヘッドフォン",
+      "costumeNameEN": "ヘッドフォン",
+      "costumeNameCN": "ヘッドフォン",
+      "costumeNameKO": "ヘッドフォン"
+    },
+    {
+      "costumeId": 48,
+      "costumeType": "head",
+      "costumeName": "サイドポニー",
+      "costumeNameEN": "サイドポニー",
+      "costumeNameCN": "サイドポニー",
+      "costumeNameKO": "サイドポニー"
+    },
+    {
+      "costumeId": 49,
+      "costumeType": "head",
+      "costumeName": "めかくし",
+      "costumeNameEN": "めかくし",
+      "costumeNameCN": "めかくし",
+      "costumeNameKO": "めかくし"
+    },
+    {
+      "costumeId": 50,
+      "costumeType": "head",
+      "costumeName": "ドリル",
+      "costumeNameEN": "ドリル",
+      "costumeNameCN": "ドリル",
+      "costumeNameKO": "ドリル"
+    },
+    {
+      "costumeId": 51,
+      "costumeType": "head",
+      "costumeName": "剣道",
+      "costumeNameEN": "剣道",
+      "costumeNameCN": "剣道",
+      "costumeNameKO": "剣道"
+    },
+    {
+      "costumeId": 52,
+      "costumeType": "head",
+      "costumeName": "水玉りぼん",
+      "costumeNameEN": "水玉りぼん",
+      "costumeNameCN": "水玉りぼん",
+      "costumeNameKO": "水玉りぼん"
+    },
+    {
+      "costumeId": 53,
+      "costumeType": "head",
+      "costumeName": "コンパス",
+      "costumeNameEN": "コンパス",
+      "costumeNameCN": "コンパス",
+      "costumeNameKO": "コンパス"
+    },
+    {
+      "costumeId": 54,
+      "costumeType": "head",
+      "costumeName": "麦わらぼうし",
+      "costumeNameEN": "麦わらぼうし",
+      "costumeNameCN": "麦わらぼうし",
+      "costumeNameKO": "麦わらぼうし"
+    },
+    {
+      "costumeId": 55,
+      "costumeType": "head",
+      "costumeName": "テニス",
+      "costumeNameEN": "テニス",
+      "costumeNameCN": "テニス",
+      "costumeNameKO": "テニス"
+    },
+    {
+      "costumeId": 56,
+      "costumeType": "head",
+      "costumeName": "絵描き",
+      "costumeNameEN": "絵描き",
+      "costumeNameCN": "絵描き",
+      "costumeNameKO": "絵描き"
+    },
+    {
+      "costumeId": 57,
+      "costumeType": "head",
+      "costumeName": "黒ゴス",
+      "costumeNameEN": "黒ゴス",
+      "costumeNameCN": "黒ゴス",
+      "costumeNameKO": "黒ゴス"
+    },
+    {
+      "costumeId": 58,
+      "costumeType": "head",
+      "costumeName": "アルパカ",
+      "costumeNameEN": "アルパカ",
+      "costumeNameCN": "アルパカ",
+      "costumeNameKO": "アルパカ"
+    },
+    {
+      "costumeId": 59,
+      "costumeType": "head",
+      "costumeName": "芸者",
+      "costumeNameEN": "芸者",
+      "costumeNameCN": "芸者",
+      "costumeNameKO": "芸者"
+    },
+    {
+      "costumeId": 60,
+      "costumeType": "head",
+      "costumeName": "ジェットパイロット",
+      "costumeNameEN": "ジェットパイロット",
+      "costumeNameCN": "ジェットパイロット",
+      "costumeNameKO": "ジェットパイロット"
+    },
+    {
+      "costumeId": 61,
+      "costumeType": "head",
+      "costumeName": "おちごさん",
+      "costumeNameEN": "おちごさん",
+      "costumeNameCN": "おちごさん",
+      "costumeNameKO": "おちごさん"
+    },
+    {
+      "costumeId": 62,
+      "costumeType": "head",
+      "costumeName": "ユニコーン",
+      "costumeNameEN": "ユニコーン",
+      "costumeNameCN": "ユニコーン",
+      "costumeNameKO": "ユニコーン"
+    },
+    {
+      "costumeId": 63,
+      "costumeType": "head",
+      "costumeName": "ガンマンハット",
+      "costumeNameEN": "ガンマンハット",
+      "costumeNameCN": "ガンマンハット",
+      "costumeNameKO": "ガンマンハット"
+    },
+    {
+      "costumeId": 64,
+      "costumeType": "head",
+      "costumeName": "パジャマ",
+      "costumeNameEN": "パジャマ",
+      "costumeNameCN": "パジャマ",
+      "costumeNameKO": "パジャマ"
+    },
+    {
+      "costumeId": 65,
+      "costumeType": "head",
+      "costumeName": "ティラノサウルス",
+      "costumeNameEN": "ティラノサウルス",
+      "costumeNameCN": "ティラノサウルス",
+      "costumeNameKO": "ティラノサウルス"
+    },
+    {
+      "costumeId": 66,
+      "costumeType": "head",
+      "costumeName": "アイス",
+      "costumeNameEN": "アイス",
+      "costumeNameCN": "アイス",
+      "costumeNameKO": "アイス"
+    },
+    {
+      "costumeId": 67,
+      "costumeType": "head",
+      "costumeName": "ユーレイヘッド",
+      "costumeNameEN": "ユーレイヘッド",
+      "costumeNameCN": "ユーレイヘッド",
+      "costumeNameKO": "ユーレイヘッド"
+    },
+    {
+      "costumeId": 68,
+      "costumeType": "head",
+      "costumeName": "はながさ",
+      "costumeNameEN": "はながさ",
+      "costumeNameCN": "はながさ",
+      "costumeNameKO": "はながさ"
+    },
+    {
+      "costumeId": 69,
+      "costumeType": "head",
+      "costumeName": "かぐや姫",
+      "costumeNameEN": "かぐや姫",
+      "costumeNameCN": "かぐや姫",
+      "costumeNameKO": "かぐや姫"
+    },
+    {
+      "costumeId": 70,
+      "costumeType": "head",
+      "costumeName": "ハロウィンハット",
+      "costumeNameEN": "ハロウィンハット",
+      "costumeNameCN": "ハロウィンハット",
+      "costumeNameKO": "ハロウィンハット"
+    },
+    {
+      "costumeId": 71,
+      "costumeType": "head",
+      "costumeName": "王冠",
+      "costumeNameEN": "王冠",
+      "costumeNameCN": "王冠",
+      "costumeNameKO": "王冠"
+    },
+    {
+      "costumeId": 72,
+      "costumeType": "head",
+      "costumeName": "スイーツ",
+      "costumeNameEN": "スイーツ",
+      "costumeNameCN": "スイーツ",
+      "costumeNameKO": "スイーツ"
+    },
+    {
+      "costumeId": 73,
+      "costumeType": "head",
+      "costumeName": "うーちゃん",
+      "costumeNameEN": "うーちゃん",
+      "costumeNameCN": "うーちゃん",
+      "costumeNameKO": "うーちゃん"
+    },
+    {
+      "costumeId": 74,
+      "costumeType": "head",
+      "costumeName": "水兵さん",
+      "costumeNameEN": "水兵さん",
+      "costumeNameCN": "水兵さん",
+      "costumeNameKO": "水兵さん"
+    },
+    {
+      "costumeId": 75,
+      "costumeType": "head",
+      "costumeName": "かぶきヘッド",
+      "costumeNameEN": "かぶきヘッド",
+      "costumeNameCN": "かぶきヘッド",
+      "costumeNameKO": "かぶきヘッド"
+    },
+    {
+      "costumeId": 76,
+      "costumeType": "head",
+      "costumeName": "サンタクロース",
+      "costumeNameEN": "サンタクロース",
+      "costumeNameCN": "サンタクロース",
+      "costumeNameKO": "サンタクロース"
+    },
+    {
+      "costumeId": 77,
+      "costumeType": "head",
+      "costumeName": "テツオ",
+      "costumeNameEN": "テツオ",
+      "costumeNameCN": "テツオ",
+      "costumeNameKO": "テツオ"
+    },
+    {
+      "costumeId": 78,
+      "costumeType": "head",
+      "costumeName": "古代のかめん",
+      "costumeNameEN": "古代のかめん",
+      "costumeNameCN": "古代のかめん",
+      "costumeNameKO": "古代のかめん"
+    },
+    {
+      "costumeId": 79,
+      "costumeType": "head",
+      "costumeName": "ロボヘッド",
+      "costumeNameEN": "ロボヘッド",
+      "costumeNameCN": "ロボヘッド",
+      "costumeNameKO": "ロボヘッド"
+    },
+    {
+      "costumeId": 80,
+      "costumeType": "head",
+      "costumeName": "きょうじゅ",
+      "costumeNameEN": "きょうじゅ",
+      "costumeNameCN": "きょうじゅ",
+      "costumeNameKO": "きょうじゅ"
+    },
+    {
+      "costumeId": 81,
+      "costumeType": "head",
+      "costumeName": "かぶとむし",
+      "costumeNameEN": "かぶとむし",
+      "costumeNameCN": "かぶとむし",
+      "costumeNameKO": "かぶとむし"
+    },
+    {
+      "costumeId": 82,
+      "costumeType": "head",
+      "costumeName": "スケーターキャップ",
+      "costumeNameEN": "スケーターキャップ",
+      "costumeNameCN": "スケーターキャップ",
+      "costumeNameKO": "スケーターキャップ"
+    },
+    {
+      "costumeId": 83,
+      "costumeType": "head",
+      "costumeName": "はらじゅくヘアー",
+      "costumeNameEN": "はらじゅくヘアー",
+      "costumeNameCN": "はらじゅくヘアー",
+      "costumeNameKO": "はらじゅくヘアー"
+    },
+    {
+      "costumeId": 84,
+      "costumeType": "head",
+      "costumeName": "ホルスタイン",
+      "costumeNameEN": "ホルスタイン",
+      "costumeNameCN": "ホルスタイン",
+      "costumeNameKO": "ホルスタイン"
+    },
+    {
+      "costumeId": 85,
+      "costumeType": "head",
+      "costumeName": "ヒーロー",
+      "costumeNameEN": "ヒーロー",
+      "costumeNameCN": "ヒーロー",
+      "costumeNameKO": "ヒーロー"
+    },
+    {
+      "costumeId": 86,
+      "costumeType": "head",
+      "costumeName": "わたがし",
+      "costumeNameEN": "わたがし",
+      "costumeNameCN": "わたがし",
+      "costumeNameKO": "わたがし"
+    },
+    {
+      "costumeId": 87,
+      "costumeType": "head",
+      "costumeName": "落武者",
+      "costumeNameEN": "落武者",
+      "costumeNameCN": "落武者",
+      "costumeNameKO": "落武者"
+    },
+    {
+      "costumeId": 88,
+      "costumeType": "head",
+      "costumeName": "自転車",
+      "costumeNameEN": "自転車",
+      "costumeNameCN": "自転車",
+      "costumeNameKO": "自転車"
+    },
+    {
+      "costumeId": 89,
+      "costumeType": "head",
+      "costumeName": "カニ",
+      "costumeNameEN": "カニ",
+      "costumeNameCN": "カニ",
+      "costumeNameKO": "カニ"
+    },
+    {
+      "costumeId": 90,
+      "costumeType": "head",
+      "costumeName": "兵士長",
+      "costumeNameEN": "兵士長",
+      "costumeNameCN": "兵士長",
+      "costumeNameKO": "兵士長"
+    },
+    {
+      "costumeId": 91,
+      "costumeType": "head",
+      "costumeName": "リラ・ダ・ガンバ",
+      "costumeNameEN": "リラ・ダ・ガンバ",
+      "costumeNameCN": "リラ・ダ・ガンバ",
+      "costumeNameKO": "リラ・ダ・ガンバ"
+    },
+    {
+      "costumeId": 92,
+      "costumeType": "head",
+      "costumeName": "金の運",
+      "costumeNameEN": "金の運",
+      "costumeNameCN": "金の運",
+      "costumeNameKO": "金の運"
+    },
+    {
+      "costumeId": 93,
+      "costumeType": "head",
+      "costumeName": "ノイズ",
+      "costumeNameEN": "ノイズ",
+      "costumeNameCN": "ノイズ",
+      "costumeNameKO": "ノイズ"
+    },
+    {
+      "costumeId": 94,
+      "costumeType": "head",
+      "costumeName": "お医者さん",
+      "costumeNameEN": "お医者さん",
+      "costumeNameCN": "お医者さん",
+      "costumeNameKO": "お医者さん"
+    },
+    {
+      "costumeId": 95,
+      "costumeType": "head",
+      "costumeName": "ミツバチ",
+      "costumeNameEN": "ミツバチ",
+      "costumeNameCN": "ミツバチ",
+      "costumeNameKO": "ミツバチ"
+    },
+    {
+      "costumeId": 96,
+      "costumeType": "head",
+      "costumeName": "ブルドッグ",
+      "costumeNameEN": "ブルドッグ",
+      "costumeNameCN": "ブルドッグ",
+      "costumeNameKO": "ブルドッグ"
+    },
+    {
+      "costumeId": 97,
+      "costumeType": "head",
+      "costumeName": "ネコミミ",
+      "costumeNameEN": "ネコミミ",
+      "costumeNameCN": "ネコミミ",
+      "costumeNameKO": "ネコミミ"
+    },
+    {
+      "costumeId": 98,
+      "costumeType": "head",
+      "costumeName": "プリースト",
+      "costumeNameEN": "プリースト",
+      "costumeNameCN": "プリースト",
+      "costumeNameKO": "プリースト"
+    },
+    {
+      "costumeId": 99,
+      "costumeType": "head",
+      "costumeName": "美少女のお面",
+      "costumeNameEN": "美少女のお面",
+      "costumeNameCN": "美少女のお面",
+      "costumeNameKO": "美少女のお面"
+    },
+    {
+      "costumeId": 100,
+      "costumeType": "head",
+      "costumeName": "トレジャーハンター",
+      "costumeNameEN": "トレジャーハンター",
+      "costumeNameCN": "トレジャーハンター",
+      "costumeNameKO": "トレジャーハンター"
+    },
+    {
+      "costumeId": 101,
+      "costumeType": "head",
+      "costumeName": "ハーモニカ",
+      "costumeNameEN": "ハーモニカ",
+      "costumeNameCN": "ハーモニカ",
+      "costumeNameKO": "ハーモニカ"
+    },
+    {
+      "costumeId": 102,
+      "costumeType": "head",
+      "costumeName": "ようせつマスク",
+      "costumeNameEN": "ようせつマスク",
+      "costumeNameCN": "ようせつマスク",
+      "costumeNameKO": "ようせつマスク"
+    },
+    {
+      "costumeId": 103,
+      "costumeType": "head",
+      "costumeName": "メデューサ",
+      "costumeNameEN": "メデューサ",
+      "costumeNameCN": "メデューサ",
+      "costumeNameKO": "メデューサ"
+    },
+    {
+      "costumeId": 104,
+      "costumeType": "head",
+      "costumeName": "ふきだし",
+      "costumeNameEN": "ふきだし",
+      "costumeNameCN": "ふきだし",
+      "costumeNameKO": "ふきだし"
+    },
+    {
+      "costumeId": 105,
+      "costumeType": "head",
+      "costumeName": "かば",
+      "costumeNameEN": "かば",
+      "costumeNameCN": "かば",
+      "costumeNameKO": "かば"
+    },
+    {
+      "costumeId": 106,
+      "costumeType": "head",
+      "costumeName": "ピザ",
+      "costumeNameEN": "ピザ",
+      "costumeNameCN": "ピザ",
+      "costumeNameKO": "ピザ"
+    },
+    {
+      "costumeId": 107,
+      "costumeType": "head",
+      "costumeName": "愛用のナベ",
+      "costumeNameEN": "愛用のナベ",
+      "costumeNameCN": "愛用のナベ",
+      "costumeNameKO": "愛用のナベ"
+    },
+    {
+      "costumeId": 108,
+      "costumeType": "head",
+      "costumeName": "はねぼうし",
+      "costumeNameEN": "はねぼうし",
+      "costumeNameCN": "はねぼうし",
+      "costumeNameKO": "はねぼうし"
+    },
+    {
+      "costumeId": 109,
+      "costumeType": "head",
+      "costumeName": "ボディビルダー",
+      "costumeNameEN": "ボディビルダー",
+      "costumeNameCN": "ボディビルダー",
+      "costumeNameKO": "ボディビルダー"
+    },
+    {
+      "costumeId": 110,
+      "costumeType": "head",
+      "costumeName": "バカンスサングラス",
+      "costumeNameEN": "バカンスサングラス",
+      "costumeNameCN": "バカンスサングラス",
+      "costumeNameKO": "バカンスサングラス"
+    },
+    {
+      "costumeId": 111,
+      "costumeType": "head",
+      "costumeName": "ちょうちょ",
+      "costumeNameEN": "ちょうちょ",
+      "costumeNameCN": "ちょうちょ",
+      "costumeNameKO": "ちょうちょ"
+    },
+    {
+      "costumeId": 112,
+      "costumeType": "head",
+      "costumeName": "ギリシャ兵",
+      "costumeNameEN": "ギリシャ兵",
+      "costumeNameCN": "ギリシャ兵",
+      "costumeNameKO": "ギリシャ兵"
+    },
+    {
+      "costumeId": 113,
+      "costumeType": "head",
+      "costumeName": "ブロック",
+      "costumeNameEN": "ブロック",
+      "costumeNameCN": "ブロック",
+      "costumeNameKO": "ブロック"
+    },
+    {
+      "costumeId": 114,
+      "costumeType": "head",
+      "costumeName": "そんごくう",
+      "costumeNameEN": "そんごくう",
+      "costumeNameCN": "そんごくう",
+      "costumeNameKO": "そんごくう"
+    },
+    {
+      "costumeId": 115,
+      "costumeType": "head",
+      "costumeName": "アニマルフード",
+      "costumeNameEN": "アニマルフード",
+      "costumeNameCN": "アニマルフード",
+      "costumeNameKO": "アニマルフード"
+    },
+    {
+      "costumeId": 116,
+      "costumeType": "head",
+      "costumeName": "ひらめき",
+      "costumeNameEN": "ひらめき",
+      "costumeNameCN": "ひらめき",
+      "costumeNameKO": "ひらめき"
+    },
+    {
+      "costumeId": 117,
+      "costumeType": "head",
+      "costumeName": "電柱",
+      "costumeNameEN": "電柱",
+      "costumeNameCN": "電柱",
+      "costumeNameKO": "電柱"
+    },
+    {
+      "costumeId": 118,
+      "costumeType": "head",
+      "costumeName": "みつあみ",
+      "costumeNameEN": "みつあみ",
+      "costumeNameCN": "みつあみ",
+      "costumeNameKO": "みつあみ"
+    },
+    {
+      "costumeId": 119,
+      "costumeType": "head",
+      "costumeName": "マンガ目",
+      "costumeNameEN": "マンガ目",
+      "costumeNameCN": "マンガ目",
+      "costumeNameKO": "マンガ目"
+    },
+    {
+      "costumeId": 120,
+      "costumeType": "head",
+      "costumeName": "チュウ",
+      "costumeNameEN": "チュウ",
+      "costumeNameCN": "チュウ",
+      "costumeNameKO": "チュウ"
+    },
+    {
+      "costumeId": 121,
+      "costumeType": "head",
+      "costumeName": "神器ヘッド",
+      "costumeNameEN": "神器ヘッド",
+      "costumeNameCN": "神器ヘッド",
+      "costumeNameKO": "神器ヘッド"
+    },
+    {
+      "costumeId": 122,
+      "costumeType": "head",
+      "costumeName": "ジャングル",
+      "costumeNameEN": "ジャングル",
+      "costumeNameCN": "ジャングル",
+      "costumeNameKO": "ジャングル"
+    },
+    {
+      "costumeId": 123,
+      "costumeType": "head",
+      "costumeName": "おフロセット",
+      "costumeNameEN": "おフロセット",
+      "costumeNameCN": "おフロセット",
+      "costumeNameKO": "おフロセット"
+    },
+    {
+      "costumeId": 124,
+      "costumeType": "head",
+      "costumeName": "モアイ",
+      "costumeNameEN": "モアイ",
+      "costumeNameCN": "モアイ",
+      "costumeNameKO": "モアイ"
+    },
+    {
+      "costumeId": 125,
+      "costumeType": "head",
+      "costumeName": "みなみのしま",
+      "costumeNameEN": "みなみのしま",
+      "costumeNameCN": "みなみのしま",
+      "costumeNameKO": "みなみのしま"
+    },
+    {
+      "costumeId": 126,
+      "costumeType": "head",
+      "costumeName": "はねかざり",
+      "costumeNameEN": "はねかざり",
+      "costumeNameCN": "はねかざり",
+      "costumeNameKO": "はねかざり"
+    },
+    {
+      "costumeId": 127,
+      "costumeType": "head",
+      "costumeName": "メキシカン",
+      "costumeNameEN": "メキシカン",
+      "costumeNameCN": "メキシカン",
+      "costumeNameKO": "メキシカン"
+    },
+    {
+      "costumeId": 128,
+      "costumeType": "head",
+      "costumeName": "どぐう",
+      "costumeNameEN": "どぐう",
+      "costumeNameCN": "どぐう",
+      "costumeNameKO": "どぐう"
+    },
+    {
+      "costumeId": 129,
+      "costumeType": "head",
+      "costumeName": "せんごくぶしょう",
+      "costumeNameEN": "せんごくぶしょう",
+      "costumeNameCN": "せんごくぶしょう",
+      "costumeNameKO": "せんごくぶしょう"
+    },
+    {
+      "costumeId": 130,
+      "costumeType": "head",
+      "costumeName": "ふくめん",
+      "costumeNameEN": "ふくめん",
+      "costumeNameCN": "ふくめん",
+      "costumeNameKO": "ふくめん"
+    },
+    {
+      "costumeId": 131,
+      "costumeType": "head",
+      "costumeName": "ペンギン親子",
+      "costumeNameEN": "ペンギン親子",
+      "costumeNameCN": "ペンギン親子",
+      "costumeNameKO": "ペンギン親子"
+    },
+    {
+      "costumeId": 132,
+      "costumeType": "head",
+      "costumeName": "水かぶり",
+      "costumeNameEN": "水かぶり",
+      "costumeNameCN": "水かぶり",
+      "costumeNameKO": "水かぶり"
+    },
+    {
+      "costumeId": 133,
+      "costumeType": "head",
+      "costumeName": "ポセイドン",
+      "costumeNameEN": "ポセイドン",
+      "costumeNameCN": "ポセイドン",
+      "costumeNameKO": "ポセイドン"
+    },
+    {
+      "costumeId": 134,
+      "costumeType": "head",
+      "costumeName": "コックさん",
+      "costumeNameEN": "コックさん",
+      "costumeNameCN": "コックさん",
+      "costumeNameKO": "コックさん"
+    },
+    {
+      "costumeId": 135,
+      "costumeType": "head",
+      "costumeName": "まほうつかい",
+      "costumeNameEN": "まほうつかい",
+      "costumeNameCN": "まほうつかい",
+      "costumeNameKO": "まほうつかい"
+    },
+    {
+      "costumeId": 136,
+      "costumeType": "head",
+      "costumeName": "赤ずきんヘッド",
+      "costumeNameEN": "赤ずきんヘッド",
+      "costumeNameCN": "赤ずきんヘッド",
+      "costumeNameKO": "赤ずきんヘッド"
+    },
+    {
+      "costumeId": 137,
+      "costumeType": "head",
+      "costumeName": "金太郎あめ",
+      "costumeNameEN": "金太郎あめ",
+      "costumeNameCN": "金太郎あめ",
+      "costumeNameKO": "金太郎あめ"
+    },
+    {
+      "costumeId": 138,
+      "costumeType": "head",
+      "costumeName": "ショベルカーヘッド",
+      "costumeNameEN": "ショベルカーヘッド",
+      "costumeNameCN": "ショベルカーヘッド",
+      "costumeNameKO": "ショベルカーヘッド"
+    },
+    {
+      "costumeId": 139,
+      "costumeType": "head",
+      "costumeName": "皇帝",
+      "costumeNameEN": "皇帝",
+      "costumeNameCN": "皇帝",
+      "costumeNameKO": "皇帝"
+    },
+    {
+      "costumeId": 0,
+      "costumeType": "kigurumi",
+      "costumeName": "素どん",
+      "costumeNameEN": "素どん",
+      "costumeNameCN": "素どん",
+      "costumeNameKO": "素どん"
+    },
+    {
+      "costumeId": 1,
+      "costumeType": "kigurumi",
+      "costumeName": "お祭りハッピ",
+      "costumeNameEN": "お祭りハッピ",
+      "costumeNameCN": "お祭りハッピ",
+      "costumeNameKO": "お祭りハッピ"
+    },
+    {
+      "costumeId": 2,
+      "costumeType": "kigurumi",
+      "costumeName": "かいぞく",
+      "costumeNameEN": "かいぞく",
+      "costumeNameCN": "かいぞく",
+      "costumeNameKO": "かいぞく"
+    },
+    {
+      "costumeId": 3,
+      "costumeType": "kigurumi",
+      "costumeName": "カブトムシ",
+      "costumeNameEN": "カブトムシ",
+      "costumeNameCN": "カブトムシ",
+      "costumeNameKO": "カブトムシ"
+    },
+    {
+      "costumeId": 4,
+      "costumeType": "kigurumi",
+      "costumeName": "ヘリコプター",
+      "costumeNameEN": "ヘリコプター",
+      "costumeNameCN": "ヘリコプター",
+      "costumeNameKO": "ヘリコプター"
+    },
+    {
+      "costumeId": 5,
+      "costumeType": "kigurumi",
+      "costumeName": "せんすいかん",
+      "costumeNameEN": "せんすいかん",
+      "costumeNameCN": "せんすいかん",
+      "costumeNameKO": "せんすいかん"
+    },
+    {
+      "costumeId": 6,
+      "costumeType": "kigurumi",
+      "costumeName": "スイーツ",
+      "costumeNameEN": "スイーツ",
+      "costumeNameCN": "スイーツ",
+      "costumeNameKO": "スイーツ"
+    },
+    {
+      "costumeId": 7,
+      "costumeType": "kigurumi",
+      "costumeName": "ブーケ",
+      "costumeNameEN": "ブーケ",
+      "costumeNameCN": "ブーケ",
+      "costumeNameKO": "ブーケ"
+    },
+    {
+      "costumeId": 8,
+      "costumeType": "kigurumi",
+      "costumeName": "いちご",
+      "costumeNameEN": "いちご",
+      "costumeNameCN": "いちご",
+      "costumeNameKO": "いちご"
+    },
+    {
+      "costumeId": 9,
+      "costumeType": "kigurumi",
+      "costumeName": "ヘビメタ",
+      "costumeNameEN": "ヘビメタ",
+      "costumeNameCN": "ヘビメタ",
+      "costumeNameKO": "ヘビメタ"
+    },
+    {
+      "costumeId": 10,
+      "costumeType": "kigurumi",
+      "costumeName": "しろくま",
+      "costumeNameEN": "しろくま",
+      "costumeNameCN": "しろくま",
+      "costumeNameKO": "しろくま"
+    },
+    {
+      "costumeId": 11,
+      "costumeType": "kigurumi",
+      "costumeName": "うちゅうひこうし",
+      "costumeNameEN": "うちゅうひこうし",
+      "costumeNameCN": "うちゅうひこうし",
+      "costumeNameKO": "うちゅうひこうし"
+    },
+    {
+      "costumeId": 12,
+      "costumeType": "kigurumi",
+      "costumeName": "とら",
+      "costumeNameEN": "とら",
+      "costumeNameCN": "とら",
+      "costumeNameKO": "とら"
+    },
+    {
+      "costumeId": 13,
+      "costumeType": "kigurumi",
+      "costumeName": "まねきねこ",
+      "costumeNameEN": "まねきねこ",
+      "costumeNameCN": "まねきねこ",
+      "costumeNameKO": "まねきねこ"
+    },
+    {
+      "costumeId": 14,
+      "costumeType": "kigurumi",
+      "costumeName": "おみこし",
+      "costumeNameEN": "おみこし",
+      "costumeNameCN": "おみこし",
+      "costumeNameKO": "おみこし"
+    },
+    {
+      "costumeId": 15,
+      "costumeType": "kigurumi",
+      "costumeName": "めでタイ",
+      "costumeNameEN": "めでタイ",
+      "costumeNameCN": "めでタイ",
+      "costumeNameKO": "めでタイ"
+    },
+    {
+      "costumeId": 16,
+      "costumeType": "kigurumi",
+      "costumeName": "ミューズポリスＣ",
+      "costumeNameEN": "ミューズポリスＣ",
+      "costumeNameCN": "ミューズポリスＣ",
+      "costumeNameKO": "ミューズポリスＣ"
+    },
+    {
+      "costumeId": 17,
+      "costumeType": "kigurumi",
+      "costumeName": "ミューズポリスＭ",
+      "costumeNameEN": "ミューズポリスＭ",
+      "costumeNameCN": "ミューズポリスＭ",
+      "costumeNameKO": "ミューズポリスＭ"
+    },
+    {
+      "costumeId": 18,
+      "costumeType": "kigurumi",
+      "costumeName": "姫ギャル",
+      "costumeNameEN": "姫ギャル",
+      "costumeNameCN": "姫ギャル",
+      "costumeNameKO": "姫ギャル"
+    },
+    {
+      "costumeId": 19,
+      "costumeType": "kigurumi",
+      "costumeName": "水兵",
+      "costumeNameEN": "水兵",
+      "costumeNameCN": "水兵",
+      "costumeNameKO": "水兵"
+    },
+    {
+      "costumeId": 20,
+      "costumeType": "kigurumi",
+      "costumeName": "でんしゃ",
+      "costumeNameEN": "でんしゃ",
+      "costumeNameCN": "でんしゃ",
+      "costumeNameKO": "でんしゃ"
+    },
+    {
+      "costumeId": 21,
+      "costumeType": "kigurumi",
+      "costumeName": "あかべこ",
+      "costumeNameEN": "あかべこ",
+      "costumeNameCN": "あかべこ",
+      "costumeNameKO": "あかべこ"
+    },
+    {
+      "costumeId": 22,
+      "costumeType": "kigurumi",
+      "costumeName": "たつどし",
+      "costumeNameEN": "たつどし",
+      "costumeNameCN": "たつどし",
+      "costumeNameKO": "たつどし"
+    },
+    {
+      "costumeId": 23,
+      "costumeType": "kigurumi",
+      "costumeName": "むしゃ",
+      "costumeNameEN": "むしゃ",
+      "costumeNameCN": "むしゃ",
+      "costumeNameKO": "むしゃ"
+    },
+    {
+      "costumeId": 24,
+      "costumeType": "kigurumi",
+      "costumeName": "パズドラ たまドラ",
+      "costumeNameEN": "パズドラ たまドラ",
+      "costumeNameCN": "パズドラ たまドラ",
+      "costumeNameKO": "パズドラ たまドラ"
+    },
+    {
+      "costumeId": 25,
+      "costumeType": "kigurumi",
+      "costumeName": "ひまわり",
+      "costumeNameEN": "ひまわり",
+      "costumeNameCN": "ひまわり",
+      "costumeNameKO": "ひまわり"
+    },
+    {
+      "costumeId": 26,
+      "costumeType": "kigurumi",
+      "costumeName": "月見だんご",
+      "costumeNameEN": "月見だんご",
+      "costumeNameCN": "月見だんご",
+      "costumeNameKO": "月見だんご"
+    },
+    {
+      "costumeId": 27,
+      "costumeType": "kigurumi",
+      "costumeName": "ハロウィン",
+      "costumeNameEN": "ハロウィン",
+      "costumeNameCN": "ハロウィン",
+      "costumeNameKO": "ハロウィン"
+    },
+    {
+      "costumeId": 28,
+      "costumeType": "kigurumi",
+      "costumeName": "よせ鍋",
+      "costumeNameEN": "よせ鍋",
+      "costumeNameCN": "よせ鍋",
+      "costumeNameKO": "よせ鍋"
+    },
+    {
+      "costumeId": 29,
+      "costumeType": "kigurumi",
+      "costumeName": "サンタクロース",
+      "costumeNameEN": "サンタクロース",
+      "costumeNameCN": "サンタクロース",
+      "costumeNameKO": "サンタクロース"
+    },
+    {
+      "costumeId": 30,
+      "costumeType": "kigurumi",
+      "costumeName": "鏡もち",
+      "costumeNameEN": "鏡もち",
+      "costumeNameCN": "鏡もち",
+      "costumeNameKO": "鏡もち"
+    },
+    {
+      "costumeId": 31,
+      "costumeType": "kigurumi",
+      "costumeName": "オニに金棒",
+      "costumeNameEN": "オニに金棒",
+      "costumeNameCN": "オニに金棒",
+      "costumeNameKO": "オニに金棒"
+    },
+    {
+      "costumeId": 32,
+      "costumeType": "kigurumi",
+      "costumeName": "初音ミク",
+      "costumeNameEN": "初音ミク",
+      "costumeNameCN": "初音ミク",
+      "costumeNameKO": "初音ミク"
+    },
+    {
+      "costumeId": 33,
+      "costumeType": "kigurumi",
+      "costumeName": "GUMI",
+      "costumeNameEN": "GUMI",
+      "costumeNameCN": "GUMI",
+      "costumeNameKO": "GUMI"
+    },
+    {
+      "costumeId": 34,
+      "costumeType": "kigurumi",
+      "costumeName": "アイドルマスター",
+      "costumeNameEN": "アイドルマスター",
+      "costumeNameCN": "アイドルマスター",
+      "costumeNameKO": "アイドルマスター"
+    },
+    {
+      "costumeId": 35,
+      "costumeType": "kigurumi",
+      "costumeName": "ダミー",
+      "costumeNameEN": "ダミー",
+      "costumeNameCN": "ダミー",
+      "costumeNameKO": "ダミー"
+    },
+    {
+      "costumeId": 36,
+      "costumeType": "kigurumi",
+      "costumeName": "段位道場",
+      "costumeNameEN": "段位道場",
+      "costumeNameCN": "段位道場",
+      "costumeNameKO": "段位道場"
+    },
+    {
+      "costumeId": 37,
+      "costumeType": "kigurumi",
+      "costumeName": "超世阿弥どん",
+      "costumeNameEN": "超世阿弥どん",
+      "costumeNameCN": "超世阿弥どん",
+      "costumeNameKO": "超世阿弥どん"
+    },
+    {
+      "costumeId": 38,
+      "costumeType": "kigurumi",
+      "costumeName": "世阿弥どん",
+      "costumeNameEN": "世阿弥どん",
+      "costumeNameCN": "世阿弥どん",
+      "costumeNameKO": "世阿弥どん"
+    },
+    {
+      "costumeId": 39,
+      "costumeType": "kigurumi",
+      "costumeName": "ゆうしゃ",
+      "costumeNameEN": "ゆうしゃ",
+      "costumeNameCN": "ゆうしゃ",
+      "costumeNameKO": "ゆうしゃ"
+    },
+    {
+      "costumeId": 40,
+      "costumeType": "kigurumi",
+      "costumeName": "ダミー",
+      "costumeNameEN": "ダミー",
+      "costumeNameCN": "ダミー",
+      "costumeNameKO": "ダミー"
+    },
+    {
+      "costumeId": 41,
+      "costumeType": "kigurumi",
+      "costumeName": "まめっち",
+      "costumeNameEN": "まめっち",
+      "costumeNameCN": "まめっち",
+      "costumeNameKO": "まめっち"
+    },
+    {
+      "costumeId": 42,
+      "costumeType": "kigurumi",
+      "costumeName": "ゆめみっち",
+      "costumeNameEN": "ゆめみっち",
+      "costumeNameCN": "ゆめみっち",
+      "costumeNameKO": "ゆめみっち"
+    },
+    {
+      "costumeId": 43,
+      "costumeType": "kigurumi",
+      "costumeName": "富士山",
+      "costumeNameEN": "富士山",
+      "costumeNameCN": "富士山",
+      "costumeNameKO": "富士山"
+    },
+    {
+      "costumeId": 44,
+      "costumeType": "kigurumi",
+      "costumeName": "さめ",
+      "costumeNameEN": "さめ",
+      "costumeNameCN": "さめ",
+      "costumeNameKO": "さめ"
+    },
+    {
+      "costumeId": 45,
+      "costumeType": "kigurumi",
+      "costumeName": "チーズバーガー",
+      "costumeNameEN": "チーズバーガー",
+      "costumeNameCN": "チーズバーガー",
+      "costumeNameKO": "チーズバーガー"
+    },
+    {
+      "costumeId": 46,
+      "costumeType": "kigurumi",
+      "costumeName": "くじゃく",
+      "costumeNameEN": "くじゃく",
+      "costumeNameCN": "くじゃく",
+      "costumeNameKO": "くじゃく"
+    },
+    {
+      "costumeId": 47,
+      "costumeType": "kigurumi",
+      "costumeName": "ほうせき",
+      "costumeNameEN": "ほうせき",
+      "costumeNameCN": "ほうせき",
+      "costumeNameKO": "ほうせき"
+    },
+    {
+      "costumeId": 48,
+      "costumeType": "kigurumi",
+      "costumeName": "りんご",
+      "costumeNameEN": "りんご",
+      "costumeNameCN": "りんご",
+      "costumeNameKO": "りんご"
+    },
+    {
+      "costumeId": 49,
+      "costumeType": "kigurumi",
+      "costumeName": "きしゃ",
+      "costumeNameEN": "きしゃ",
+      "costumeNameCN": "きしゃ",
+      "costumeNameKO": "きしゃ"
+    },
+    {
+      "costumeId": 50,
+      "costumeType": "kigurumi",
+      "costumeName": "らいおん",
+      "costumeNameEN": "らいおん",
+      "costumeNameCN": "らいおん",
+      "costumeNameKO": "らいおん"
+    },
+    {
+      "costumeId": 51,
+      "costumeType": "kigurumi",
+      "costumeName": "ロボットアーム",
+      "costumeNameEN": "ロボットアーム",
+      "costumeNameCN": "ロボットアーム",
+      "costumeNameKO": "ロボットアーム"
+    },
+    {
+      "costumeId": 52,
+      "costumeType": "kigurumi",
+      "costumeName": "うちゅうせん",
+      "costumeNameEN": "うちゅうせん",
+      "costumeNameCN": "うちゅうせん",
+      "costumeNameKO": "うちゅうせん"
+    },
+    {
+      "costumeId": 53,
+      "costumeType": "kigurumi",
+      "costumeName": "やたい",
+      "costumeNameEN": "やたい",
+      "costumeNameCN": "やたい",
+      "costumeNameKO": "やたい"
+    },
+    {
+      "costumeId": 54,
+      "costumeType": "kigurumi",
+      "costumeName": "パズドラ ティラ",
+      "costumeNameEN": "パズドラ ティラ",
+      "costumeNameCN": "パズドラ ティラ",
+      "costumeNameKO": "パズドラ ティラ"
+    },
+    {
+      "costumeId": 55,
+      "costumeType": "kigurumi",
+      "costumeName": "たからぶね",
+      "costumeNameEN": "たからぶね",
+      "costumeNameCN": "たからぶね",
+      "costumeNameKO": "たからぶね"
+    },
+    {
+      "costumeId": 56,
+      "costumeType": "kigurumi",
+      "costumeName": "チリチリロープ",
+      "costumeNameEN": "チリチリロープ",
+      "costumeNameCN": "チリチリロープ",
+      "costumeNameKO": "チリチリロープ"
+    },
+    {
+      "costumeId": 57,
+      "costumeType": "kigurumi",
+      "costumeName": "小学生",
+      "costumeNameEN": "小学生",
+      "costumeNameCN": "小学生",
+      "costumeNameKO": "小学生"
+    },
+    {
+      "costumeId": 58,
+      "costumeType": "kigurumi",
+      "costumeName": "こいのぼり",
+      "costumeNameEN": "こいのぼり",
+      "costumeNameCN": "こいのぼり",
+      "costumeNameKO": "こいのぼり"
+    },
+    {
+      "costumeId": 59,
+      "costumeType": "kigurumi",
+      "costumeName": "かえる",
+      "costumeNameEN": "かえる",
+      "costumeNameCN": "かえる",
+      "costumeNameKO": "かえる"
+    },
+    {
+      "costumeId": 60,
+      "costumeType": "kigurumi",
+      "costumeName": "ゴースト",
+      "costumeNameEN": "ゴースト",
+      "costumeNameCN": "ゴースト",
+      "costumeNameKO": "ゴースト"
+    },
+    {
+      "costumeId": 61,
+      "costumeType": "kigurumi",
+      "costumeName": "ダミー",
+      "costumeNameEN": "ダミー",
+      "costumeNameCN": "ダミー",
+      "costumeNameKO": "ダミー"
+    },
+    {
+      "costumeId": 62,
+      "costumeType": "kigurumi",
+      "costumeName": "うんどうかい",
+      "costumeNameEN": "うんどうかい",
+      "costumeNameCN": "うんどうかい",
+      "costumeNameKO": "うんどうかい"
+    },
+    {
+      "costumeId": 63,
+      "costumeType": "kigurumi",
+      "costumeName": "ゴールデンボンバー",
+      "costumeNameEN": "ゴールデンボンバー",
+      "costumeNameCN": "ゴールデンボンバー",
+      "costumeNameKO": "ゴールデンボンバー"
+    },
+    {
+      "costumeId": 64,
+      "costumeType": "kigurumi",
+      "costumeName": "ＩＡ",
+      "costumeNameEN": "ＩＡ",
+      "costumeNameCN": "ＩＡ",
+      "costumeNameKO": "ＩＡ"
+    },
+    {
+      "costumeId": 65,
+      "costumeType": "kigurumi",
+      "costumeName": "星宮いちご",
+      "costumeNameEN": "星宮いちご",
+      "costumeNameCN": "星宮いちご",
+      "costumeNameKO": "星宮いちご"
+    },
+    {
+      "costumeId": 66,
+      "costumeType": "kigurumi",
+      "costumeName": "コロコロコミック",
+      "costumeNameEN": "コロコロコミック",
+      "costumeNameCN": "コロコロコミック",
+      "costumeNameKO": "コロコロコミック"
+    },
+    {
+      "costumeId": 67,
+      "costumeType": "kigurumi",
+      "costumeName": "ちゃお",
+      "costumeNameEN": "ちゃお",
+      "costumeNameCN": "ちゃお",
+      "costumeNameKO": "ちゃお"
+    },
+    {
+      "costumeId": 68,
+      "costumeType": "kigurumi",
+      "costumeName": "ももクロ しおりどん",
+      "costumeNameEN": "ももクロ しおりどん",
+      "costumeNameCN": "ももクロ しおりどん",
+      "costumeNameKO": "ももクロ しおりどん"
+    },
+    {
+      "costumeId": 69,
+      "costumeType": "kigurumi",
+      "costumeName": "ももクロ かなこどん",
+      "costumeNameEN": "ももクロ かなこどん",
+      "costumeNameCN": "ももクロ かなこどん",
+      "costumeNameKO": "ももクロ かなこどん"
+    },
+    {
+      "costumeId": 70,
+      "costumeType": "kigurumi",
+      "costumeName": "ももクロ ももかどん",
+      "costumeNameEN": "ももクロ ももかどん",
+      "costumeNameCN": "ももクロ ももかどん",
+      "costumeNameKO": "ももクロ ももかどん"
+    },
+    {
+      "costumeId": 71,
+      "costumeType": "kigurumi",
+      "costumeName": "ももクロ あーどん",
+      "costumeNameEN": "ももクロ あーどん",
+      "costumeNameCN": "ももクロ あーどん",
+      "costumeNameKO": "ももクロ あーどん"
+    },
+    {
+      "costumeId": 72,
+      "costumeType": "kigurumi",
+      "costumeName": "ももクロ れにどん",
+      "costumeNameEN": "ももクロ れにどん",
+      "costumeNameCN": "ももクロ れにどん",
+      "costumeNameKO": "ももクロ れにどん"
+    },
+    {
+      "costumeId": 73,
+      "costumeType": "kigurumi",
+      "costumeName": "ももクロ しおり",
+      "costumeNameEN": "ももクロ しおり",
+      "costumeNameCN": "ももクロ しおり",
+      "costumeNameKO": "ももクロ しおり"
+    },
+    {
+      "costumeId": 74,
+      "costumeType": "kigurumi",
+      "costumeName": "ももクロ かなこ",
+      "costumeNameEN": "ももクロ かなこ",
+      "costumeNameCN": "ももクロ かなこ",
+      "costumeNameKO": "ももクロ かなこ"
+    },
+    {
+      "costumeId": 75,
+      "costumeType": "kigurumi",
+      "costumeName": "ももクロ ももか",
+      "costumeNameEN": "ももクロ ももか",
+      "costumeNameCN": "ももクロ ももか",
+      "costumeNameKO": "ももクロ ももか"
+    },
+    {
+      "costumeId": 76,
+      "costumeType": "kigurumi",
+      "costumeName": "ももクロ あやか",
+      "costumeNameEN": "ももクロ あやか",
+      "costumeNameCN": "ももクロ あやか",
+      "costumeNameKO": "ももクロ あやか"
+    },
+    {
+      "costumeId": 77,
+      "costumeType": "kigurumi",
+      "costumeName": "ももクロ れに",
+      "costumeNameEN": "ももクロ れに",
+      "costumeNameCN": "ももクロ れに",
+      "costumeNameKO": "ももクロ れに"
+    },
+    {
+      "costumeId": 78,
+      "costumeType": "kigurumi",
+      "costumeName": "ジバニャン",
+      "costumeNameEN": "ジバニャン",
+      "costumeNameCN": "ジバニャン",
+      "costumeNameKO": "ジバニャン"
+    },
+    {
+      "costumeId": 79,
+      "costumeType": "kigurumi",
+      "costumeName": "ブレイブネコシリーズ",
+      "costumeNameEN": "ブレイブネコシリーズ",
+      "costumeNameCN": "ブレイブネコシリーズ",
+      "costumeNameKO": "ブレイブネコシリーズ"
+    },
+    {
+      "costumeId": 80,
+      "costumeType": "kigurumi",
+      "costumeName": "ダブルバーガーどん",
+      "costumeNameEN": "ダブルバーガーどん",
+      "costumeNameCN": "ダブルバーガーどん",
+      "costumeNameKO": "ダブルバーガーどん"
+    },
+    {
+      "costumeId": 81,
+      "costumeType": "kigurumi",
+      "costumeName": "ポテどん",
+      "costumeNameEN": "ポテどん",
+      "costumeNameCN": "ポテどん",
+      "costumeNameKO": "ポテどん"
+    },
+    {
+      "costumeId": 82,
+      "costumeType": "kigurumi",
+      "costumeName": "パズドラＺ シロップ",
+      "costumeNameEN": "パズドラＺ シロップ",
+      "costumeNameCN": "パズドラＺ シロップ",
+      "costumeNameKO": "パズドラＺ シロップ"
+    },
+    {
+      "costumeId": 83,
+      "costumeType": "kigurumi",
+      "costumeName": "マリオ",
+      "costumeNameEN": "マリオ",
+      "costumeNameCN": "マリオ",
+      "costumeNameKO": "マリオ"
+    },
+    {
+      "costumeId": 84,
+      "costumeType": "kigurumi",
+      "costumeName": "ルイージ",
+      "costumeNameEN": "ルイージ",
+      "costumeNameCN": "ルイージ",
+      "costumeNameKO": "ルイージ"
+    },
+    {
+      "costumeId": 85,
+      "costumeType": "kigurumi",
+      "costumeName": "博麗霊夢",
+      "costumeNameEN": "博麗霊夢",
+      "costumeNameCN": "博麗霊夢",
+      "costumeNameKO": "博麗霊夢"
+    },
+    {
+      "costumeId": 86,
+      "costumeType": "kigurumi",
+      "costumeName": "くまモン",
+      "costumeNameEN": "くまモン",
+      "costumeNameCN": "くまモン",
+      "costumeNameKO": "くまモン"
+    },
+    {
+      "costumeId": 87,
+      "costumeType": "kigurumi",
+      "costumeName": "ふなっしー",
+      "costumeNameEN": "ふなっしー",
+      "costumeNameCN": "ふなっしー",
+      "costumeNameKO": "ふなっしー"
+    },
+    {
+      "costumeId": 88,
+      "costumeType": "kigurumi",
+      "costumeName": "コマさん",
+      "costumeNameEN": "コマさん",
+      "costumeNameCN": "コマさん",
+      "costumeNameKO": "コマさん"
+    },
+    {
+      "costumeId": 89,
+      "costumeType": "kigurumi",
+      "costumeName": "ぎゅうどん",
+      "costumeNameEN": "ぎゅうどん",
+      "costumeNameCN": "ぎゅうどん",
+      "costumeNameKO": "ぎゅうどん"
+    },
+    {
+      "costumeId": 90,
+      "costumeType": "kigurumi",
+      "costumeName": "アイマス　天海 春香",
+      "costumeNameEN": "アイマス　天海 春香",
+      "costumeNameCN": "アイマス　天海 春香",
+      "costumeNameKO": "アイマス　天海 春香"
+    },
+    {
+      "costumeId": 91,
+      "costumeType": "kigurumi",
+      "costumeName": "アイマス　如月 千早",
+      "costumeNameEN": "アイマス　如月 千早",
+      "costumeNameCN": "アイマス　如月 千早",
+      "costumeNameKO": "アイマス　如月 千早"
+    },
+    {
+      "costumeId": 92,
+      "costumeType": "kigurumi",
+      "costumeName": "アイマス　萩原 雪歩",
+      "costumeNameEN": "アイマス　萩原 雪歩",
+      "costumeNameCN": "アイマス　萩原 雪歩",
+      "costumeNameKO": "アイマス　萩原 雪歩"
+    },
+    {
+      "costumeId": 93,
+      "costumeType": "kigurumi",
+      "costumeName": "アイマス　高槻 やよい",
+      "costumeNameEN": "アイマス　高槻 やよい",
+      "costumeNameCN": "アイマス　高槻 やよい",
+      "costumeNameKO": "アイマス　高槻 やよい"
+    },
+    {
+      "costumeId": 94,
+      "costumeType": "kigurumi",
+      "costumeName": "アイマス　秋月 律子",
+      "costumeNameEN": "アイマス　秋月 律子",
+      "costumeNameCN": "アイマス　秋月 律子",
+      "costumeNameKO": "アイマス　秋月 律子"
+    },
+    {
+      "costumeId": 95,
+      "costumeType": "kigurumi",
+      "costumeName": "アイマス　水瀬 伊織",
+      "costumeNameEN": "アイマス　水瀬 伊織",
+      "costumeNameCN": "アイマス　水瀬 伊織",
+      "costumeNameKO": "アイマス　水瀬 伊織"
+    },
+    {
+      "costumeId": 96,
+      "costumeType": "kigurumi",
+      "costumeName": "アイマス　三浦 あずさ",
+      "costumeNameEN": "アイマス　三浦 あずさ",
+      "costumeNameCN": "アイマス　三浦 あずさ",
+      "costumeNameKO": "アイマス　三浦 あずさ"
+    },
+    {
+      "costumeId": 97,
+      "costumeType": "kigurumi",
+      "costumeName": "アイマス　双海 亜美",
+      "costumeNameEN": "アイマス　双海 亜美",
+      "costumeNameCN": "アイマス　双海 亜美",
+      "costumeNameKO": "アイマス　双海 亜美"
+    },
+    {
+      "costumeId": 98,
+      "costumeType": "kigurumi",
+      "costumeName": "アイマス　双海 真美",
+      "costumeNameEN": "アイマス　双海 真美",
+      "costumeNameCN": "アイマス　双海 真美",
+      "costumeNameKO": "アイマス　双海 真美"
+    },
+    {
+      "costumeId": 99,
+      "costumeType": "kigurumi",
+      "costumeName": "アイマス　菊地 真",
+      "costumeNameEN": "アイマス　菊地 真",
+      "costumeNameCN": "アイマス　菊地 真",
+      "costumeNameKO": "アイマス　菊地 真"
+    },
+    {
+      "costumeId": 100,
+      "costumeType": "kigurumi",
+      "costumeName": "アイマス　星井 美希",
+      "costumeNameEN": "アイマス　星井 美希",
+      "costumeNameCN": "アイマス　星井 美希",
+      "costumeNameKO": "アイマス　星井 美希"
+    },
+    {
+      "costumeId": 101,
+      "costumeType": "kigurumi",
+      "costumeName": "アイマス　我那覇 響",
+      "costumeNameEN": "アイマス　我那覇 響",
+      "costumeNameCN": "アイマス　我那覇 響",
+      "costumeNameKO": "アイマス　我那覇 響"
+    },
+    {
+      "costumeId": 102,
+      "costumeType": "kigurumi",
+      "costumeName": "アイマス　四条 貴音",
+      "costumeNameEN": "アイマス　四条 貴音",
+      "costumeNameCN": "アイマス　四条 貴音",
+      "costumeNameKO": "アイマス　四条 貴音"
+    },
+    {
+      "costumeId": 103,
+      "costumeType": "kigurumi",
+      "costumeName": "ダミー",
+      "costumeNameEN": "ダミー",
+      "costumeNameCN": "ダミー",
+      "costumeNameKO": "ダミー"
+    },
+    {
+      "costumeId": 104,
+      "costumeType": "kigurumi",
+      "costumeName": "ダミー",
+      "costumeNameEN": "ダミー",
+      "costumeNameCN": "ダミー",
+      "costumeNameKO": "ダミー"
+    },
+    {
+      "costumeId": 105,
+      "costumeType": "kigurumi",
+      "costumeName": "きのこの山",
+      "costumeNameEN": "きのこの山",
+      "costumeNameCN": "きのこの山",
+      "costumeNameKO": "きのこの山"
+    },
+    {
+      "costumeId": 106,
+      "costumeType": "kigurumi",
+      "costumeName": "たけのこの里",
+      "costumeNameEN": "たけのこの里",
+      "costumeNameCN": "たけのこの里",
+      "costumeNameKO": "たけのこの里"
+    },
+    {
+      "costumeId": 107,
+      "costumeType": "kigurumi",
+      "costumeName": "大空あかり",
+      "costumeNameEN": "大空あかり",
+      "costumeNameCN": "大空あかり",
+      "costumeNameKO": "大空あかり"
+    },
+    {
+      "costumeId": 108,
+      "costumeType": "kigurumi",
+      "costumeName": "霧雨魔理沙",
+      "costumeNameEN": "霧雨魔理沙",
+      "costumeNameCN": "霧雨魔理沙",
+      "costumeNameKO": "霧雨魔理沙"
+    },
+    {
+      "costumeId": 109,
+      "costumeType": "kigurumi",
+      "costumeName": "きのこの山　ちびどん",
+      "costumeNameEN": "きのこの山　ちびどん",
+      "costumeNameCN": "きのこの山　ちびどん",
+      "costumeNameKO": "きのこの山　ちびどん"
+    },
+    {
+      "costumeId": 110,
+      "costumeType": "kigurumi",
+      "costumeName": "たけのこの里　ちびどん",
+      "costumeNameEN": "たけのこの里　ちびどん",
+      "costumeNameCN": "たけのこの里　ちびどん",
+      "costumeNameKO": "たけのこの里　ちびどん"
+    },
+    {
+      "costumeId": 111,
+      "costumeType": "kigurumi",
+      "costumeName": "殺せんせー",
+      "costumeNameEN": "殺せんせー",
+      "costumeNameCN": "殺せんせー",
+      "costumeNameKO": "殺せんせー"
+    },
+    {
+      "costumeId": 112,
+      "costumeType": "kigurumi",
+      "costumeName": "さちさち",
+      "costumeNameEN": "さちさち",
+      "costumeNameCN": "さちさち",
+      "costumeNameKO": "さちさち"
+    },
+    {
+      "costumeId": 113,
+      "costumeType": "kigurumi",
+      "costumeName": "細貝さん",
+      "costumeNameEN": "細貝さん",
+      "costumeNameCN": "細貝さん",
+      "costumeNameKO": "細貝さん"
+    },
+    {
+      "costumeId": 114,
+      "costumeType": "kigurumi",
+      "costumeName": "朱美ちゃん",
+      "costumeNameEN": "朱美ちゃん",
+      "costumeNameCN": "朱美ちゃん",
+      "costumeNameKO": "朱美ちゃん"
+    },
+    {
+      "costumeId": 115,
+      "costumeType": "kigurumi",
+      "costumeName": "アイドルマスター筐体",
+      "costumeNameEN": "アイドルマスター筐体",
+      "costumeNameCN": "アイドルマスター筐体",
+      "costumeNameKO": "アイドルマスター筐体"
+    },
+    {
+      "costumeId": 116,
+      "costumeType": "kigurumi",
+      "costumeName": "フィーナとピリカ",
+      "costumeNameEN": "フィーナとピリカ",
+      "costumeNameCN": "フィーナとピリカ",
+      "costumeNameKO": "フィーナとピリカ"
+    },
+    {
+      "costumeId": 117,
+      "costumeType": "kigurumi",
+      "costumeName": "ＵＳＡピョン",
+      "costumeNameEN": "ＵＳＡピョン",
+      "costumeNameCN": "ＵＳＡピョン",
+      "costumeNameKO": "ＵＳＡピョン"
+    },
+    {
+      "costumeId": 118,
+      "costumeType": "kigurumi",
+      "costumeName": "ＭＡＫＩＤＡＩどん",
+      "costumeNameEN": "ＭＡＫＩＤＡＩどん",
+      "costumeNameCN": "ＭＡＫＩＤＡＩどん",
+      "costumeNameKO": "ＭＡＫＩＤＡＩどん"
+    },
+    {
+      "costumeId": 119,
+      "costumeType": "kigurumi",
+      "costumeName": "メンディーどん",
+      "costumeNameEN": "メンディーどん",
+      "costumeNameCN": "メンディーどん",
+      "costumeNameKO": "メンディーどん"
+    },
+    {
+      "costumeId": 120,
+      "costumeType": "kigurumi",
+      "costumeName": "仮面ライダーゴースト",
+      "costumeNameEN": "仮面ライダーゴースト",
+      "costumeNameCN": "仮面ライダーゴースト",
+      "costumeNameKO": "仮面ライダーゴースト"
+    },
+    {
+      "costumeId": 121,
+      "costumeType": "kigurumi",
+      "costumeName": "リラックス殺せんせー",
+      "costumeNameEN": "リラックス殺せんせー",
+      "costumeNameCN": "リラックス殺せんせー",
+      "costumeNameKO": "リラックス殺せんせー"
+    },
+    {
+      "costumeId": 122,
+      "costumeType": "kigurumi",
+      "costumeName": "まうちゅー",
+      "costumeNameEN": "まうちゅー",
+      "costumeNameCN": "まうちゅー",
+      "costumeNameKO": "まうちゅー"
+    },
+    {
+      "costumeId": 123,
+      "costumeType": "kigurumi",
+      "costumeName": "ＶＦ－３１",
+      "costumeNameEN": "ＶＦ－３１",
+      "costumeNameCN": "ＶＦ－３１",
+      "costumeNameKO": "ＶＦ－３１"
+    },
+    {
+      "costumeId": 124,
+      "costumeType": "kigurumi",
+      "costumeName": "さかなクン",
+      "costumeNameEN": "さかなクン",
+      "costumeNameCN": "さかなクン",
+      "costumeNameKO": "さかなクン"
+    },
+    {
+      "costumeId": 125,
+      "costumeType": "kigurumi",
+      "costumeName": "星のカービィ",
+      "costumeNameEN": "星のカービィ",
+      "costumeNameCN": "星のカービィ",
+      "costumeNameKO": "星のカービィ"
+    },
+    {
+      "costumeId": 126,
+      "costumeType": "kigurumi",
+      "costumeName": "ティア＆ポポカカ",
+      "costumeNameEN": "ティア＆ポポカカ",
+      "costumeNameCN": "ティア＆ポポカカ",
+      "costumeNameKO": "ティア＆ポポカカ"
+    },
+    {
+      "costumeId": 127,
+      "costumeType": "kigurumi",
+      "costumeName": "ジュウオウイーグル",
+      "costumeNameEN": "ジュウオウイーグル",
+      "costumeNameCN": "ジュウオウイーグル",
+      "costumeNameKO": "ジュウオウイーグル"
+    },
+    {
+      "costumeId": 128,
+      "costumeType": "kigurumi",
+      "costumeName": "ワンピース フィルム ゴールド",
+      "costumeNameEN": "ワンピース フィルム ゴールド",
+      "costumeNameCN": "ワンピース フィルム ゴールド",
+      "costumeNameKO": "ワンピース フィルム ゴールド"
+    },
+    {
+      "costumeId": 129,
+      "costumeType": "kigurumi",
+      "costumeName": "サマードンチャン",
+      "costumeNameEN": "サマードンチャン",
+      "costumeNameCN": "サマードンチャン",
+      "costumeNameKO": "サマードンチャン"
+    },
+    {
+      "costumeId": 130,
+      "costumeType": "kigurumi",
+      "costumeName": "トムニャン",
+      "costumeNameEN": "トムニャン",
+      "costumeNameCN": "トムニャン",
+      "costumeNameKO": "トムニャン"
+    },
+    {
+      "costumeId": 131,
+      "costumeType": "kigurumi",
+      "costumeName": "仮面ライダーエグゼイド",
+      "costumeNameEN": "仮面ライダーエグゼイド",
+      "costumeNameCN": "仮面ライダーエグゼイド",
+      "costumeNameKO": "仮面ライダーエグゼイド"
+    },
+    {
+      "costumeId": 132,
+      "costumeType": "kigurumi",
+      "costumeName": "ハイキュー!!",
+      "costumeNameEN": "ハイキュー!!",
+      "costumeNameCN": "ハイキュー!!",
+      "costumeNameKO": "ハイキュー!!"
+    },
+    {
+      "costumeId": 133,
+      "costumeType": "kigurumi",
+      "costumeName": "へいあんびじん",
+      "costumeNameEN": "へいあんびじん",
+      "costumeNameCN": "へいあんびじん",
+      "costumeNameKO": "へいあんびじん"
+    },
+    {
+      "costumeId": 134,
+      "costumeType": "kigurumi",
+      "costumeName": "スプラトゥーン ガール",
+      "costumeNameEN": "スプラトゥーン ガール",
+      "costumeNameCN": "スプラトゥーン ガール",
+      "costumeNameKO": "スプラトゥーン ガール"
+    },
+    {
+      "costumeId": 135,
+      "costumeType": "kigurumi",
+      "costumeName": "メタナイト",
+      "costumeNameEN": "メタナイト",
+      "costumeNameCN": "メタナイト",
+      "costumeNameKO": "メタナイト"
+    },
+    {
+      "costumeId": 136,
+      "costumeType": "kigurumi",
+      "costumeName": "リンク オブ ザ ワイルド",
+      "costumeNameEN": "リンク オブ ザ ワイルド",
+      "costumeNameCN": "リンク オブ ザ ワイルド",
+      "costumeNameKO": "リンク オブ ザ ワイルド"
+    },
+    {
+      "costumeId": 137,
+      "costumeType": "kigurumi",
+      "costumeName": "アッガイ",
+      "costumeNameEN": "アッガイ",
+      "costumeNameCN": "アッガイ",
+      "costumeNameKO": "アッガイ"
+    },
+    {
+      "costumeId": 138,
+      "costumeType": "kigurumi",
+      "costumeName": "おそドン",
+      "costumeNameEN": "おそドン",
+      "costumeNameCN": "おそドン",
+      "costumeNameKO": "おそドン"
+    },
+    {
+      "costumeId": 139,
+      "costumeType": "kigurumi",
+      "costumeName": "カラドン",
+      "costumeNameEN": "カラドン",
+      "costumeNameCN": "カラドン",
+      "costumeNameKO": "カラドン"
+    },
+    {
+      "costumeId": 140,
+      "costumeType": "kigurumi",
+      "costumeName": "チョロドン",
+      "costumeNameEN": "チョロドン",
+      "costumeNameCN": "チョロドン",
+      "costumeNameKO": "チョロドン"
+    },
+    {
+      "costumeId": 141,
+      "costumeType": "kigurumi",
+      "costumeName": "一ドン",
+      "costumeNameEN": "一ドン",
+      "costumeNameCN": "一ドン",
+      "costumeNameKO": "一ドン"
+    },
+    {
+      "costumeId": 142,
+      "costumeType": "kigurumi",
+      "costumeName": "十四ドン",
+      "costumeNameEN": "十四ドン",
+      "costumeNameCN": "十四ドン",
+      "costumeNameKO": "十四ドン"
+    },
+    {
+      "costumeId": 143,
+      "costumeType": "kigurumi",
+      "costumeName": "トドドン",
+      "costumeNameEN": "トドドン",
+      "costumeNameCN": "トドドン",
+      "costumeNameKO": "トドドン"
+    },
+    {
+      "costumeId": 144,
+      "costumeType": "kigurumi",
+      "costumeName": "仮面ライダービルド",
+      "costumeNameEN": "仮面ライダービルド",
+      "costumeNameCN": "仮面ライダービルド",
+      "costumeNameKO": "仮面ライダービルド"
+    },
+    {
+      "costumeId": 145,
+      "costumeType": "kigurumi",
+      "costumeName": "マリオオデッセイ",
+      "costumeNameEN": "マリオオデッセイ",
+      "costumeNameCN": "マリオオデッセイ",
+      "costumeNameKO": "マリオオデッセイ"
+    },
+    {
+      "costumeId": 146,
+      "costumeType": "kigurumi",
+      "costumeName": "スプラトゥーン ボーイ",
+      "costumeNameEN": "スプラトゥーン ボーイ",
+      "costumeNameCN": "スプラトゥーン ボーイ",
+      "costumeNameKO": "スプラトゥーン ボーイ"
+    },
+    {
+      "costumeId": 147,
+      "costumeType": "kigurumi",
+      "costumeName": "仮面ライダージオウ＆ゲイツ",
+      "costumeNameEN": "仮面ライダージオウ＆ゲイツ",
+      "costumeNameCN": "仮面ライダージオウ＆ゲイツ",
+      "costumeNameKO": "仮面ライダージオウ＆ゲイツ"
+    },
+    {
+      "costumeId": 148,
+      "costumeType": "kigurumi",
+      "costumeName": "アミティ推し",
+      "costumeNameEN": "アミティ推し",
+      "costumeNameCN": "アミティ推し",
+      "costumeNameKO": "アミティ推し"
+    },
+    {
+      "costumeId": 149,
+      "costumeType": "kigurumi",
+      "costumeName": "ＡＩどん",
+      "costumeNameEN": "ＡＩどん",
+      "costumeNameCN": "ＡＩどん",
+      "costumeNameKO": "ＡＩどん"
+    },
+    {
+      "costumeId": 150,
+      "costumeType": "kigurumi",
+      "costumeName": "仮面ライダーゼロワン",
+      "costumeNameEN": "仮面ライダーゼロワン",
+      "costumeNameCN": "仮面ライダーゼロワン",
+      "costumeNameKO": "仮面ライダーゼロワン"
+    },
+    {
+      "costumeId": 151,
+      "costumeType": "kigurumi",
+      "costumeName": "AIどん（桃）",
+      "costumeNameEN": "AIどん（桃）",
+      "costumeNameCN": "AIどん（桃）",
+      "costumeNameKO": "AIどん（桃）"
+    },
+    {
+      "costumeId": 152,
+      "costumeType": "kigurumi",
+      "costumeName": "AIどん（黄）",
+      "costumeNameEN": "AIどん（黄）",
+      "costumeNameCN": "AIどん（黄）",
+      "costumeNameKO": "AIどん（黄）"
+    },
+    {
+      "costumeId": 153,
+      "costumeType": "kigurumi",
+      "costumeName": "AIどん（青）",
+      "costumeNameEN": "AIどん（青）",
+      "costumeNameCN": "AIどん（青）",
+      "costumeNameKO": "AIどん（青）"
+    },
+    {
+      "costumeId": 154,
+      "costumeType": "kigurumi",
+      "costumeName": "仮面ライダーセイバー",
+      "costumeNameEN": "仮面ライダーセイバー",
+      "costumeNameCN": "仮面ライダーセイバー",
+      "costumeNameKO": "仮面ライダーセイバー"
+    },
+    {
+      "costumeId": 155,
+      "costumeType": "kigurumi",
+      "costumeName": "仮面ライダーリバイス",
+      "costumeNameEN": "仮面ライダーリバイス",
+      "costumeNameCN": "仮面ライダーリバイス",
+      "costumeNameKO": "仮面ライダーリバイス"
+    },
+    {
+      "costumeId": 156,
+      "costumeType": "kigurumi",
+      "costumeName": "仮面ライダーギーツ",
+      "costumeNameEN": "仮面ライダーギーツ",
+      "costumeNameCN": "仮面ライダーギーツ",
+      "costumeNameKO": "仮面ライダーギーツ"
+    },
+    {
+      "costumeId": 0,
+      "costumeType": "puchi",
+      "costumeName": "素どん",
+      "costumeNameEN": "素どん",
+      "costumeNameCN": "素どん",
+      "costumeNameKO": "素どん"
+    },
+    {
+      "costumeId": 1,
+      "costumeType": "puchi",
+      "costumeName": "島村卯月",
+      "costumeNameEN": "島村卯月",
+      "costumeNameCN": "島村卯月",
+      "costumeNameKO": "島村卯月"
+    },
+    {
+      "costumeId": 2,
+      "costumeType": "puchi",
+      "costumeName": "渋谷凛",
+      "costumeNameEN": "渋谷凛",
+      "costumeNameCN": "渋谷凛",
+      "costumeNameKO": "渋谷凛"
+    },
+    {
+      "costumeId": 3,
+      "costumeType": "puchi",
+      "costumeName": "本田未央",
+      "costumeNameEN": "本田未央",
+      "costumeNameCN": "本田未央",
+      "costumeNameKO": "本田未央"
+    },
+    {
+      "costumeId": 4,
+      "costumeType": "puchi",
+      "costumeName": "座るドン",
+      "costumeNameEN": "座るドン",
+      "costumeNameCN": "座るドン",
+      "costumeNameKO": "座るドン"
+    },
+    {
+      "costumeId": 5,
+      "costumeType": "puchi",
+      "costumeName": "博麗霊夢",
+      "costumeNameEN": "博麗霊夢",
+      "costumeNameCN": "博麗霊夢",
+      "costumeNameKO": "博麗霊夢"
+    },
+    {
+      "costumeId": 6,
+      "costumeType": "puchi",
+      "costumeName": "霧雨魔理沙",
+      "costumeNameEN": "霧雨魔理沙",
+      "costumeNameCN": "霧雨魔理沙",
+      "costumeNameKO": "霧雨魔理沙"
+    },
+    {
+      "costumeId": 7,
+      "costumeType": "puchi",
+      "costumeName": "十六夜咲夜",
+      "costumeNameEN": "十六夜咲夜",
+      "costumeNameCN": "十六夜咲夜",
+      "costumeNameKO": "十六夜咲夜"
+    },
+    {
+      "costumeId": 8,
+      "costumeType": "puchi",
+      "costumeName": "アリス・マーガトロイド",
+      "costumeNameEN": "アリス・マーガトロイド",
+      "costumeNameCN": "アリス・マーガトロイド",
+      "costumeNameKO": "アリス・マーガトロイド"
+    },
+    {
+      "costumeId": 9,
+      "costumeType": "puchi",
+      "costumeName": "レミリア・スカーレット",
+      "costumeNameEN": "レミリア・スカーレット",
+      "costumeNameCN": "レミリア・スカーレット",
+      "costumeNameKO": "レミリア・スカーレット"
+    },
+    {
+      "costumeId": 10,
+      "costumeType": "puchi",
+      "costumeName": "チルノ",
+      "costumeNameEN": "チルノ",
+      "costumeNameCN": "チルノ",
+      "costumeNameKO": "チルノ"
+    },
+    {
+      "costumeId": 11,
+      "costumeType": "puchi",
+      "costumeName": "堀川雷鼓",
+      "costumeNameEN": "堀川雷鼓",
+      "costumeNameCN": "堀川雷鼓",
+      "costumeNameKO": "堀川雷鼓"
+    },
+    {
+      "costumeId": 12,
+      "costumeType": "puchi",
+      "costumeName": "天海春香",
+      "costumeNameEN": "天海春香",
+      "costumeNameCN": "天海春香",
+      "costumeNameKO": "天海春香"
+    },
+    {
+      "costumeId": 13,
+      "costumeType": "puchi",
+      "costumeName": "如月千早",
+      "costumeNameEN": "如月千早",
+      "costumeNameCN": "如月千早",
+      "costumeNameKO": "如月千早"
+    },
+    {
+      "costumeId": 14,
+      "costumeType": "puchi",
+      "costumeName": "萩原雪歩",
+      "costumeNameEN": "萩原雪歩",
+      "costumeNameCN": "萩原雪歩",
+      "costumeNameKO": "萩原雪歩"
+    },
+    {
+      "costumeId": 15,
+      "costumeType": "puchi",
+      "costumeName": "高槻やよい",
+      "costumeNameEN": "高槻やよい",
+      "costumeNameCN": "高槻やよい",
+      "costumeNameKO": "高槻やよい"
+    },
+    {
+      "costumeId": 16,
+      "costumeType": "puchi",
+      "costumeName": "秋月律子",
+      "costumeNameEN": "秋月律子",
+      "costumeNameCN": "秋月律子",
+      "costumeNameKO": "秋月律子"
+    },
+    {
+      "costumeId": 17,
+      "costumeType": "puchi",
+      "costumeName": "水瀬伊織",
+      "costumeNameEN": "水瀬伊織",
+      "costumeNameCN": "水瀬伊織",
+      "costumeNameKO": "水瀬伊織"
+    },
+    {
+      "costumeId": 18,
+      "costumeType": "puchi",
+      "costumeName": "三浦あずさ",
+      "costumeNameEN": "三浦あずさ",
+      "costumeNameCN": "三浦あずさ",
+      "costumeNameKO": "三浦あずさ"
+    },
+    {
+      "costumeId": 19,
+      "costumeType": "puchi",
+      "costumeName": "双海亜美",
+      "costumeNameEN": "双海亜美",
+      "costumeNameCN": "双海亜美",
+      "costumeNameKO": "双海亜美"
+    },
+    {
+      "costumeId": 20,
+      "costumeType": "puchi",
+      "costumeName": "双海真美",
+      "costumeNameEN": "双海真美",
+      "costumeNameCN": "双海真美",
+      "costumeNameKO": "双海真美"
+    },
+    {
+      "costumeId": 21,
+      "costumeType": "puchi",
+      "costumeName": "菊地真",
+      "costumeNameEN": "菊地真",
+      "costumeNameCN": "菊地真",
+      "costumeNameKO": "菊地真"
+    },
+    {
+      "costumeId": 22,
+      "costumeType": "puchi",
+      "costumeName": "星井美希",
+      "costumeNameEN": "星井美希",
+      "costumeNameCN": "星井美希",
+      "costumeNameKO": "星井美希"
+    },
+    {
+      "costumeId": 23,
+      "costumeType": "puchi",
+      "costumeName": "我那覇響",
+      "costumeNameEN": "我那覇響",
+      "costumeNameCN": "我那覇響",
+      "costumeNameKO": "我那覇響"
+    },
+    {
+      "costumeId": 24,
+      "costumeType": "puchi",
+      "costumeName": "四条貴音",
+      "costumeNameEN": "四条貴音",
+      "costumeNameCN": "四条貴音",
+      "costumeNameKO": "四条貴音"
+    },
+    {
+      "costumeId": 25,
+      "costumeType": "puchi",
+      "costumeName": "春日未来",
+      "costumeNameEN": "春日未来",
+      "costumeNameCN": "春日未来",
+      "costumeNameKO": "春日未来"
+    },
+    {
+      "costumeId": 26,
+      "costumeType": "puchi",
+      "costumeName": "最上静香",
+      "costumeNameEN": "最上静香",
+      "costumeNameCN": "最上静香",
+      "costumeNameKO": "最上静香"
+    },
+    {
+      "costumeId": 27,
+      "costumeType": "puchi",
+      "costumeName": "伊吹翼",
+      "costumeNameEN": "伊吹翼",
+      "costumeNameCN": "伊吹翼",
+      "costumeNameKO": "伊吹翼"
+    },
+    {
+      "costumeId": 28,
+      "costumeType": "puchi",
+      "costumeName": "城ヶ崎莉嘉",
+      "costumeNameEN": "城ヶ崎莉嘉",
+      "costumeNameCN": "城ヶ崎莉嘉",
+      "costumeNameKO": "城ヶ崎莉嘉"
+    },
+    {
+      "costumeId": 29,
+      "costumeType": "puchi",
+      "costumeName": "赤城みりあ",
+      "costumeNameEN": "赤城みりあ",
+      "costumeNameCN": "赤城みりあ",
+      "costumeNameKO": "赤城みりあ"
+    },
+    {
+      "costumeId": 30,
+      "costumeType": "puchi",
+      "costumeName": "諸星きらり",
+      "costumeNameEN": "諸星きらり",
+      "costumeNameCN": "諸星きらり",
+      "costumeNameKO": "諸星きらり"
+    },
+    {
+      "costumeId": 31,
+      "costumeType": "puchi",
+      "costumeName": "双葉杏",
+      "costumeNameEN": "双葉杏",
+      "costumeNameCN": "双葉杏",
+      "costumeNameKO": "双葉杏"
+    },
+    {
+      "costumeId": 32,
+      "costumeType": "puchi",
+      "costumeName": "緒方智絵里",
+      "costumeNameEN": "緒方智絵里",
+      "costumeNameCN": "緒方智絵里",
+      "costumeNameKO": "緒方智絵里"
+    },
+    {
+      "costumeId": 33,
+      "costumeType": "puchi",
+      "costumeName": "三村かな子",
+      "costumeNameEN": "三村かな子",
+      "costumeNameCN": "三村かな子",
+      "costumeNameKO": "三村かな子"
+    },
+    {
+      "costumeId": 34,
+      "costumeType": "puchi",
+      "costumeName": "新田美波",
+      "costumeNameEN": "新田美波",
+      "costumeNameCN": "新田美波",
+      "costumeNameKO": "新田美波"
+    },
+    {
+      "costumeId": 35,
+      "costumeType": "puchi",
+      "costumeName": "アナスタシア",
+      "costumeNameEN": "アナスタシア",
+      "costumeNameCN": "アナスタシア",
+      "costumeNameKO": "アナスタシア"
+    },
+    {
+      "costumeId": 36,
+      "costumeType": "puchi",
+      "costumeName": "神崎蘭子",
+      "costumeNameEN": "神崎蘭子",
+      "costumeNameCN": "神崎蘭子",
+      "costumeNameKO": "神崎蘭子"
+    },
+    {
+      "costumeId": 37,
+      "costumeType": "puchi",
+      "costumeName": "前川みく",
+      "costumeNameEN": "前川みく",
+      "costumeNameCN": "前川みく",
+      "costumeNameKO": "前川みく"
+    },
+    {
+      "costumeId": 38,
+      "costumeType": "puchi",
+      "costumeName": "多田李衣菜",
+      "costumeNameEN": "多田李衣菜",
+      "costumeNameCN": "多田李衣菜",
+      "costumeNameKO": "多田李衣菜"
+    },
+    {
+      "costumeId": 39,
+      "costumeType": "puchi",
+      "costumeName": "山村賢",
+      "costumeNameEN": "山村賢",
+      "costumeNameCN": "山村賢",
+      "costumeNameKO": "山村賢"
+    },
+    {
+      "costumeId": 40,
+      "costumeType": "puchi",
+      "costumeName": "高坂 穂乃果",
+      "costumeNameEN": "高坂 穂乃果",
+      "costumeNameCN": "高坂 穂乃果",
+      "costumeNameKO": "高坂 穂乃果"
+    },
+    {
+      "costumeId": 41,
+      "costumeType": "puchi",
+      "costumeName": "絢瀬 絵里",
+      "costumeNameEN": "絢瀬 絵里",
+      "costumeNameCN": "絢瀬 絵里",
+      "costumeNameKO": "絢瀬 絵里"
+    },
+    {
+      "costumeId": 42,
+      "costumeType": "puchi",
+      "costumeName": "南 ことり",
+      "costumeNameEN": "南 ことり",
+      "costumeNameCN": "南 ことり",
+      "costumeNameKO": "南 ことり"
+    },
+    {
+      "costumeId": 43,
+      "costumeType": "puchi",
+      "costumeName": "園田 海未",
+      "costumeNameEN": "園田 海未",
+      "costumeNameCN": "園田 海未",
+      "costumeNameKO": "園田 海未"
+    },
+    {
+      "costumeId": 44,
+      "costumeType": "puchi",
+      "costumeName": "星空 凛",
+      "costumeNameEN": "星空 凛",
+      "costumeNameCN": "星空 凛",
+      "costumeNameKO": "星空 凛"
+    },
+    {
+      "costumeId": 45,
+      "costumeType": "puchi",
+      "costumeName": "西木野 真姫",
+      "costumeNameEN": "西木野 真姫",
+      "costumeNameCN": "西木野 真姫",
+      "costumeNameKO": "西木野 真姫"
+    },
+    {
+      "costumeId": 46,
+      "costumeType": "puchi",
+      "costumeName": "東條 希",
+      "costumeNameEN": "東條 希",
+      "costumeNameCN": "東條 希",
+      "costumeNameKO": "東條 希"
+    },
+    {
+      "costumeId": 47,
+      "costumeType": "puchi",
+      "costumeName": "小泉 花陽",
+      "costumeNameEN": "小泉 花陽",
+      "costumeNameCN": "小泉 花陽",
+      "costumeNameKO": "小泉 花陽"
+    },
+    {
+      "costumeId": 48,
+      "costumeType": "puchi",
+      "costumeName": "矢澤 にこ",
+      "costumeNameEN": "矢澤 にこ",
+      "costumeNameCN": "矢澤 にこ",
+      "costumeNameKO": "矢澤 にこ"
+    },
+    {
+      "costumeId": 49,
+      "costumeType": "puchi",
+      "costumeName": "アラシ",
+      "costumeNameEN": "アラシ",
+      "costumeNameCN": "アラシ",
+      "costumeNameKO": "アラシ"
+    },
+    {
+      "costumeId": 50,
+      "costumeType": "puchi",
+      "costumeName": "ちょうちんうなぎ",
+      "costumeNameEN": "ちょうちんうなぎ",
+      "costumeNameCN": "ちょうちんうなぎ",
+      "costumeNameKO": "ちょうちんうなぎ"
+    },
+    {
+      "costumeId": 51,
+      "costumeType": "puchi",
+      "costumeName": "お面小僧おかめ",
+      "costumeNameEN": "お面小僧おかめ",
+      "costumeNameCN": "お面小僧おかめ",
+      "costumeNameKO": "お面小僧おかめ"
+    },
+    {
+      "costumeId": 52,
+      "costumeType": "puchi",
+      "costumeName": "お面小僧きつね",
+      "costumeNameEN": "お面小僧きつね",
+      "costumeNameCN": "お面小僧きつね",
+      "costumeNameKO": "お面小僧きつね"
+    },
+    {
+      "costumeId": 53,
+      "costumeType": "puchi",
+      "costumeName": "お面小僧ひょっとこ",
+      "costumeNameEN": "お面小僧ひょっとこ",
+      "costumeNameCN": "お面小僧ひょっとこ",
+      "costumeNameKO": "お面小僧ひょっとこ"
+    },
+    {
+      "costumeId": 54,
+      "costumeType": "puchi",
+      "costumeName": "ソプラノ姫",
+      "costumeNameEN": "ソプラノ姫",
+      "costumeNameCN": "ソプラノ姫",
+      "costumeNameKO": "ソプラノ姫"
+    },
+    {
+      "costumeId": 55,
+      "costumeType": "puchi",
+      "costumeName": "フウガ＆ミライ",
+      "costumeNameEN": "フウガ＆ミライ",
+      "costumeNameCN": "フウガ＆ミライ",
+      "costumeNameKO": "フウガ＆ミライ"
+    },
+    {
+      "costumeId": 56,
+      "costumeType": "puchi",
+      "costumeName": "フウガ",
+      "costumeNameEN": "フウガ",
+      "costumeNameCN": "フウガ",
+      "costumeNameKO": "フウガ"
+    },
+    {
+      "costumeId": 57,
+      "costumeType": "puchi",
+      "costumeName": "ミライ",
+      "costumeNameEN": "ミライ",
+      "costumeNameCN": "ミライ",
+      "costumeNameKO": "ミライ"
+    },
+    {
+      "costumeId": 58,
+      "costumeType": "puchi",
+      "costumeName": "マオウ",
+      "costumeNameEN": "マオウ",
+      "costumeNameCN": "マオウ",
+      "costumeNameKO": "マオウ"
+    },
+    {
+      "costumeId": 59,
+      "costumeType": "puchi",
+      "costumeName": "ラルコ＆ソプラノ姫",
+      "costumeNameEN": "ラルコ＆ソプラノ姫",
+      "costumeNameCN": "ラルコ＆ソプラノ姫",
+      "costumeNameKO": "ラルコ＆ソプラノ姫"
+    },
+    {
+      "costumeId": 60,
+      "costumeType": "puchi",
+      "costumeName": "ラルコ",
+      "costumeNameEN": "ラルコ",
+      "costumeNameCN": "ラルコ",
+      "costumeNameKO": "ラルコ"
+    },
+    {
+      "costumeId": 61,
+      "costumeType": "puchi",
+      "costumeName": "ネコと杓子",
+      "costumeNameEN": "ネコと杓子",
+      "costumeNameCN": "ネコと杓子",
+      "costumeNameKO": "ネコと杓子"
+    },
+    {
+      "costumeId": 62,
+      "costumeType": "puchi",
+      "costumeName": "よつんばいドン",
+      "costumeNameEN": "よつんばいドン",
+      "costumeNameCN": "よつんばいドン",
+      "costumeNameKO": "よつんばいドン"
+    },
+    {
+      "costumeId": 63,
+      "costumeType": "puchi",
+      "costumeName": "ヨガドン",
+      "costumeNameEN": "ヨガドン",
+      "costumeNameCN": "ヨガドン",
+      "costumeNameKO": "ヨガドン"
+    },
+    {
+      "costumeId": 64,
+      "costumeType": "puchi",
+      "costumeName": "ＭＡＫＩＤＡＩ",
+      "costumeNameEN": "ＭＡＫＩＤＡＩ",
+      "costumeNameCN": "ＭＡＫＩＤＡＩ",
+      "costumeNameKO": "ＭＡＫＩＤＡＩ"
+    },
+    {
+      "costumeId": 65,
+      "costumeType": "puchi",
+      "costumeName": "関口メンディー",
+      "costumeNameEN": "関口メンディー",
+      "costumeNameCN": "関口メンディー",
+      "costumeNameKO": "関口メンディー"
+    },
+    {
+      "costumeId": 66,
+      "costumeType": "puchi",
+      "costumeName": "太虎",
+      "costumeNameEN": "太虎",
+      "costumeNameCN": "太虎",
+      "costumeNameKO": "太虎"
+    },
+    {
+      "costumeId": 67,
+      "costumeType": "puchi",
+      "costumeName": "龍神",
+      "costumeNameEN": "龍神",
+      "costumeNameCN": "龍神",
+      "costumeNameKO": "龍神"
+    },
+    {
+      "costumeId": 68,
+      "costumeType": "puchi",
+      "costumeName": "フランドール・スカーレット",
+      "costumeNameEN": "フランドール・スカーレット",
+      "costumeNameCN": "フランドール・スカーレット",
+      "costumeNameKO": "フランドール・スカーレット"
+    },
+    {
+      "costumeId": 69,
+      "costumeType": "puchi",
+      "costumeName": "フレイア・ヴィオン",
+      "costumeNameEN": "フレイア・ヴィオン",
+      "costumeNameCN": "フレイア・ヴィオン",
+      "costumeNameKO": "フレイア・ヴィオン"
+    },
+    {
+      "costumeId": 70,
+      "costumeType": "puchi",
+      "costumeName": "美雲・ギンヌメール",
+      "costumeNameEN": "美雲・ギンヌメール",
+      "costumeNameCN": "美雲・ギンヌメール",
+      "costumeNameKO": "美雲・ギンヌメール"
+    },
+    {
+      "costumeId": 71,
+      "costumeType": "puchi",
+      "costumeName": "カナメ・バッカニア",
+      "costumeNameEN": "カナメ・バッカニア",
+      "costumeNameCN": "カナメ・バッカニア",
+      "costumeNameKO": "カナメ・バッカニア"
+    },
+    {
+      "costumeId": 72,
+      "costumeType": "puchi",
+      "costumeName": "マキナ・中島",
+      "costumeNameEN": "マキナ・中島",
+      "costumeNameCN": "マキナ・中島",
+      "costumeNameKO": "マキナ・中島"
+    },
+    {
+      "costumeId": 73,
+      "costumeType": "puchi",
+      "costumeName": "レイナ・プラウラー",
+      "costumeNameEN": "レイナ・プラウラー",
+      "costumeNameCN": "レイナ・プラウラー",
+      "costumeNameKO": "レイナ・プラウラー"
+    },
+    {
+      "costumeId": 74,
+      "costumeType": "puchi",
+      "costumeName": "暁月",
+      "costumeNameEN": "暁月",
+      "costumeNameCN": "暁月",
+      "costumeNameKO": "暁月"
+    },
+    {
+      "costumeId": 75,
+      "costumeType": "puchi",
+      "costumeName": "燦",
+      "costumeNameEN": "燦",
+      "costumeNameCN": "燦",
+      "costumeNameKO": "燦"
+    },
+    {
+      "costumeId": 76,
+      "costumeType": "puchi",
+      "costumeName": "ティア＆ポポカカ",
+      "costumeNameEN": "ティア＆ポポカカ",
+      "costumeNameCN": "ティア＆ポポカカ",
+      "costumeNameKO": "ティア＆ポポカカ"
+    },
+    {
+      "costumeId": 77,
+      "costumeType": "puchi",
+      "costumeName": "LindaAI-CUE",
+      "costumeNameEN": "LindaAI-CUE",
+      "costumeNameCN": "LindaAI-CUE",
+      "costumeNameKO": "LindaAI-CUE"
+    },
+    {
+      "costumeId": 78,
+      "costumeType": "puchi",
+      "costumeName": "ゼウス",
+      "costumeNameEN": "ゼウス",
+      "costumeNameCN": "ゼウス",
+      "costumeNameKO": "ゼウス"
+    },
+    {
+      "costumeId": 79,
+      "costumeType": "puchi",
+      "costumeName": "ヘラ",
+      "costumeNameEN": "ヘラ",
+      "costumeNameCN": "ヘラ",
+      "costumeNameKO": "ヘラ"
+    },
+    {
+      "costumeId": 80,
+      "costumeType": "puchi",
+      "costumeName": "プリンセスヴァルキリー",
+      "costumeNameEN": "プリンセスヴァルキリー",
+      "costumeNameCN": "プリンセスヴァルキリー",
+      "costumeNameKO": "プリンセスヴァルキリー"
+    },
+    {
+      "costumeId": 81,
+      "costumeType": "puchi",
+      "costumeName": "赤ソニア",
+      "costumeNameEN": "赤ソニア",
+      "costumeNameCN": "赤ソニア",
+      "costumeNameKO": "赤ソニア"
+    },
+    {
+      "costumeId": 82,
+      "costumeType": "puchi",
+      "costumeName": "堕ルシ",
+      "costumeNameEN": "堕ルシ",
+      "costumeNameCN": "堕ルシ",
+      "costumeNameKO": "堕ルシ"
+    },
+    {
+      "costumeId": 83,
+      "costumeType": "puchi",
+      "costumeName": "サクヤ",
+      "costumeNameEN": "サクヤ",
+      "costumeNameCN": "サクヤ",
+      "costumeNameKO": "サクヤ"
+    },
+    {
+      "costumeId": 84,
+      "costumeType": "puchi",
+      "costumeName": "闇カーリー",
+      "costumeNameEN": "闇カーリー",
+      "costumeNameCN": "闇カーリー",
+      "costumeNameKO": "闇カーリー"
+    },
+    {
+      "costumeId": 85,
+      "costumeType": "puchi",
+      "costumeName": "タマゾーＸどんちゃん",
+      "costumeNameEN": "タマゾーＸどんちゃん",
+      "costumeNameCN": "タマゾーＸどんちゃん",
+      "costumeNameKO": "タマゾーＸどんちゃん"
+    },
+    {
+      "costumeId": 86,
+      "costumeType": "puchi",
+      "costumeName": "藤原妹紅",
+      "costumeNameEN": "藤原妹紅",
+      "costumeNameCN": "藤原妹紅",
+      "costumeNameKO": "藤原妹紅"
+    },
+    {
+      "costumeId": 87,
+      "costumeType": "puchi",
+      "costumeName": "古明地さとり",
+      "costumeNameEN": "古明地さとり",
+      "costumeNameCN": "古明地さとり",
+      "costumeNameKO": "古明地さとり"
+    },
+    {
+      "costumeId": 88,
+      "costumeType": "puchi",
+      "costumeName": "古明地こいし",
+      "costumeNameEN": "古明地こいし",
+      "costumeNameCN": "古明地こいし",
+      "costumeNameKO": "古明地こいし"
+    },
+    {
+      "costumeId": 89,
+      "costumeType": "puchi",
+      "costumeName": "宇佐見蓮子＆マエリベリー・ハーン",
+      "costumeNameEN": "宇佐見蓮子＆マエリベリー・ハーン",
+      "costumeNameCN": "宇佐見蓮子＆マエリベリー・ハーン",
+      "costumeNameKO": "宇佐見蓮子＆マエリベリー・ハーン"
+    },
+    {
+      "costumeId": 90,
+      "costumeType": "puchi",
+      "costumeName": "博麗霊夢（青）",
+      "costumeNameEN": "博麗霊夢（青）",
+      "costumeNameCN": "博麗霊夢（青）",
+      "costumeNameKO": "博麗霊夢（青）"
+    },
+    {
+      "costumeId": 91,
+      "costumeType": "puchi",
+      "costumeName": "一ノ瀬志希",
+      "costumeNameEN": "一ノ瀬志希",
+      "costumeNameCN": "一ノ瀬志希",
+      "costumeNameKO": "一ノ瀬志希"
+    },
+    {
+      "costumeId": 92,
+      "costumeType": "puchi",
+      "costumeName": "塩見周子",
+      "costumeNameEN": "塩見周子",
+      "costumeNameCN": "塩見周子",
+      "costumeNameKO": "塩見周子"
+    },
+    {
+      "costumeId": 93,
+      "costumeType": "puchi",
+      "costumeName": "宮本フレデリカ",
+      "costumeNameEN": "宮本フレデリカ",
+      "costumeNameCN": "宮本フレデリカ",
+      "costumeNameKO": "宮本フレデリカ"
+    },
+    {
+      "costumeId": 94,
+      "costumeType": "puchi",
+      "costumeName": "城ヶ崎美嘉",
+      "costumeNameEN": "城ヶ崎美嘉",
+      "costumeNameCN": "城ヶ崎美嘉",
+      "costumeNameKO": "城ヶ崎美嘉"
+    },
+    {
+      "costumeId": 95,
+      "costumeType": "puchi",
+      "costumeName": "速水奏",
+      "costumeNameEN": "速水奏",
+      "costumeNameCN": "速水奏",
+      "costumeNameKO": "速水奏"
+    },
+    {
+      "costumeId": 96,
+      "costumeType": "puchi",
+      "costumeName": "魂魄妖夢",
+      "costumeNameEN": "魂魄妖夢",
+      "costumeNameCN": "魂魄妖夢",
+      "costumeNameKO": "魂魄妖夢"
+    },
+    {
+      "costumeId": 97,
+      "costumeType": "puchi",
+      "costumeName": "射命丸文",
+      "costumeNameEN": "射命丸文",
+      "costumeNameCN": "射命丸文",
+      "costumeNameKO": "射命丸文"
+    },
+    {
+      "costumeId": 98,
+      "costumeType": "puchi",
+      "costumeName": "東風谷早苗",
+      "costumeNameEN": "東風谷早苗",
+      "costumeNameCN": "東風谷早苗",
+      "costumeNameKO": "東風谷早苗"
+    },
+    {
+      "costumeId": 99,
+      "costumeType": "puchi",
+      "costumeName": "鈴仙・優曇華院・イナバ",
+      "costumeNameEN": "鈴仙・優曇華院・イナバ",
+      "costumeNameCN": "鈴仙・優曇華院・イナバ",
+      "costumeNameKO": "鈴仙・優曇華院・イナバ"
+    },
+    {
+      "costumeId": 100,
+      "costumeType": "puchi",
+      "costumeName": "秦こころ",
+      "costumeNameEN": "秦こころ",
+      "costumeNameCN": "秦こころ",
+      "costumeNameKO": "秦こころ"
+    },
+    {
+      "costumeId": 101,
+      "costumeType": "puchi",
+      "costumeName": "日焼けしたチルノ",
+      "costumeNameEN": "日焼けしたチルノ",
+      "costumeNameCN": "日焼けしたチルノ",
+      "costumeNameKO": "日焼けしたチルノ"
+    },
+    {
+      "costumeId": 102,
+      "costumeType": "puchi",
+      "costumeName": "佐久間咲也",
+      "costumeNameEN": "佐久間咲也",
+      "costumeNameCN": "佐久間咲也",
+      "costumeNameKO": "佐久間咲也"
+    },
+    {
+      "costumeId": 103,
+      "costumeType": "puchi",
+      "costumeName": "皇天馬",
+      "costumeNameEN": "皇天馬",
+      "costumeNameCN": "皇天馬",
+      "costumeNameKO": "皇天馬"
+    },
+    {
+      "costumeId": 104,
+      "costumeType": "puchi",
+      "costumeName": "摂津万里",
+      "costumeNameEN": "摂津万里",
+      "costumeNameCN": "摂津万里",
+      "costumeNameKO": "摂津万里"
+    },
+    {
+      "costumeId": 105,
+      "costumeType": "puchi",
+      "costumeName": "月岡紬",
+      "costumeNameEN": "月岡紬",
+      "costumeNameCN": "月岡紬",
+      "costumeNameKO": "月岡紬"
+    },
+    {
+      "costumeId": 106,
+      "costumeType": "puchi",
+      "costumeName": "霧雨魔理沙（白）",
+      "costumeNameEN": "霧雨魔理沙（白）",
+      "costumeNameCN": "霧雨魔理沙（白）",
+      "costumeNameKO": "霧雨魔理沙（白）"
+    },
+    {
+      "costumeId": 107,
+      "costumeType": "puchi",
+      "costumeName": "博麗霊夢＆霧雨魔理沙",
+      "costumeNameEN": "博麗霊夢＆霧雨魔理沙",
+      "costumeNameCN": "博麗霊夢＆霧雨魔理沙",
+      "costumeNameKO": "博麗霊夢＆霧雨魔理沙"
+    },
+    {
+      "costumeId": 108,
+      "costumeType": "puchi",
+      "costumeName": "Voidoll",
+      "costumeNameEN": "Voidoll",
+      "costumeNameCN": "Voidoll",
+      "costumeNameKO": "Voidoll"
+    },
+    {
+      "costumeId": 109,
+      "costumeType": "puchi",
+      "costumeName": "ヴィオレッタ ノワール",
+      "costumeNameEN": "ヴィオレッタ ノワール",
+      "costumeNameCN": "ヴィオレッタ ノワール",
+      "costumeNameKO": "ヴィオレッタ ノワール"
+    },
+    {
+      "costumeId": 110,
+      "costumeType": "puchi",
+      "costumeName": "メグメグ",
+      "costumeNameEN": "メグメグ",
+      "costumeNameCN": "メグメグ",
+      "costumeNameKO": "メグメグ"
+    },
+    {
+      "costumeId": 111,
+      "costumeType": "puchi",
+      "costumeName": "桜華 忠臣",
+      "costumeNameEN": "桜華 忠臣",
+      "costumeNameCN": "桜華 忠臣",
+      "costumeNameKO": "桜華 忠臣"
+    },
+    {
+      "costumeId": 112,
+      "costumeType": "puchi",
+      "costumeName": "マルコス'55",
+      "costumeNameEN": "マルコス'55",
+      "costumeNameCN": "マルコス'55",
+      "costumeNameKO": "マルコス'55"
+    },
+    {
+      "costumeId": 113,
+      "costumeType": "puchi",
+      "costumeName": "リリカ",
+      "costumeNameEN": "リリカ",
+      "costumeNameCN": "リリカ",
+      "costumeNameKO": "リリカ"
+    },
+    {
+      "costumeId": 114,
+      "costumeType": "puchi",
+      "costumeName": "櫻木真乃",
+      "costumeNameEN": "櫻木真乃",
+      "costumeNameCN": "櫻木真乃",
+      "costumeNameKO": "櫻木真乃"
+    },
+    {
+      "costumeId": 115,
+      "costumeType": "puchi",
+      "costumeName": "八宮めぐる",
+      "costumeNameEN": "八宮めぐる",
+      "costumeNameCN": "八宮めぐる",
+      "costumeNameKO": "八宮めぐる"
+    },
+    {
+      "costumeId": 116,
+      "costumeType": "puchi",
+      "costumeName": "風野灯織",
+      "costumeNameEN": "風野灯織",
+      "costumeNameCN": "風野灯織",
+      "costumeNameKO": "風野灯織"
+    },
+    {
+      "costumeId": 117,
+      "costumeType": "puchi",
+      "costumeName": "博麗霊夢（東方香霖堂Ver.）",
+      "costumeNameEN": "博麗霊夢（東方香霖堂Ver.）",
+      "costumeNameCN": "博麗霊夢（東方香霖堂Ver.）",
+      "costumeNameKO": "博麗霊夢（東方香霖堂Ver.）"
+    },
+    {
+      "costumeId": 118,
+      "costumeType": "puchi",
+      "costumeName": "レミリア・スカーレット＆十六夜咲夜",
+      "costumeNameEN": "レミリア・スカーレット＆十六夜咲夜",
+      "costumeNameCN": "レミリア・スカーレット＆十六夜咲夜",
+      "costumeNameKO": "レミリア・スカーレット＆十六夜咲夜"
+    },
+    {
+      "costumeId": 119,
+      "costumeType": "puchi",
+      "costumeName": "八雲紫",
+      "costumeNameEN": "八雲紫",
+      "costumeNameCN": "八雲紫",
+      "costumeNameKO": "八雲紫"
+    },
+    {
+      "costumeId": 120,
+      "costumeType": "puchi",
+      "costumeName": "洩矢諏訪子",
+      "costumeNameEN": "洩矢諏訪子",
+      "costumeNameCN": "洩矢諏訪子",
+      "costumeNameKO": "洩矢諏訪子"
+    },
+    {
+      "costumeId": 121,
+      "costumeType": "puchi",
+      "costumeName": "双挽乃保",
+      "costumeNameEN": "双挽乃保",
+      "costumeNameCN": "双挽乃保",
+      "costumeNameKO": "双挽乃保"
+    },
+    {
+      "costumeId": 122,
+      "costumeType": "puchi",
+      "costumeName": "十文字アタリ",
+      "costumeNameEN": "十文字アタリ",
+      "costumeNameCN": "十文字アタリ",
+      "costumeNameKO": "十文字アタリ"
+    },
+    {
+      "costumeId": 123,
+      "costumeType": "puchi",
+      "costumeName": "グスタフ ハイドリヒ",
+      "costumeNameEN": "グスタフ ハイドリヒ",
+      "costumeNameCN": "グスタフ ハイドリヒ",
+      "costumeNameKO": "グスタフ ハイドリヒ"
+    },
+    {
+      "costumeId": 124,
+      "costumeType": "puchi",
+      "costumeName": "コクリコット ブランシュ",
+      "costumeNameEN": "コクリコット ブランシュ",
+      "costumeNameCN": "コクリコット ブランシュ",
+      "costumeNameKO": "コクリコット ブランシュ"
+    },
+    {
+      "costumeId": 125,
+      "costumeType": "puchi",
+      "costumeName": "まきな",
+      "costumeNameEN": "まきな",
+      "costumeNameCN": "まきな",
+      "costumeNameKO": "まきな"
+    },
+    {
+      "costumeId": 126,
+      "costumeType": "puchi",
+      "costumeName": "まきな（学生Ver.）",
+      "costumeNameEN": "まきな（学生Ver.）",
+      "costumeNameCN": "まきな（学生Ver.）",
+      "costumeNameKO": "まきな（学生Ver.）"
+    },
+    {
+      "costumeId": 127,
+      "costumeType": "puchi",
+      "costumeName": "AIどん",
+      "costumeNameEN": "AIどん",
+      "costumeNameCN": "AIどん",
+      "costumeNameKO": "AIどん"
+    },
+    {
+      "costumeId": 128,
+      "costumeType": "puchi",
+      "costumeName": "博麗霊夢（まんじゅう）",
+      "costumeNameEN": "博麗霊夢（まんじゅう）",
+      "costumeNameCN": "博麗霊夢（まんじゅう）",
+      "costumeNameKO": "博麗霊夢（まんじゅう）"
+    },
+    {
+      "costumeId": 129,
+      "costumeType": "puchi",
+      "costumeName": "天海春香（15周年）",
+      "costumeNameEN": "天海春香（15周年）",
+      "costumeNameCN": "天海春香（15周年）",
+      "costumeNameKO": "天海春香（15周年）"
+    },
+    {
+      "costumeId": 130,
+      "costumeType": "puchi",
+      "costumeName": "島村卯月（15周年）",
+      "costumeNameEN": "島村卯月（15周年）",
+      "costumeNameCN": "島村卯月（15周年）",
+      "costumeNameKO": "島村卯月（15周年）"
+    },
+    {
+      "costumeId": 131,
+      "costumeType": "puchi",
+      "costumeName": "春日未来（15周年）",
+      "costumeNameEN": "春日未来（15周年）",
+      "costumeNameCN": "春日未来（15周年）",
+      "costumeNameKO": "春日未来（15周年）"
+    },
+    {
+      "costumeId": 132,
+      "costumeType": "puchi",
+      "costumeName": "天道輝（15周年）",
+      "costumeNameEN": "天道輝（15周年）",
+      "costumeNameCN": "天道輝（15周年）",
+      "costumeNameKO": "天道輝（15周年）"
+    },
+    {
+      "costumeId": 133,
+      "costumeType": "puchi",
+      "costumeName": "櫻木真乃（15周年）",
+      "costumeNameEN": "櫻木真乃（15周年）",
+      "costumeNameCN": "櫻木真乃（15周年）",
+      "costumeNameKO": "櫻木真乃（15周年）"
+    },
+    {
+      "costumeId": 134,
+      "costumeType": "puchi",
+      "costumeName": "ルフィ",
+      "costumeNameEN": "ルフィ",
+      "costumeNameCN": "ルフィ",
+      "costumeNameKO": "ルフィ"
+    },
+    {
+      "costumeId": 135,
+      "costumeType": "puchi",
+      "costumeName": "キッド",
+      "costumeNameEN": "キッド",
+      "costumeNameCN": "キッド",
+      "costumeNameKO": "キッド"
+    },
+    {
+      "costumeId": 136,
+      "costumeType": "puchi",
+      "costumeName": "ロー",
+      "costumeNameEN": "ロー",
+      "costumeNameCN": "ロー",
+      "costumeNameKO": "ロー"
+    },
+    {
+      "costumeId": 137,
+      "costumeType": "puchi",
+      "costumeName": "ヤマト",
+      "costumeNameEN": "ヤマト",
+      "costumeNameCN": "ヤマト",
+      "costumeNameKO": "ヤマト"
+    },
+    {
+      "costumeId": 138,
+      "costumeType": "puchi",
+      "costumeName": "カイドウ",
+      "costumeNameEN": "カイドウ",
+      "costumeNameCN": "カイドウ",
+      "costumeNameKO": "カイドウ"
+    },
+    {
+      "costumeId": 139,
+      "costumeType": "puchi",
+      "costumeName": "霧雨魔理沙（まんじゅう）",
+      "costumeNameEN": "霧雨魔理沙（まんじゅう）",
+      "costumeNameCN": "霧雨魔理沙（まんじゅう）",
+      "costumeNameKO": "霧雨魔理沙（まんじゅう）"
+    },
+    {
+      "costumeId": 140,
+      "costumeType": "puchi",
+      "costumeName": "粗品",
+      "costumeNameEN": "粗品",
+      "costumeNameCN": "粗品",
+      "costumeNameKO": "粗品"
+    },
+    {
+      "costumeId": 141,
+      "costumeType": "puchi",
+      "costumeName": "AI粗品",
+      "costumeNameEN": "AI粗品",
+      "costumeNameCN": "AI粗品",
+      "costumeNameKO": "AI粗品"
+    },
+    {
+      "costumeId": 142,
+      "costumeType": "puchi",
+      "costumeName": "不知火フレア",
+      "costumeNameEN": "不知火フレア",
+      "costumeNameCN": "不知火フレア",
+      "costumeNameKO": "不知火フレア"
+    },
+    {
+      "costumeId": 143,
+      "costumeType": "puchi",
+      "costumeName": "白銀ノエル",
+      "costumeNameEN": "白銀ノエル",
+      "costumeNameCN": "白銀ノエル",
+      "costumeNameKO": "白銀ノエル"
+    },
+    {
+      "costumeId": 144,
+      "costumeType": "puchi",
+      "costumeName": "宝鐘マリン",
+      "costumeNameEN": "宝鐘マリン",
+      "costumeNameCN": "宝鐘マリン",
+      "costumeNameKO": "宝鐘マリン"
+    },
+    {
+      "costumeId": 145,
+      "costumeType": "puchi",
+      "costumeName": "桃鈴ねね",
+      "costumeNameEN": "桃鈴ねね",
+      "costumeNameCN": "桃鈴ねね",
+      "costumeNameKO": "桃鈴ねね"
+    },
+    {
+      "costumeId": 146,
+      "costumeType": "puchi",
+      "costumeName": "鷹嶺ルイ",
+      "costumeNameEN": "鷹嶺ルイ",
+      "costumeNameCN": "鷹嶺ルイ",
+      "costumeNameKO": "鷹嶺ルイ"
+    },
+    {
+      "costumeId": 147,
+      "costumeType": "puchi",
+      "costumeName": "風真いろは",
+      "costumeNameEN": "風真いろは",
+      "costumeNameCN": "風真いろは",
+      "costumeNameKO": "風真いろは"
+    }
+  ]
+}
