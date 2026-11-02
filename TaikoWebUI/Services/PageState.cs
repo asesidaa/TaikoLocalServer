@@ -29,6 +29,10 @@ public sealed class PageState
     public void SetPlayData(string playData, long baid, params string[] rest) =>
         Set([new Crumb(playData, PlayDataPaths.Index(baid)), .. rest.Select(r => new Crumb(r))]);
 
+    /// <summary>An older game's Play Data page: "Red", "Play Data" (to that game's index), then the page's own steps.</summary>
+    public void SetEraPlayData(string game, string playData, long baid, params string[] rest) =>
+        Set([new Crumb(game), new Crumb(playData, EraPaths.Index(baid, game)), .. rest.Select(r => new Crumb(r))]);
+
     public void Set(params Crumb[] crumbs)
     {
         Crumbs = crumbs;

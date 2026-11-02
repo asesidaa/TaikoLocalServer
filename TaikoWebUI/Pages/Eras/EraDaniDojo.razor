@@ -1,0 +1,97 @@
+@page "/Users/{baid:int}/{Game}/PlayData/DaniDojo"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject GameDataService GameDataService
+@inject PageState Page
+
+<PageTitle>@Localizer["Dani Dojo"]</PageTitle>
+@* An older game's dans, named from its own catalogue (its Taikojuku packs), with your best run in each. A pass is red,
+   a gold pass gold, and a dan not passed yet has a dashed outline. *@
+<div class="mx-auto max-w-3xl">
+    <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Dani Dojo"]</h1>
+    <GameLine Game="@GameName" Class="mb-5" />
+    @if (dans is null)
+    {
+        <div class="@Css.Card p-5"><Skeleton /></div>
+    }
+    else if (Rows.Count == 0)
+    {
+        <p class="@Css.Card p-6 text-center text-sm @Css.Muted">@string.Format(Localizer["No {0} dan results yet."], GameName)</p>
+    }
+    else
+    {
+        <ul class="@Css.Card divide-y divide-zinc-100 overflow-hidden dark:divide-zinc-800">
+            @foreach (var (id, title, best, course) in Rows)
+            {
+                var passed = best is not null && best.ClearState != DanClearState.NotClear;
+                var gold = passed && GameData.IsGold(best!.ClearState);
+                var open = expanded.Contains(id);
+                <li>
+                    <button class="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50" aria-expanded="@Css.Aria(open)"
+                            @onclick="() => { if (!expanded.Remove(id)) expanded.Add(id); }">
+                        <span class="@($"min-w-16 rounded-lg px-2 py-1 text-center text-sm font-bold {(gold ? "bg-gradient-to-br from-amber-300 to-amber-500 text-amber-950" : passed ? "bg-red-600 text-white" : "border border-dashed border-zinc-300 text-zinc-500 dark:border-zinc-600")}")">@title</span>
+                        <span class="min-w-0 flex-1 text-sm">@(gold ? Localizer["Gold pass"] : passed ? Localizer["Passed"] : best is null ? Localizer["Not played"] : Localizer["Not passed yet"])</span>
+                        @if (best is not null)
+                        {
+                            <span class="hidden text-xs tabular-nums sm:block @Css.Muted">@string.Format(Localizer["Soul gauge {0} · combo {1}"], best.SoulGaugeTotal, best.ComboCountTotal)</span>
+                        }
+                        <Icon Name="chevDown" Class="@($"size-4 {Css.Muted} {(open ? "rotate-180" : "")}")" />
+                    </button>
+                    @if (open)
+                    {
+                        <ol class="space-y-1 px-4 pb-3 text-sm">
+                            @for (var i = 0; i < Math.Max(course?.OdaiSongList.Count ?? 0, best?.DanBestStageDataList.Count ?? 0); i++)
+                            {
+                                var song = course?.OdaiSongList.ElementAtOrDefault(i);
+                                var stage = best?.DanBestStageDataList.ElementAtOrDefault(i);
+                                <li class="flex items-center gap-3">
+                                    <span class="w-5 shrink-0 text-xs @Css.Muted">@(i + 1)</span>
+                                    <span class="min-w-0 flex-1 truncate">@(song is null ? "–" : SongName(song.SongNo))</span>
+                                    <span class="w-20 text-right tabular-nums">@(stage?.HighScore.ToString("N0") ?? "–")</span>
+                                </li>
+                            }
+                        </ol>
+                    }
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public string Game { get; set; } = "";
+
+    private string GameName => EraPaths.Older(Game) ?? Game;
+    private List<DanBestData>? dans;
+    private List<DanData> courses = [];
+    private Dictionary<uint, MusicDetail> songs = [];
+    private readonly HashSet<uint> expanded = [];
+
+    // Every dan the game has, then any result for one its catalogue doesn't list.
+    private List<(uint Id, string Title, DanBestData? Best, DanData? Course)> Rows =>
+        courses.OrderBy(c => c.DanId).Select(c => (c.DanId, c.Title, dans!.FirstOrDefault(d => d.DanId == c.DanId), (DanData?)c))
+            .Concat(dans!.Where(d => courses.All(c => c.DanId != d.DanId)).OrderBy(d => d.DanId).Select(d => (d.DanId, $"#{d.DanId}", (DanBestData?)d, (DanData?)null)))
+            .ToList();
+
+    private string SongName(uint id) => songs.TryGetValue(id, out var s) && s.SongName.Length > 0 ? s.SongName : $"#{id}";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.SetEraPlayData(GameName, Localizer["Play Data"], Baid, Localizer["Dani Dojo"]);
+        dans = null;
+        if (EraPaths.Older(Game) is null) return;
+        try
+        {
+            var best = Client.GetFromJsonAsync<DanBestDataResponse>($"api/{GameName}/DanBestData/{Baid}");
+            var course = Client.GetFromJsonAsync<List<DanData>>($"api/{GameName}/GameData/DanData");
+            songs = await GameDataService.GetMusicDetailDictionary(GameName);
+            courses = await course ?? [];
+            dans = (await best)?.DanBestDataList ?? [];
+        }
+        catch (HttpRequestException)
+        {
+            dans = [];
+        }
+    }
+}

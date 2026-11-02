@@ -1,0 +1,7 @@
+@* A difficulty as a coloured dot and its name (older games have no difficulty art). *@
+<span class="@($"inline-flex items-center gap-1.5 {Class}")"><span class="size-2 shrink-0 rounded-full" style="background:@GameData.DifficultyColor(Difficulty)" aria-hidden="true"></span>@GameData.DifficultyName(Difficulty)</span>
+
+@code {
+    [Parameter] public Difficulty Difficulty { get; set; }
+    [Parameter] public string Class { get; set; } = "";
+}

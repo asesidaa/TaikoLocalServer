@@ -1,0 +1,91 @@
+@page "/Users/{baid:int}/{Game}/PlayData"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject GameDataService GameDataService
+@inject PageState Page
+
+<PageTitle>@Localizer["Play Data"]</PageTitle>
+@* An older game's Play Data index: the same cards as Nijiiro's without Favourites. A number only Nijiiro's endpoints
+   give is left out rather than shown as a dash. *@
+<div class="mx-auto max-w-6xl">
+    <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Play Data"]</h1>
+    <GameLine Game="@GameName" Class="mb-5" />
+    <div class="grid grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        @Card(PlayDataPaths.Songs, "music", Localizer["Song List"], Localizer["Every song with your best crown on each difficulty."],
+            (scores?.Songs.Count.ToString("N0"), Localizer["songs"]), (scores?.Bests.Select(b => b.SongId).Distinct().Count().ToString("N0"), Localizer["played"]))
+        @Card(PlayDataPaths.HighScores, "highScores", Localizer["High Scores"], Localizer["Your best score on each chart, by difficulty."],
+            (scores?.Clears.ToString("N0"), Localizer["clears"]), (scores?.FullCombos.ToString("N0"), Localizer["full combos"]))
+        @Card(PlayDataPaths.PlayHistory, "playHistory", Localizer["Play History"], Localizer["Every song you played, by day."],
+            (scores is null ? null : scores.Plays.Any() ? Ago(scores.Plays.Max(p => p.PlayTime)) : "–", Localizer["last played"]),
+            (scores?.Plays.Count().ToString("N0"), Localizer["plays"]))
+        @Card(PlayDataPaths.DaniDojo, "dani", Localizer["Dani Dojo"], Localizer["Your best run in each dan."],
+            (dans?.Count(d => d.ClearState != DanClearState.NotClear).ToString("N0"), Localizer["dans passed"]))
+        @if (EraPaths.HasDonChallenge(GameName))
+        {
+            @Card(EraPaths.DonChallenge, "medal", Localizer["Don Challenge"], Localizer["This month's tasks, your progress and the rewards."])
+        }
+        @* Stats needs numbers only Nijiiro's server keeps. *@
+        <div class="rounded-2xl border border-dashed border-zinc-300 p-5 opacity-70 dark:border-zinc-700">
+            <div class="flex items-center gap-2 text-zinc-500"><Icon Name="chart" /><span class="font-semibold">@Localizer["Stats"]</span></div>
+            <p class="mt-2 text-sm @Css.Muted">@string.Format(Localizer["Not available for {0} yet."], GameName)</p>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public string Game { get; set; } = "";
+
+    private string GameName => EraPaths.Older(Game) ?? Game;
+    private EraScores? scores;
+    private List<DanBestData>? dans;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.Set(GameName, Localizer["Play Data"]);
+        (scores, dans) = (null, null);
+        if (EraPaths.Older(Game) is null) return;
+        await Task.WhenAll(
+            Fill(async () => scores = await EraScores.LoadAsync(Client, GameDataService, GameName, Baid)),
+            Fill(async () => dans = (await Client.GetFromJsonAsync<DanBestDataResponse>($"api/{GameName}/DanBestData/{Baid}"))?.DanBestDataList ?? []));
+    }
+
+    private async Task Fill(Func<Task> load)
+    {
+        try
+        {
+            await load();
+        }
+        catch (HttpRequestException)
+        {
+            // That card keeps its dash and still links.
+        }
+        StateHasChanged();
+    }
+
+    private string Ago(DateTime t)
+    {
+        var days = (DateTime.Now.Date - t.ToLocalTime().Date).Days;
+        return days <= 0 ? Localizer["today"] : days == 1 ? Localizer["yesterday"] : string.Format(Localizer["{0} days ago"], days);
+    }
+
+    private RenderFragment Card(string page, string icon, string title, string blurb, params (string? Value, string Label)[] numbers) => __builder =>
+    {
+        <a href="@EraPaths.Of(Baid, GameName, page)" class="@Css.Card group block p-5 transition-colors hover:border-primary-500/40">
+            <div class="flex items-center gap-2"><Icon Name="@icon" Class="size-5 text-primary-500" /><span class="font-semibold">@title</span><Icon Name="chevRight" Class="ml-auto size-4 text-zinc-400 group-hover:text-primary-500" /></div>
+            <p class="mt-1 text-sm @Css.Muted">@blurb</p>
+            @if (numbers.Length > 0)
+            {
+                <dl class="mt-4 flex gap-6">
+                    @foreach (var (value, label) in numbers)
+                    {
+                        <div>
+                            <dd class="text-xl font-semibold tabular-nums">@(value ?? "–")</dd>
+                            <dt class="text-xs @Css.Muted">@label</dt>
+                        </div>
+                    }
+                </dl>
+            }
+        </a>
+    };
+}

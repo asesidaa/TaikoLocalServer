@@ -1,0 +1,19 @@
+@* An older game's result on a chart, without game art: a plain crown with "Clear" or "Full combo" (amber), or
+   "Played". They have no Donderful combo or score ranks. *@
+@if (Crown >= CrownType.Gold)
+{
+    <span class="@($"inline-flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400 {Class}")"><Icon Name="crown" Class="size-3.5" />@Localizer["Full combo"]</span>
+}
+else if (Crown == CrownType.Clear)
+{
+    <span class="@($"inline-flex items-center gap-1 text-xs font-medium {Class}")"><Icon Name="crown" Class="size-3.5" />@Localizer["Clear"]</span>
+}
+else
+{
+    <span class="@($"text-xs {Css.Muted} {Class}")">@Localizer["Played"]</span>
+}
+
+@code {
+    [Parameter] public CrownType Crown { get; set; }
+    [Parameter] public string Class { get; set; } = "";
+}

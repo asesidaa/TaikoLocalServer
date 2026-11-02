@@ -1,0 +1,7 @@
+@* Under an older game's page heading: which game it is, so a screenshot is never mistaken for Nijiiro. *@
+<p class="@($"flex items-center gap-1.5 text-sm {Css.Muted} {Class}")"><GameDot Game="GameInfo.Of(Game)" />Taiko no Tatsujin @GameInfo.Of(Game).Name</p>
+
+@code {
+    [Parameter, EditorRequired] public string Game { get; set; } = "";
+    [Parameter] public string Class { get; set; } = "";
+}

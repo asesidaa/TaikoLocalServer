@@ -120,6 +120,8 @@ try
     builder.Services.AddInfrastructure(builder.Configuration, enabledEras);
     builder.Services.AddAdminApi(builder.Configuration);
     builder.Services.AddAllnetMucha();
+    // Every game's cabinets are checked (blocked, approval only), whichever games are on.
+    TaikoLocalServer.Adapters.GameProtocol.Shared.Cabinets.CabinetFilter.AddOnce(builder.Services);
     if (enabledEras.Contains(GameEra.Nijiiro))
     {
         builder.Services.AddGameProtocolWwR08();

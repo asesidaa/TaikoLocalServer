@@ -1,0 +1,76 @@
+@page "/Users/{baid:int}/{Game}/PlayData/PlayHistory"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject GameDataService GameDataService
+@inject PageState Page
+
+<PageTitle>@Localizer["Play History"]</PageTitle>
+@* An older game's plays, newest day first. These games don't say where or how long you played, so there are no sessions. *@
+<div class="mx-auto max-w-3xl">
+    <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Play History"]</h1>
+    <GameLine Game="@GameName" Class="mb-5" />
+    @if (scores is null)
+    {
+        <div class="@Css.Card p-5"><Skeleton /></div>
+    }
+    else if (!scores.Plays.Any())
+    {
+        <p class="@Css.Card p-6 text-center text-sm @Css.Muted">@string.Format(Localizer["No {0} plays yet."], GameName)</p>
+    }
+    else
+    {
+        <div class="space-y-4">
+            @foreach (var day in Days.Take(shownDays))
+            {
+                <section class="@Css.Card overflow-hidden">
+                    <h2 class="flex items-baseline justify-between border-b border-zinc-100 px-4 py-2.5 dark:border-zinc-800">
+                        <span class="font-semibold">@day.Key.ToString("D")</span>
+                        <span class="text-xs @Css.Muted">@string.Format(Localizer["{0} songs"], day.Count())</span>
+                    </h2>
+                    <ul class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                        @foreach (var p in day.OrderByDescending(p => p.PlayTime))
+                        {
+                            <li class="flex flex-wrap items-center gap-x-3 gap-y-0.5 px-4 py-2 text-sm sm:flex-nowrap">
+                                <time class="w-12 shrink-0 text-xs tabular-nums @Css.Muted">@p.PlayTime.ToLocalTime().ToString("t")</time>
+                                <span class="min-w-0 flex-1 truncate font-medium">@scores.Name(p.SongId)</span>
+                                <DiffLabel Difficulty="p.Difficulty" Class="text-xs" />
+                                <EraCrown Crown="p.Crown" Class="w-24 shrink-0" />
+                                <span class="w-20 shrink-0 text-right tabular-nums">@p.Score.ToString("N0")</span>
+                            </li>
+                        }
+                    </ul>
+                </section>
+            }
+            @if (Days.Count > shownDays)
+            {
+                <button class="@Css.GhostButton w-full border border-zinc-200 dark:border-zinc-700" @onclick="() => shownDays += 14">@Localizer["Older days"]</button>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public string Game { get; set; } = "";
+
+    private string GameName => EraPaths.Older(Game) ?? Game;
+    private EraScores? scores;
+    private List<IGrouping<DateTime, SongPlayDatumDto>> Days = [];
+    private int shownDays = 14;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.SetEraPlayData(GameName, Localizer["Play Data"], Baid, Localizer["Play History"]);
+        scores = null;
+        if (EraPaths.Older(Game) is null) return;
+        try
+        {
+            scores = await EraScores.LoadAsync(Client, GameDataService, GameName, Baid);
+        }
+        catch (HttpRequestException)
+        {
+            scores = new([], new Dictionary<uint, MusicDetail>());
+        }
+        Days = scores.Plays.GroupBy(p => p.PlayTime.ToLocalTime().Date).OrderByDescending(g => g.Key).ToList();
+    }
+}

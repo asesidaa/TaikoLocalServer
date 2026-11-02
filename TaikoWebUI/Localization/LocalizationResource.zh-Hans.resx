@@ -4050,4 +4050,157 @@
   <data name="Telop messages" xml:space="preserve">
     <value>滚动消息</value>
   </data>
+  <data name="No {0} dan results yet." xml:space="preserve">
+    <value>还没有 {0} 的段位记录。</value>
+  </data>
+  <data name="Soul gauge {0} · combo {1}" xml:space="preserve">
+    <value>魂量表 {0} · 连段 {1}</value>
+  </data>
+  <data name="There's no Don Challenge round in {0} right now." xml:space="preserve">
+    <value>{0} 目前没有咚挑战。</value>
+  </data>
+  <data name="{0} days left" xml:space="preserve">
+    <value>还剩 {0} 天</value>
+  </data>
+  <data name="{0} of {1} tasks done" xml:space="preserve">
+    <value>已完成 {0}/{1} 个任务</value>
+  </data>
+  <data name="Earned" xml:space="preserve">
+    <value>已获得</value>
+  </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>无法获得</value>
+  </data>
+  <data name="Complete {0} tasks" xml:space="preserve">
+    <value>完成 {0} 个任务</value>
+  </data>
+  <data name="Title {0}" xml:space="preserve">
+    <value>称号 {0}</value>
+  </data>
+  <data name="Needs more tasks than this round has." xml:space="preserve">
+    <value>需要的任务比本轮的还多。</value>
+  </data>
+  <data name="No {0} scores yet." xml:space="preserve">
+    <value>还没有 {0} 的成绩。</value>
+  </data>
+  <data name="Best with Shin-uchi scoring" xml:space="preserve">
+    <value>真打计分的最佳成绩</value>
+  </data>
+  <data name="真打 (Shin-uchi) scores every note the same and counts separately, so a chart can have both bests." xml:space="preserve">
+    <value>真打对每个音符计分相同并单独记录，所以一张谱面可以有两个最佳成绩。</value>
+  </data>
+  <data name="Every song with your best crown on each difficulty." xml:space="preserve">
+    <value>每首歌曲及你在各难度的最佳王冠。</value>
+  </data>
+  <data name="Every song you played, by day." xml:space="preserve">
+    <value>按天列出你玩过的每首歌曲。</value>
+  </data>
+  <data name="plays" xml:space="preserve">
+    <value>次游玩</value>
+  </data>
+  <data name="Your best run in each dan." xml:space="preserve">
+    <value>你在每个段位的最佳挑战。</value>
+  </data>
+  <data name="dans passed" xml:space="preserve">
+    <value>已通过的段位</value>
+  </data>
+  <data name="This month's tasks, your progress and the rewards." xml:space="preserve">
+    <value>本月的任务、你的进度和奖励。</value>
+  </data>
+  <data name="Not available for {0} yet." xml:space="preserve">
+    <value>{0} 暂不可用。</value>
+  </data>
+  <data name="today" xml:space="preserve">
+    <value>今天</value>
+  </data>
+  <data name="yesterday" xml:space="preserve">
+    <value>昨天</value>
+  </data>
+  <data name="No {0} plays yet." xml:space="preserve">
+    <value>还没有 {0} 的游玩记录。</value>
+  </data>
+  <data name="Older days" xml:space="preserve">
+    <value>更早的日子</value>
+  </data>
+  <data name="No {0} profile yet: it's made the first time this card plays {0}." xml:space="preserve">
+    <value>还没有 {0} 的个人资料：这张卡第一次玩 {0} 时会创建。</value>
+  </data>
+  <data name="{0} doesn't have don-chan's 3D model here, so the preview is your initial." xml:space="preserve">
+    <value>{0} 在这里没有咚酱的 3D 模型，所以预览显示你的首字母。</value>
+  </data>
+  <data name="Name &amp; title" xml:space="preserve">
+    <value>名字和称号</value>
+  </data>
+  <data name="{0}'s item names aren't on this server, so items show their number." xml:space="preserve">
+    <value>这台服务器没有 {0} 的物品名称，所以显示编号。</value>
+  </data>
+  <data name="Colours" xml:space="preserve">
+    <value>颜色</value>
+  </data>
+  <data name="Arms &amp; legs" xml:space="preserve">
+    <value>手脚</value>
+  </data>
+  <data name="Game options" xml:space="preserve">
+    <value>游戏选项</value>
+  </data>
+  <data name="Dan on nameplate" xml:space="preserve">
+    <value>名牌显示段位</value>
+  </data>
+  <data name="Folder close button" xml:space="preserve">
+    <value>关闭文件夹按钮</value>
+  </data>
+  <data name="Skip &quot;how to play&quot;" xml:space="preserve">
+    <value>跳过“玩法说明”</value>
+  </data>
+  <data name="Wear new costume items" xml:space="preserve">
+    <value>穿上新装扮</value>
+  </data>
+  <data name="A costume item won at the cabinet is put on straight away." xml:space="preserve">
+    <value>在机台获得的装扮会立刻穿上。</value>
+  </data>
+  <data name="Local ranking difficulty" xml:space="preserve">
+    <value>店内排名难度</value>
+  </data>
+  <data name="Default difficulty" xml:space="preserve">
+    <value>默认难度</value>
+  </data>
+  <data name="Taikojuku folder dan" xml:space="preserve">
+    <value>太鼓塾文件夹段位</value>
+  </data>
+  <data name="{0} doesn't have {1}, so they aren't shown." xml:space="preserve">
+    <value>{0} 没有{1}，所以不显示。</value>
+  </data>
+  <data name="Saved your {0} profile." xml:space="preserve">
+    <value>已保存你的 {0} 个人资料。</value>
+  </data>
+  <data name="Drum sound {0}" xml:space="preserve">
+    <value>音色 {0}</value>
+  </data>
+  <data name="title plates" xml:space="preserve">
+    <value>称号牌</value>
+  </data>
+  <data name="the Taikojuku folder" xml:space="preserve">
+    <value>太鼓塾文件夹</value>
+  </data>
+  <data name="the folder close button" xml:space="preserve">
+    <value>关闭文件夹按钮</value>
+  </data>
+  <data name="wearing new items" xml:space="preserve">
+    <value>穿上新装扮</value>
+  </data>
+  <data name="{0}'s songs aren't loaded on this server yet." xml:space="preserve">
+    <value>这台服务器尚未加载 {0} 的歌曲。</value>
+  </data>
+  <data name="Show {0} more" xml:space="preserve">
+    <value>再显示 {0} 首</value>
+  </data>
+  <data name="{0} isn't in {1}" xml:space="preserve">
+    <value>{1} 没有{0}</value>
+  </data>
+  <data name="{0}'s Play Data" xml:space="preserve">
+    <value>{0} 的游玩数据</value>
+  </data>
+  <data name="{0} in {1}" xml:space="preserve">
+    <value>{1} 的{0}</value>
+  </data>
 </root>

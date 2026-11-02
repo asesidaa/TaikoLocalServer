@@ -1,0 +1,84 @@
+@page "/Users/{baid:int}/{Game}/PlayData/HighScores"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject GameDataService GameDataService
+@inject PageState Page
+
+<PageTitle>@Localizer["High Scores"]</PageTitle>
+@* An older game's best score on each chart, a tab per difficulty. 真打 marks a best kept with Shin-uchi scoring, which
+   these games score separately. *@
+<div class="mx-auto max-w-4xl">
+    <h1 class="text-2xl font-semibold tracking-tight">@Localizer["High Scores"]</h1>
+    <GameLine Game="@GameName" Class="mb-5" />
+    <div class="flex flex-wrap gap-1.5" role="tablist" aria-label="@Localizer["Difficulty"]">
+        @foreach (var (d, name) in GameData.Difficulties)
+        {
+            var on = d == difficulty;
+            <button role="tab" aria-selected="@Css.Aria(on)" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium @Css.Chip(on)" @onclick="() => difficulty = d">
+                <span class="size-2 rounded-full" style="background:@GameData.DifficultyColor(d)" aria-hidden="true"></span>@name
+                <span class="text-xs opacity-60">@(scores?.Bests.Count(b => b.Difficulty == d) ?? 0)</span>
+            </button>
+        }
+    </div>
+    <section class="@Css.Card mt-4 overflow-hidden" role="tabpanel">
+        @if (scores is null)
+        {
+            <div class="p-5"><Skeleton /></div>
+        }
+        else if (Rows.Count == 0)
+        {
+            <p class="p-6 text-center text-sm @Css.Muted">@string.Format(Localizer["No {0} scores yet."], GameData.DifficultyName(difficulty))</p>
+        }
+        else
+        {
+            <ul class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                @foreach (var b in Rows)
+                {
+                    <li class="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 sm:flex-nowrap">
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-medium">@scores.Name(b.SongId)</p>
+                            <EraCrown Crown="b.BestCrown" Class="sm:hidden" />
+                        </div>
+                        <EraCrown Crown="b.BestCrown" Class="hidden w-24 shrink-0 sm:inline-flex" />
+                        <span class="w-20 shrink-0 text-right font-semibold tabular-nums">@b.BestScore.ToString("N0")</span>
+                        <span class="w-28 shrink-0 text-right">
+                            @if (b.AlternateScore is { } shin)
+                            {
+                                <span class="inline-flex items-center gap-1 text-xs tabular-nums" title="@Localizer["Best with Shin-uchi scoring"]">
+                                    <span class="rounded border border-zinc-300 px-1 text-[10px] font-semibold dark:border-zinc-600">真打</span>@shin.BestScore.ToString("N0")
+                                </span>
+                            }
+                        </span>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+    <p class="mt-3 text-xs @Css.Muted">@Localizer["真打 (Shin-uchi) scores every note the same and counts separately, so a chart can have both bests."]</p>
+</div>
+
+@code {
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public string Game { get; set; } = "";
+
+    private string GameName => EraPaths.Older(Game) ?? Game;
+    private EraScores? scores;
+    private Difficulty difficulty = Difficulty.Oni;
+
+    private List<SongBestData> Rows => scores?.Bests.Where(b => b.Difficulty == difficulty).OrderByDescending(b => b.BestScore).ToList() ?? [];
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.SetEraPlayData(GameName, Localizer["Play Data"], Baid, Localizer["High Scores"]);
+        scores = null;
+        if (EraPaths.Older(Game) is null) return;
+        try
+        {
+            scores = await EraScores.LoadAsync(Client, GameDataService, GameName, Baid);
+        }
+        catch (HttpRequestException)
+        {
+            scores = new([], new Dictionary<uint, MusicDetail>());
+        }
+    }
+}

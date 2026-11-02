@@ -4050,4 +4050,157 @@
   <data name="Telop messages" xml:space="preserve">
     <value>テロップ</value>
   </data>
+  <data name="No {0} dan results yet." xml:space="preserve">
+    <value>{0}の段位の記録はまだありません。</value>
+  </data>
+  <data name="Soul gauge {0} · combo {1}" xml:space="preserve">
+    <value>魂ゲージ{0}・コンボ{1}</value>
+  </data>
+  <data name="There's no Don Challenge round in {0} right now." xml:space="preserve">
+    <value>{0}では今、ドンチャレは開催されていません。</value>
+  </data>
+  <data name="{0} days left" xml:space="preserve">
+    <value>残り{0}日</value>
+  </data>
+  <data name="{0} of {1} tasks done" xml:space="preserve">
+    <value>{1}個中{0}個のお題を達成</value>
+  </data>
+  <data name="Earned" xml:space="preserve">
+    <value>獲得済み</value>
+  </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>獲得不可</value>
+  </data>
+  <data name="Complete {0} tasks" xml:space="preserve">
+    <value>お題を{0}個達成</value>
+  </data>
+  <data name="Title {0}" xml:space="preserve">
+    <value>称号{0}</value>
+  </data>
+  <data name="Needs more tasks than this round has." xml:space="preserve">
+    <value>このラウンドのお題の数より多く必要です。</value>
+  </data>
+  <data name="No {0} scores yet." xml:space="preserve">
+    <value>{0}のスコアはまだありません。</value>
+  </data>
+  <data name="Best with Shin-uchi scoring" xml:space="preserve">
+    <value>真打での自己ベスト</value>
+  </data>
+  <data name="真打 (Shin-uchi) scores every note the same and counts separately, so a chart can have both bests." xml:space="preserve">
+    <value>真打はすべての音符を同じ点数で数え、別に記録されるので、1つの譜面に2つのベストがあることがあります。</value>
+  </data>
+  <data name="Every song with your best crown on each difficulty." xml:space="preserve">
+    <value>全曲と、各難易度での最高の王冠。</value>
+  </data>
+  <data name="Every song you played, by day." xml:space="preserve">
+    <value>プレイした曲を日ごとに。</value>
+  </data>
+  <data name="plays" xml:space="preserve">
+    <value>プレイ</value>
+  </data>
+  <data name="Your best run in each dan." xml:space="preserve">
+    <value>各段位での自己ベスト。</value>
+  </data>
+  <data name="dans passed" xml:space="preserve">
+    <value>合格した段位</value>
+  </data>
+  <data name="This month's tasks, your progress and the rewards." xml:space="preserve">
+    <value>今月のお題、進み具合、報酬。</value>
+  </data>
+  <data name="Not available for {0} yet." xml:space="preserve">
+    <value>{0}ではまだ利用できません。</value>
+  </data>
+  <data name="today" xml:space="preserve">
+    <value>今日</value>
+  </data>
+  <data name="yesterday" xml:space="preserve">
+    <value>昨日</value>
+  </data>
+  <data name="No {0} plays yet." xml:space="preserve">
+    <value>{0}のプレイはまだありません。</value>
+  </data>
+  <data name="Older days" xml:space="preserve">
+    <value>さらに前の日</value>
+  </data>
+  <data name="No {0} profile yet: it's made the first time this card plays {0}." xml:space="preserve">
+    <value>{0}のプロフィールはまだありません。このカードで初めて{0}をプレイしたときに作られます。</value>
+  </data>
+  <data name="{0} doesn't have don-chan's 3D model here, so the preview is your initial." xml:space="preserve">
+    <value>{0}にはここでどんちゃんの3Dモデルがないので、プレビューは頭文字です。</value>
+  </data>
+  <data name="Name &amp; title" xml:space="preserve">
+    <value>名前と称号</value>
+  </data>
+  <data name="{0}'s item names aren't on this server, so items show their number." xml:space="preserve">
+    <value>{0}のアイテム名はこのサーバーにないため、番号で表示されます。</value>
+  </data>
+  <data name="Colours" xml:space="preserve">
+    <value>カラー</value>
+  </data>
+  <data name="Arms &amp; legs" xml:space="preserve">
+    <value>手足</value>
+  </data>
+  <data name="Game options" xml:space="preserve">
+    <value>ゲームの設定</value>
+  </data>
+  <data name="Dan on nameplate" xml:space="preserve">
+    <value>ネームプレートに段位</value>
+  </data>
+  <data name="Folder close button" xml:space="preserve">
+    <value>フォルダを閉じるボタン</value>
+  </data>
+  <data name="Skip &quot;how to play&quot;" xml:space="preserve">
+    <value>「遊び方」を飛ばす</value>
+  </data>
+  <data name="Wear new costume items" xml:space="preserve">
+    <value>新しい着せ替えを着る</value>
+  </data>
+  <data name="A costume item won at the cabinet is put on straight away." xml:space="preserve">
+    <value>筐体で手に入れた着せ替えをすぐに着ます。</value>
+  </data>
+  <data name="Local ranking difficulty" xml:space="preserve">
+    <value>店内ランキングの難易度</value>
+  </data>
+  <data name="Default difficulty" xml:space="preserve">
+    <value>最初の難易度</value>
+  </data>
+  <data name="Taikojuku folder dan" xml:space="preserve">
+    <value>太鼓塾フォルダの段位</value>
+  </data>
+  <data name="{0} doesn't have {1}, so they aren't shown." xml:space="preserve">
+    <value>{0}には{1}がないので表示しません。</value>
+  </data>
+  <data name="Saved your {0} profile." xml:space="preserve">
+    <value>{0}のプロフィールを保存しました。</value>
+  </data>
+  <data name="Drum sound {0}" xml:space="preserve">
+    <value>音色{0}</value>
+  </data>
+  <data name="title plates" xml:space="preserve">
+    <value>称号プレート</value>
+  </data>
+  <data name="the Taikojuku folder" xml:space="preserve">
+    <value>太鼓塾フォルダ</value>
+  </data>
+  <data name="the folder close button" xml:space="preserve">
+    <value>フォルダを閉じるボタン</value>
+  </data>
+  <data name="wearing new items" xml:space="preserve">
+    <value>新しい着せ替えを着る設定</value>
+  </data>
+  <data name="{0}'s songs aren't loaded on this server yet." xml:space="preserve">
+    <value>このサーバーでは{0}の曲がまだ読み込まれていません。</value>
+  </data>
+  <data name="Show {0} more" xml:space="preserve">
+    <value>さらに{0}件表示</value>
+  </data>
+  <data name="{0} isn't in {1}" xml:space="preserve">
+    <value>{1}には{0}がありません</value>
+  </data>
+  <data name="{0}'s Play Data" xml:space="preserve">
+    <value>{0}のプレイデータ</value>
+  </data>
+  <data name="{0} in {1}" xml:space="preserve">
+    <value>{1}の{0}</value>
+  </data>
 </root>

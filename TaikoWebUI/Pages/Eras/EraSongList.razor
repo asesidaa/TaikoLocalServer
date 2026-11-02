@@ -1,0 +1,109 @@
+@page "/Users/{baid:int}/{Game}/PlayData/Songs"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject GameDataService GameDataService
+@inject PageState Page
+
+<PageTitle>@Localizer["Song List"]</PageTitle>
+@* An older game's songs from its own catalogue: each difficulty's ★ level and your best crown on it. *@
+<div class="mx-auto max-w-5xl">
+    <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Song List"]</h1>
+    <GameLine Game="@GameName" Class="mb-5" />
+    <input type="search" class="@Css.Input" placeholder="@Localizer["Search by name or ID"]" aria-label="@Localizer["Search by name or ID"]"
+           value="@query" @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
+    <section class="@Css.Card mt-4 overflow-x-auto">
+        @if (scores is null)
+        {
+            <div class="p-5"><Skeleton /></div>
+        }
+        else if (scores.Songs.Count == 0)
+        {
+            <p class="p-6 text-center text-sm @Css.Muted">@string.Format(Localizer["{0}'s songs aren't loaded on this server yet."], GameName)</p>
+        }
+        else
+        {
+            var rows = Matches();
+            <table class="w-full text-sm">
+                <thead class="text-left text-xs @Css.Muted">
+                    <tr>
+                        <th class="px-4 py-2 font-medium">@Localizer["Song"]</th>
+                        @foreach (var (d, _) in GameData.Difficulties)
+                        {
+                            <th class="px-2 py-2 text-center font-medium"><DiffLabel Difficulty="d" Class="justify-center" /></th>
+                        }
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                    @foreach (var s in rows.Take(shown))
+                    {
+                        <tr>
+                            <td class="max-w-72 px-4 py-2">
+                                <p class="truncate font-medium">@s.SongName</p>
+                                <p class="font-mono text-[11px] @Css.Muted">#@s.SongId</p>
+                            </td>
+                            @foreach (var (d, _) in GameData.Difficulties)
+                            {
+                                var stars = Stars(s, d);
+                                var best = bests.GetValueOrDefault((s.SongId, d));
+                                <td class="px-2 py-2 text-center">
+                                    @if (stars > 0)
+                                    {
+                                        <span class="block text-xs tabular-nums">★@stars</span>
+                                        @if (best is not null)
+                                        {
+                                            <EraCrown Crown="best.BestCrown" />
+                                        }
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            @if (rows.Count > shown)
+            {
+                <button class="@Css.GhostButton m-2" @onclick="() => shown += 200">@string.Format(Localizer["Show {0} more"], Math.Min(200, rows.Count - shown))</button>
+            }
+        }
+    </section>
+</div>
+
+@code {
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public string Game { get; set; } = "";
+
+    private string GameName => EraPaths.Older(Game) ?? Game;
+    private EraScores? scores;
+    private Dictionary<(uint, Difficulty), SongBestData> bests = [];
+    private string query = "";
+    private int shown = 200;
+
+    private static int Stars(MusicDetail m, Difficulty d) => d switch
+    {
+        Difficulty.Easy => m.StarEasy, Difficulty.Normal => m.StarNormal, Difficulty.Hard => m.StarHard, Difficulty.Oni => m.StarOni, _ => m.StarUra,
+    };
+
+    private List<MusicDetail> Matches()
+    {
+        var q = query.Trim();
+        return scores!.Songs.Values.Where(s => q.Length == 0 || s.SongId.ToString() == q
+                || s.SongName.Contains(q, StringComparison.OrdinalIgnoreCase) || s.SongNameEN.Contains(q, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(s => s.SongId).ToList();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.SetEraPlayData(GameName, Localizer["Play Data"], Baid, Localizer["Song List"]);
+        scores = null;
+        if (EraPaths.Older(Game) is null) return;
+        try
+        {
+            scores = await EraScores.LoadAsync(Client, GameDataService, GameName, Baid);
+        }
+        catch (HttpRequestException)
+        {
+            scores = new([], new Dictionary<uint, MusicDetail>());
+        }
+        bests = scores.Bests.GroupBy(b => (b.SongId, b.Difficulty)).ToDictionary(g => g.Key, g => g.First());
+    }
+}

@@ -1,0 +1,42 @@
+@page "/Users/{baid:int}/{Game}/PlayData/{Name}"
+@page "/Users/{baid:int}/PlayData/{Name}"
+@attribute [Authorize]
+@inject PageState Page
+@inject AuthService AuthService
+
+<PageTitle>@Title</PageTitle>
+@* Switching games keeps the page; when the other game doesn't have it, this says so and offers the games that do. *@
+<div class="mx-auto max-w-lg py-10 text-center">
+    <span class="mx-auto grid size-12 place-items-center rounded-full bg-zinc-100 text-zinc-500 dark:bg-zinc-800"><Icon Name="construction" Class="size-6" /></span>
+    <h1 class="mt-4 text-xl font-semibold">@string.Format(Localizer["{0} isn't in {1}"], Label, Current)</h1>
+    <div class="mt-6 flex flex-wrap justify-center gap-2">
+        <a class="@Css.PrimaryButton" href="@EraPaths.Index(Baid, Current)">@string.Format(Localizer["{0}'s Play Data"], Current)</a>
+        @foreach (var other in Others)
+        {
+            <a class="@Css.GhostButton border border-zinc-200 dark:border-zinc-700" href="@EraPaths.Of(Baid, other, Name)"><GameDot Game="GameInfo.Of(other)" />@string.Format(Localizer["{0} in {1}"], Label, other)</a>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public string? Game { get; set; }
+    [Parameter] public string Name { get; set; } = "";
+
+    private string Current => EraPaths.Older(Game) ?? EraPaths.Nijiiro;
+
+    private string Label => Name switch
+    {
+        PlayDataPaths.Stats => Localizer["Stats"], PlayDataPaths.Songs => Localizer["Song List"], PlayDataPaths.Favourites => Localizer["Favourites"],
+        PlayDataPaths.HighScores => Localizer["High Scores"], PlayDataPaths.PlayHistory => Localizer["Play History"],
+        PlayDataPaths.DaniDojo => Localizer["Dani Dojo"], EraPaths.DonChallenge => Localizer["Don Challenge"], _ => Name,
+    };
+
+    private string Title => string.Format(Localizer["{0} isn't in {1}"], Label, Current);
+
+    // Up to two games that are on and have this page, newest first.
+    private IEnumerable<string> Others => GameInfo.All.Select(g => g.Name)
+        .Where(g => g != Current && AuthService.EnabledGames.Contains(g) && EraPaths.PagesOf(g).Contains(Name)).Take(2);
+
+    protected override void OnParametersSet() => Page.Set(Current, Label);
+}

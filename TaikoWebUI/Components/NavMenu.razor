@@ -15,11 +15,16 @@
     @Link(View.Baid > 0 ? $"/Users/{Baid}/Dashboard" : "/", "dashboard", Localizer["Dashboard"])
     @if (Baid > 0)
     {
-        @Link($"/Users/{Baid}/Profile", "profile", Localizer["Profile"])
+        @if (AuthService.EnabledGames.Count > 1)
+        {
+            @* Which game's pages these are; switching keeps the page when that game has it. *@
+            <GameMenu Games="AuthService.EnabledGames" Value="@Game" ValueChanged="SwitchGame" Class="my-1.5" />
+        }
+        @Link(EraPaths.Profile(Baid, Game), "profile", Localizer["Profile"])
         @* Play Data: the label opens its index, the chevron folds its pages away (they stay shown while one is open). *@
         var playDataShown = playDataOpen || OnPlayDataPage;
         <div class="flex items-center gap-0.5">
-            <div class="min-w-0 flex-1">@Link(PlayDataPaths.Index(Baid), "playData", Localizer["Play Data"])</div>
+            <div class="min-w-0 flex-1">@Link(EraPaths.Index(Baid, Game), "playData", Localizer["Play Data"])</div>
             <button class="@Css.IconButton" aria-expanded="@Css.Aria(playDataShown)" aria-controls="nav-play-data"
                     aria-label="@Localizer["Play Data"]" @onclick="() => playDataOpen = !playDataShown">
                 <span class="chev @(playDataShown ? "rotate-180" : "")"><Icon Name="chevDown" /></span>
@@ -28,12 +33,10 @@
         @if (playDataShown)
         {
             <div id="nav-play-data" class="fade space-y-0.5">
-                @Sub(PlayDataPaths.Stats, Localizer["Stats"])
-                @Sub(PlayDataPaths.Songs, Localizer["Song List"], prefix: true)
-                @Sub(PlayDataPaths.Favourites, Localizer["Favourites"])
-                @Sub(PlayDataPaths.HighScores, Localizer["High Scores"])
-                @Sub(PlayDataPaths.PlayHistory, Localizer["Play History"])
-                @Sub(PlayDataPaths.DaniDojo, Localizer["Dani Dojo"])
+                @foreach (var page in EraPaths.PagesOf(Game))
+                {
+                    @Sub(page, PageLabel(page), prefix: page == PlayDataPaths.Songs)
+                }
             </div>
         }
         @Link(View.Baid > 0 ? $"/Users/{Baid}/Settings" : "/Settings", "settings", Localizer["Settings"], prefix: true)
@@ -101,12 +104,38 @@ else if (!AuthService.LoginRequired)
     };
 
     private bool playDataOpen = true;
-    private bool OnPlayDataPage => ("/" + Nav.ToBaseRelativePath(Nav.Uri)).StartsWith(PlayDataPaths.Index(Baid) + "/", StringComparison.OrdinalIgnoreCase);
+    private bool OnPlayDataPage => ("/" + Nav.ToBaseRelativePath(Nav.Uri)).StartsWith(EraPaths.Index(Baid, Game) + "/", StringComparison.OrdinalIgnoreCase);
+
+    // The game the player pages are for: the page's own when it's in one, else the last one picked.
+    private string picked = EraPaths.Nijiiro;
+    private string Game
+    {
+        get
+        {
+            var path = "/" + Nav.ToBaseRelativePath(Nav.Uri);
+            if (EraPaths.Switch(path, Baid, EraPaths.Nijiiro) is not null) picked = EraPaths.GameOf(path);
+            return AuthService.EnabledGames.Contains(picked) ? picked
+                : AuthService.NijiiroOn ? EraPaths.Nijiiro : GameInfo.All.First(g => AuthService.EnabledGames.Contains(g.Name)).Name;
+        }
+    }
+
+    private void SwitchGame(string to)
+    {
+        picked = to;
+        Nav.NavigateTo(EraPaths.Switch("/" + Nav.ToBaseRelativePath(Nav.Uri), Baid, to) ?? EraPaths.Index(Baid, to));
+    }
+
+    private string PageLabel(string page) => page switch
+    {
+        PlayDataPaths.Stats => Localizer["Stats"], PlayDataPaths.Songs => Localizer["Song List"], PlayDataPaths.Favourites => Localizer["Favourites"],
+        PlayDataPaths.HighScores => Localizer["High Scores"], PlayDataPaths.PlayHistory => Localizer["Play History"],
+        PlayDataPaths.DaniDojo => Localizer["Dani Dojo"], _ => Localizer["Don Challenge"],
+    };
 
     // A Play Data page, indented under it.
     private RenderFragment Sub(string page, string label, bool prefix = false) => __builder =>
     {
-        var href = PlayDataPaths.Of(Baid, page);
+        var href = EraPaths.Of(Baid, Game, page);
         var active = IsActive(href, prefix);
         <a href="@href" aria-current="@(active ? "page" : null)"
            class="flex w-full items-center rounded-xl py-2 pl-10 pr-3 text-sm transition-colors @(active ? "bg-primary-500/10 font-medium text-primary-700 dark:text-primary-300" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/70 dark:hover:text-zinc-100")">

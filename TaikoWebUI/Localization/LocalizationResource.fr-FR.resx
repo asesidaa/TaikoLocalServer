@@ -4050,4 +4050,157 @@
   <data name="Telop messages" xml:space="preserve">
     <value>Messages défilants</value>
   </data>
+  <data name="No {0} dan results yet." xml:space="preserve">
+    <value>Aucun résultat de dan dans {0} pour l'instant.</value>
+  </data>
+  <data name="Soul gauge {0} · combo {1}" xml:space="preserve">
+    <value>Jauge d'âme {0} · combo {1}</value>
+  </data>
+  <data name="There's no Don Challenge round in {0} right now." xml:space="preserve">
+    <value>Pas de manche Don Challenge dans {0} en ce moment.</value>
+  </data>
+  <data name="{0} days left" xml:space="preserve">
+    <value>{0} jours restants</value>
+  </data>
+  <data name="{0} of {1} tasks done" xml:space="preserve">
+    <value>{0} tâches sur {1} faites</value>
+  </data>
+  <data name="Earned" xml:space="preserve">
+    <value>Obtenu</value>
+  </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>Indisponible</value>
+  </data>
+  <data name="Complete {0} tasks" xml:space="preserve">
+    <value>Terminer {0} tâches</value>
+  </data>
+  <data name="Title {0}" xml:space="preserve">
+    <value>Titre {0}</value>
+  </data>
+  <data name="Needs more tasks than this round has." xml:space="preserve">
+    <value>Demande plus de tâches que cette manche n'en a.</value>
+  </data>
+  <data name="No {0} scores yet." xml:space="preserve">
+    <value>Aucun score en {0} pour l'instant.</value>
+  </data>
+  <data name="Best with Shin-uchi scoring" xml:space="preserve">
+    <value>Meilleur en notation Shin-uchi</value>
+  </data>
+  <data name="真打 (Shin-uchi) scores every note the same and counts separately, so a chart can have both bests." xml:space="preserve">
+    <value>真打 (Shin-uchi) compte chaque note pareil et à part : un morceau peut avoir les deux meilleurs scores.</value>
+  </data>
+  <data name="Every song with your best crown on each difficulty." xml:space="preserve">
+    <value>Chaque morceau avec votre meilleure couronne à chaque difficulté.</value>
+  </data>
+  <data name="Every song you played, by day." xml:space="preserve">
+    <value>Chaque morceau joué, jour par jour.</value>
+  </data>
+  <data name="plays" xml:space="preserve">
+    <value>parties</value>
+  </data>
+  <data name="Your best run in each dan." xml:space="preserve">
+    <value>Votre meilleure tentative dans chaque dan.</value>
+  </data>
+  <data name="dans passed" xml:space="preserve">
+    <value>dans réussis</value>
+  </data>
+  <data name="This month's tasks, your progress and the rewards." xml:space="preserve">
+    <value>Les tâches du mois, votre progression et les récompenses.</value>
+  </data>
+  <data name="Not available for {0} yet." xml:space="preserve">
+    <value>Pas encore disponible pour {0}.</value>
+  </data>
+  <data name="today" xml:space="preserve">
+    <value>aujourd'hui</value>
+  </data>
+  <data name="yesterday" xml:space="preserve">
+    <value>hier</value>
+  </data>
+  <data name="No {0} plays yet." xml:space="preserve">
+    <value>Aucune partie de {0} pour l'instant.</value>
+  </data>
+  <data name="Older days" xml:space="preserve">
+    <value>Jours plus anciens</value>
+  </data>
+  <data name="No {0} profile yet: it's made the first time this card plays {0}." xml:space="preserve">
+    <value>Pas encore de profil {0} : il est créé la première fois que cette carte joue à {0}.</value>
+  </data>
+  <data name="{0} doesn't have don-chan's 3D model here, so the preview is your initial." xml:space="preserve">
+    <value>{0} n'a pas le modèle 3D de don-chan ici : l'aperçu montre votre initiale.</value>
+  </data>
+  <data name="Name &amp; title" xml:space="preserve">
+    <value>Nom et titre</value>
+  </data>
+  <data name="{0}'s item names aren't on this server, so items show their number." xml:space="preserve">
+    <value>Les noms d'objets de {0} ne sont pas sur ce serveur : les objets affichent leur numéro.</value>
+  </data>
+  <data name="Colours" xml:space="preserve">
+    <value>Couleurs</value>
+  </data>
+  <data name="Arms &amp; legs" xml:space="preserve">
+    <value>Bras et jambes</value>
+  </data>
+  <data name="Game options" xml:space="preserve">
+    <value>Options du jeu</value>
+  </data>
+  <data name="Dan on nameplate" xml:space="preserve">
+    <value>Dan sur la plaque</value>
+  </data>
+  <data name="Folder close button" xml:space="preserve">
+    <value>Bouton de fermeture de dossier</value>
+  </data>
+  <data name="Skip &quot;how to play&quot;" xml:space="preserve">
+    <value>Passer « Comment jouer »</value>
+  </data>
+  <data name="Wear new costume items" xml:space="preserve">
+    <value>Porter les nouveaux objets</value>
+  </data>
+  <data name="A costume item won at the cabinet is put on straight away." xml:space="preserve">
+    <value>Un objet gagné à la borne est porté tout de suite.</value>
+  </data>
+  <data name="Local ranking difficulty" xml:space="preserve">
+    <value>Difficulté du classement local</value>
+  </data>
+  <data name="Default difficulty" xml:space="preserve">
+    <value>Difficulté par défaut</value>
+  </data>
+  <data name="Taikojuku folder dan" xml:space="preserve">
+    <value>Dan du dossier Taikojuku</value>
+  </data>
+  <data name="{0} doesn't have {1}, so they aren't shown." xml:space="preserve">
+    <value>{0} n'a pas {1} : ils ne sont pas affichés.</value>
+  </data>
+  <data name="Saved your {0} profile." xml:space="preserve">
+    <value>Profil {0} enregistré.</value>
+  </data>
+  <data name="Drum sound {0}" xml:space="preserve">
+    <value>Son de tambour {0}</value>
+  </data>
+  <data name="title plates" xml:space="preserve">
+    <value>les plaques de titre</value>
+  </data>
+  <data name="the Taikojuku folder" xml:space="preserve">
+    <value>le dossier Taikojuku</value>
+  </data>
+  <data name="the folder close button" xml:space="preserve">
+    <value>le bouton de fermeture de dossier</value>
+  </data>
+  <data name="wearing new items" xml:space="preserve">
+    <value>le port des nouveaux objets</value>
+  </data>
+  <data name="{0}'s songs aren't loaded on this server yet." xml:space="preserve">
+    <value>Les morceaux de {0} ne sont pas encore chargés sur ce serveur.</value>
+  </data>
+  <data name="Show {0} more" xml:space="preserve">
+    <value>Afficher {0} de plus</value>
+  </data>
+  <data name="{0} isn't in {1}" xml:space="preserve">
+    <value>{0} n'existe pas dans {1}</value>
+  </data>
+  <data name="{0}'s Play Data" xml:space="preserve">
+    <value>Données de jeu de {0}</value>
+  </data>
+  <data name="{0} in {1}" xml:space="preserve">
+    <value>{0} dans {1}</value>
+  </data>
 </root>

@@ -1,0 +1,127 @@
+@page "/Users/{baid:int}/{Game}/PlayData/DonChallenge"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject GameDataService GameDataService
+@inject PageState Page
+
+<PageTitle>@Localizer["Don Challenge"]</PageTitle>
+@* Red and White's Don Challenge: this round's tasks with your progress, and the reward tiers. *@
+<div class="mx-auto max-w-3xl">
+    <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Don Challenge"]</h1>
+    <GameLine Game="@GameName" Class="mb-5" />
+    @if (data is null)
+    {
+        <div class="@Css.Card p-5"><Skeleton /></div>
+    }
+    else if (!data.IsAvailable)
+    {
+        <p class="@Css.Card p-6 text-center text-sm @Css.Muted">@(data.Message ?? string.Format(Localizer["There's no Don Challenge round in {0} right now."], GameName))</p>
+    }
+    else
+    {
+        var done = data.CompletedTaskCount;
+        var total = Math.Max(1u, data.PersonalTaskCount);
+        <section class="@Css.Card p-5">
+            <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <h2 class="font-mono text-sm font-semibold">@data.BundleId</h2>
+                @if (data.EndsAt is { } ends)
+                {
+                    var left = (ends.LocalDateTime.Date - DateTime.Now.Date).Days;
+                    <span class="text-xs @Css.Muted">@(data.StartsAt?.LocalDateTime.ToString("d")) – @ends.LocalDateTime.ToString("d") · @string.Format(Localizer["{0} days left"], Math.Max(0, left))</span>
+                }
+            </div>
+            <p class="mt-2 text-sm">@string.Format(Localizer["{0} of {1} tasks done"], done, data.PersonalTaskCount)</p>
+            <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800" role="progressbar" aria-valuenow="@done" aria-valuemin="0" aria-valuemax="@data.PersonalTaskCount">
+                <div class="h-full rounded-full bg-primary-500" style="width:@(done * 100 / total)%"></div>
+            </div>
+        </section>
+        <section class="mt-4 space-y-3">
+            <h2 class="text-sm font-semibold">@Localizer["Tasks"]</h2>
+            @foreach (var t in data.Tasks.OrderBy(t => t.Slot))
+            {
+                <div class="@Css.Card p-4">
+                    <div class="flex items-start gap-3">
+                        <span class="@($"mt-0.5 grid size-6 shrink-0 place-items-center rounded-full {(t.Completed ? "bg-emerald-500 text-white" : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800")}")">
+                            @if (t.Completed) { <Icon Name="check" Class="size-3.5" /> } else { <span class="text-xs font-semibold">@t.Slot</span> }
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-medium">@t.Name</p>
+                            <p class="text-xs @Css.Muted">@t.RuleLabel@(t.TargetValue is { } target ? $" · {t.ProgressValue} / {target}" : "")</p>
+                            @if (!t.Completed && t.TargetValue is { } goal and > 0)
+                            {
+                                <div class="mt-1.5 h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"><div class="h-full rounded-full bg-primary-500" style="width:@(Math.Min(100, t.ProgressValue * 100 / goal))%"></div></div>
+                            }
+                            @if (t.Tracks.Count > 0)
+                            {
+                                <ul class="mt-2 space-y-0.5 text-xs">
+                                    @foreach (var track in t.Tracks.OrderBy(x => x.TrackNumber))
+                                    {
+                                        <li class="flex gap-2"><span class="@Css.Muted">@track.TrackNumber.</span><span class="truncate">@SongName(track.SongNumber)</span></li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </section>
+        <section class="mt-4 space-y-2">
+            <h2 class="text-sm font-semibold">@Localizer["Rewards"]</h2>
+            @foreach (var r in data.Rewards.OrderBy(r => r.RequiredCompletedTasks))
+            {
+                var (icon, word, tone) = r.Status switch
+                {
+                    DonChallengeRewardStatus.Earned => ("check", Localizer["Earned"], "text-emerald-600 dark:text-emerald-400"),
+                    DonChallengeRewardStatus.Locked => ("lock", Localizer["Locked"], Css.Muted),
+                    _ => ("ban", Localizer["Unavailable"], "text-zinc-400"),
+                };
+                <div class="@($"{Css.Card} flex items-start gap-3 p-4 {(r.Status == DonChallengeRewardStatus.Unavailable ? "opacity-60" : "")}")">
+                    <div class="min-w-0 flex-1 text-sm">
+                        <p class="font-medium">@string.Format(Localizer["Complete {0} tasks"], r.RequiredCompletedTasks)</p>
+                        @foreach (var song in r.RewardSongNoes)
+                        {
+                            <p class="truncate text-xs">♪ @SongName(song)</p>
+                        }
+                        @foreach (var title in r.RewardTitleIds)
+                        {
+                            <p class="text-xs @Css.Muted">@string.Format(Localizer["Title {0}"], title)</p>
+                        }
+                        @if (r.Status == DonChallengeRewardStatus.Unavailable)
+                        {
+                            <p class="mt-1 text-xs @Css.Muted">@Localizer["Needs more tasks than this round has."]</p>
+                        }
+                    </div>
+                    <span class="@($"inline-flex shrink-0 items-center gap-1 text-xs font-medium {tone}")"><Icon Name="@icon" Class="size-3.5" />@word</span>
+                </div>
+            }
+        </section>
+    }
+</div>
+
+@code {
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public string Game { get; set; } = "";
+
+    private string GameName => EraPaths.Older(Game) ?? Game;
+    private DonChallengeResponse? data;
+    private Dictionary<uint, MusicDetail> songs = [];
+
+    private string SongName(uint id) => songs.TryGetValue(id, out var s) && s.SongName.Length > 0 ? s.SongName : $"#{id}";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.SetEraPlayData(GameName, Localizer["Play Data"], Baid, Localizer["Don Challenge"]);
+        data = null;
+        if (EraPaths.Older(Game) is null) return;
+        try
+        {
+            var response = Client.GetFromJsonAsync<DonChallengeResponse>($"api/{GameName}/DonChallenge/{Baid}");
+            songs = await GameDataService.GetMusicDetailDictionary(GameName);
+            data = await response ?? new DonChallengeResponse();
+        }
+        catch (HttpRequestException)
+        {
+            data = new DonChallengeResponse();
+        }
+    }
+}
