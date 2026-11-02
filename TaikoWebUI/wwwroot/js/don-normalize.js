@@ -462,6 +462,21 @@ function createMeshOutline(source) {
   }
   return outline;
 }
+// The same outline hull for a mesh drawn without normalizePart (the older games' PS3 models): `unit` is the mesh's units
+// per Nijiiro unit, so the shared thickness means the same width on screen.
+export function addMeshOutline(mesh, unit = 1) {
+  ensureOutlineNormals(mesh.geometry);
+  const normals = mesh.geometry.getAttribute('outlineNormal');
+  if (unit !== 1 && !mesh.geometry.userData.donOutlineUnit) {
+    for (let i = 0; i < normals.array.length; i += 1)
+      normals.array[i] *= unit;
+    normals.needsUpdate = true;
+    mesh.geometry.userData.donOutlineUnit = unit;
+  }
+  const outline = createMeshOutline(mesh);
+  mesh.parent.add(outline);
+  return outline;
+}
 function createDepthPrePassMesh(source) {
   const sourceMaterials = Array.isArray(source.material) ? source.material : [source.material];
   const prePassMaterials = sourceMaterials.map((m) => {

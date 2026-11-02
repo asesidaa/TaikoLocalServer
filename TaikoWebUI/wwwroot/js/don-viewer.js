@@ -4,7 +4,7 @@
 import * as THREE from "../lib/three/three.module.min.js";
 import { GLTFLoader } from "../lib/three/addons/loaders/GLTFLoader.js";
 import { clone as cloneSkinned } from "../lib/three/addons/utils/SkeletonUtils.js";
-import { disposePart, normalizePart } from "./don-normalize.js";
+import { addMeshOutline, disposePart, normalizePart, setMeshOutlineParams } from "./don-normalize.js";
 
 // The game's colour ids.
 const PALETTE = ["#F84828", "#68C0C0", "#DC1500", "#F8F0E0", "#009687", "#00BF87", "#00FF9A", "#66FFC2", "#FFFFFF", "#690000",
@@ -30,9 +30,9 @@ const PARTS = ["body", "head", "kigurumi", "face", "puchi", "cosFile", "game"];
 // The older games' (PS3) models are in the game's units, 100 times Nijiiro's.
 const ERA_SCALE = 0.01;
 // Their shaders, by the low byte of a material's nudFlags (extras): color_change mixes the player's colours by the
-// texture's channels, face_anime shows the face set's current frame. The outline (black_line) is an inverted hull,
-// as wide as the vertex colour's green says (the only thing that reads it), in the game's units.
-const ERA_COLOR_CHANGE = 0x01, ERA_FACE = 0x02, ERA_OUTLINE_WIDTH = 0.3;
+// texture's channels, face_anime shows the face set's current frame. The outline (black_line) is Nijiiro's hull: as
+// wide as the vertex colour's green says (the only thing that reads it), drawn the same way.
+const ERA_COLOR_CHANGE = 0x01, ERA_FACE = 0x02;
 const OUTLINE = { visible: true, thickness: 0.0025 };
 const CAM_X = -0.017, CAM_YAW = THREE.MathUtils.degToRad(-29);
 const PUCHI_Y = 0.115;
@@ -86,8 +86,11 @@ export function mount(el) {
     const name = base && folder === "acce" ? "acc" : folder;
     return (await asset(`${base}${folder}/${name}_${file}.${ext}`)) ?? asset(`${base}${folder}/${name}_000000.${ext}`);
   };
+  // An older game's face set: a kigurumi's own (face_<cos id>), else the paint set. Paint ids are the same art in every
+  // game and the face plane is Nijiiro's size, so Nijiiro's sharper set is used when it's extracted (the PS3's are 128 px).
   const eraFace = async (base, kig, cosFile, paint) =>
-    (kig ? await asset(`${base}face/face_${cosFile}.png`) : null) ?? part(base, "paint", paint, "png");
+    (kig ? await asset(`${base}face/face_${cosFile}.png`) : null)
+    ?? (await asset(`paint/paint_${paint}.png`)) ?? part(base, "paint", paint, "png");
   const cached = (url, load) => {
     let p = loaded.get(url);
     if (!p) loaded.set(url, p = load(url));
@@ -219,7 +222,7 @@ export function mount(el) {
     m.faceTextures = [];
     for (const root of Object.values(m.roots)) {
       const meshes = [];
-      root.traverse(obj => { if (obj.isMesh && !obj.userData.donEraOutline) meshes.push(obj); });
+      root.traverse(obj => { if (obj.isMesh && !obj.userData.donOutline) meshes.push(obj); });
       for (const obj of meshes) {
         const src = obj.userData.donEraSource ??= obj.material;
         if (obj.material !== src) obj.material.dispose();
@@ -237,12 +240,16 @@ export function mount(el) {
             depthWrite: src.depthWrite, side: src.side });
           if (obj.material.map) obj.material.map.colorSpace = THREE.SRGBColorSpace;
         }
-        if (src.userData?.outline && !obj.userData.donEraOutlined) eraOutline(obj);
+        if (src.userData?.outline && !obj.userData.donEraOutlined && obj.geometry.attributes.normal) {
+          obj.userData.donEraOutlined = true;
+          addMeshOutline(obj, 1 / ERA_SCALE);
+        }
         if (root === m.roots.puchi) {
           obj.material.depthTest = obj.material.depthWrite = false;
           obj.renderOrder = 1000;
         }
       }
+      setMeshOutlineParams(root, OUTLINE.visible, OUTLINE.thickness);
     }
   }
 
@@ -264,27 +271,6 @@ export function mount(el) {
     };
     mat.customProgramCacheKey = () => "eraColorChange";
     return mat;
-  }
-
-  // black_line: the same skinned mesh drawn black, back faces only, pushed out along its normals before skinning.
-  function eraOutline(obj) {
-    obj.userData.donEraOutlined = true;
-    if (!obj.geometry.attributes.color || !obj.geometry.attributes.normal) return;
-    const mat = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.BackSide, vertexColors: true });
-    mat.onBeforeCompile = shader => {
-      shader.vertexShader = shader.vertexShader.replace("#include <begin_vertex>",
-        `#include <begin_vertex>
-        transformed += normalize(objectNormal) * ${ERA_OUTLINE_WIDTH.toFixed(3)} * color.g;`);
-      shader.fragmentShader = shader.fragmentShader.replace("#include <color_fragment>", "diffuseColor.rgb = vec3(0.0);");
-    };
-    mat.customProgramCacheKey = () => "eraOutline";
-    const outline = obj.isSkinnedMesh ? new THREE.SkinnedMesh(obj.geometry, mat) : new THREE.Mesh(obj.geometry, mat);
-    if (obj.isSkinnedMesh) outline.bind(obj.skeleton, obj.bindMatrix);
-    outline.userData.donEraOutline = true;
-    outline.position.copy(obj.position);
-    outline.quaternion.copy(obj.quaternion);
-    outline.scale.copy(obj.scale);
-    obj.parent.add(outline);
   }
 
   const colours = () => ({
