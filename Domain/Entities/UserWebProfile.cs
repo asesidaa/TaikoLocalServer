@@ -10,8 +10,6 @@ public class UserWebProfile
 {
     public uint Baid { get; set; }
 
-    /// <summary>See <see cref="TaikoLocalServer.Domain.FriendCode"/>. Unique.</summary>
-    public string FriendCode { get; set; } = string.Empty;
 
     /// <summary>Player card background: a game palette index (0 = Don red).</summary>
     public uint CardColor { get; set; }

@@ -67,7 +67,6 @@ public class UserSetting
     public DateTime LastPlayDateTime { get; set; }
 
     /// <summary>12 digits; read-only (the server assigns it and ignores it on save).</summary>
-    public string FriendCode { get; set; } = string.Empty;
 
     // Player card (WebUI only; stored in UserWebProfiles).
     /// <summary>Game palette index (0 = Don red).</summary>

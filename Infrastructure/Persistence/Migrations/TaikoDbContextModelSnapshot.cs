@@ -877,11 +877,6 @@ namespace TaikoLocalServer.Migrations
                     b.Property<bool?>("DarkMode")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("FriendCode")
-                        .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Language")
                         .HasColumnType("TEXT");
 
@@ -889,9 +884,6 @@ namespace TaikoLocalServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Baid");
-
-                    b.HasIndex("FriendCode")
-                        .IsUnique();
 
                     b.ToTable("UserWebProfiles");
                 });

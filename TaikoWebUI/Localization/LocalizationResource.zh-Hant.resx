@@ -1548,15 +1548,6 @@
   <data name="Free profile editing" xml:space="preserve">
     <value>自由編輯個人檔案</value>
   </data>
-  <data name="Friend Code copied!" xml:space="preserve">
-    <value>好友碼已複製！</value>
-  </data>
-  <data name="Friend code {0}, copy" xml:space="preserve">
-    <value>好友碼 {0}，複製</value>
-  </data>
-  <data name="Friend code · click to copy" xml:space="preserve">
-    <value>好友碼 · 點擊複製</value>
-  </data>
   <data name="Full combo" xml:space="preserve">
     <value>全連段</value>
   </data>

@@ -152,7 +152,7 @@ public class UserSettingsController(ITaikoDbContext context, IServerAccess acces
         toneFlg = toneFlg.Append(0u).Append(userSetting.ToneId).Distinct().ToList();
         user.ToneFlgArray = toneFlg;
 
-        // WebUI-only card settings live in UserWebProfiles; the friend code is server-assigned and never taken from here.
+        // WebUI-only card settings live in UserWebProfiles.
         var profile = await context.UserWebProfiles.FindAsync(baid);
         if (profile is not null)
         {
@@ -219,7 +219,6 @@ public class UserSettingsController(ITaikoDbContext context, IServerAccess acces
             FaceColor = user.ColorFace,
             LimbColor = user.ColorLimb,
             LastPlayDateTime = user.LastPlayDatetime,
-            FriendCode = profile.FriendCode,
             CardColor = profile.CardColor,
             CardPattern = profile.CardPattern,
             CardFade = profile.CardFade,

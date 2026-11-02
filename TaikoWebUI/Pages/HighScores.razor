@@ -225,7 +225,7 @@
     private static readonly string[] CrownTiles = ["Not cleared", "Cleared", "Full combo", "Donderful"];
 
     [Parameter] public int Baid { get; set; }
-    /// <summary>Opens already comparing (Friends › Compare scores).</summary>
+    /// <summary>Opens already comparing with this player (?vs=).</summary>
     [SupplyParameterFromQuery(Name = "vs")] public int? VsQuery { get; set; }
 
     private HighScoresPage? data;
@@ -237,7 +237,7 @@
     private string vsText = "";
     private CancellationTokenSource? vsTyping;
 
-    // Comparing needs access to the other player's scores: admins, or anyone in Local mode (friends later).
+    // Comparing needs access to the other player's scores: admins, or anyone in Local mode.
     private bool CanCompare => !AuthService.LoginRequired || AuthService.IsAdmin;
     private CancellationTokenSource? typing;
 

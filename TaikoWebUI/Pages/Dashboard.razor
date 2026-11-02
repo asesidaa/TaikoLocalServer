@@ -23,19 +23,6 @@
                 <p class="font-display min-w-0 truncate text-2xl @(light ? "" : "drop-shadow-[0_2px_0_rgba(0,0,0,.2)]")">@(string.IsNullOrEmpty(s.MyDonName) ? $"#{u.Baid}" : s.MyDonName)</p>
             </div>
             <div class="flex flex-wrap items-center gap-2 border-t px-5 py-3 @(light ? "border-black/10" : "border-white/15")">
-                @if (Constants.ShowFriendCodes && AuthService.LoginRequired && s.FriendCode.Length == 12)
-                {
-                    <span class="relative">
-                        <button class="@Frosted(light) tabular-nums tracking-wide" title="@Localizer["Friend code · click to copy"]"
-                                aria-label="@string.Format(Localizer["Friend code {0}, copy"], FriendCode(s))" @onclick="() => CopyFriendCode(s.FriendCode)">
-                            @FriendCode(s)<Icon Name="copy" Class="size-3.5 opacity-70" />
-                        </button>
-                        @if (copied)
-                        {
-                            <span role="status" class="fade pointer-events-none absolute left-1/2 top-full z-10 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-lg bg-zinc-950/90 px-2 py-1 text-xs text-white shadow-lg">@Localizer["Friend Code copied!"]</span>
-                        }
-                    </span>
-                }
                 <span class="ml-auto flex gap-2">
                     <button class="@Frosted(light)" @onclick="() => showQr = true"><Icon Name="qr" Class="size-3.5" />@Localizer["QR code"]</button>
                     <a href="/Users/@u.Baid/Profile" class="@Frosted(light)"><Icon Name="profile" Class="size-3.5" />@Localizer["Edit profile"]</a>
@@ -110,7 +97,7 @@
 
     private User? user;
     private DashboardNoticeSettings? notice;
-    private bool noticeHidden, copied, showQr;
+    private bool noticeHidden, showQr;
     private PlayHistoryDay? recent;
     private DashboardServer? server;
     private int? toFix;
@@ -181,17 +168,6 @@
         noticeHidden = true;
         try { await Storage.SetItemAsStringAsync(NoticeKey, NoticeId(notice!)); } catch { /* hidden for this visit only */ }
     }
-
-    private async Task CopyFriendCode(string code)
-    {
-        if (!await Js.InvokeAsync<bool>("ui.copy", code)) return;
-        copied = true;
-        StateHasChanged();
-        await Task.Delay(1400);
-        copied = false;
-    }
-
-    private static string FriendCode(UserSetting s) => string.Join(' ', s.FriendCode.Chunk(4).Select(c => new string(c)));
 
     // Frosted buttons read on light and dark card colours.
     private static string Frosted(bool light) =>

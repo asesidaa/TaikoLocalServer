@@ -1548,15 +1548,6 @@
   <data name="Free profile editing" xml:space="preserve">
     <value>プロフィールの自由編集</value>
   </data>
-  <data name="Friend Code copied!" xml:space="preserve">
-    <value>フレンドコードをコピーしました！</value>
-  </data>
-  <data name="Friend code {0}, copy" xml:space="preserve">
-    <value>フレンドコード {0}、コピー</value>
-  </data>
-  <data name="Friend code · click to copy" xml:space="preserve">
-    <value>フレンドコード · クリックでコピー</value>
-  </data>
   <data name="Full combo" xml:space="preserve">
     <value>フルコンボ</value>
   </data>

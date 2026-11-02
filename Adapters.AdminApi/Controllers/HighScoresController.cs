@@ -4,7 +4,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 /// <summary>
 /// Play Data › High Scores: a player's best on every chart of one difficulty, filtered, sorted and paged here.
-/// Comparing with another player needs access to theirs too: admins (or Local mode) until friends exist.
+/// Comparing with another player needs access to theirs too: admins, or anyone in Local mode.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]

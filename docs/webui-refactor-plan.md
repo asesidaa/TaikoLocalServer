@@ -499,32 +499,12 @@ ASB61 has **93 title plates** (sprite 541; the first 21 are unchanged from 39.06
 
 ## 4. Future features (noted 2026-10-31, not scheduled)
 
-### 4a. Friend system
-
-The game protocol has no friend or rival concept: the only hit in the wire types is `arrival_song_cnt`, a dan stat. So this is a **web-only** feature, and the game adapters don't change.
-
-- **Adding friends:** by friend code or from the Users page. Each user gets a short, shareable **friend code**, not their access code (access codes are login secrets). It's random and stored, rather than derived from the BAID, so it can be regenerated.
-- **Requests:** send, accept, decline, cancel and remove. A friendship is mutual once accepted. Blocking is optional and later.
-- **Privacy setting** on the Settings › Security page: *who can see my profile and scores*, either Everyone (the server default), Friends or Only me. It applies to profile views, leaderboards and the card image (4b). Admins always see everything.
-- **Uses:**
-  - a Friends page (list, pending requests, add by code)
-  - a friend's player card, read-only
-  - a **Friends filter on song leaderboards** (`SongLeaderboard` already exists; add a `friendsOnly` query)
-  - optionally, "friend X beat your score on Y" on the Dashboard, computed from play history when the page loads (no push notifications)
-- **Data:**
-  - `UserDatum.FriendCode` (unique) and `UserDatum.ProfileVisibility` (enum)
-  - a `Friendship` table: `RequesterBaid`, `AddresseeBaid`, `Status` (Pending/Accepted), `CreatedAt`, `RespondedAt`, with a unique (low, high) pair index
-  - one EF migration under `Infrastructure/Persistence/Migrations/`
-- **API:** `Adapters.AdminApi/Controllers/FriendsController` under the usual auth policy. It acts only as the logged-in user, with BAIDs taken from the token, never the body. Rate-limit "add by code" with the existing `auth` policy, so codes can't be guessed by brute force.
-- **Local mode** (auth off): there's no identity, so hide the friend UI entirely.
-- **Open:** whether friend leaderboards should count only a friend's best per song (simplest) or their history too.
-
-### 4b. Player card image endpoint
+### 4a. Player card image endpoint
 
 `GET api/Users/{baid}/Card` (`.png`) renders the **whole player card** as an image, so players can share it (Discord, social links) and the server can use it for link previews. The card includes the background colour and pattern, the 3D don-chan, the name and title in game glyphs (§2b), the nameplate and the scoreboard.
 - **Renderer:** it reuses the headless avatar renderer from `docs/webui-design-decisions.md` ("Avatar endpoint"): the same warm PuppeteerSharp page, work queue, timeouts and config. The embed gets a `?card=1` mode that lays out the card component at a fixed size (e.g. 1200×630 for Open Graph, plus a square variant) and returns a data URL. It's one more `IAvatarRenderer` method (`RenderCardAsync`), not a second browser.
 - **Inputs and cache:** everything on the card. That's the avatar hash inputs plus name, title, `MyDonNameLanguage`, plate id, dan, achievement difficulty and the scoreboard counts, so the hash changes when scores change. Cached as `wwwroot/cards/{baid}-{hash}.png` with an `ETag`, and re-rendered on the same triggers as the avatar plus after `PlayResult` updates (debounced per user).
-- **Access:** follows the friend privacy setting (4a). It's public only if the profile is Everyone; otherwise it needs a logged-in viewer who's allowed. Because shared links must work logged-out, add an optional **share link**, `GET api/Share/{token}/Card.png`. The token is random, can be revoked from Settings, and exposes only the image.
+- **Access:** like the player's other pages: the player and admins (anyone in Local mode). Because shared links must work logged-out, add an optional **share link**, `GET api/Share/{token}/Card.png`. The token is random, can be revoked from Settings, and exposes only the image.
 - **Link previews:** a small server-rendered `/u/{shareToken}` HTML page (no WASM) with `og:image` pointing at the card. Optional, later.
 - **Dependencies:** none beyond the avatar renderer. If the headless renderer is disabled, the endpoint returns 503 with a clear message, not a broken image.
 
@@ -534,7 +514,7 @@ The game protocol has no friend or rival concept: the only hit in the wire types
 
 The server runs in one of two modes, chosen by a single switch. The goal is an easy setup: download, run `extract` (or let the server run it), start.
 
-- **`"Mode": "Local"`**: no accounts or login. Everyone on the network is effectively the operator: profiles, play data and the admin pages (User Management, Server Management, Dani Dojo, backups) are all usable. Features that need accounts are hidden: sign-in/sign-up, Admin › Access (sign-up and sign-in rules, sessions, 2-step), friends, notifications and Discord. Game assets stay behind the same-origin check on `api/Assets`.
+- **`"Mode": "Local"`**: no accounts or login. Everyone on the network is effectively the operator: profiles, play data and the admin pages (User Management, Server Management, Dani Dojo, backups) are all usable. Features that need accounts are hidden: sign-in/sign-up, Admin › Access (sign-up and sign-in rules, sessions, 2-step). Game assets stay behind the same-origin check on `api/Assets`.
 - **`"Mode": "Server"`**: accounts and login, the admin role, and everything else. The first admin comes from a **one-time setup code printed in the console** on first start while no admin exists (registering with it makes that account admin), or from the existing CLI (`TaikoLocalServer.exe admin promote …`).
 
 **Config files (operator, set before start; restart to change):**
@@ -561,9 +541,9 @@ The server runs in one of two modes, chosen by a single switch. The goal is an e
 5. In-game messages stay global for now.
 6. Editors write the operator's JSON (temp file + rename, `.bak`, reload); duplicate songs only warn.
 7. Backups in `wwwroot/backups` via SQLite online backup; restore needs the Offline state; keep 3/7/14/30.
-8. Discord webhook allowed (outbound HTTPS with retry, URL stored server-side as a secret), off by default.
+8. ~~Discord webhook~~: dropped with notifications (2026-11-01).
 9. Export may include access codes: off by default, with a warning.
-10. Friends: 100 limit, regenerable codes, accept-requests switch. Hide "Compare scores" until High Scores is designed.
+10. Friends, the friend code and notifications are dropped (2026-11-01): no Friends page, friend requests or notification bell, and users no longer get a friend code. High Scores' comparison stays for admins and Local mode.
 11. Retention: Activity 365 days, Sign-ins 90 days.
 12. Admin › Security is renamed **Access** (Settings › Security stays the user's own).
 13. Remove `LocalSaveModScoreMigrator` (and its CLAUDE.md lines) in PR 2.
@@ -579,7 +559,7 @@ The server runs in one of two modes, chosen by a single switch. The goal is an e
 | 3 | Game data editors and Dani Dojo course sets; "Run extract" |
 | 4 | Admin › Access (rules, sessions, 2-step, lockout) |
 | 5 | Announcements (backups dropped 2026-11-01: operators back the database up with their own scripts or scheduled tasks) |
-| 6 | Friends, notifications, Discord |
+| 6 | ~~Friends, notifications, Discord~~ (dropped 2026-11-01) |
 | 7 | Export / import / merge (deferrable) |
 
 ## Phasing / PRs (first round)

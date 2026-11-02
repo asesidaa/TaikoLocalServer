@@ -103,8 +103,6 @@ namespace TaikoLocalServer.Infrastructure.Persistence
             {
                 entity.HasKey(e => e.Baid);
 
-                entity.Property(e => e.FriendCode).HasMaxLength(Domain.FriendCode.Length);
-                entity.HasIndex(e => e.FriendCode).IsUnique();
 
                 entity.HasOne(d => d.Ba)
                     .WithOne()
