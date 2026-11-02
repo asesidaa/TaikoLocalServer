@@ -144,6 +144,16 @@ Rotations are Euler angles in radians, applied Rz·Ry·Rx (as Smash Forge reads 
 
 A puchi's `_bind.bin` and `_loop.bin` are the same format with 5 slots, the rig's first two bones. `_info.bin` (92 bytes of small integers) isn't decoded.
 
+### Drum sounds (`sound/se/*.nub`, `src/nub.rs`)
+
+| From `USRDIR/data/sound/se/` | To `<out>/game_data/<era>/tone/` | |
+| --- | --- | --- |
+| `SE_GAME_NEIRO_<id>_C.nub` | `<id>_{don,ka}.wav` | Each drum sound's don and ka hits, 16-bit mono WAV, like Nijiiro's `tone/NN_{don,ka}.wav`. Green: 72 (000–070 and `AIDON`), Momoiro 16 |
+
+The banks are NUB v2.1 and the drum sounds are Sony VAG (PS-ADPCM), not ATRAC3, so no decoder dependency is needed. Header: u32 `0x00020100`, u32, u32 bank id, u32 stream count, u32 data offset (0x800), u32 data size, u32 offset of a table of stream-header offsets. A stream header starts with its codec (`vag\0`); +0x14 is its size, +0x18 its offset in the data and +0xBC its sample rate (44,100, 22,050 or 16,000). The data is 16-byte frames: a filter/shift byte, a flags byte (7 ends the stream) and 28 4-bit samples, low nibble first, with the usual five PS-ADPCM filters.
+
+A bank holds three streams. Stream 0 is the don and stream 1 the ka: on the plain drum sounds the don crosses zero about 550 times a second and the ka 4,000–7,000 (measured, not listened to). Stream 2 is the same sound in every bank and isn't written. `_L` and `_R` banks are the same sounds for the left and right drum, and the `SE_SELECT_NEIRO_*` banks the song-select previews; neither is used.
+
 In `--inputs` rules a `*` segment matches any one folder name (`data/config/*/musicinfo.xml`, `data/nutdata/*/*/title_name/`); `ExtractRunner.Match` and the WebUI's `gamefolder.js` match the same way.
 
 ## Game UI art (`src/lumen.rs`, `src/ui.rs`)

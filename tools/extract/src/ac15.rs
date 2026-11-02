@@ -137,6 +137,7 @@ pub fn inputs(era: Era) -> serde_json::Value {
     rules.extend(crate::lmpack::inputs());
     rules.extend(crate::nud::inputs());
     rules.push(Rule::files("don3d/ani/"));
+    rules.extend(crate::nub::inputs());
     let pick = |names: bool| rules.iter().filter(|r| r.names == names).map(|r| format!("data/{}", r.path)).collect::<Vec<_>>();
     serde_json::json!({ "files": pick(false), "names": pick(true), "mods": null })
 }
@@ -156,6 +157,9 @@ pub fn run(era: Era, game: &Path, out: &Path) -> Result<Vec<Report>> {
     let mut anims = Report::new(&format!("{} animations", era.name()));
     crate::ani::convert(&src, &assets.join("animation"), &mut anims)?;
     reports.push(anims);
+    let mut tones = Report::new(&format!("{} tones", era.name()));
+    crate::nub::convert(&src, &assets, &mut tones)?;
+    reports.push(tones);
     Ok(reports)
 }
 
