@@ -72,6 +72,7 @@ const SETS: [(&str, &[(&str, &str, Sel)]); 5] = [
 
 pub fn inputs() -> Vec<crate::ac15::Rule> {
     let mut scenes: Vec<&str> = SETS.iter().flat_map(|(_, c)| c.iter().map(|(s, _, _)| *s)).collect();
+    scenes.sort();
     scenes.dedup();
     scenes.iter().map(|s| crate::ac15::Rule { path: format!("lumendata/packed/{s}/packeddata.ddp"), names: false }).collect()
 }
