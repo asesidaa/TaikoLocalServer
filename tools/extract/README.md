@@ -50,7 +50,7 @@ extract --era yellow --game "D:\Taiko no Tatsujin - Yellow Version.zip"
 | `config/S10100-1/battle/*.xml` | same | Blue's battle mode, when the dump has it (11.01BF doesn't) |
 | `config/S11100-1/rewardtitlefiltering.xml`, `nutdata/{cos,title,tone}_name/nutdatapack.ndp` | same | Green's name packs (`GreenCatalogExtractor`) |
 | `fumen/tuning.bin` | same | |
-| `movie/*`, `don3d/{cos,face,full/cos,full/face,parts/*}/*`, `nutdata/**/{title,tone}_name/*` | same, **empty** | Only the names are read: attract movie ids, and the costume, title and tone ids (`Ac15Don3dDirScanner`, `Ac15CustomizationSourceParser`). An existing file is never replaced |
+| `movie/*`, `don3d/{cos,face,full/cos,full/face,parts/*}/*`, `nutdata/**/{title,tone}_name/*` | same, **empty** | Only the names are read: attract movie ids, and the costume, title and tone ids (`Ac15Don3dDirScanner`, `Ac15CustomizationSourceParser`). An existing file is never replaced. A name pack without ids in its file name (`pack/ST4100-1/00/title_name/nutdatapack.ndp`) also gets an empty file per entry beside it (`shougou_000.nut` … `shougou_283.nut` for Momoiro), and an entry holding one texture per item (`image.nut`, Murasaki's 16 drum-sound names) one per texture from 000; such packs are sent whole by `--inputs` |
 
 That's 1.6 MB (Momoiro) to 8.3 MB (Green). When the game has only another variant of the config id, it's used and written under the id the server reads: Red 10.01 ships `ST8100-7` only (an early Red, 25 Dojo courses). The White zip we have is an incomplete dump (no `config`, `tuning.bin`, `don3d` or `lm_data`), so White reports them missing.
 
