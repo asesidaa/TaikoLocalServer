@@ -1,4 +1,5 @@
 mod ac15;
+mod ani;
 mod anims;
 mod font;
 mod game;
@@ -6,6 +7,7 @@ mod lmpack;
 mod lumen;
 mod models;
 mod movies;
+mod nud;
 mod nut;
 mod source;
 mod textures;

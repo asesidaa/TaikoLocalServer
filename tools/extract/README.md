@@ -104,6 +104,46 @@ The same `LMB` tag stream as Nijiiro's `.nulm`, big-endian (the header's second 
 
 To find a sprite in another scene, `LM_PACK=<packeddata.ddp> [LM_NAME=<lm>] [LM_SPRITE=<id> LM_OUT=<dir>] cargo test --release lm_ls -- --ignored --nocapture` lists every sprite's labels and the instance names it places, and renders a sprite's labels.
 
+| From `USRDIR/data/don3d/` | To `<out>/game_data/<era>/` | |
+| --- | --- | --- |
+| `parts/{body,head}/*.nud` + `.nut`, `full/cos/*.nud` + `.nut` | `body/`, `head/`, `cos/<name>.glb` | Bodies, heads and kigurumi, skinned to the don rig, textures embedded |
+| `parts/acc/*.nud` + `.nut` + `_bind.bin` + `_loop.bin` | `acce/acc_NNNNNN.glb` | Puchi: a textured card with its own two-bone rig and its idle animation as the clip `loop` |
+| `parts/paint/*.nut` | `paint/paint_NNNNNN.png` | Face paint |
+| `full/face/*.nut` | `face/face_NNNNNN.png` | Expressions: the file's 12 textures stacked top to bottom, like Nijiiro's face atlases |
+| `ani/*.bin` | `animation/don.glb` + `facekeys.json` | The rig and one clip per file (60 fps), and each clip's face expression over time, in the shapes Nijiiro's `animation/` uses |
+
+Green: 156 bodies, 140 heads, 176 kigurumi, 121 puchi, 60 paints, 22 faces, 81 clips; Momoiro: 33, 23, 93, none, 39, 13, 79. Every model in Green, Blue, Yellow, Red, Kimidori, Murasaki and Momoiro converts (Green in 3 seconds). The models are in the game's units, about 115 times Nijiiro's (a puchi sits at (−15, 14, 10) where Nijiiro's is at (−0.135, 0.115, 0.06)), and `don3d/cos` (smaller copies of the kigurumi) isn't converted. The WebUI's `don-viewer.js` is written for Nijiiro's parts (material-name flags, `normalize.ts`), so showing these needs its own path there.
+
+### NUD models (`.nud`, `src/nud.rs`)
+
+NDP3 as in Smash Forge's `NUD.cs` (MIT), big-endian, version `0x0200`. Header: `NDP3`, u32 file size, u16 version, u16 object count, u16 type, u16 highest bone index, then u32 sizes of the index clump (it starts at the first value + 0x30), the vertex clump and the vertex-add clump, which follow each other; the names follow them. A bounding sphere, then 0x30-byte objects from 0x30: 8 floats of bounds, u32 name offset, u32 flags, s16 single-bind bone (−1 none), u16 polygon count, u32 offset of its 0x30-byte polygon headers:
+
+| Offset | |
+| --- | --- |
+| +0x00 | u32 index, +0x04 vertex, +0x08 vertex-add offset (into their clumps) |
+| +0x0C | u16 vertex count |
+| +0x0E | u8 vertex type. High nibble: `0` no weights, `1` four u32 bone indices and four float weights. Low nibble: `1` float normals (position xyzw, normal xyzw), `6` half-float normals (position xyz, normal xyz + pad) |
+| +0x0F | u8 UV type. High nibble: UV count (half floats). Low nibble: `0` no colour, `2` RGBA bytes (0x7F = 1.0) |
+| +0x10 | four u32 material offsets (absolute): the first is the drawn pass, the second the outline shell (front faces culled) |
+| +0x20 | u16 index count, u8 strip flags (always a triangle strip with `0xFFFF` restarts), u8 |
+
+With weights, colour and UVs are interleaved in the vertex clump and position, normal and weights in the vertex-add clump (64 bytes a vertex); without, everything is in the vertex clump. A material is u32 flags, u32, u16 source blend, u16 texture count, u16 destination blend, u8 alpha test, u8 alpha function, u16, u16 cull (`0x405` back, `0x404` front, `0` none), …; its textures start at +0x20, 0x18 bytes each, the first u32 being the texture's `GIDX` id in the `.nut` beside the model. Only the formats above occur (vertex `0x11`/`0x06`, UV `0x12`/`0x10`). Positions are in model space even for single-bound objects (faces, hats), so a model renders in rest pose without its rig; with it, those objects get their bone at full weight.
+
+### The don rig and animations (`don3d/ani/*.bin`, `src/ani.rs`)
+
+Namco's own format, worked out from the data. A file is a big-endian f32 frame count, then that many frames of 98 vec3s (1,176 bytes); `don_bind.bin` is a 2-frame file whose first frame is the bind pose. Every model uses one 39-bone rig, so the slots are fixed (t translation, r rotation, s scale):
+
+| Slots | Bone | |
+| --- | --- | --- |
+| 0–1 | 0 `root` (t, r) | Always zero |
+| 2–4 | 1 `body` (t, r, s) | At (0, 15, 0); bounces, spins and squashes. Heads and faces are bound to it |
+| 5 + 23·L … | 2 + 9·L … `limbL_0…8` | Four limbs (L = 0…3): `_0` (t r s) in model space under `root`; `_1…_5` (t r s) chained along +x, their translations stretching the limb; `_6` (t r) copies `_5`; `_7` (t r) copies `_0`; `_8` (t) at the chain's length along `_7`'s x: the IK target |
+| 97 | (`face`, bone 38: no transform) | x is the face expression (0–11), exported to `facekeys.json` |
+
+Rotations are Euler angles in radians, applied Rz·Ry·Rx (as Smash Forge reads VBN). How that was settled: on clips that turn the limbs a lot on all three axes, the chain end (`_5`) lands on the IK target (`_8`) within 0.005 units with that order, against 0.01–0.015 for the other five. A few clips (`don_sabi`, `don_norm_loop`, the kusudama ones) stretch the chain past the target, so their targets are hints and not exact. Placing the bind pose's bones puts each one on the centroid of the vertices weighted to it (within 0.02–0.12; the body's within 1.1, its centre being the drum's). Scale is inherited as in glTF. Bone names are ours: the game's aren't in these files.
+
+A puchi's `_bind.bin` and `_loop.bin` are the same format with 5 slots, the rig's first two bones. `_info.bin` (92 bytes of small integers) isn't decoded.
+
 In `--inputs` rules a `*` segment matches any one folder name (`data/config/*/musicinfo.xml`, `data/nutdata/*/*/title_name/`); `ExtractRunner.Match` and the WebUI's `gamefolder.js` match the same way.
 
 ## Game UI art (`src/lumen.rs`, `src/ui.rs`)
