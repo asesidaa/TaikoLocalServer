@@ -18,7 +18,7 @@
         @if (AuthService.EnabledGames.Count > 1)
         {
             @* Which game's pages these are; switching keeps the page when that game has it. *@
-            <GameMenu Games="AuthService.EnabledGames" Value="@Game" ValueChanged="SwitchGame" Class="my-1.5" Dim="@(View.Played is { } played ? g => !played.Contains(g) : null)" />
+            <GameMenu Games="AuthService.EnabledGames" Value="@Game" ValueChanged="SwitchGame" Class="my-1.5" Dim="@(Played is { } played ? g => !played.Contains(g) : null)" />
         }
         @Link(EraPaths.Profile(Baid, Game), "profile", Localizer["Profile"])
         @* The game's whole song list (with this player's results): its own item, not a Play Data page. *@
@@ -90,6 +90,10 @@ else if (!AuthService.LoginRequired)
     // Whose pages the player links open: the player in the admin view, else the signed-in user, or (Local mode) the
     // player picked in the top bar.
     private uint Baid => View.Baid > 0 ? View.Baid : AuthService.LoginRequired ? AuthService.GetLoggedInBaid() : Players.Baid;
+    // The games the player whose pages these are has data in (admin view, or Local mode's pick); null until known.
+    private IReadOnlySet<string>? Played => View.Baid > 0 ? View.Played
+        : !AuthService.LoginRequired ? Players.Current?.Games.Select(g => g.Game).ToHashSet() : null;
+
     private string ViewName => View.Name.Length > 0 ? View.Name : $"#{View.Baid}";
 
     // prefix: the link stays active on its sub-routes (a page's tabs).

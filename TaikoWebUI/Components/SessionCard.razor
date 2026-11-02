@@ -4,7 +4,13 @@
 @inject IJSRuntime Js
 
 <section class="@Css.Card p-4 sm:p-5">
-    <h2 class="font-semibold">@Title <span class="font-normal @Css.Muted">· @Session.Start.ToString("HH:mm")–@Session.End.ToString("HH:mm")</span></h2>
+    @* An older game's session names its game; Nijiiro's stay unlabelled. *@
+    <h2 class="flex flex-wrap items-center gap-x-1.5 font-semibold">@Title
+        @if (Session.Game != EraPaths.Nijiiro)
+        {
+            <span class="flex items-center gap-1.5 font-normal @Css.Muted">· <GameDot Game="GameInfo.Of(Session.Game)" />@Session.Game</span>
+        }
+        <span class="font-normal @Css.Muted">· @Session.Start.ToString("HH:mm")–@Session.End.ToString("HH:mm")</span></h2>
     <p class="mt-0.5 text-xs @Css.Muted">
         @string.Format(Localizer[Session.Credits == 1 ? "{0} credit" : "{0} credits"], Session.Credits) ·
         @(Session.Plays.Count < Session.Songs ? string.Format(Localizer["{0} of {1} songs"], Session.Plays.Count, Session.Songs) : string.Format(Localizer[Session.Songs == 1 ? "{0} song" : "{0} songs"], Session.Songs))
@@ -23,7 +29,7 @@
             {
                 <li>
                     <button class="flex w-full items-center gap-3 px-1 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
-                            @onclick='() => Nav.NavigateTo(PlayDataPaths.Song(Baid, p.SongId, (int)p.Difficulty))'>
+                            @onclick='() => Nav.NavigateTo(Session.Game == EraPaths.Nijiiro ? PlayDataPaths.Song(Baid, p.SongId, (int)p.Difficulty) : EraPaths.Of(Baid, Session.Game, PlayDataPaths.Songs))'>
                         <img data-asset="@GameData.DifficultyIcon(p.Difficulty)" alt="@GameData.DifficultyName(p.Difficulty)" class="size-8 object-contain" />
                         <span class="min-w-0 flex-1">
                             <span class="block truncate text-sm">@p.Name</span>
@@ -44,12 +50,18 @@
             }
         </ul>
     }
-    @if (Shown.Sum(c => c.Count()) < Session.Plays.Count || open)
-    {
-        <button class="mt-1 text-sm font-medium text-primary-600 hover:underline dark:text-primary-400" @onclick="() => open = !open">
-            @(open ? Localizer["Show less"] : string.Format(Localizer["Show all {0} songs"], Session.Plays.Count))
-        </button>
-    }
+    <div class="mt-1 flex flex-wrap gap-x-4 text-sm font-medium">
+        @if (Shown.Sum(c => c.Count()) < Session.Plays.Count || open)
+        {
+            <button class="text-primary-600 hover:underline dark:text-primary-400" @onclick="() => open = !open">
+                @(open ? Localizer["Show less"] : string.Format(Localizer["Show all {0} songs"], Session.Plays.Count))
+            </button>
+        }
+        @if (Session.Game != EraPaths.Nijiiro)
+        {
+            <a class="@Css.Link" href="@EraPaths.Of(Baid, Session.Game, PlayDataPaths.PlayHistory)">@string.Format(Localizer["{0} play history ›"], Session.Game)</a>
+        }
+    </div>
 </section>
 
 @code {

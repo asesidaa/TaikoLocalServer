@@ -37,7 +37,17 @@
                             <Avatar Setting="u.UserSetting" Size="32" />
                             <span class="min-w-0 flex-1">
                                 <span class="block truncate text-sm font-medium">@u.UserSetting.MyDonName</span>
-                                <span class="block truncate text-xs @Css.Muted">@Localizer["User ID"] @u.Baid</span>
+                                <span class="flex items-center gap-1.5 truncate text-xs @Css.Muted">@Localizer["User ID"] @u.Baid
+                                    @if (u.Games.Count > 1)
+                                    {
+                                        @* Where they last played, and a dot per game they have data in. *@
+                                        <span>· @string.Format(Localizer["{0}, on {1}"], Ago(u.Games[0].LastPlayed), u.Games[0].Game)</span>
+                                        @foreach (var g in GameInfo.All.Where(i => u.Games.Any(x => x.Game == i.Name)))
+                                        {
+                                            <GameDot Game="g" />
+                                        }
+                                    }
+                                </span>
                             </span>
                             @if (on)
                             {
@@ -59,6 +69,13 @@
     {
         Players.Changed += Refresh;
         await Players.LoadAsync();
+    }
+
+    private string Ago(DateTime? t)
+    {
+        if (t is not { } when) return Localizer["Never"];
+        var days = (int)(DateTime.Now - when).TotalDays;
+        return days <= 0 ? Localizer["Today"] : days == 1 ? Localizer["Yesterday"] : days < 30 ? string.Format(Localizer["{0} days ago"], days) : when.ToString("d");
     }
 
     private IEnumerable<User> Matches()

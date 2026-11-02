@@ -188,20 +188,32 @@ public partial class PlayHistoryController(ITaikoDbContext context, IGameDataCat
         return new PlayHistoryDay { Sessions = Sessions(day, diff, best) };
     }
 
-    /// <summary>The Dashboard timeline: every session of the last <paramref name="days"/> days (today included), newest first.</summary>
+    /// <summary>
+    /// The Dashboard timeline: every session of the last <paramref name="days"/> days (today included) in every game,
+    /// newest first. A session is on one game's cabinet; older games' sessions come without song names.
+    /// </summary>
     [HttpGet("{baid}/Recent")]
     public async Task<ActionResult<PlayHistoryDay>> Recent(uint baid, [FromQuery] int days = 7)
     {
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
         var since = DateTime.Today.AddDays(1 - Math.Clamp(days, 1, 31));
-        return new PlayHistoryDay { Sessions = Sessions(await Plays(baid, since, DateTime.MaxValue), 0, false) };
+        var sessions = Sessions(await Plays(baid, since, DateTime.MaxValue), 0, false);
+        foreach (var (game, rows) in new[]
+                 {
+                     ("Green", await EraPlays(context.SongPlayDataGreen, baid, since)), ("Blue", await EraPlays(context.SongPlayDataBlue, baid, since)),
+                     ("Yellow", await EraPlays(context.SongPlayDataYellow, baid, since)), ("Red", await EraPlays(context.SongPlayDataRed, baid, since)),
+                     ("White", await EraPlays(context.SongPlayDataWhite, baid, since)), ("Murasaki", await EraPlays(context.SongPlayDataMurasaki, baid, since)),
+                     ("Kimidori", await EraPlays(context.SongPlayDataKimidori, baid, since)), ("Momoiro", await EraPlays(context.SongPlayDataMomoiro, baid, since)),
+                 })
+            sessions.AddRange(Sessions(rows, 0, false, game));
+        return new PlayHistoryDay { Sessions = sessions.OrderByDescending(s => s.Start).ToList() };
     }
 
     // Groups plays into sessions (newest first), keeping the plays that match the filters; sessions left empty are dropped.
-    private List<PlaySession> Sessions(List<Row> plays, int diff, bool best)
+    private List<PlaySession> Sessions(List<Row> plays, int diff, bool best, string game = "Nijiiro")
     {
-        var songs = catalog.Nijiiro().GetMusicDetailDictionary();
+        var songs = game == "Nijiiro" ? catalog.Nijiiro().GetMusicDetailDictionary() : [];
         var sessions = new List<List<Row>>();
         foreach (var p in plays.OrderBy(p => p.PlayTime))
         {
@@ -210,12 +222,13 @@ public partial class PlayHistoryController(ITaikoDbContext context, IGameDataCat
         }
         return sessions.AsEnumerable().Reverse().Select(s => new PlaySession
         {
+            Game = game,
             Start = s[0].PlayTime, End = s[^1].PlayTime, Songs = s.Count,
             Credits = NumberCredits(s),
             Plays = s.Where(p => Matches(p, diff, best)).OrderByDescending(p => p.Play.Credit).ThenBy(p => p.SongNumber).Select(p =>
             {
                 var song = songs.GetValueOrDefault(p.SongId);
-                p.Play.Name = song?.SongName ?? $"#{p.SongId}";
+                p.Play.Name = song?.SongName ?? (game == "Nijiiro" ? $"#{p.SongId}" : "");
                 p.Play.NameEn = song?.SongNameEN ?? "";
                 p.Play.Stars = song is null ? 0 : p.Difficulty switch
                 {
@@ -249,6 +262,36 @@ public partial class PlayHistoryController(ITaikoDbContext context, IGameDataCat
         public DateTime PlayTime => Play.PlayTime;
         public uint SongId => Play.SongId;
         public Difficulty Difficulty => Play.Difficulty;
+    }
+
+    // An older game's plays from `from` on, as Rows. The game saves a credit's songs in one request, so they share a
+    // PlayTime: each song's number within it starts a new credit at 0, as Nijiiro's SongNumber does. "New best" is
+    // against every earlier play of the chart, as Plays works it out.
+    private async Task<List<Row>> EraPlays<T>(IQueryable<T> table, uint baid, DateTime from) where T : class, IAc15SongPlayDatum
+    {
+        var ct = HttpContext.RequestAborted;
+        var rows = await table.Where(p => p.Baid == baid && p.PlayTime >= from)
+            .OrderBy(p => p.PlayTime).ThenBy(p => EF.Property<long>(p, "Id"))
+            .Select(p => new { p.SongId, p.Difficulty, p.PlayTime, p.Score, p.Crown })
+            .ToListAsync(ct);
+        if (rows.Count == 0) return [];
+        var songs = rows.Select(p => p.SongId).Distinct().ToList();
+        var bestSoFar = await table.Where(p => p.Baid == baid && p.PlayTime < from && songs.Contains(p.SongId))
+            .GroupBy(p => new { p.SongId, p.Difficulty }).Select(g => new { g.Key.SongId, g.Key.Difficulty, Top = g.Max(p => p.Score) })
+            .ToDictionaryAsync(g => (g.SongId, g.Difficulty), g => g.Top, ct);
+        uint number = 0;
+        return rows.Select((p, i) =>
+        {
+            number = i > 0 && rows[i - 1].PlayTime == p.PlayTime ? number + 1 : 0;
+            var key = (p.SongId, p.Difficulty);
+            var newBest = bestSoFar.TryGetValue(key, out var prev) && p.Score > prev;
+            if (!bestSoFar.ContainsKey(key) || p.Score > prev) bestSoFar[key] = p.Score;
+            return new Row
+            {
+                SongNumber = number,
+                Play = new HistoryPlay { SongId = p.SongId, Difficulty = p.Difficulty, PlayTime = p.PlayTime, Score = p.Score, Crown = p.Crown, NewBest = newBest },
+            };
+        }).ToList();
     }
 
     private static bool Matches(Row p, int diff, bool best) => (diff == 0 || (int)p.Difficulty == diff) && (!best || p.Play.NewBest);

@@ -1,7 +1,10 @@
-@* Admin view of a game the player has never played: say so instead of that game's empty pages. *@
+@* A game the player has never played (admin view, or the player picked in Local mode): say so instead of that game's
+   empty pages. *@
 @implements IDisposable
 @inject AdminView View
 @inject NavigationManager Nav
+@inject AuthService AuthService
+@inject PlayerSelection Players
 
 @if (Missing is { } game)
 {
@@ -10,9 +13,9 @@
         <h1 class="mt-4 text-xl font-semibold">@string.Format(Localizer["{0} hasn't played {1}"], Name, game)</h1>
         <p class="mt-2 text-sm @Css.Muted">@string.Format(Localizer["Their {0} profile and play data are created the first time they tap their card on a {0} cabinet."], game)</p>
         <div class="mt-6 flex flex-wrap justify-center gap-2">
-            @foreach (var other in GameInfo.All.Where(g => View.Played!.Contains(g.Name)).Take(3))
+            @foreach (var other in GameInfo.All.Where(g => Played!.Contains(g.Name)).Take(3))
             {
-                <a class="@Css.GhostButton border border-zinc-200 dark:border-zinc-700" href="@EraPaths.Index(View.Baid, other.Name)"><GameDot Game="other" />@string.Format(Localizer["{0}'s Play Data"], other.Name)</a>
+                <a class="@Css.GhostButton border border-zinc-200 dark:border-zinc-700" href="@EraPaths.Index(Baid, other.Name)"><GameDot Game="other" />@string.Format(Localizer["{0}'s Play Data"], other.Name)</a>
             }
         </div>
     </div>
@@ -25,23 +28,28 @@ else
 @code {
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
-    private string Name => View.Name.Length > 0 ? View.Name : $"#{View.Baid}";
+    private bool Local => !AuthService.LoginRequired;
+    private uint Baid => Local ? Players.Baid : View.Baid;
+    private IReadOnlySet<string>? Played => Local ? Players.Current?.Games.Select(g => g.Game).ToHashSet() : View.Played;
+
+    private string Name => Local ? Players.Current?.UserSetting.MyDonName ?? $"#{Baid}" : View.Name.Length > 0 ? View.Name : $"#{View.Baid}";
 
     // A game page (Profile or Play Data, of any game) of a player with no data in that game.
     private string? Missing
     {
         get
         {
-            if (View.Played is not { } played) return null;
+            if (Played is not { } played) return null;
             var path = "/" + Nav.ToBaseRelativePath(Nav.Uri);
             var game = EraPaths.GameOf(path);
-            return EraPaths.Switch(path, View.Baid, game) is not null && !played.Contains(game) ? game : null;
+            return EraPaths.Switch(path, Baid, game) is not null && !played.Contains(game) ? game : null;
         }
     }
 
     protected override void OnInitialized()
     {
         View.Changed += Refresh;
+        Players.Changed += Refresh;
         Nav.LocationChanged += OnLocation;
     }
 
@@ -52,6 +60,7 @@ else
     public void Dispose()
     {
         View.Changed -= Refresh;
+        Players.Changed -= Refresh;
         Nav.LocationChanged -= OnLocation;
     }
 }

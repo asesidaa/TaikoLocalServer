@@ -19,6 +19,8 @@ public class PlayHistoryDay
 /// <summary>Plays on one visit: back to back, under 30 minutes apart.</summary>
 public class PlaySession
 {
+    /// <summary>The game it was played on (GameInfo's name). An older game's plays carry only IDs: the Web UI names them.</summary>
+    public string Game { get; set; } = "Nijiiro";
     public DateTime Start { get; set; }
     public DateTime End { get; set; }
     public int Credits { get; set; }

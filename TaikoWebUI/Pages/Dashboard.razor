@@ -8,6 +8,7 @@
 @inject PlayerSelection Players
 @inject IJSRuntime Js
 @inject Blazored.LocalStorage.ILocalStorageService Storage
+@inject GameDataService GameDataService
 
 <PageTitle>@Localizer["Dashboard"]</PageTitle>
 
@@ -64,7 +65,7 @@
     }
     else if (recent.Sessions.Count == 0)
     {
-        <section class="@Css.Card px-4 py-10 text-center text-sm @Css.Muted">@Localizer["No plays in the last 7 days."]</section>
+        <section class="@Css.Card px-4 py-10 text-center text-sm @Css.Muted">@(AuthService.EnabledGames.Count > 1 ? Localizer["No plays in the last 7 days, in any game."] : Localizer["No plays in the last 7 days."])</section>
     }
     else
     {
@@ -140,7 +141,24 @@
     {
         if (Baid == 0) return;
         user = await Client.GetFromJsonAsync<User>($"api/Users/{Baid}");
-        recent = await Client.GetFromJsonAsync<PlayHistoryDay>($"api/PlayHistory/{Baid}/Recent?days=7");
+        var day = await Client.GetFromJsonAsync<PlayHistoryDay>($"api/PlayHistory/{Baid}/Recent?days=7");
+        // An older game's plays come with only song IDs: name them from that game's catalogue.
+        foreach (var session in day?.Sessions.Where(s => s.Game != EraPaths.Nijiiro) ?? [])
+        {
+            var songs = await GameDataService.GetMusicDetailDictionary(session.Game);
+            foreach (var p in session.Plays)
+            {
+                var song = songs.GetValueOrDefault(p.SongId);
+                p.Name = song is { SongName.Length: > 0 } ? song.SongName : $"#{p.SongId}";
+                p.NameEn = song is { SongNameEN.Length: > 0 } && song.SongNameEN != p.Name ? song.SongNameEN : "";
+                p.Stars = song is null ? 0 : (int)(p.Difficulty switch
+                {
+                    Difficulty.Easy => song.StarEasy, Difficulty.Normal => song.StarNormal, Difficulty.Hard => song.StarHard,
+                    Difficulty.Oni => song.StarOni, _ => song.StarUra,
+                });
+            }
+        }
+        recent = day;
     }
 
     private async Task LoadNotice()

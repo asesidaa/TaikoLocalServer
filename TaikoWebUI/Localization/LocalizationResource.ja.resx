@@ -4434,4 +4434,10 @@
   <data name="No plays" xml:space="preserve">
     <value>プレイなし</value>
   </data>
+  <data name="{0} play history ›" xml:space="preserve">
+    <value>{0}のプレイ履歴 ›</value>
+  </data>
+  <data name="No plays in the last 7 days, in any game." xml:space="preserve">
+    <value>この7日間、どのゲームでもプレイがありません。</value>
+  </data>
 </root>

@@ -4434,4 +4434,10 @@
   <data name="No plays" xml:space="preserve">
     <value>未遊玩</value>
   </data>
+  <data name="{0} play history ›" xml:space="preserve">
+    <value>{0} 遊玩紀錄 ›</value>
+  </data>
+  <data name="No plays in the last 7 days, in any game." xml:space="preserve">
+    <value>最近 7 天在所有遊戲中都沒有遊玩。</value>
+  </data>
 </root>
