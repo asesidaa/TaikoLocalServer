@@ -18,6 +18,8 @@ const T_POSITIONS: u32 = 0xF103;
 const T_BOUNDS: u32 = 0xF004;
 const T_ATLASES: u32 = 0xF007;
 const T_SHAPE: u32 = 0xF022;
+/// The older games' (PS3) graphic: one textured quad, `x y u v` × 4, then the atlas id and the fill.
+const T_QUAD: u32 = 0xF023;
 const T_GRAPHIC: u32 = 0xF024;
 const T_SPRITE: u32 = 0x0027;
 const T_LABEL: u32 = 0x002B;
@@ -78,16 +80,20 @@ enum Op {
     Remove { depth: u16 },
 }
 
+/// Nijiiro's files are little-endian; the PS3 games' are big-endian with the same layout.
 struct Reader<'a> {
     b: &'a [u8],
+    be: bool,
 }
 
 impl Reader<'_> {
     fn u32(&self, o: usize) -> Result<u32> {
-        Ok(u32::from_le_bytes(self.b.get(o..o + 4).context("truncated LMB")?.try_into()?))
+        let b = self.b.get(o..o + 4).context("truncated LMB")?.try_into()?;
+        Ok(if self.be { u32::from_be_bytes(b) } else { u32::from_le_bytes(b) })
     }
     fn u16(&self, o: usize) -> Result<u16> {
-        Ok(u16::from_le_bytes(self.b.get(o..o + 2).context("truncated LMB")?.try_into()?))
+        let b = self.b.get(o..o + 2).context("truncated LMB")?.try_into()?;
+        Ok(if self.be { u16::from_be_bytes(b) } else { u16::from_le_bytes(b) })
     }
     fn f32(&self, o: usize) -> Result<f32> {
         Ok(f32::from_bits(self.u32(o)?))
@@ -99,7 +105,8 @@ impl Lumen {
         if bytes.get(..4) != Some(b"LMB\0") {
             bail!("not a Lumen file (missing LMB magic)");
         }
-        let r = Reader { b: bytes };
+        // The header's second word is 0x10 either way round.
+        let r = Reader { b: bytes, be: bytes.get(4..8) == Some(&[0, 0, 0, 0x10]) };
         let mut lm = Lumen::default();
         let mut shape: Option<u32> = None;
         let mut sprite: Option<u32> = None;
@@ -146,9 +153,15 @@ impl Lumen {
                 }
                 T_ATLASES => {
                     lm.atlas_count = count()?;
+                    // Entries: id, name symbol, width, height. The PS3 files' atlases differ in size (`render_layers`).
                     if lm.atlas_count > 0 {
                         lm.atlas_size = (r.f32(p + 12)?, r.f32(p + 16)?);
                     }
+                }
+                T_QUAD => {
+                    let verts = (0..4).map(|k| { let v = p + k * 16; Ok([r.f32(v)?, r.f32(v + 4)?, r.f32(v + 8)?, r.f32(v + 12)?]) }).collect::<Result<_>>()?;
+                    let graphic = Graphic { atlas: r.u32(p + 64)?, fill: r.u16(p + 68)?, verts, indices: vec![0, 1, 2, 0, 2, 3] };
+                    lm.shapes.get_mut(&shape.context("graphic outside a shape")?).unwrap().push(graphic);
                 }
                 T_TEXT => {
                     // Words: id, ?, template symbol, ?, ?, bounds index, … word 15 = outline width.
@@ -258,6 +271,27 @@ impl Lumen {
     /// Renders `sprite` at `label` from `atlas` (the decoded `.nutexb`, layers stacked vertically).
     /// `bounds` (stage units, x0 y0 x1 y1) fixes the canvas; otherwise it fits the drawn content.
     pub fn render(&self, sprite: u32, label: &str, atlas: &RgbaImage, bounds: Option<[f32; 4]>) -> Result<RgbaImage> {
+        self.render_with(sprite, label, bounds, &|layer, u, v| sample(atlas, self.atlas_size, layer, u, v))
+    }
+
+    /// `render` from one image per atlas, each its own size (the PS3 files' `img*.nut`). Atlases the sprite
+    /// doesn't use (see `atlases`) may be empty images.
+    pub fn render_layers(&self, sprite: u32, label: &str, layers: &[RgbaImage], bounds: Option<[f32; 4]>) -> Result<RgbaImage> {
+        self.render_with(sprite, label, bounds, &|layer, u, v| {
+            layers.get(layer as usize).map_or([0.0; 4], |img| sample(img, (img.width() as f32, img.height() as f32), 0, u, v))
+        })
+    }
+
+    /// The atlases `sprite` draws from, over all its labels.
+    pub fn atlases(&self, sprite: u32) -> Result<std::collections::BTreeSet<u32>> {
+        let mut used = std::collections::BTreeSet::new();
+        for label in self.labels(sprite) {
+            used.extend(self.scene(sprite, &label)?.tris.iter().filter_map(|t| match t.fill { Fill::Atlas(a) => Some(a), Fill::Solid(_) => None }));
+        }
+        Ok(used)
+    }
+
+    fn render_with(&self, sprite: u32, label: &str, bounds: Option<[f32; 4]>, texel: &dyn Fn(u32, f32, f32) -> [f32; 4]) -> Result<RgbaImage> {
         let scene = self.scene(sprite, label)?;
         let [x0, y0, x1, y1] = bounds.or_else(|| scene.bounds()).context("nothing drawn")?;
         let (w, h) = ((x1 - x0).ceil().max(1.0) as u32, (y1 - y0).ceil().max(1.0) as u32);
@@ -285,7 +319,7 @@ impl Lumen {
                     }
                     let texel = match tri.fill {
                         Fill::Solid(color) => color,
-                        Fill::Atlas(layer) => sample(atlas, self.atlas_size, layer, l1 * a[2] + l2 * b[2] + l3 * c[2], l1 * a[3] + l2 * b[3] + l3 * c[3]),
+                        Fill::Atlas(layer) => texel(layer, l1 * a[2] + l2 * b[2] + l3 * c[2], l1 * a[3] + l2 * b[3] + l3 * c[3]),
                     };
                     let src: [f32; 4] = std::array::from_fn(|k| (texel[k] * tri.mult[k] + tri.add[k]).clamp(0.0, 1.0));
                     let dst = &mut out[(y * w + x) as usize];
@@ -299,6 +333,21 @@ impl Lumen {
         }
         let raw = out.iter().flat_map(|p| p.map(|v| (v * 255.0).round() as u8)).collect();
         Ok(RgbaImage::from_raw(w, h, raw).unwrap())
+    }
+
+    #[cfg(test)]
+    /// Every sprite with labels, and the instance names it places: what `sprite_with_label` and `child` can find.
+    pub fn describe(&self) -> String {
+        let mut ids: Vec<_> = self.sprites.keys().copied().collect();
+        ids.sort();
+        ids.iter()
+            .filter_map(|&id| {
+                let names: std::collections::BTreeSet<_> = self.placements(id).map(|(c, n)| format!("{n}:{c}")).filter(|n| !n.starts_with(':')).collect();
+                let labels = self.labels(id);
+                (!labels.is_empty() || !names.is_empty()).then(|| format!("sprite {id}: labels [{}] places [{}]", labels.join(" "), names.into_iter().collect::<Vec<_>>().join(" ")))
+            })
+            .collect::<Vec<_>>()
+            .join("\n")
     }
 
     /// Stage-space bounds of what `sprite` draws at `label`, clipped by its masks.

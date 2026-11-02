@@ -9,6 +9,8 @@ publish = false
 [dependencies]
 anyhow = "1.0.86"
 binrw = "0.15"
+crc32fast = "1.5.0"
+flate2 = "1.1.9"
 clap = { version = "4.5.4", features = ["derive"] }
 glam = "0.30"
 image = { version = "0.25.10", default-features = false, features = ["png"] }

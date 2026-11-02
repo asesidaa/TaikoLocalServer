@@ -18,11 +18,11 @@ use ssbh_data::matl_data::ParamId;
 use ssbh_data::mesh_data::{MeshObjectData, VectorData};
 use ssbh_data::prelude::*;
 
-const ARRAY_BUFFER: u32 = 34962;
-const ELEMENT_ARRAY_BUFFER: u32 = 34963;
+pub(crate) const ARRAY_BUFFER: u32 = 34962;
+pub(crate) const ELEMENT_ARRAY_BUFFER: u32 = 34963;
 pub(crate) const FLOAT: u32 = 5126;
-const UNSIGNED_SHORT: u32 = 5123;
-const UNSIGNED_INT: u32 = 5125;
+pub(crate) const UNSIGNED_SHORT: u32 = 5123;
+pub(crate) const UNSIGNED_INT: u32 = 5125;
 
 /// Converts every model under the game folder `rel` (`model/<category>`) to `<dst_dir>/<name>.glb`.
 /// A model folder normally holds one `<name>/<name>.numdlb`, but can hold variants (e.g. `head_102001`).
@@ -264,16 +264,16 @@ pub(crate) struct Gltf {
     views: Vec<Value>,
     accessors: Vec<Value>,
     pub(crate) nodes: Vec<Value>,
-    meshes: Vec<Value>,
-    skins: Vec<Value>,
-    materials: Vec<Value>,
-    textures: Vec<Value>,
-    images: Vec<Value>,
+    pub(crate) meshes: Vec<Value>,
+    pub(crate) skins: Vec<Value>,
+    pub(crate) materials: Vec<Value>,
+    pub(crate) textures: Vec<Value>,
+    pub(crate) images: Vec<Value>,
     pub(crate) animations: Vec<Value>,
 }
 
 impl Gltf {
-    fn view(&mut self, bytes: &[u8], target: Option<u32>) -> usize {
+    pub(crate) fn view(&mut self, bytes: &[u8], target: Option<u32>) -> usize {
         while !self.bin.len().is_multiple_of(4) {
             self.bin.push(0);
         }
@@ -297,7 +297,7 @@ impl Gltf {
         self.accessors.len() - 1
     }
 
-    fn accessor_f32(&mut self, values: &[f32], kind: &str, width: usize, target: Option<u32>) -> usize {
+    pub(crate) fn accessor_f32(&mut self, values: &[f32], kind: &str, width: usize, target: Option<u32>) -> usize {
         let bytes: Vec<u8> = values.iter().flat_map(|f| f.to_le_bytes()).collect();
         self.accessor(&bytes, FLOAT, values.len() / width, kind, target, None)
     }

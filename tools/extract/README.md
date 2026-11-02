@@ -1,6 +1,6 @@
 # extract
 
-Copies and converts the files TaikoLocalServer needs from a Taiko no Tatsujin Nijiiro install.
+Copies and converts the files TaikoLocalServer needs from a Taiko no Tatsujin Nijiiro install, or with `--era` from one of the older PS3-based games (see Older games below).
 
 ```bash
 extract --game "G:\Games\Taiko no Tatsujin Nijiiro Version (SBWY 39.06)"
@@ -11,6 +11,8 @@ extract --game "G:\Games\Taiko no Tatsujin Nijiiro Version (SBWY 39.06)"
 | `--game` | The game install folder, the one containing `Data/x64`. Passing `Data/x64` itself also works. `Data_mods` is read only with `--mods`. |
 | `--out` | The server's `wwwroot` folder. Defaults to `wwwroot` next to `extract.exe`, which is right when it sits beside `TaikoLocalServer.exe`. |
 | `--mods` | Layer the install's LayeredFS `Data_mods` folder over `Data`, as the game sees it with the plugin. A file in `Data_mods/x64/<path>` replaces `Data/x64/<path>` (fonts, models, UI), and folders gain the mods' extra entries. Datatables (e.g. new songs) come from `Data_mods/x64_enc/datatable`, the re-encrypted ones; the JSON in `Data_mods/x64/datatable` is ignored. Switching `--mods` on or off rebuilds every output once. |
+| `--era` | An older game instead: `green`, `blue`, `yellow`, `red`, `white`, `murasaki`, `kimidori` or `momoiro`. `--game` is then its RPCS3 install (or its `USRDIR/data`), or a `.zip` of it. |
+| `--inputs` | Print the game files extract reads, as JSON, and exit (for the WebUI's "Choose game folder"). With `--era`, that game's, relative to `USRDIR`. |
 
 It is safe to re-run, for example after a game update. Outputs that are already up to date (not older than the game's file; datatables must also match in size) are skipped. It exits with code `2` when a required file is missing or a texture fails to convert, and `1` on any other error. One bad texture doesn't stop the rest.
 
@@ -32,6 +34,129 @@ It is safe to re-run, for example after a game update. Outputs that are already 
 | `sound/se_neiro_{00…19}_v12a.nus3bank` | `game_data/tone/NN_{don,ka}.wav` | The drum tones' don and ka hits, the bank's two embedded PCM WAVs cut out as-is, for the Profile's tone preview |
 | `movie/<8-digit id>.wmv` | `game_data/movies.json` | The ids of the attract movies (not the videos), so Server Management › Cabinets offers them instead of asking for numbers |
 | `lumen/000_default/common/player_board.{nulm,nutexb}` | `game_data/scoreboard/panel_<difficulty>.png`, `digit_ns_0N.png`, `scoreboard.json` | The Profile achievement panel ("scoreboard") per difficulty, plus the game's counter digit glyphs |
+
+## Older games (`--era`, `src/ac15.rs`, `src/source.rs`)
+
+```bash
+extract --era green --game "D:\RPCS3\Taiko no Tatsujin Green Version (SBWY 13.02)"
+extract --era yellow --game "D:\Taiko no Tatsujin - Yellow Version.zip"
+```
+
+`--era` is one of `green`, `blue`, `yellow`, `red`, `white`, `murasaki`, `kimidori`, `momoiro`. `--game` is the RPCS3 install (or anything down to its `dev_hdd0/game/SCEEXE000/USRDIR/data`, also one folder deeper, like Blue's `[ARCADE SYSTEM 357] … ReadyToPlay.7z` folder), or a `.zip` of it. Zips are read in place, without unpacking: stored and deflate members, zip64, every member CRC-checked. `--inputs --era <era>` lists what it reads, relative to `USRDIR` (paths start with `data/`).
+
+| From `USRDIR/data/` | To `<out>/data/<era>/data/` | |
+| --- | --- | --- |
+| `config/<id>/{musicinfo,musicmedleyinfo}.xml`, plus `defmusic.bin` (all but Green and Blue), `present.xml` and `spacialbaid.xml` (White, Murasaki, Kimidori) | same path | Kimidori and Momoiro keep them at the top of `data`. `<id>` is Green `S11100-1`, Blue `S10100-1`, Yellow `ST9100-1`, Red `ST8100-1`, White `ST7100-1`, Murasaki `ST6100-1` |
+| `config/S10100-1/battle/*.xml` | same | Blue's battle mode, when the dump has it (11.01BF doesn't) |
+| `config/S11100-1/rewardtitlefiltering.xml`, `nutdata/{cos,title,tone}_name/nutdatapack.ndp` | same | Green's name packs (`GreenCatalogExtractor`) |
+| `fumen/tuning.bin` | same | |
+| `movie/*`, `don3d/{cos,face,full/cos,full/face,parts/*}/*`, `nutdata/**/{title,tone}_name/*` | same, **empty** | Only the names are read: attract movie ids, and the costume, title and tone ids (`Ac15Don3dDirScanner`, `Ac15CustomizationSourceParser`). An existing file is never replaced |
+
+That's 1.6 MB (Momoiro) to 8.3 MB (Green). When the game has only another variant of the config id, it's used and written under the id the server reads: Red 10.01 ships `ST8100-7` only (an early Red, 25 Dojo courses). The White zip we have is an incomplete dump (no `config`, `tuning.bin`, `don3d` or `lm_data`), so White reports them missing.
+
+| From `USRDIR/data/nutdata/` | To `<out>/game_data/<era>/` | |
+| --- | --- | --- |
+| `{cos_icon,tone_icon}/`, `pack/<…>/<nn>/tone_icon/`, `<id>/appendable/<nn>/tone_icon/` | `cos_icon/cos_icon_NNN.png`, `tone_icon/icon_neiro_NNN.png` | Costume and drum-sound icons. `cos_icon` exists only in Green (91); every game has its tone icons |
+| the same folders for `cos_name`, `title_name`, `tone_name` | `cos_name/`, `title_name/shougou_NNN.png`, `tone_name/` | The names, as the game draws them (text rendered to images). These are the only title names Momoiro has (284 images) |
+
+Packs are merged by file name. A game's own `nutdata/<id>/appendable` packs are applied last, so they win over the packs it inherited. Green: 91 costume icons, 7 tone icons, 418 titles; Momoiro: 5 tone icons, 284 titles; Blue: 7 and 364; Red 10.01: 1 and 11.
+
+### NTP3 textures (`.nut`, `src/nut.rs`)
+
+The PS3 NUT, big-endian. Header: `NTP3`, u16 version (`0x0100` or `0x0200`), u16 texture count, 8 bytes of padding. Then per texture, at 0x10:
+
+| Offset | |
+| --- | --- |
+| +0x00 | u32 total size (header + data) |
+| +0x08 | u32 data size |
+| +0x0C | u16 header size (0x50, more with a mip size table) |
+| +0x11 | u8 mip count |
+| +0x13 | u8 format: `0` DXT1, `1` DXT3, `2` DXT5, `14` A8R8G8B8, `17` R8G8B8A8 (bytes in that order). Data is linear, not swizzled |
+| +0x14 | u16 width, u16 height |
+| +0x20 | u32 data offset from this header (`0x0200` only) |
+| +0x30 | `eXt\0` block (0x10 bytes), then `GIDX`, u32 0x10, **u32 texture id** (what NUD materials refer to) |
+
+Version `0x0100` lays them out header, data, header, data (data right after its header, the next header after `total`). `0x0200` puts every header first (the next one `header size` later) and the data where +0x20 says. The base mip comes first.
+
+### NUT packs (`.ndp`)
+
+`NUT_PACK_TYPE1` is a boost `binary_oarchive` (big-endian, 32-bit PS3 sizes): the magic padded to 16 bytes, u32 22 + `serialization::archive`, the archive's header and class info, then at 0x3E the u32 entry count. From 0x4B each entry is a u32 name length, the name (`cos_icon_000.nut`), a u32 offset and a u32 size. The first entry has a 5-byte class header between its name and offset. The data starts 4 bytes after the last entry (a u32 blob size), and offsets count from there. Every entry is a whole NTP3. All 347 packs in Green and all 13 in Momoiro parse this way.
+
+| From `USRDIR/data/lumendata/packed/` | To `<out>/game_data/<era>/ui/` | |
+| --- | --- | --- |
+| `song_select/packeddata.ddp` | `crown_{none,silver,gold}.png`, `crown_course_{gold,silver}_{easy,normal,hard,mania,extreme}.png` | Crowns, and a crown beside each difficulty's face (Momoiro has no `extreme`) |
+| `song_select` (`courseicon`), else `enso_result` (`result.lm`, labels `easy,normal,hard,mania`) | `difficulty_{easy,normal,hard,mania}.png` | Green to Kimidori use the compact song-select icon; Momoiro the result screen's, with its caption |
+| `dani_result/packeddata.ddp` (`dani_title`) | `dan_{syokyuu,10kyuu…1kyuu,syodan,2dan…,tatsujin}.png` | The dan names as the Dojo result draws them. Older games have fewer ranks (Momoiro: 4kyuu–10dan) |
+| `enso_result/packeddata.ddp` (`titlepanel`) | `plate_{normal,gold,platinum,rainbow}.png` | Title plates by rarity. Momoiro has none |
+| | `ui.json` | Each set's labels, in the game's order |
+
+Every label of a set is drawn on one shared canvas, so they line up. Green, Blue, Yellow and Red: 47 images; Murasaki 39, Kimidori 36, Momoiro 32.
+
+### PS3 Lumen packs (`LM_NUT_TYPE1`, `src/lmpack.rs`)
+
+`lumendata/packed/<scene>/packeddata.ddp` holds a scene's `.lm` files and their atlases; `packlist.txt` beside it lists the same names (it isn't needed). It's a boost binary archive like the NUT packs: the `.lm` count at 0x3E, then from 0x4B per `.lm` its name (u32 length + bytes; the first one adds a 5-byte class header), u32 offset, u32 size and the `[from, to)` range of its textures in the texture list. Then 5 bytes, the u32 texture count, 9 bytes, and a u32 (offset, size) per texture. The data starts 16 bytes after the last pair: first the `.lm` files, then the textures, whose offsets count from the end of the last `.lm`. Each texture is a whole NTP3, and a `.lm`'s textures are its atlases in id order. All 230 packs in Green (765 `.lm`, 20,668 textures) and all 106 in Momoiro parse. `lm_data/output.ddp` and the loose `lm_data/don/` aren't used.
+
+### PS3 Lumen (`.lm`, `src/lumen.rs`)
+
+The same `LMB` tag stream as Nijiiro's `.nulm`, big-endian (the header's second word reads `0x10` either way, which tells them apart). The differences:
+
+- Graphics are tag `0xF023`, always 18 words: one quad, `x y u v` × 4 (floats), then u32 atlas id and u16 fill (`0x41` or `0x40` textured, `0` solid colour with the colour index in the atlas field). Triangles `0 1 2`, `0 2 3`. No `0xF024`.
+- `0xF007` lists one entry per atlas (id, name symbol, width, height), and each atlas is its own `.nut` at its own size (400×400, 64×64…), not layers of one texture. `Lumen::render_layers` samples them separately, and only the atlases a set uses are decoded (song select has 788).
+- u16 fields (place mode, depth, clip depth, colours) sit at the same byte offsets, so they read as-is in big-endian.
+
+To find a sprite in another scene, `LM_PACK=<packeddata.ddp> [LM_NAME=<lm>] [LM_SPRITE=<id> LM_OUT=<dir>] cargo test --release lm_ls -- --ignored --nocapture` lists every sprite's labels and the instance names it places, and renders a sprite's labels.
+
+| From `USRDIR/data/don3d/` | To `<out>/game_data/<era>/` | |
+| --- | --- | --- |
+| `parts/{body,head}/*.nud` + `.nut`, `full/cos/*.nud` + `.nut` | `body/`, `head/`, `cos/<name>.glb` | Bodies, heads and kigurumi, skinned to the don rig, textures embedded |
+| `parts/acc/*.nud` + `.nut` + `_bind.bin` + `_loop.bin` | `acce/acc_NNNNNN.glb` | Puchi: a textured card with its own two-bone rig and its idle animation as the clip `loop` |
+| `parts/paint/*.nut` | `paint/paint_NNNNNN.png` | Face paint |
+| `full/face/*.nut` | `face/face_NNNNNN.png` | Expressions: the file's 12 textures stacked top to bottom, like Nijiiro's face atlases |
+| `ani/*.bin` | `animation/don.glb` + `facekeys.json` | The rig and one clip per file (60 fps), and each clip's face expression over time, in the shapes Nijiiro's `animation/` uses |
+
+Green: 156 bodies, 140 heads, 176 kigurumi, 121 puchi, 60 paints, 22 faces, 81 clips; Momoiro: 33, 23, 93, none, 39, 13, 79. Every model in Green, Blue, Yellow, Red, Kimidori, Murasaki and Momoiro converts (Green in 3 seconds). The models are in the game's units, about 115 times Nijiiro's (a puchi sits at (−15, 14, 10) where Nijiiro's is at (−0.135, 0.115, 0.06)), and `don3d/cos` (smaller copies of the kigurumi) isn't converted. The WebUI's `don-viewer.js` is written for Nijiiro's parts (material-name flags, `normalize.ts`), so showing these needs its own path there.
+
+### NUD models (`.nud`, `src/nud.rs`)
+
+NDP3 as in Smash Forge's `NUD.cs` (MIT), big-endian, version `0x0200`. Header: `NDP3`, u32 file size, u16 version, u16 object count, u16 type, u16 highest bone index, then u32 sizes of the index clump (it starts at the first value + 0x30), the vertex clump and the vertex-add clump, which follow each other; the names follow them. A bounding sphere, then 0x30-byte objects from 0x30: 8 floats of bounds, u32 name offset, u32 flags, s16 single-bind bone (−1 none), u16 polygon count, u32 offset of its 0x30-byte polygon headers:
+
+| Offset | |
+| --- | --- |
+| +0x00 | u32 index, +0x04 vertex, +0x08 vertex-add offset (into their clumps) |
+| +0x0C | u16 vertex count |
+| +0x0E | u8 vertex type. High nibble: `0` no weights, `1` four u32 bone indices and four float weights. Low nibble: `1` float normals (position xyzw, normal xyzw), `6` half-float normals (position xyz, normal xyz + pad) |
+| +0x0F | u8 UV type. High nibble: UV count (half floats). Low nibble: `0` no colour, `2` RGBA bytes (0x7F = 1.0) |
+| +0x10 | four u32 material offsets (absolute): the first is the drawn pass, the second the outline shell (front faces culled) |
+| +0x20 | u16 index count, u8 strip flags (always a triangle strip with `0xFFFF` restarts), u8 |
+
+With weights, colour and UVs are interleaved in the vertex clump and position, normal and weights in the vertex-add clump (64 bytes a vertex); without, everything is in the vertex clump. A material is u32 flags, u32, u16 source blend, u16 texture count, u16 destination blend, u8 alpha test, u8 alpha function, u16, u16 cull (`0x405` back, `0x404` front, `0` none), …; its textures start at +0x20, 0x18 bytes each, the first u32 being the texture's `GIDX` id in the `.nut` beside the model. Only the formats above occur (vertex `0x11`/`0x06`, UV `0x12`/`0x10`). Positions are in model space even for single-bound objects (faces, hats), so a model renders in rest pose without its rig; with it, those objects get their bone at full weight.
+
+### The don rig and animations (`don3d/ani/*.bin`, `src/ani.rs`)
+
+Namco's own format, worked out from the data. A file is a big-endian f32 frame count, then that many frames of 98 vec3s (1,176 bytes); `don_bind.bin` is a 2-frame file whose first frame is the bind pose. Every model uses one 39-bone rig, so the slots are fixed (t translation, r rotation, s scale):
+
+| Slots | Bone | |
+| --- | --- | --- |
+| 0–1 | 0 `root` (t, r) | Always zero |
+| 2–4 | 1 `body` (t, r, s) | At (0, 15, 0); bounces, spins and squashes. Heads and faces are bound to it |
+| 5 + 23·L … | 2 + 9·L … `limbL_0…8` | Four limbs (L = 0…3): `_0` (t r s) in model space under `root`; `_1…_5` (t r s) chained along +x, their translations stretching the limb; `_6` (t r) copies `_5`; `_7` (t r) copies `_0`; `_8` (t) at the chain's length along `_7`'s x: the IK target |
+| 97 | (`face`, bone 38: no transform) | x is the face expression (0–11), exported to `facekeys.json` |
+
+Rotations are Euler angles in radians, applied Rz·Ry·Rx (as Smash Forge reads VBN). How that was settled: on clips that turn the limbs a lot on all three axes, the chain end (`_5`) lands on the IK target (`_8`) within 0.005 units with that order, against 0.01–0.015 for the other five. A few clips (`don_sabi`, `don_norm_loop`, the kusudama ones) stretch the chain past the target, so their targets are hints and not exact. Placing the bind pose's bones puts each one on the centroid of the vertices weighted to it (within 0.02–0.12; the body's within 1.1, its centre being the drum's). Scale is inherited as in glTF. Bone names are ours: the game's aren't in these files.
+
+A puchi's `_bind.bin` and `_loop.bin` are the same format with 5 slots, the rig's first two bones. `_info.bin` (92 bytes of small integers) isn't decoded.
+
+### Drum sounds (`sound/se/*.nub`, `src/nub.rs`)
+
+| From `USRDIR/data/sound/se/` | To `<out>/game_data/<era>/tone/` | |
+| --- | --- | --- |
+| `SE_GAME_NEIRO_<id>_C.nub` | `<id>_{don,ka}.wav` | Each drum sound's don and ka hits, 16-bit mono WAV, like Nijiiro's `tone/NN_{don,ka}.wav`. Green: 72 (000–070 and `AIDON`), Momoiro 16 |
+
+The banks are NUB v2.1 and the drum sounds are Sony VAG (PS-ADPCM), not ATRAC3, so no decoder dependency is needed. Header: u32 `0x00020100`, u32, u32 bank id, u32 stream count, u32 data offset (0x800), u32 data size, u32 offset of a table of stream-header offsets. A stream header starts with its codec (`vag\0`); +0x14 is its size, +0x18 its offset in the data and +0xBC its sample rate (44,100, 22,050 or 16,000). The data is 16-byte frames: a filter/shift byte, a flags byte (7 ends the stream) and 28 4-bit samples, low nibble first, with the usual five PS-ADPCM filters.
+
+A bank holds three streams. Stream 0 is the don and stream 1 the ka: on the plain drum sounds the don crosses zero about 550 times a second and the ka 4,000–7,000 (measured, not listened to). Stream 2 is the same sound in every bank and isn't written. `_L` and `_R` banks are the same sounds for the left and right drum, and the `SE_SELECT_NEIRO_*` banks the song-select previews; neither is used.
+
+In `--inputs` rules a `*` segment matches any one folder name (`data/config/*/musicinfo.xml`, `data/nutdata/*/*/title_name/`); `ExtractRunner.Match` and the WebUI's `gamefolder.js` match the same way.
 
 ## Game UI art (`src/lumen.rs`, `src/ui.rs`)
 

@@ -1,9 +1,16 @@
+mod ac15;
+mod ani;
 mod anims;
 mod font;
 mod game;
+mod lmpack;
 mod lumen;
 mod models;
 mod movies;
+mod nub;
+mod nud;
+mod nut;
+mod source;
 mod textures;
 mod tones;
 mod ui;
@@ -57,6 +64,11 @@ struct Args {
     /// admin picks in the browser, into a copy of the install's layout that extract then runs on.
     #[arg(long)]
     inputs: bool,
+
+    /// An older game (Green … Momoiro) instead of Nijiiro. `--game` is then its `USRDIR/data` folder (or a folder
+    /// above it), or a `.zip` of the RPCS3 install, read without unpacking it.
+    #[arg(long, value_enum)]
+    era: Option<ac15::Era>,
 }
 
 /// Records which layers the outputs came from, so switching `--mods` on or off rebuilds them.
@@ -102,7 +114,7 @@ fn inputs() -> serde_json::Value {
 fn main() -> ExitCode {
     let args = Args::parse();
     if args.inputs {
-        println!("{}", inputs());
+        println!("{}", args.era.map_or_else(inputs, ac15::inputs));
         return ExitCode::SUCCESS;
     }
     match run(args) {
@@ -122,7 +134,7 @@ fn main() -> ExitCode {
 }
 
 fn run(args: Args) -> Result<Vec<Report>> {
-    let x64 = resolve_x64(&args.game.context("--game is required")?)?;
+    let game = args.game.context("--game is required")?;
     let out = match args.out {
         Some(p) => p,
         None => std::env::current_exe()?
@@ -130,6 +142,10 @@ fn run(args: Args) -> Result<Vec<Report>> {
             .context("exe has no parent folder")?
             .join("wwwroot"),
     };
+    if let Some(era) = args.era {
+        return ac15::run(era, &game, &out);
+    }
+    let x64 = resolve_x64(&game)?;
     let game = game::Game::new(x64, args.mods)?;
     println!("game:   {}{}", game.base().display(), if game.modded() { " + Data_mods" } else { "" });
     println!("output: {}", out.display());
