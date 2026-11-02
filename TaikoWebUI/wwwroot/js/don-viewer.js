@@ -35,8 +35,7 @@ const ERA_SCALE = 0.01;
 const ERA_COLOR_CHANGE = 0x01, ERA_FACE = 0x02;
 // The rim lines' half-width, in Nijiiro units (so they scale with don-chan, as Nijiiro's modelled lines do).
 const ERA_LINE_WIDTH = 0.0012;
-// Set while the line pass renders: color_change writes which colour slot each pixel takes, the other parts only hide
-// what's behind them.
+// Set while the line pass renders (drawEraLines): each part writes what it is instead of its colour.
 const eraAlphaPass = { value: 0 };
 const OUTLINE = { visible: true, thickness: 0.0025 };
 const CAM_X = -0.017, CAM_YAW = THREE.MathUtils.degToRad(-29);
@@ -91,11 +90,13 @@ export function mount(el) {
     const name = base && folder === "acce" ? "acc" : folder;
     return (await asset(`${base}${folder}/${name}_${file}.${ext}`)) ?? asset(`${base}${folder}/${name}_000000.${ext}`);
   };
-  // An older game's face set: a kigurumi's own (face_<cos id>), else the paint set. Paint ids are the same art in every
-  // game and the face plane is Nijiiro's size, so Nijiiro's sharper set is used when it's extracted (the PS3's are 128 px).
-  const eraFace = async (base, kig, cosFile, paint) =>
-    (kig ? await asset(`${base}face/face_${cosFile}.png`) : null)
-    ?? (await asset(`paint/paint_${paint}.png`)) ?? part(base, "paint", paint, "png");
+  // An older game's face set. A kigurumi's is its own (face_<cos id>), else the plain kigurumi face (face_000000), as
+  // Nijiiro's: its plane is smaller than the head's, and the paint sets are drawn for the head's, so they'd look too
+  // small. Otherwise the paint set: paint ids are the same art in every game and the head's plane is Nijiiro's size, so
+  // Nijiiro's sharper set is used when it's extracted (the PS3's are 128 px).
+  const eraFace = async (base, kig, cosFile, paint) => kig
+    ? (await part(base, "face", cosFile, "png")) ?? asset("face/face_000000.png")
+    : (await asset(`paint/paint_${paint}.png`)) ?? part(base, "paint", paint, "png");
   const cached = (url, load) => {
     let p = loaded.get(url);
     if (!p) loaded.set(url, p = load(url));
@@ -223,9 +224,10 @@ export function mount(el) {
   // The game's own materials, made again on a colour change. The GLB's material stays on the mesh as its source.
   function dressEra(m) {
     const c = colours();
+    let part = 0;
     for (const tex of m.faceTextures) tex.dispose();
     m.faceTextures = [];
-    // Hidden in the alpha pass: the face plane (a decal over the skin), the outline hulls and the puchi.
+    // Hidden in the line pass: the face plane (a decal over the skin) and the puchi.
     m.noAlpha ??= new Set();
     for (const root of Object.values(m.roots)) {
       const meshes = [];
@@ -234,7 +236,7 @@ export function mount(el) {
         const src = obj.userData.donEraSource ??= obj.material;
         if (obj.material !== src) obj.material.dispose();
         const shader = (src.userData?.nudFlags ?? 0) & 0xff;
-        if (shader === ERA_COLOR_CHANGE) obj.material = eraColorChange(src, c);
+        if (shader === ERA_COLOR_CHANGE) obj.material = eraColorChange(src, c, ++part);
         else if (shader === ERA_FACE) {
           // The plane's own texture is never read: it shows the face set's frame (12 rows, as Nijiiro's). Cut out at half
           // alpha rather than blended, so its edges are as crisp as Nijiiro's face.
@@ -249,9 +251,12 @@ export function mount(el) {
             depthWrite: src.depthWrite, side: src.side }));
           if (obj.material.map) obj.material.map.colorSpace = THREE.SRGBColorSpace;
         }
-        if (src.userData?.outline && !obj.userData.donEraOutlined && obj.geometry.attributes.normal) {
+        if (src.userData?.outline && !obj.userData.donEraOutlined && obj.geometry.attributes.normal && !seeThrough(src)) {
           obj.userData.donEraOutlined = true;
-          m.noAlpha.add(addMeshOutline(obj, 1 / ERA_SCALE));
+          // The game's outline (black_line) keeps the texture's alpha: a cut-out part (hair cards) is outlined along its
+          // drawn shape, not as a solid black copy of its whole card.
+          if (obj.material.map && (src.transparent || src.alphaTest > 0)) obj.material.userData._donFlags = { outlineCutout: true };
+          addMeshOutline(obj, 1 / ERA_SCALE);
         }
         if (root === m.roots.puchi) {
           obj.material.depthTest = obj.material.depthWrite = false;
@@ -263,12 +268,12 @@ export function mount(el) {
     }
   }
 
-  // color_change: rgb = t.r·limb + t.g·(body − limb) + t.b·(face − limb), opaque (the RGB under alpha 0 counts), unlit.
-  // Its a = t.a goes to the frame, where the game's outline_post draws black where alpha changes: the rim lines. The
-  // masks' alpha edges sit where the rims meet the barrel and the skin, but the strip and the half-ring each have
-  // their own, so following alpha doubles every line. The line pass writes the colour slot instead (g: limb 0.25,
-  // body 0.5, face 0.75; r = 1 marks don-chan), and eraLines draws one line where it changes, as Nijiiro's.
-  function eraColorChange(src, c) {
+  // color_change, unlit and opaque. The masks are red on the barrel, green on the face, blue on the rims, hands and feet,
+  // and black on the skin, so rgb = limb + t.r·(body − limb) + t.g·(face − limb). The PS3's rim lines come from a screen
+  // pass of its own, not Nijiiro's (a line round the face, every one doubled), so the line pass writes whether the pixel
+  // is the body's colour (r: 1, else 0.5) and which part it is (g), and eraLines draws a line where either changes:
+  // where the barrel meets the rim and where the rim's side meets the drum's front, as Nijiiro's modelled lines are.
+  function eraColorChange(src, c, part) {
     const map = src.map;
     // A mask: its channels are weights, not colours (no sRGB decode). They're only a few texels wide, so each channel is
     // snapped at half (step below): blended as they are, the barrel's edge becomes a band of mixed colour; read texel
@@ -282,49 +287,55 @@ export function mount(el) {
         .replace("#include <common>", "#include <common>\nuniform vec3 eraLimb;\nuniform vec3 eraBody;\nuniform vec3 eraFace;")
         .replace("#include <map_fragment>", `vec4 eraTex = texture2D(map, vMapUv);
           vec4 eraMask = step(0.5, eraTex);
-          vec3 eraRgb = eraMask.r * eraLimb + eraMask.g * (eraBody - eraLimb) + eraMask.b * (eraFace - eraLimb);
-          diffuseColor = vec4(eraRgb, 1.0);`)
-        .replace("#include <dithering_fragment>", "#include <dithering_fragment>\nif (eraAlphaPass > 0.5) gl_FragColor = vec4(1.0, eraMask.g > 0.5 ? 0.5 : eraMask.b > 0.5 ? 0.75 : 0.25, 0.0, 1.0);")
+          diffuseColor = vec4(eraLimb + eraMask.r * (eraBody - eraLimb) + eraMask.g * (eraFace - eraLimb), 1.0);`)
+        .replace("#include <dithering_fragment>", `#include <dithering_fragment>
+          if (eraAlphaPass > 0.5) gl_FragColor = vec4(eraTex.r > 0.5 ? 1.0 : 0.5, ${(part % 64) / 64}, 0.0, 1.0);`)
         .replace("#include <common>", "#include <common>\nuniform float eraAlphaPass;");
       shader.uniforms.eraAlphaPass = eraAlphaPass;
     };
-    mat.customProgramCacheKey = () => "eraColorChange";
+    mat.customProgramCacheKey = () => `eraColorChange${part % 64}`;
     return mat;
   }
 
-  // A part that's drawn as it is (0x00 textures): in the alpha pass it only hides what's behind it, so no line shows
-  // through a kigurumi's hull.
+  // A part that's drawn as it is (0x00 textures): in the line pass it hides what's behind it, so no line shows through a
+  // kigurumi's hull, and gets a line where it meets a colour part (r = 0.1), as Nijiiro's. Where it's see-through
+  // (glass) it's left out, so it neither hides the lines behind it nor gets one round its edge.
   function eraOccluder(mat) {
     mat.onBeforeCompile = shader => {
       shader.uniforms.eraAlphaPass = eraAlphaPass;
       shader.fragmentShader = shader.fragmentShader
         .replace("#include <common>", "#include <common>\nuniform float eraAlphaPass;")
-        .replace("#include <dithering_fragment>", "#include <dithering_fragment>\nif (eraAlphaPass > 0.5) gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);");
+        .replace("#include <dithering_fragment>", `#include <dithering_fragment>
+          if (eraAlphaPass > 0.5) { if (diffuseColor.a < 0.9) discard; gl_FragColor = vec4(0.1, 0.0, 0.0, 1.0); }`);
     };
     mat.customProgramCacheKey = () => "eraOccluder";
     return mat;
   }
 
-  // ---- The rim lines (outline_post): the alpha pass into a target, then a full-screen pass drawing black over the
-  // frame where the colour slot changes between don-chan's pixels (never at his edge against the background: the hull
-  // outlines that).
+  // ---- The rim lines: the line pass into a target, then a full-screen pass drawing black over the frame where a colour
+  // part's pixel meets another colour or part, or a plain part. Never against the background or across an outline hull
+  // (black, r = 0): the hulls draw those edges, and a part in front of another is always ringed by its hull.
   let lines = null;
   function eraLines() {
     if (lines) return lines;
-    const target = new THREE.WebGLRenderTarget(1, 1);
+    const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
     const material = new THREE.ShaderMaterial({
-      uniforms: { tAlpha: { value: target.texture }, step: { value: new THREE.Vector2() } },
+      uniforms: { tAlpha: { value: target.texture }, step: { value: new THREE.Vector2() }, texel: { value: new THREE.Vector2() } },
       vertexShader: "varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
-      fragmentShader: `uniform sampler2D tAlpha; uniform vec2 step; varying vec2 vUv;
-        void main() {
-          vec4 c = texture2D(tAlpha, vUv);
-          if (c.r < 0.5) discard;
-          float edge = 0.0;
+      // The target is twice the frame's size: each pixel averages its four texels' tests, so the lines are smooth.
+      fragmentShader: `uniform sampler2D tAlpha; uniform vec2 step; uniform vec2 texel; varying vec2 vUv;
+        float edgeAt(vec2 uv) {
+          vec4 c = texture2D(tAlpha, uv);
+          if (c.r < 0.25) return 0.0;
           for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) {
-            vec4 t = texture2D(tAlpha, vUv + vec2(float(i), float(j)) * step);
-            if (t.r > 0.5) edge = max(edge, abs(t.g - c.g));
+            vec4 t = texture2D(tAlpha, uv + vec2(float(i), float(j)) * step);
+            if (t.r > 0.05 && (abs(t.r - c.r) > 0.25 || (t.r > 0.25 && abs(t.g - c.g) > 0.005))) return 1.0;
           }
-          float line = clamp(edge * 16.0 - 0.5, 0.0, 1.0);
+          return 0.0;
+        }
+        void main() {
+          vec2 h = texel * 0.5;
+          float line = 0.25 * (edgeAt(vUv + vec2(-h.x, -h.y)) + edgeAt(vUv + vec2(h.x, -h.y)) + edgeAt(vUv + vec2(-h.x, h.y)) + edgeAt(vUv + h));
           if (line <= 0.0) discard;
           gl_FragColor = vec4(0.0, 0.0, 0.0, line);
         }`,
@@ -339,7 +350,7 @@ export function mount(el) {
 
   function drawEraLines(upp) {
     const L = eraLines(), size = renderer.getDrawingBufferSize(new THREE.Vector2());
-    if (L.target.width !== size.x || L.target.height !== size.y) L.target.setSize(size.x, size.y);
+    if (L.target.width !== size.x * 2 || L.target.height !== size.y * 2) L.target.setSize(size.x * 2, size.y * 2);
     for (const obj of model.noAlpha) obj.visible = false;
     eraAlphaPass.value = 1;
     renderer.setRenderTarget(L.target);
@@ -350,11 +361,28 @@ export function mount(el) {
     for (const obj of model.noAlpha) obj.visible = true;
     renderer.render(scene, camera);
     // The taps' reach: the line's half-width on screen, in the target's texels.
-    const texels = Math.max(1, ERA_LINE_WIDTH / upp * dpr);
-    L.material.uniforms.step.value.set(texels / size.x, texels / size.y);
+    const texels = Math.max(1, 2 * ERA_LINE_WIDTH / upp * dpr);
+    L.material.uniforms.step.value.set(texels / (2 * size.x), texels / (2 * size.y));
+    L.material.uniforms.texel.value.set(1 / (2 * size.x), 1 / (2 * size.y));
     renderer.autoClear = false;
     renderer.render(L.quadScene, L.quadCamera);
     renderer.autoClear = true;
+  }
+
+  // Glass (a blended texture that's mostly translucent): Nijiiro draws it without an outline, which would show through.
+  const glass = new WeakMap();
+  function seeThrough(mat) {
+    const img = mat.transparent && mat.map?.image;
+    if (!img) return false;
+    if (!glass.has(img)) {
+      const c = Object.assign(document.createElement("canvas"), { width: 16, height: 16 }).getContext("2d", { willReadFrequently: true });
+      c.drawImage(img, 0, 0, 16, 16);
+      const a = c.getImageData(0, 0, 16, 16).data;
+      let seen = 0, clear = 0;
+      for (let i = 3; i < a.length; i += 4) if (a[i] > 8) { seen++; if (a[i] < 230) clear++; }
+      glass.set(img, seen > 0 && clear / seen > 0.5);
+    }
+    return glass.get(img);
   }
 
   const colours = () => ({
