@@ -26,6 +26,8 @@ pub struct Part {
     pub indices: Vec<u32>,
     /// The first pass's first texture (a `GIDX` id in the `.nut`); the second pass is the outline shell.
     pub texture: Option<u32>,
+    /// The texture's wrap modes (S, T): 1 repeat, 2 mirror, 3 clamp.
+    pub wrap: [u8; 2],
     pub double_sided: bool,
     /// The first pass's material flags (`0x10000001`: its low byte picks the shader; see the README).
     pub flags: u32,
@@ -108,7 +110,7 @@ fn part(r: &R, h: usize, index_at: usize, vert_at: usize, add_at: usize) -> Resu
     ensure!(matches!(bones, 0 | 1) && matches!(normal, 1 | 6) && matches!(color, 0 | 2), "vertex type {vtype:#x}/{uvtype:#x} isn't supported");
     ensure!(r.u8(h + 34)? >> 4 != 4, "triangle-list polygons aren't supported");
 
-    let mut p = Part { positions: Vec::with_capacity(n * 3), normals: Vec::with_capacity(n * 3), colors: (color == 2).then(Vec::new), uvs: Vec::new(), joints: None, weights: None, indices: Vec::new(), texture: None, double_sided: false, flags: 0, blend: false, alpha_ref: None, outline: false };
+    let mut p = Part { positions: Vec::with_capacity(n * 3), normals: Vec::with_capacity(n * 3), colors: (color == 2).then(Vec::new), uvs: Vec::new(), joints: None, weights: None, indices: Vec::new(), texture: None, wrap: [1, 1], double_sided: false, flags: 0, blend: false, alpha_ref: None, outline: false };
     // Colour and UVs: interleaved per vertex, after the position and normal when there are no bones.
     let uv_block = |p: &mut Part, mut o: usize| -> Result<usize> {
         if let Some(c) = p.colors.as_mut() {
@@ -172,6 +174,7 @@ fn part(r: &R, h: usize, index_at: usize, vert_at: usize, add_at: usize) -> Resu
     if mat != 0 {
         if r.u16(mat + 10)? > 0 {
             p.texture = Some(r.u32(mat + 0x20)?);
+            p.wrap = [r.u8(mat + 0x2C)?, r.u8(mat + 0x2D)?];
         }
         p.double_sided = r.u16(mat + 18)? == 0;
         p.flags = r.u32(mat)?;
@@ -245,19 +248,23 @@ pub fn glb(objects: &[Object], textures: &[crate::nut::Texture], rig: Option<(&[
 
             let mut pbr = json!({ "baseColorFactor": [1.0, 1.0, 1.0, 1.0], "metallicFactor": 0.0, "roughnessFactor": 1.0 });
             if let Some(img) = p.texture.and_then(|id| by_id.get(&id).map(|img| (id, img))) {
-                let texture = match images.get(&img.0) {
-                    Some(&t) => t,
+                let source = match images.get(&img.0) {
+                    Some(&s) => s,
                     None => {
                         let mut png = Vec::new();
                         img.1.write_to(&mut Cursor::new(&mut png), image::ImageFormat::Png)?;
                         let view = g.view(&png, None);
                         g.images.push(json!({ "name": format!("{:08x}", img.0), "mimeType": "image/png", "bufferView": view }));
-                        g.textures.push(json!({ "sampler": 0, "source": g.images.len() - 1 }));
-                        let t = g.textures.len() - 1;
-                        images.insert(img.0, t);
-                        t
+                        images.insert(img.0, g.images.len() - 1);
+                        g.images.len() - 1
                     }
                 };
+                // NUD wrap modes: 1 repeat, 2 mirror, 3 clamp.
+                let wrap = |w: u8| match w { 2 => 33648, 3 => 33071, _ => 10497 };
+                let sampler = json!({ "magFilter": 9729, "minFilter": 9729, "wrapS": wrap(p.wrap[0]), "wrapT": wrap(p.wrap[1]) });
+                let sampler = g.samplers.iter().position(|s| *s == sampler).unwrap_or_else(|| { g.samplers.push(sampler); g.samplers.len() - 1 });
+                let texture = json!({ "sampler": sampler, "source": source });
+                let texture = g.textures.iter().position(|t| *t == texture).unwrap_or_else(|| { g.textures.push(texture); g.textures.len() - 1 });
                 pbr["baseColorTexture"] = json!({ "index": texture, "texCoord": 0 });
             }
             let (mode, cutoff) = alpha_mode(p);
@@ -369,7 +376,7 @@ mod tests {
 
     #[test]
     fn alpha_mode_follows_the_material_not_the_texture() {
-        let part = |blend, alpha_ref| Part { positions: vec![], normals: vec![], colors: None, uvs: vec![], joints: None, weights: None, indices: vec![], texture: None, double_sided: false, flags: 0x1000_0001, blend, alpha_ref, outline: true };
+        let part = |blend, alpha_ref| Part { positions: vec![], normals: vec![], colors: None, uvs: vec![], joints: None, weights: None, indices: vec![], texture: None, wrap: [1, 1], double_sided: false, flags: 0x1000_0001, blend, alpha_ref, outline: true };
         assert_eq!(alpha_mode(&part(false, None)), ("OPAQUE", None), "the bodies' recolour pass: texture alpha is ignored");
         assert_eq!(alpha_mode(&part(false, Some(255))), ("MASK", Some(1.0)));
         assert_eq!(alpha_mode(&part(true, Some(255))), ("BLEND", None));

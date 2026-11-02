@@ -270,6 +270,8 @@ pub(crate) struct Gltf {
     pub(crate) textures: Vec<Value>,
     pub(crate) images: Vec<Value>,
     pub(crate) animations: Vec<Value>,
+    /// Empty: one linear, repeating sampler (index 0).
+    pub(crate) samplers: Vec<Value>,
 }
 
 impl Gltf {
@@ -393,7 +395,9 @@ impl Gltf {
             "bufferViews": self.views,
             "buffers": [{ "byteLength": self.bin.len() }],
         });
-        if !self.textures.is_empty() {
+        if !self.samplers.is_empty() {
+            doc["samplers"] = json!(self.samplers);
+        } else if !self.textures.is_empty() {
             doc["samplers"] = json!([{ "magFilter": 9729, "minFilter": 9729, "wrapS": 10497, "wrapT": 10497 }]);
         }
         // glTF arrays must be non-empty when present.
