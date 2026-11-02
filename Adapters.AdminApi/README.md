@@ -5,10 +5,10 @@ Routes are under `/api/...`.
 
 ## Role
 
-HTTP-facing translation layer between the WebUI and the `Application`
-handlers. Each controller deserializes a `Contracts.AdminApi` request
-type, sends it through `IMediator`, then returns a `Contracts.AdminApi`
-response type. Auth uses `[Authorize]` and the admin policy; in
+HTTP-facing layer between the WebUI and the server. Controllers take and
+return `Contracts.AdminApi` types; most read and write through
+`ITaikoDbContext` and the other ports directly, and a few send Mediator
+requests shared with the game protocol. Auth uses `[Authorize]` and the admin policy; in
 Local mode (`ServerSettings.Mode`) `AuthAwarePolicyEvaluator` lets every request through.
 
 ## Dependencies
@@ -16,14 +16,15 @@ Local mode (`ServerSettings.Mode`) `AuthAwarePolicyEvaluator` lets every request
 - Inbound: `Host` only.
 - Outbound: `Application`, `Infrastructure`, `Contracts.AdminApi`.
 - Notable packages: `Microsoft.AspNetCore.Authentication.JwtBearer`,
-  `Riok.Mapperly`, `Otp.NET`, `Swan.Core`, `Throw`.
+  `Riok.Mapperly`, `Otp.NET`, `QRCoder`, `Swan.Core`, `Throw`.
 
 ## Key folders
 
 - `Controllers/` — REST controllers. Inherit `BaseAdminController` (which
   lazily resolves `IMediator` and `Logger` from request services).
-- `Filters/` — `AuthorizeIfRequiredAttribute` (the toggleable auth
-  filter).
+- `Authorization/` — API-token scopes (`ApiScope`), the server-state filter,
+  `AuthorizeOwnerOrAdmin`, Activity logging, 2-step codes.
+- `Mapping/` — Mapperly mappers from entities to the contracts.
 - `BaseAdminController.cs` — base class for all admin controllers.
 - `DependencyInjection.cs` — `AddAdminApi(IConfiguration)` extension that
   registers JWT bearer auth, the OTP/QR services, and the admin
@@ -32,13 +33,10 @@ Local mode (`ServerSettings.Mode`) `AuthAwarePolicyEvaluator` lets every request
 ## When to add code here
 
 - New admin API endpoint → add a controller under `Controllers/`,
-  inheriting `BaseAdminController`, with `[AuthorizeIfRequired]` if it
-  needs auth.
+  inheriting `BaseAdminController`, with `[Authorize]` (or the admin policy)
+  and `[ApiScope]` if API tokens may use it.
 - The request/response DTO it accepts/returns lives in
   `Contracts.AdminApi/{Requests,Responses,ViewModels}` so the WebUI can
   consume it.
-
-Do **not** query `ITaikoDbContext` directly from a controller — that's a
-handler's job. Send through `IMediator` instead.
 
 See the root `CLAUDE.md` for the full hexagonal layout.

@@ -15,7 +15,6 @@ This file holds **WebUI-only** presentation settings. The mode (Local or Server,
   "WebUiSettings": {
     "Title": "TaikoWebUI",
     "DisplayUnplayedDans": "false", //Display all Dans, even ones that haven't been played yet.
-    "MaxWidth": "3", //0:Large, 1:Medium, 2:Small, 3:ExtraLarge, 4:ExtraExtraLarge
     "SongLeaderboardSettings": {
       "DisablePagination": "false",
       "PageSize": "10"

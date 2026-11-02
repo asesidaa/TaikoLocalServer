@@ -20,7 +20,7 @@ public static class AvatarKeys
     /// <summary>
     /// The costume (without the puchi, which avatars leave out), colours and pose. It's in the avatar's URL, so any
     /// change, in game too, misses the stored image until a new one is rendered. Bump the leading version to re-render
-    /// all, e.g. after changing the framing (ui.js avatarRun and the server renderer).
+    /// all, e.g. after changing the framing (AvatarFraming in the server renderer).
     /// </summary>
     public static string Key(uint kigurumi, uint head, uint body, uint face, uint bodyColor, uint faceColor, uint limbColor, CardAnimation animation) =>
         $"4-{kigurumi}-{head}-{body}-{face}-{bodyColor}-{faceColor}-{limbColor}-{(int)animation}";

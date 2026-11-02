@@ -92,4 +92,4 @@ This solution targets **.NET 10 LTS**. Install the .NET 10 SDK from <https://dot
 - **Styles** (Tailwind, `TaikoWebUI/Styles/app.css` → `wwwroot/css/app.css`, committed). The first build downloads the pinned Tailwind CLI into `tools/tailwindcss/` and checks it against the release's published SHA-256. To build without downloading anything (CI, offline), pass `-p:WebUiToolRestore=false`; style changes then need `tools/tailwindcss/tailwindcss(.exe)` in place yourself.
 - **don-chan's 3D view** (`wwwroot/js/don-viewer.js` and `don-normalize.js`) is plain JavaScript on three.js, which is committed in `wwwroot/lib/three` (0.184.0, no CDN: servers are often offline). There's no build step: edit and reload. With Node.js, `node --test TaikoWebUI/don-normalize.test.mjs` checks its material rules.
 
-The admin UI uses **MudBlazor 9.x**. If you customize `TaikoWebUI/`, refer to the [MudBlazor v9 docs](https://mudblazor.com/) — components and parameters changed across the 7→8→9 majors compared to older forks.
+The web UI uses no component library: Tailwind v4 classes and small components in `TaikoWebUI/Components/Ui`.

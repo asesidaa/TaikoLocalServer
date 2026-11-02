@@ -22,7 +22,7 @@ WebUI-shared `ServerData` JSON shapes (`DanData`, `MusicDetail`,
 
 - `Requests/` — request DTOs accepted by `Adapters.AdminApi/Controllers/`.
 - `Responses/` — response DTOs returned by the same.
-- `ViewModels/` — UI-facing view models bound by MudBlazor pages.
+- `ViewModels/` — UI-facing view models bound by the WebUI pages.
 - `ServerData/` — operator-edited JSON shapes that the WebUI displays
   (`DanData`, `MusicDetail`, `IVerupNo`).
 - `Converters/` — `JsonConverter` types used in both server and client

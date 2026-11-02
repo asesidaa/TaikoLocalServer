@@ -9,7 +9,7 @@ not about EF Core, the filesystem, JWT, or HTTP wire types.
 The "use case" layer of the hexagonal architecture. Handlers receive
 `Common*` DTOs (mapped from version-specific protobuf in the
 `Adapters.GameProtocol.*` projects) and orchestrate calls to ports
-(`ITaikoDbContext`, `IGameDataCatalog`, `IJwtTokenService`, `IClock`).
+(`ITaikoDbContext`, `IGameDataCatalog`, `IServerAccess`, `IClock`, ...).
 Concrete implementations of those ports live in `Infrastructure`.
 
 ## Dependencies
@@ -17,16 +17,16 @@ Concrete implementations of those ports live in `Infrastructure`.
 - Inbound: `Infrastructure`, `Adapters.AdminApi`, `Adapters.AllnetMucha`,
   `Adapters.GameProtocol.Shared`, `Adapters.GameProtocol.WwR08`,
   `Adapters.GameProtocol.CnR00`, `Host`.
-- Outbound: `Domain`, `Contracts.AdminApi`. Plus `Microsoft.AspNetCore.App`
-  framework reference (for `IFormFile` on a few admin handlers — not for
-  routing / hosting).
+- Outbound: `Domain`, `Contracts.AdminApi`. Plus the `Microsoft.AspNetCore.App`
+  framework reference (not for routing / hosting).
 - Mediator namespace: set to `TaikoLocalServer.Application` in
   `DependencyInjection.cs`.
 
 ## Key folders
 
-- `Abstractions/` — port interfaces (`ITaikoDbContext`,
-  `IGameDataCatalog`, `IJwtTokenService`, `IClock`).
+- `Abstractions/` — port interfaces (`ITaikoDbContext`, `IGameDataCatalog`,
+  `IJwtTokenService`, `IServerAccess`, `ICabinetRegistry`, `IAvatarRenderer`,
+  `IExtractRunner`, `ILogBuffer`, `IClock`).
 - `Handlers/` — Mediator request/handler types. Convention:
   `readonly record struct *Query : IRequest<TResponse>` +
   `*QueryHandler : IRequestHandler<*Query, TResponse>` returning

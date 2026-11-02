@@ -23,6 +23,8 @@ plumbing.
 - `Controllers/` — `BaseProtocolController` (shared base for both
   per-version adapters' controllers).
 - `Compression/` — gzip / 32-byte-header strip / decompression helpers.
+- `Cabinets/` — `CabinetFilter` (records each cabinet, refuses blocked or
+  unapproved ones) and the heartbeat's server-state value.
 
 ## When to add code here
 

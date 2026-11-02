@@ -18,7 +18,7 @@ automatically on startup.
 - Notable packages: `Microsoft.EntityFrameworkCore.Sqlite`,
   `Microsoft.EntityFrameworkCore.Tools`, `BCrypt.Net-Next`,
   `EntityFrameworkCore.Exceptions.Sqlite`, `SharpZipLib`,
-  `System.IdentityModel.Tokens.Jwt`,
+  `System.IdentityModel.Tokens.Jwt`, `PuppeteerSharp`,
   `Microsoft.AspNetCore.Authentication.JwtBearer`,
   `Yoh.Text.Json.NamingPolicies`.
 
@@ -30,8 +30,9 @@ automatically on startup.
 - `GameDataCatalog/` — `FileGameDataCatalog` (implements
   `IGameDataCatalog`), `PathHelper` (resolves `wwwroot` next to the
   exe), `CatalogConstants`.
-- `Identity/` — `JwtTokenService` (implements `IJwtTokenService`) +
-  helpers.
+- `Identity/` — `JwtTokenService`, `ServerAccess` (mode, access rules, server
+  state), session and API-token checks, the cabinet registry.
+- `Avatars/` — the headless avatar renderer (`IAvatarRenderer`).
 - `Time/` — `SystemClock` (implements `IClock`).
 - `Settings/` — `IOptions`-bound settings types specific to
   Infrastructure concerns (file paths, JWT, etc.).
@@ -44,7 +45,7 @@ automatically on startup.
 - A new implementation of a port defined in `Application/Abstractions/`.
 - A new EF Core entity configuration.
 - A new EF Core migration: from the repo root,
-  `dotnet ef migrations add <Name> --project Infrastructure --startup-project Host`.
+  `dotnet ef migrations add <Name> --project Infrastructure --startup-project Infrastructure`.
 
 Do **not** add: port **interfaces** (→ `Application/Abstractions/`), HTTP
 controllers (→ `Adapters.*`), domain entities (→ `Domain`), or admin-API
