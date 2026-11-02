@@ -3105,36 +3105,6 @@
   <data name="Notice title" xml:space="preserve">
     <value>Titre de l'annonce</value>
   </data>
-  <data name="Avatars" xml:space="preserve">
-    <value>Avatars</value>
-  </data>
-  <data name="Render avatars on the server" xml:space="preserve">
-    <value>Générer les avatars sur le serveur</value>
-  </data>
-  <data name="Draws each player's avatar on the server the first time it's shown, so players who never open the Web UI get one too. Edge or Chrome runs in the background only while avatars are waiting. When off, avatars show the player's initial." xml:space="preserve">
-    <value>Dessine l'avatar de chaque joueur sur le serveur la première fois qu'il s'affiche, pour que les joueurs qui n'ouvrent jamais l'interface web en aient un aussi. Edge ou Chrome tourne en arrière-plan seulement quand des avatars attendent. Désactivé : les avatars affichent l'initiale du joueur.</value>
-  </data>
-  <data name="Browser" xml:space="preserve">
-    <value>Navigateur</value>
-  </data>
-  <data name="None found" xml:space="preserve">
-    <value>Aucun trouvé</value>
-  </data>
-  <data name="Running" xml:space="preserve">
-    <value>En cours</value>
-  </data>
-  <data name="Idle" xml:space="preserve">
-    <value>Inactif</value>
-  </data>
-  <data name="{0} queued · {1} drawn · {2} failed" xml:space="preserve">
-    <value>{0} en attente · {1} dessinés · {2} échecs</value>
-  </data>
-  <data name="Avatar renderer on" xml:space="preserve">
-    <value>Rendu des avatars activé</value>
-  </data>
-  <data name="Avatar renderer off" xml:space="preserve">
-    <value>Rendu des avatars désactivé</value>
-  </data>
   <data name="Find a user" xml:space="preserve">
     <value>Trouver un utilisateur</value>
   </data>
@@ -3306,36 +3276,6 @@
   <data name="Player Settings" xml:space="preserve">
     <value>Paramètres des joueurs</value>
   </data>
-  <data name="Stored avatars" xml:space="preserve">
-    <value>Avatars enregistrés</value>
-  </data>
-  <data name="Stored avatars · {0}" xml:space="preserve">
-    <value>Avatars enregistrés · {0}</value>
-  </data>
-  <data name="Clear all avatars" xml:space="preserve">
-    <value>Effacer tous les avatars</value>
-  </data>
-  <data name="Clear all avatars?" xml:space="preserve">
-    <value>Effacer tous les avatars ?</value>
-  </data>
-  <data name="No avatars stored yet." xml:space="preserve">
-    <value>Aucun avatar enregistré pour l'instant.</value>
-  </data>
-  <data name="{0} in the database." xml:space="preserve">
-    <value>{0} dans la base de données.</value>
-  </data>
-  <data name="No name" xml:space="preserve">
-    <value>Sans nom</value>
-  </data>
-  <data name="Every stored avatar is deleted. The server draws each one again the next time it's shown." xml:space="preserve">
-    <value>Tous les avatars enregistrés sont supprimés. Le serveur redessine chacun la prochaine fois qu'il s'affiche.</value>
-  </data>
-  <data name="Every stored avatar is deleted. While rendering is off, avatars show the player's initial." xml:space="preserve">
-    <value>Tous les avatars enregistrés sont supprimés. Tant que le rendu est désactivé, les avatars affichent l'initiale du joueur.</value>
-  </data>
-  <data name="Avatars cleared ({0})" xml:space="preserve">
-    <value>Avatars effacés ({0})</value>
-  </data>
   <data name="Delete Account Hint" xml:space="preserve">
     <value>Supprime définitivement votre profil, vos scores, votre historique, vos cartes et votre connexion. Vos cartes pourront être réenregistrées ensuite, comme nouveau joueur.</value>
   </data>
@@ -3366,21 +3306,6 @@
   <data name="Too many tries. Wait a minute, then try again." xml:space="preserve">
     <value>Trop de tentatives. Attendez une minute, puis réessayez.</value>
   </data>
-  <data name="Enable 3D Renderer" xml:space="preserve">
-    <value>Activer le rendu 3D</value>
-  </data>
-  <data name="Player cards show an animated 3D don-chan. When off, they show a still image the server draws: lighter for phones and older PCs, and it updates a few seconds after a costume change." xml:space="preserve">
-    <value>Les cartes des joueurs montrent un don-chan animé en 3D. Désactivé : elles montrent une image fixe dessinée par le serveur, plus légère pour les téléphones et les PC anciens, mise à jour quelques secondes après un changement de costume.</value>
-  </data>
-  <data name="Player cards show an animated 3D don-chan. Turn on rendering avatars on the server to use still images instead." xml:space="preserve">
-    <value>Les cartes des joueurs montrent un don-chan animé en 3D. Activez le rendu des avatars sur le serveur pour utiliser des images fixes à la place.</value>
-  </data>
-  <data name="Player cards show 3D" xml:space="preserve">
-    <value>Les cartes montrent la 3D</value>
-  </data>
-  <data name="Player cards show still images" xml:space="preserve">
-    <value>Les cartes montrent des images fixes</value>
-  </data>
   <data name="3D quality" xml:space="preserve">
     <value>Qualité 3D</value>
   </data>
@@ -3395,9 +3320,6 @@
   </data>
   <data name="High" xml:space="preserve">
     <value>Élevée</value>
-  </data>
-  <data name="Drawing don-chan…" xml:space="preserve">
-    <value>Dessin de don-chan…</value>
   </data>
   <data name="Display" xml:space="preserve">
     <value>Affichage</value>

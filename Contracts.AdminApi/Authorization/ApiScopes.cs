@@ -5,7 +5,6 @@ public static class ApiScopes
 {
     public const string ReadProfiles = "read:profiles";
     public const string ReadScores = "read:scores";
-    public const string ReadAvatars = "read:avatars";
     public const string ReadAssets = "read:assets";
     public const string AdminUsers = "admin:users";
     public const string AdminServer = "admin:server";
@@ -23,7 +22,6 @@ public static class ApiScopes
     [
         (ReadProfiles, "Profiles: settings, cards, titles"),
         (ReadScores, "Scores: best scores, play history, Dani Dojo results"),
-        (ReadAvatars, "Avatars and card images"),
         (ReadAssets, "Game art: don-chan models, nameplates, scoreboard"),
         (AdminUsers, "Users: invite codes, password resets, access codes, bans"),
         (AdminServer, "Server: game data, extract, Dani Dojo sets, rules, logs"),

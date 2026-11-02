@@ -1,17 +1,10 @@
-@* A user's avatar in a circle on their card colour. While the server's renderer is on (Server Management › Status),
-   its image covers the initial; while it's off, or before it has drawn their current costume, the initial shows. *@
-@inject IJSRuntime Js
-@inject AuthService Auth
+@* A user's avatar: their initial in a circle on their card colour. *@
 
 @* The initial is nudged up 0.075em: Zen Maru Gothic's ascent/descent (1.15/0.3em) put a capital's middle that far below
    the line box's. *@
 <span class="relative grid shrink-0 place-items-center overflow-hidden rounded-full font-display leading-none @(CardStyle.IsLight(Hex) ? "text-zinc-900" : "text-white") @(OnCard ? "border-2 border-white" : "")"
       style="width:@(Size)px;height:@(Size)px;@CardStyle.Background(Setting.CardColor, OnCard ? CardPattern.None : Setting.CardPattern);background-clip:padding-box;font-size:@(Size / 2)px" aria-hidden="true">
     <span class="-translate-y-[0.075em]">@Initial</span>
-    @if (Auth.ServerAvatars)
-    {
-        <img data-avatar="@CardStyle.AvatarSrc(Setting)" alt="" hidden class="absolute inset-0 size-full object-cover" />
-    }
 </span>
 
 @code {
@@ -27,6 +20,4 @@
     private string Hex => GameData.Color(Setting.CardColor);
     // A capital: a lowercase letter's x-height sits below the circle's middle.
     private string Initial => string.IsNullOrEmpty(Setting.MyDonName) ? "?" : char.ConvertFromUtf32(char.ConvertToUtf32(Setting.MyDonName, 0)).ToUpperInvariant();
-
-    protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
 }

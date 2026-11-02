@@ -15,7 +15,6 @@ public class AuthController(
     ITaikoDbContext context,
     IJwtTokenService jwtTokens,
     IServerAccess access,
-    IAvatarRenderer avatars,
     IMemoryCache pending) : BaseAdminController<AuthController>
 {
     // Login step 1 to step 2: who passed the password, kept briefly, with a few code tries.
@@ -58,8 +57,7 @@ public class AuthController(
         var rules = access.Rules;
         return Ok(new ClientAuthConfigResponse(access.Mode, access.LoginRequired, rules.OnlyAdmin, rules.AccessCodeLimit,
             rules.SignUpMode, rules.AllowUserDelete, rules.AllowFreeProfileEditing, access.SetupPending, rules.TwoFactor,
-            avatars.Status is { Enabled: true, Browser: not null },
-            avatars.Status is { Enabled: true, Browser: not null, Cards3D: false }, rules.AllowCustomTitles));
+            rules.AllowCustomTitles));
     }
 
     [HttpPost("Login")]

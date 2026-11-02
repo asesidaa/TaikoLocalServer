@@ -18,7 +18,7 @@ automatically on startup.
 - Notable packages: `Microsoft.EntityFrameworkCore.Sqlite`,
   `Microsoft.EntityFrameworkCore.Tools`, `BCrypt.Net-Next`,
   `EntityFrameworkCore.Exceptions.Sqlite`, `SharpZipLib`,
-  `System.IdentityModel.Tokens.Jwt`, `PuppeteerSharp`,
+  `System.IdentityModel.Tokens.Jwt`,
   `Microsoft.AspNetCore.Authentication.JwtBearer`,
   `Yoh.Text.Json.NamingPolicies`.
 
@@ -32,7 +32,6 @@ automatically on startup.
   exe), `CatalogConstants`.
 - `Identity/` — `JwtTokenService`, `ServerAccess` (mode, access rules, server
   state), session and API-token checks, the cabinet registry.
-- `Avatars/` — the headless avatar renderer (`IAvatarRenderer`).
 - `Time/` — `SystemClock` (implements `IClock`).
 - `Settings/` — `IOptions`-bound settings types specific to
   Infrastructure concerns (file paths, JWT, etc.).

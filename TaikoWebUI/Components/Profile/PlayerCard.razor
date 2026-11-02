@@ -1,12 +1,10 @@
-@* The player's card: 3D don-chan (display-only canvas covering the whole card so costumes never clip; ui.don) or,
-   when an admin turns off "Enable 3D Renderer" (Player Settings), a still image the server draws,
+@* The player's card: 3D don-chan (display-only canvas covering the whole card so costumes never clip; ui.don),
    name, and the game nameplate. DanView = the Dani Dojo look (段位道場 outfit for the top rank, no puchi,
    Clear animation, and a dan panel under the nameplate). Colour, pattern, fade and animation come from the
    user's card settings (UserWebProfiles; see Shared/CardStyle.cs). *@
 @implements IDisposable
 @inject IJSRuntime Js
 @inject OverlayHost Overlay
-@inject AuthService Auth
 
 <section class="relative overflow-hidden rounded-3xl shadow-[0_8px_24px_-12px_rgba(0,0,0,.4)] @(LightText ? "text-zinc-900" : "text-white")" aria-label="@Localizer["Player card"]"
          style="@CardStyle.Background(Setting.CardColor, Setting.CardPattern)">
@@ -15,10 +13,7 @@
         @* The fade sits behind don-chan, the name and the nameplate; the text contrast follows it. *@
         <div class="absolute inset-x-0 bottom-0 h-3/5" style="background:linear-gradient(to top, @GameData.Color((uint)Setting.CardFade) 15%, transparent)"></div>
     }
-    @if (!Is2D)
-    {
-        <div @ref="frame" role="img" aria-label="@Localizer["3D preview"]" class="pointer-events-none absolute inset-0"></div>
-    }
+    <div @ref="frame" role="img" aria-label="@Localizer["3D preview"]" class="pointer-events-none absolute inset-0"></div>
     @if (!DanView)
     {
         @* The 3D view is display-only (no pointer events), so the button above it gets the click. *@
@@ -28,18 +23,7 @@
         </button>
     }
     <div class="relative grid grid-cols-[160px_minmax(0,1fr)] items-center gap-4 p-4 lg:grid-cols-1 lg:gap-2 lg:p-5">
-        <div @ref="anchor" class="relative grid h-40 place-items-center lg:h-80">
-            @if (Is2D)
-            {
-                @* Until the still arrives: a soft placeholder. A new costume dims the old still until its own is drawn. *@
-                <img @ref="stillImg" alt="@Localizer["Don-chan"]" hidden class="peer absolute inset-0 size-full object-contain transition-opacity data-pending:opacity-50" />
-                <span class="absolute inset-[15%] animate-pulse rounded-full bg-black/10 peer-[:not([hidden])]:hidden" aria-hidden="true"></span>
-                @* Shown while the first still loads or a new costume's is being drawn (the image's own state drives it). *@
-                <span role="status" class="pointer-events-none absolute bottom-1 left-1/2 hidden -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-black/50 px-2.5 py-1 text-xs font-medium text-white backdrop-blur peer-data-pending:flex peer-[[hidden]]:flex">
-                    <Icon Name="rotate" Class="size-3.5 animate-spin" />@Localizer["Drawing don-chan…"]
-                </span>
-            }
-        </div>
+        <div @ref="anchor" class="relative grid h-40 place-items-center lg:h-80"></div>
         <div class="min-w-0 lg:text-center">
             <p class="font-display truncate text-2xl @(LightText ? "" : "drop-shadow-[0_2px_0_rgba(0,0,0,.2)]")">@(string.IsNullOrEmpty(Setting.MyDonName) ? " " : Setting.MyDonName)</p>
             @* In the strip (<lg) the plate sits beside the 160px don-chan slot, so it's capped at 3/4 of its 352px. *@
@@ -75,20 +59,14 @@
     [Parameter] public IReadOnlyList<DanBestData> Dans { get; set; } = [];
     [Parameter] public bool DanView { get; set; }
 
-    private ElementReference frame, anchor, stillImg;
-    // The server's choice (Player Settings › Enable 3D Renderer off); it needs the server's own renderer.
-    private bool Is2D => Auth.ServerStills;
-
-    // The still: the normal costume and its puchi (the Dani Dojo look has no still of its own).
-    private string StillSrc => $"api/Users/{Setting.Baid}/Still?v={Uri.EscapeDataString(CardStyle.StillKey(Setting))}&c=2"; // c: see CardStyle.AvatarSrc
+    private ElementReference frame, anchor;
 
     private async Task OpenBig()
     {
         Overlay.Show(BigView);
-        // The overlay renders in the layout; give it a moment, then draw don-chan (or load the still) into it.
+        // The overlay renders in the layout; give it a moment, then draw don-chan into it.
         await Task.Delay(50);
-        if (Is2D) await Js.InvokeVoidAsync("ui.hydrateAssets");
-        else await Js.InvokeVoidAsync("ui.don", "[data-don-big]", null, DonState(0.22, 0.19));
+        await Js.InvokeVoidAsync("ui.don", "[data-don-big]", null, DonState(0.22, 0.19));
     }
 
     // Text sits over the fade when there is one, otherwise over the background.
@@ -118,14 +96,7 @@
             <div role="dialog" aria-modal="true" aria-label="@Localizer["Don-chan"]" class="pop w-full max-w-3xl overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-zinc-900"
                  @onclick:stopPropagation="true">
                 <div class="relative h-[480px] sm:h-[560px]" style="@CardStyle.Background(Setting.CardColor, Setting.CardPattern)">
-                    @if (Is2D)
-                    {
-                        <img data-avatar="@StillSrc" alt="@Localizer["Don-chan"]" hidden class="absolute inset-0 size-full object-contain p-6" />
-                    }
-                    else
-                    {
-                        <div data-don-big role="img" aria-label="@Localizer["3D preview"]" class="pointer-events-none absolute inset-0"></div>
-                    }
+                    <div data-don-big role="img" aria-label="@Localizer["3D preview"]" class="pointer-events-none absolute inset-0"></div>
                     <button class="absolute right-3 top-3 z-10 grid size-10 place-items-center rounded-xl bg-black/25 text-white backdrop-blur hover:bg-black/40"
                             aria-label="@Localizer["Close"]" @onclick="Overlay.Hide"><Icon Name="x" Class="size-5" /></button>
                 </div>
@@ -137,11 +108,6 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (Is2D)
-        {
-            await Js.InvokeVoidAsync("ui.still", stillImg, StillSrc);
-            return;
-        }
         await Js.InvokeVoidAsync("ui.don", frame, anchor, DonState(0.25, 0.2));
     }
 }

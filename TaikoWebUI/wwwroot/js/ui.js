@@ -151,13 +151,12 @@
 
   // <img data-asset="nameplate/dan_10dan_gold.png">: api/Assets needs the token, which <img src> can't send,
   // so fetch once and use a blob URL. A missing asset hides the element (any element: a button can depend on one).
-  // <img data-avatar="api/Users/N/Avatar?v=key"> works the same way (the server's renderer draws those).
   const blobUrls = new Map();
   const blobUrl = url => {
     if (!blobUrls.has(url)) {
       const found = authFetch(url).then(r => r.ok ? r.blob() : null).then(b => b && URL.createObjectURL(b)).catch(() => null);
       blobUrls.set(url, found);
-      // A miss is asked again on the next page: the server may draw that avatar in the meantime.
+      // A miss is asked again on the next page.
       found.then(u => { if (!u) blobUrls.delete(url); });
     }
     return blobUrls.get(url);
@@ -171,7 +170,7 @@
     toUrl(path).then(url => url || (el.dataset.assetFallback ? toUrl(el.dataset.assetFallback) : null))
       .then(url => { if (el.dataset[attr] !== path) return; el.hidden = !url; if (url && el.tagName === "IMG") el.src = url; });
   });
-  const hydrateAssets = () => { hydrate("asset", assetUrl); hydrate("avatar", blobUrl); };
+  const hydrateAssets = () => hydrate("asset", assetUrl);
 
   // Tone preview: the tone's don, then its ka (extract writes tone/NN_{don,ka}.wav).
   const playTone = async id => {
@@ -291,30 +290,7 @@
   new MutationObserver(() => updateRails())
     .observe(document.documentElement, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["aria-current", "aria-pressed", "aria-selected"] });
 
-  // ---- Don-chan as a still image (PlayerCard, when an admin turns off "Enable 3D Renderer") ----
-  // The still for a costume: the server draws a missing one on request (404 meanwhile), so it's asked again every
-  // second for a while. The previous costume's image stays, dimmed, until the new one arrives.
-  const still = async (img, url) => {
-    if (!img || img._still === url) return;
-    img._still = url;
-    if (img.src) img.dataset.pending = "";
-    for (let i = 0; i < 90 && img._still === url; i++) {
-      const res = await authFetch(url).catch(() => null);
-      if (res?.ok) {
-        const src = URL.createObjectURL(await res.blob());
-        blobUrls.set(url, Promise.resolve(src));   // the large view's <img data-avatar> reuses it
-        if (img._still !== url) return;
-        img.src = src;
-        img.hidden = false;
-        delete img.dataset.pending;
-        return;
-      }
-      await new Promise(r => setTimeout(r, 1000));
-    }
-  };
-
   window.ui = {
-    still,
     setDark: on => { root.classList.toggle("dark", on); store.set("ui.dark", on ? "1" : "0"); },
     isDark: () => root.classList.contains("dark"),
     setAccent: id => { root.dataset.accent = id; store.set("ui.accent", id); },

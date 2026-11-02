@@ -9,7 +9,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Route("/api/[controller]")]
 [Authorize]
 [ApiScope(ApiScopes.ReadProfiles, ApiScopes.AdminUsers)]
-public class UserSettingsController(ITaikoDbContext context, IServerAccess access, IAvatarRenderer avatars, IGameDataCatalog catalog) : BaseAdminController<UserSettingsController>
+public class UserSettingsController(ITaikoDbContext context, IServerAccess access, IGameDataCatalog catalog) : BaseAdminController<UserSettingsController>
 {
 
     [HttpGet]
@@ -164,8 +164,6 @@ public class UserSettingsController(ITaikoDbContext context, IServerAccess acces
 
         this.LogIfSomeoneElse(context, "profile.edit", baid);
         await context.SaveChangesAsync(HttpContext.RequestAborted);
-        // The costume or pose may have changed: render the avatar (it skips when it still matches).
-        avatars.Enqueue(baid, changed: true);
         return NoContent();
     }
 

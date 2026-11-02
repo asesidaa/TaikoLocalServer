@@ -25,7 +25,7 @@ Concrete implementations of those ports live in `Infrastructure`.
 ## Key folders
 
 - `Abstractions/` — port interfaces (`ITaikoDbContext`, `IGameDataCatalog`,
-  `IJwtTokenService`, `IServerAccess`, `ICabinetRegistry`, `IAvatarRenderer`,
+  `IJwtTokenService`, `IServerAccess`, `ICabinetRegistry`,
   `IExtractRunner`, `ILogBuffer`, `IClock`).
 - `Handlers/` — Mediator request/handler types. Convention:
   `readonly record struct *Query : IRequest<TResponse>` +

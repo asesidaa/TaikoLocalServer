@@ -23,9 +23,6 @@ public class ServerSettings
     /// <summary>Only cabinets an admin allowed may connect (Server Management › Cabinets). Off: any, except blocked ones.</summary>
     public bool RestrictChassisIds { get; set; }
 
-    /// <summary>The browser the avatar renderer drives; blank: Edge, then Chrome, found automatically.</summary>
-    public string? AvatarBrowserPath { get; set; }
-
     public bool EnableMoreSongs { get; set; }
 
     public int MoreSongsSize { get; set; } = TaikoLocalServer.Domain.DomainConstants.MusicIdMaxExpanded;

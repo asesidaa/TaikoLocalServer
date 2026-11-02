@@ -1,5 +1,4 @@
-// don-chan in 3D: three.js on a canvas inside a page element (PlayerCard through ui.don, and don-render.html, the page
-// the server's avatar renderer opens). Game files aren't public: every part is fetched from api/Assets with the WebUI's
+// don-chan in 3D: three.js on a canvas inside a page element (PlayerCard through ui.don). Game files aren't public: every part is fetched from api/Assets with the WebUI's
 // login token and handed to three.js as a blob: URL. The addons import "three" through the page's import map, which
 // names the same file as the relative imports here, so there's one three.js.
 import * as THREE from "../lib/three/three.module.min.js";
@@ -41,7 +40,7 @@ export function mount(el) {
   const api = new URL("api/Assets/", document.baseURI).href;
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  // ACES: what @react-three/fiber used, so the cards look as they did (snapshots render to a target, untouched by it).
+  // ACES: what @react-three/fiber used, so the cards look as they did.
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.setClearColor(0x000000, 0);
   const canvas = renderer.domElement;
@@ -219,12 +218,6 @@ export function mount(el) {
     for (const tex of m.faceTextures) tex.offset.y = frame / m.frameCount;
   }
 
-  const seek = (m, t) => {
-    const duration = m.actions[0]?.getClip().duration ?? 0;
-    for (const mixer of m.mixers) mixer.setTime(Math.max(0, Math.min(t, duration)));
-    faceFrame(m);
-  };
-
   // Frees a replaced model, and the downloads the new one doesn't use.
   function release(m, keep) {
     for (const mixer of m.mixers) mixer.stopAllAction();
@@ -298,47 +291,6 @@ export function mount(el) {
       if (!model) return;
       if (state.bodyColor !== prev.bodyColor || state.faceColor !== prev.faceColor || state.limbColor !== prev.limbColor) dress(model);
       if (state.anim !== prev.anim) bind(model);
-    },
-    /**
-     * A square PNG data URL of a fixed pose, drawn by its own camera into a render target, so the visible view never
-     * reframes or flickers. camX shifts the frame sideways (along the camera's right axis); puchi: false leaves it out.
-     */
-    snapshot({ zoom, camY, camX = 0, size = 256, poseT = 0, puchi = true }) {
-      const m = model;
-      if (!m) return null;
-      const t = m.actions[0]?.time ?? 0;
-      seek(m, poseT);
-      const cam = new THREE.OrthographicCamera(-zoom + camX, zoom + camX, zoom, -zoom, -1, 1000);
-      cam.position.set(CAM_X, camY, 0);
-      cam.rotation.set(0, CAM_YAW, 0, "XYZ");
-      cam.updateProjectionMatrix();
-      cam.updateMatrixWorld();
-      // The puchi's own frame and bob are set again on the next frame.
-      m.puchi.visible = puchi;
-      m.atlas.offset.y = 0.5;
-      m.puchi.position.y = PUCHI_Y;
-      m.puchi.quaternion.copy(cam.quaternion);
-      m.puchi.updateMatrixWorld();
-      const rt = new THREE.WebGLRenderTarget(size, size, { samples: 4 });
-      rt.texture.colorSpace = THREE.SRGBColorSpace;   // the same sRGB output as on screen
-      const prevClear = renderer.getClearAlpha();
-      renderer.setRenderTarget(rt);
-      renderer.setClearAlpha(0);
-      renderer.clear();
-      renderer.render(scene, cam);
-      const px = new Uint8Array(size * size * 4);
-      renderer.readRenderTargetPixels(rt, 0, 0, size, size, px);
-      renderer.setRenderTarget(null);
-      renderer.setClearAlpha(prevClear);
-      rt.dispose();
-      m.puchi.visible = true;
-      seek(m, t);
-      // WebGL rows are bottom-up.
-      const img = new ImageData(size, size), row = size * 4;
-      for (let y = 0; y < size; y++) img.data.set(px.subarray((size - 1 - y) * row, (size - y) * row), y * row);
-      const out = Object.assign(document.createElement("canvas"), { width: size, height: size });
-      out.getContext("2d").putImageData(img, 0, 0);
-      return out.toDataURL("image/png");
     },
   };
 }

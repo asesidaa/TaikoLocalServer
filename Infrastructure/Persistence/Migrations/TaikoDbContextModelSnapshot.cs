@@ -426,22 +426,6 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("MovieLabels");
                 });
 
-            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.ServerOptions", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("Cards3D")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("RenderAvatars")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ServerOptions");
-                });
-
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.ServerSecrets", b =>
                 {
                     b.Property<int>("Id")
@@ -656,30 +640,6 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("TrustedBrowsers");
                 });
 
-            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserAvatar", b =>
-                {
-                    b.Property<uint>("Baid")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("TEXT");
-
-                    b.Property<byte[]>("Image")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Baid");
-
-                    b.ToTable("UserAvatars");
-                });
-
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserDatum", b =>
                 {
                     b.Property<uint>("Baid")
@@ -828,30 +788,6 @@ namespace TaikoLocalServer.Migrations
                     b.HasKey("Baid");
 
                     b.ToTable("UserData");
-                });
-
-            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserStill", b =>
-                {
-                    b.Property<uint>("Baid")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("TEXT");
-
-                    b.Property<byte[]>("Image")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Baid");
-
-                    b.ToTable("UserStills");
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserWebProfile", b =>
@@ -1018,28 +954,6 @@ namespace TaikoLocalServer.Migrations
                         .IsRequired();
 
                     b.Navigation("Datum");
-                });
-
-            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserAvatar", b =>
-                {
-                    b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
-                        .WithOne()
-                        .HasForeignKey("TaikoLocalServer.Domain.Entities.UserAvatar", "Baid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Ba");
-                });
-
-            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserStill", b =>
-                {
-                    b.HasOne("TaikoLocalServer.Domain.Entities.UserDatum", "Ba")
-                        .WithOne()
-                        .HasForeignKey("TaikoLocalServer.Domain.Entities.UserStill", "Baid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Ba");
                 });
 
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.UserWebProfile", b =>
