@@ -137,6 +137,7 @@ Admins can also be managed from the command line, run from the server folder:
 TaikoLocalServer.exe admin promote <accessCode>       # make this card's user an admin
 TaikoLocalServer.exe admin demote <accessCode>        # remove admin rights
 TaikoLocalServer.exe admin set-password <accessCode>  # set the web UI password (prompts, input hidden)
+TaikoLocalServer.exe admin reset-2fa <accessCode>     # turn off 2-step verification (lost phone and recovery codes)
 ```
 
 These commands apply database migrations, make the change and exit; they don't start the server. To create your first admin, run `promote` and then `set-password` on your own card, and log in. On Windows, run them from an administrator terminal, like the server itself.
