@@ -18,7 +18,6 @@ public class AuthController(
     ITaikoDbContext context,
     IJwtTokenService jwtTokens,
     IServerAccess access,
-    IAvatarRenderer avatars,
     IMemoryCache pending,
     IOptions<ServerSettings> serverSettings) : BaseAdminController<AuthController>
 {
@@ -62,8 +61,7 @@ public class AuthController(
         var rules = access.Rules;
         return Ok(new ClientAuthConfigResponse(access.Mode, access.LoginRequired, rules.OnlyAdmin, rules.AccessCodeLimit,
             rules.SignUpMode, rules.AllowUserDelete, rules.AllowFreeProfileEditing, access.SetupPending, rules.TwoFactor,
-            avatars.Status is { Enabled: true, Browser: not null },
-            avatars.Status is { Enabled: true, Browser: not null, Cards3D: false }, rules.AllowCustomTitles,
+            rules.AllowCustomTitles,
             EnabledEras(), FavoriteSongLimits()));
     }
 

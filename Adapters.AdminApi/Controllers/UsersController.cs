@@ -6,7 +6,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Route("api/[controller]")]
 [Authorize]
 [ApiScope(ApiScopes.ReadProfiles, ApiScopes.AdminUsers)]
-public class UsersController(ITaikoDbContext context, IServerAccess access, IAvatarRenderer avatars) : BaseAdminController<UsersController>
+public class UsersController(ITaikoDbContext context, IServerAccess access) : BaseAdminController<UsersController>
 {
 
 
@@ -148,54 +148,6 @@ public class UsersController(ITaikoDbContext context, IServerAccess access, IAva
             TotalPages = totalPages,
             TotalUsers = totalUsers
         };
-    }
-
-    /// <summary>
-    /// The avatar (drawn by the server's renderer) for costume <paramref name="v"/>. Any other key
-    /// 404s and queues a render.
-    /// </summary>
-    [HttpGet("{baid}/Avatar")]
-    [ApiScope(ApiScopes.ReadAvatars)]
-    public async Task<IActionResult> GetAvatar(uint baid, [FromQuery] string v)
-    {
-        var avatar = await context.UserAvatars.FindAsync(baid);
-        if (avatar is null || avatar.Key != v)
-        {
-            // A costume changed (in game too) or a new player: the server renders it, if that's on.
-            avatars.Enqueue(baid);
-            return NotFound();
-        }
-
-        return Cached(avatar.Key) ?? File(avatar.Image, avatar.ContentType);
-    }
-
-    // Revalidated on every load (no-cache + the key as ETag), not cached for good: a browser's copy still asks, so an
-    // image that's gone from the server (cleared, or never stored) is a miss here and queues a render.
-    private IActionResult? Cached(string key)
-    {
-        var etag = $"\"{key}\"";
-        Response.Headers.CacheControl = "private, no-cache";
-        Response.Headers.ETag = etag;
-        Response.Headers.XContentTypeOptions = "nosniff";
-        return Request.Headers.IfNoneMatch == etag ? StatusCode(304) : null;
-    }
-
-    /// <summary>
-    /// The 2D view's full-body don-chan for costume <paramref name="v"/> (AvatarKeys.StillKey), drawn by the server's
-    /// renderer. A miss asks the renderer for one and is a 404 until it's ready.
-    /// </summary>
-    [HttpGet("{baid}/Still")]
-    [ApiScope(ApiScopes.ReadAvatars)]
-    public async Task<IActionResult> GetStill(uint baid, [FromQuery] string v)
-    {
-        var still = await context.UserStills.FindAsync(baid);
-        if (still is null || still.Key != v)
-        {
-            avatars.Enqueue(baid);
-            return NotFound();
-        }
-
-        return Cached(still.Key) ?? File(still.Image, still.ContentType);
     }
 
     [HttpDelete("{baid}")]

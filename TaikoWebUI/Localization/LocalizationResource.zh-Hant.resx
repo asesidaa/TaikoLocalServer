@@ -3105,36 +3105,6 @@
   <data name="Notice title" xml:space="preserve">
     <value>公告標題</value>
   </data>
-  <data name="Avatars" xml:space="preserve">
-    <value>頭像</value>
-  </data>
-  <data name="Render avatars on the server" xml:space="preserve">
-    <value>在伺服器上繪製頭像</value>
-  </data>
-  <data name="Draws each player's avatar on the server the first time it's shown, so players who never open the Web UI get one too. Edge or Chrome runs in the background only while avatars are waiting. When off, avatars show the player's initial." xml:space="preserve">
-    <value>在頭像首次顯示時由伺服器繪製，從不開啟 Web UI 的玩家也會有頭像。僅在有頭像等待繪製時，Edge 或 Chrome 才會在背景執行。關閉時，頭像顯示玩家名字的首字。</value>
-  </data>
-  <data name="Browser" xml:space="preserve">
-    <value>瀏覽器</value>
-  </data>
-  <data name="None found" xml:space="preserve">
-    <value>未找到</value>
-  </data>
-  <data name="Running" xml:space="preserve">
-    <value>執行中</value>
-  </data>
-  <data name="Idle" xml:space="preserve">
-    <value>閒置</value>
-  </data>
-  <data name="{0} queued · {1} drawn · {2} failed" xml:space="preserve">
-    <value>排隊 {0} · 已繪製 {1} · 失敗 {2}</value>
-  </data>
-  <data name="Avatar renderer on" xml:space="preserve">
-    <value>頭像繪製已開啟</value>
-  </data>
-  <data name="Avatar renderer off" xml:space="preserve">
-    <value>頭像繪製已關閉</value>
-  </data>
   <data name="Find a user" xml:space="preserve">
     <value>尋找使用者</value>
   </data>
@@ -3306,36 +3276,6 @@
   <data name="Player Settings" xml:space="preserve">
     <value>玩家設定</value>
   </data>
-  <data name="Stored avatars" xml:space="preserve">
-    <value>已儲存的頭像</value>
-  </data>
-  <data name="Stored avatars · {0}" xml:space="preserve">
-    <value>已儲存的頭像 · {0}</value>
-  </data>
-  <data name="Clear all avatars" xml:space="preserve">
-    <value>清除所有頭像</value>
-  </data>
-  <data name="Clear all avatars?" xml:space="preserve">
-    <value>清除所有頭像？</value>
-  </data>
-  <data name="No avatars stored yet." xml:space="preserve">
-    <value>還沒有儲存的頭像。</value>
-  </data>
-  <data name="{0} in the database." xml:space="preserve">
-    <value>資料庫中共 {0}。</value>
-  </data>
-  <data name="No name" xml:space="preserve">
-    <value>無名稱</value>
-  </data>
-  <data name="Every stored avatar is deleted. The server draws each one again the next time it's shown." xml:space="preserve">
-    <value>將刪除所有已儲存的頭像。每個頭像會在下次顯示時由伺服器重新繪製。</value>
-  </data>
-  <data name="Every stored avatar is deleted. While rendering is off, avatars show the player's initial." xml:space="preserve">
-    <value>將刪除所有已儲存的頭像。關閉繪製期間，頭像顯示玩家名字的首字。</value>
-  </data>
-  <data name="Avatars cleared ({0})" xml:space="preserve">
-    <value>已清除頭像（{0}）</value>
-  </data>
   <data name="Delete Account Hint" xml:space="preserve">
     <value>將永久刪除你的資料、成績、遊玩記錄、卡片和登入資訊。之後你的卡片可以作為新玩家重新註冊。</value>
   </data>
@@ -3366,21 +3306,6 @@
   <data name="Too many tries. Wait a minute, then try again." xml:space="preserve">
     <value>嘗試次數過多。請等一分鐘後再試。</value>
   </data>
-  <data name="Enable 3D Renderer" xml:space="preserve">
-    <value>啟用 3D 繪製</value>
-  </data>
-  <data name="Player cards show an animated 3D don-chan. When off, they show a still image the server draws: lighter for phones and older PCs, and it updates a few seconds after a costume change." xml:space="preserve">
-    <value>玩家卡片顯示動態 3D 小咚。關閉時顯示由伺服器繪製的靜態圖片：在手機和舊電腦上更流暢，更換裝扮幾秒後更新。</value>
-  </data>
-  <data name="Player cards show an animated 3D don-chan. Turn on rendering avatars on the server to use still images instead." xml:space="preserve">
-    <value>玩家卡片顯示動態 3D 小咚。要改用靜態圖片，請先開啟在伺服器上繪製頭像。</value>
-  </data>
-  <data name="Player cards show 3D" xml:space="preserve">
-    <value>卡片顯示 3D</value>
-  </data>
-  <data name="Player cards show still images" xml:space="preserve">
-    <value>卡片顯示靜態圖片</value>
-  </data>
   <data name="3D quality" xml:space="preserve">
     <value>3D 畫質</value>
   </data>
@@ -3395,9 +3320,6 @@
   </data>
   <data name="High" xml:space="preserve">
     <value>高</value>
-  </data>
-  <data name="Drawing don-chan…" xml:space="preserve">
-    <value>正在繪製小咚…</value>
   </data>
   <data name="Display" xml:space="preserve">
     <value>顯示</value>

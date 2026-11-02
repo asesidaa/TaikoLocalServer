@@ -19,8 +19,8 @@
     {
         <YourCards @key="Owner" Baid="Owner" Name="@name" />
     }
-    @* Your own display choice (not on an admin's view of someone else's), and only while cards draw 3D. *@
-    @if (Baid is null && !AuthService.ServerStills)
+    @* Your own display choice (not on an admin's view of someone else's). *@
+    @if (Baid is null)
     {
         <DisplayCard />
     }

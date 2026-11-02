@@ -30,7 +30,7 @@ public class AssetsController : BaseAdminController<AssetsController>
     [HttpGet("{**path}")]
     public IActionResult Get(string path)
     {
-        // Only fetch() from this site's own pages (the WebUI and don-render.html): opening the URL, an <img>
+        // Only fetch() from this site's own pages (the WebUI): opening the URL, an <img>
         // hotlink or another site gets nothing. Browsers set these headers themselves; it also covers local
         // mode (AuthenticationRequired off), where [Authorize] lets everyone through. An admin's API token with
         // read:assets (checked by ApiScopeFilter) is the one way in from outside the browser.

@@ -10,7 +10,6 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 public partial class UserSettingsController(
     ITaikoDbContext context,
     IServerAccess access,
-    IAvatarRenderer avatars,
     IGameDataCatalog catalog) : BaseAdminController<UserSettingsController>
 {
     private readonly ITaikoDbContext context = context;

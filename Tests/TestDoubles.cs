@@ -17,16 +17,6 @@ public sealed class TestServerAccess(ServerMode mode = ServerMode.Local, AccessR
     public void LogSetupCode() { }
 }
 
-/// <summary>An avatar renderer that's off and renders nothing.</summary>
-public sealed class NullAvatarRenderer : IAvatarRenderer
-{
-    public AvatarRendererStatus Status { get; } = new(false, null, false, 0, 0, 0, null, null);
-    public void Enqueue(uint baid, bool changed = false) { }
-    public Task SetEnabledAsync(bool enabled, CancellationToken cancellationToken) => Task.CompletedTask;
-    public Task SetCards3DAsync(bool on, CancellationToken cancellationToken) => Task.CompletedTask;
-    public bool IsRendererToken(string token) => false;
-}
-
 /// <summary>No cabinets known, none restricted.</summary>
 public sealed class NullCabinetRegistry : ICabinetRegistry
 {

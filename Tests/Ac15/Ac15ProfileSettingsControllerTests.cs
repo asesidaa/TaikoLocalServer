@@ -115,7 +115,7 @@ public sealed class Ac15ProfileSettingsControllerTests
         var services = new ServiceCollection()
             .AddSingleton<IServerAccess>(authSettings)
             .BuildServiceProvider();
-        var controller = new UserSettingsController(database.Context, authSettings, new NullAvatarRenderer(), new FileGameDataCatalog([]))
+        var controller = new UserSettingsController(database.Context, authSettings, new FileGameDataCatalog([]))
         {
             ControllerContext = new ControllerContext
             {

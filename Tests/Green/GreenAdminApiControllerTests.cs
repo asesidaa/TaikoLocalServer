@@ -511,7 +511,6 @@ public class GreenAdminApiControllerTests
         return new UserSettingsController(
             context,
             effectiveAccess,
-            new NullAvatarRenderer(),
             new FileGameDataCatalog([]))
         {
             ControllerContext = new ControllerContext { HttpContext = httpContext }

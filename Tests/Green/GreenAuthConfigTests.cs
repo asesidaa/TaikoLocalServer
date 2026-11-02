@@ -14,7 +14,6 @@ public sealed class GreenAuthConfigTests
             new ThrowingTaikoDbContext(),
             new ThrowingJwtTokenService(),
             new TestServerAccess(),
-            new NullAvatarRenderer(),
             new MemoryCache(new MemoryCacheOptions()),
             Options.Create(new ServerSettings
             {
@@ -39,7 +38,6 @@ public sealed class GreenAuthConfigTests
             new ThrowingTaikoDbContext(),
             new ThrowingJwtTokenService(),
             new TestServerAccess(),
-            new NullAvatarRenderer(),
             new MemoryCache(new MemoryCacheOptions()),
             Options.Create(new ServerSettings
             {
@@ -80,8 +78,6 @@ public sealed class GreenAuthConfigTests
         public DbSet<Credential> Credentials => throw new NotSupportedException();
         public DbSet<Token> Tokens => throw new NotSupportedException();
         public DbSet<UserWebProfile> UserWebProfiles => throw new NotSupportedException();
-        public DbSet<UserAvatar> UserAvatars => throw new NotSupportedException();
-        public DbSet<UserStill> UserStills => throw new NotSupportedException();
         public DbSet<AccessRules> AccessRules => throw new NotSupportedException();
         public DbSet<ServerSecrets> ServerSecrets => throw new NotSupportedException();
         public DbSet<ActivityEntry> Activity => throw new NotSupportedException();
@@ -92,7 +88,6 @@ public sealed class GreenAuthConfigTests
         public DbSet<DashboardNotice> DashboardNotices => throw new NotSupportedException();
         public DbSet<ServerStatus> ServerStatuses => throw new NotSupportedException();
         public DbSet<TrustedBrowser> TrustedBrowsers => throw new NotSupportedException();
-        public DbSet<ServerOptions> ServerOptions => throw new NotSupportedException();
         public DbSet<Cabinet> Cabinets => throw new NotSupportedException();
         public DbSet<MovieLabel> MovieLabels => throw new NotSupportedException();
         public DbSet<ShopLiveSeason> ShopLiveSeasons => throw new NotSupportedException();

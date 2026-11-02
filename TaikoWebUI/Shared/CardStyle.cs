@@ -1,5 +1,4 @@
 using System.Globalization;
-using TaikoLocalServer.Contracts.AdminApi;
 
 namespace TaikoWebUI.Shared;
 
@@ -19,24 +18,23 @@ public static class CardStyle
         (CardPattern.Zigzag, "Zigzag"), (CardPattern.Grid, "Grid"), (CardPattern.Sunburst, "Sunburst"), (CardPattern.None, "Plain"),
     ];
 
-    /// <summary>Animation presets in picker order; the clip each loops is <see cref="AvatarKeys.Clip"/>.</summary>
+    /// <summary>Animation presets in picker order; the clip each loops is <see cref="Clip"/>.</summary>
     public static readonly (CardAnimation Value, string Name)[] Animations =
     [
         (CardAnimation.Celebrate, "Celebrate"), (CardAnimation.Clear, "Clear"), (CardAnimation.Aggressive, "Aggressive"),
         (CardAnimation.Miss, "Miss"), (CardAnimation.FullCombo, "Full Combo"), (CardAnimation.Pout, "Pout"),
     ];
 
-    public static string Clip(CardAnimation a) => AvatarKeys.Clip(a);
-
-    /// <summary>What an avatar shows (shared with the server renderer, see <see cref="AvatarKeys"/>).</summary>
-    /// <summary>The 2D view's still for this costume (AvatarKeys.StillKey), with the puchi.</summary>
-    public static string StillKey(UserSetting s) => AvatarKeys.StillKey(s.Kigurumi, s.Head, s.Body, s.Face, s.Puchi, s.BodyColor, s.FaceColor, s.LimbColor, s.CardAnimation);
-
-    public static string AvatarKey(UserSetting s) =>
-        AvatarKeys.Key(s.Kigurumi, s.Head, s.Body, s.Face, s.BodyColor, s.FaceColor, s.LimbColor, s.CardAnimation);
-
-    // c=2: skips copies browsers cached for a year under the old never-ask-again headers (the server ignores it).
-    public static string AvatarSrc(UserSetting s) => $"api/Users/{s.Baid}/Avatar?v={AvatarKey(s)}&c=2";
+    /// <summary>The clip each card animation loops.</summary>
+    public static string Clip(CardAnimation a) => a switch
+    {
+        CardAnimation.Celebrate => "don_result_full_loop",
+        CardAnimation.Aggressive => "don_wait_loop",
+        CardAnimation.Miss => "don_miss",
+        CardAnimation.FullCombo => "don_full_combo",
+        CardAnimation.Pout => "don_result_failure_loop",
+        _ => "don_result_clear_loop",
+    };
 
     /// <summary>Relative luminance above 0.45 means dark text and dark pattern ink, so light cards stay readable.</summary>
     public static bool IsLight(string hex)

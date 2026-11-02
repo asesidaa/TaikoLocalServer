@@ -3105,36 +3105,6 @@
   <data name="Notice title" xml:space="preserve">
     <value>タイトル</value>
   </data>
-  <data name="Avatars" xml:space="preserve">
-    <value>アバター</value>
-  </data>
-  <data name="Render avatars on the server" xml:space="preserve">
-    <value>サーバーでアバターを描画</value>
-  </data>
-  <data name="Draws each player's avatar on the server the first time it's shown, so players who never open the Web UI get one too. Edge or Chrome runs in the background only while avatars are waiting. When off, avatars show the player's initial." xml:space="preserve">
-    <value>各プレイヤーのアバターを、初めて表示されるときにサーバーで描画します。Web UI を開かないプレイヤーにもアバターが付きます。描画待ちのアバターがあるときだけ、Edge か Chrome がバックグラウンドで動きます。オフの場合、アバターはプレイヤー名の頭文字になります。</value>
-  </data>
-  <data name="Browser" xml:space="preserve">
-    <value>ブラウザー</value>
-  </data>
-  <data name="None found" xml:space="preserve">
-    <value>見つかりません</value>
-  </data>
-  <data name="Running" xml:space="preserve">
-    <value>実行中</value>
-  </data>
-  <data name="Idle" xml:space="preserve">
-    <value>待機中</value>
-  </data>
-  <data name="{0} queued · {1} drawn · {2} failed" xml:space="preserve">
-    <value>待機 {0} · 描画 {1} · 失敗 {2}</value>
-  </data>
-  <data name="Avatar renderer on" xml:space="preserve">
-    <value>アバター描画をオンにしました</value>
-  </data>
-  <data name="Avatar renderer off" xml:space="preserve">
-    <value>アバター描画をオフにしました</value>
-  </data>
   <data name="Find a user" xml:space="preserve">
     <value>ユーザーを探す</value>
   </data>
@@ -3306,36 +3276,6 @@
   <data name="Player Settings" xml:space="preserve">
     <value>プレイヤー設定</value>
   </data>
-  <data name="Stored avatars" xml:space="preserve">
-    <value>保存済みアバター</value>
-  </data>
-  <data name="Stored avatars · {0}" xml:space="preserve">
-    <value>保存済みアバター · {0}</value>
-  </data>
-  <data name="Clear all avatars" xml:space="preserve">
-    <value>アバターをすべて削除</value>
-  </data>
-  <data name="Clear all avatars?" xml:space="preserve">
-    <value>アバターをすべて削除しますか？</value>
-  </data>
-  <data name="No avatars stored yet." xml:space="preserve">
-    <value>保存済みのアバターはまだありません。</value>
-  </data>
-  <data name="{0} in the database." xml:space="preserve">
-    <value>データベース内 {0}。</value>
-  </data>
-  <data name="No name" xml:space="preserve">
-    <value>名前なし</value>
-  </data>
-  <data name="Every stored avatar is deleted. The server draws each one again the next time it's shown." xml:space="preserve">
-    <value>保存済みのアバターをすべて削除します。各アバターは、次に表示されるときにサーバーが描き直します。</value>
-  </data>
-  <data name="Every stored avatar is deleted. While rendering is off, avatars show the player's initial." xml:space="preserve">
-    <value>保存済みのアバターをすべて削除します。描画がオフの間、アバターはプレイヤー名の頭文字になります。</value>
-  </data>
-  <data name="Avatars cleared ({0})" xml:space="preserve">
-    <value>アバターを削除しました（{0}）</value>
-  </data>
   <data name="Delete Account Hint" xml:space="preserve">
     <value>プロフィール、スコア、プレイ履歴、カード、サインイン情報を完全に削除します。カードはその後、新しいプレイヤーとして再登録できます。</value>
   </data>
@@ -3366,21 +3306,6 @@
   <data name="Too many tries. Wait a minute, then try again." xml:space="preserve">
     <value>試行回数が多すぎます。1分待ってから、もう一度お試しください。</value>
   </data>
-  <data name="Enable 3D Renderer" xml:space="preserve">
-    <value>3D描画を有効にする</value>
-  </data>
-  <data name="Player cards show an animated 3D don-chan. When off, they show a still image the server draws: lighter for phones and older PCs, and it updates a few seconds after a costume change." xml:space="preserve">
-    <value>プレイヤーカードに3Dのどんちゃんを動きつきで表示します。オフの場合はサーバーが描いた静止画を表示します。スマホや古いPCで軽く、着せ替えの数秒後に更新されます。</value>
-  </data>
-  <data name="Player cards show an animated 3D don-chan. Turn on rendering avatars on the server to use still images instead." xml:space="preserve">
-    <value>プレイヤーカードに3Dのどんちゃんを動きつきで表示します。静止画を使うには、サーバーでのアバター描画をオンにしてください。</value>
-  </data>
-  <data name="Player cards show 3D" xml:space="preserve">
-    <value>カードを3D表示にしました</value>
-  </data>
-  <data name="Player cards show still images" xml:space="preserve">
-    <value>カードを静止画表示にしました</value>
-  </data>
   <data name="3D quality" xml:space="preserve">
     <value>3D画質</value>
   </data>
@@ -3395,9 +3320,6 @@
   </data>
   <data name="High" xml:space="preserve">
     <value>高</value>
-  </data>
-  <data name="Drawing don-chan…" xml:space="preserve">
-    <value>どんちゃんを描画中…</value>
   </data>
   <data name="Display" xml:space="preserve">
     <value>表示</value>

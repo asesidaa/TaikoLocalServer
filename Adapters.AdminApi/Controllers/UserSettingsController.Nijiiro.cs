@@ -91,8 +91,6 @@ public partial class UserSettingsController
 
         this.LogIfSomeoneElse(context, "profile.edit", baid);
         await context.SaveChangesAsync(HttpContext.RequestAborted);
-        // The costume or pose may have changed: render the avatar (it skips when it still matches).
-        avatars.Enqueue(baid, changed: true);
         return NoContent();
     }
 

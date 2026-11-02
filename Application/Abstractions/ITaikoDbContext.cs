@@ -3,8 +3,6 @@ namespace TaikoLocalServer.Application.Abstractions;
 public partial interface ITaikoDbContext
 {
     DbSet<UserWebProfile> UserWebProfiles { get; }
-    DbSet<UserAvatar> UserAvatars { get; }
-    DbSet<UserStill> UserStills { get; }
     DbSet<AccessRules> AccessRules { get; }
     DbSet<ServerSecrets> ServerSecrets { get; }
     DbSet<ActivityEntry> Activity { get; }
@@ -15,7 +13,6 @@ public partial interface ITaikoDbContext
     DbSet<DashboardNotice> DashboardNotices { get; }
     DbSet<ServerStatus> ServerStatuses { get; }
     DbSet<TrustedBrowser> TrustedBrowsers { get; }
-    DbSet<ServerOptions> ServerOptions { get; }
     DbSet<Cabinet> Cabinets { get; }
     DbSet<MovieLabel> MovieLabels { get; }
     DbSet<ShopLiveSeason> ShopLiveSeasons { get; }
