@@ -114,6 +114,30 @@ fn server_rules(era: Era, config: &str) -> Vec<(Rule, bool)> {
     rules
 }
 
+/// A title or drum-sound name pack without ids in its file name (`pack/ST4100-1/00/title_name/nutdatapack.ndp`,
+/// unlike `nutdatapack_00000_00099.ndp`). The server reads ids from file names, so its entries are written beside it.
+fn unnumbered_pack(rel: &str) -> bool {
+    let mut parts = rel.rsplit('/');
+    let (file, dir) = (parts.next().unwrap_or(""), parts.next().unwrap_or(""));
+    file.ends_with(".ndp") && !file.bytes().any(|c| c.is_ascii_digit()) && matches!(dir, "title_name" | "tone_name")
+}
+
+/// The pack's entry names (`shougou_012.nut`). An entry without a number holds one texture per item, from 0
+/// (Murasaki's drum-sound names are one `image.nut` of 16), and gives `<prefix>_NNN.nut` for each.
+fn entry_names(rel: &str, pack: &[u8]) -> Result<Vec<String>> {
+    let prefix = if rel.contains("/title_name/") { "shougou_" } else { "tone_name_" };
+    let mut names = Vec::new();
+    for (name, nut) in crate::nut::pack(pack)? {
+        if name.bytes().any(|c| c.is_ascii_digit()) {
+            names.push(name);
+        } else {
+            let count = u16::from_be_bytes(nut.get(6..8).context("truncated NTP3")?.try_into()?);
+            names.extend((0..count).map(|k| format!("{prefix}{k:03}.nut")));
+        }
+    }
+    Ok(names)
+}
+
 /// `config/<id>/`, or `""` for Kimidori and Momoiro. When the game has only another variant of the id (Red's
 /// 10.01 dump has `ST8100-7`, not `ST8100-1`), that one is used and copied under the id the server reads.
 fn config_dir(era: Era, game: &Source) -> (String, String) {
@@ -133,6 +157,8 @@ fn config_dir(era: Era, game: &Source) -> (String, String) {
 pub fn inputs(era: Era) -> serde_json::Value {
     let config = if era.config().is_some() { "config/*/" } else { "" };
     let mut rules: Vec<Rule> = server_rules(era, config).into_iter().map(|(r, _)| r).collect();
+    // Unnumbered name packs are read for their entry names (`unnumbered_pack`), so they're sent whole.
+    rules.extend(NAME_DIRS.iter().flat_map(|d| ["title_name", "tone_name"].map(|n| Rule::files(format!("{d}{n}/nutdatapack.ndp")))));
     rules.extend(crate::nut::inputs(era));
     rules.extend(crate::lmpack::inputs());
     rules.extend(crate::nud::inputs());
@@ -181,6 +207,20 @@ fn copy_server_files(era: Era, src: &Source, dst: &Path) -> Result<Report> {
                 continue;
             }
             let to = dst.join(target(rel));
+            if unnumbered_pack(rel) {
+                match src.read(rel).and_then(|b| entry_names(rel, &b)) {
+                    Ok(names) => {
+                        fs::create_dir_all(to.parent().unwrap())?;
+                        for name in names {
+                            let entry = to.with_file_name(&name);
+                            if !entry.exists() {
+                                fs::write(&entry, [])?;
+                            }
+                        }
+                    }
+                    Err(e) => report.failed.push(format!("{rel}: {e:#}")),
+                }
+            }
             if rule.names {
                 // Only the name is read; never replace a real file someone copied in by hand.
                 if !to.exists() {
@@ -212,6 +252,35 @@ fn copy_server_files(era: Era, src: &Source, dst: &Path) -> Result<Report> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn unnumbered_packs_list_their_entries() {
+        assert!(unnumbered_pack("nutdata/pack/ST4100-1/00/title_name/nutdatapack.ndp"));
+        assert!(!unnumbered_pack("nutdata/pack/ST5100-1/00/title_name/nutdatapack_00000_00099.ndp"));
+        assert!(!unnumbered_pack("nutdata/cos_name/nutdatapack.ndp"));
+        // A NUT pack (see nut.rs) of shougou_007.nut (one texture) and image.nut (three, one per item).
+        let entries = [("shougou_007.nut", 1u16), ("image.nut", 3)];
+        let mut b = b"NUT_PACK_TYPE1\0\0".to_vec();
+        b.resize(0x3E, 0);
+        b.extend((entries.len() as u32).to_be_bytes());
+        b.resize(0x4B, 0);
+        for (i, (name, _)) in entries.iter().enumerate() {
+            b.extend((name.len() as u32).to_be_bytes());
+            b.extend(name.as_bytes());
+            if i == 0 {
+                b.extend([0; 5]);
+            }
+            b.extend(((i * 8) as u32).to_be_bytes());
+            b.extend(8u32.to_be_bytes());
+        }
+        b.extend(16u32.to_be_bytes());
+        for (_, count) in entries {
+            b.extend(b"NTP3\x01\x00");
+            b.extend(count.to_be_bytes());
+        }
+        assert_eq!(entry_names("nutdata/pack/x/00/title_name/nutdatapack.ndp", &b).unwrap(), ["shougou_007.nut", "shougou_000.nut", "shougou_001.nut", "shougou_002.nut"]);
+        assert_eq!(entry_names("nutdata/pack/x/00/tone_name/nutdatapack.ndp", &b).unwrap()[1], "tone_name_000.nut");
+    }
 
     #[test]
     fn rules_match_like_the_server() {
