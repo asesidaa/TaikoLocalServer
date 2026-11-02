@@ -130,6 +130,7 @@ public static class DependencyInjection
         services.AddSingleton<IGameDataCatalog>(sp => new FileGameDataCatalog(
             sp.GetServices<IEraGameDataCatalog>(), sp.GetRequiredService<ILogger<FileGameDataCatalog>>()));
         services.AddSingleton<IExtractRunner, ExtractRunner>();
+        services.AddSingleton<IShopLiveSeasons, ShopLiveSeasons>();
 
         // Identity
         services.AddSingleton<ServerAccess>();

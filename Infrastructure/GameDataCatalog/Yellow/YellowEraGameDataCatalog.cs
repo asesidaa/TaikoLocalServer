@@ -11,7 +11,8 @@ namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Yellow;
 public sealed class YellowEraGameDataCatalog(
     ILogger<YellowEraGameDataCatalog> logger,
     IOptions<ServerSettings>? serverSettings = null,
-    INijiiroCatalog? nijiiroCatalog = null) : IYellowCatalog
+    INijiiroCatalog? nijiiroCatalog = null,
+    IShopLiveSeasons? liveSeasons = null) : IYellowCatalog
 {
     public const string CostumeFileName = "yellow_costume_data.json";
     public const string TitleFileName = "yellow_title_data.json";
@@ -125,7 +126,8 @@ public sealed class YellowEraGameDataCatalog(
             .GroupBy(entry => entry.UniqueId)
             .ToDictionary(group => group.Key, group => group.First());
 
-        itemShopCatalog = await new YellowItemShopLoader().LoadAsync(yellowSettings, cancellationToken);
+        itemShopCatalog = await Ac15LiveShop.LoadAsync(GameEra.Yellow, yellowSettings, liveSeasons,
+            settings => new YellowItemShopLoader().LoadAsync(settings, cancellationToken));
         itemShop = itemShopCatalog.ActiveItemsByNo;
         eventFolders = await new YellowEventFolderLoader().LoadAsync(
             new HashSet<uint>(musicInfos.Keys),

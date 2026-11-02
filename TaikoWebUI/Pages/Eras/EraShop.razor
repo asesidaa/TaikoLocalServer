@@ -1,0 +1,144 @@
+@page "/Users/{baid:int}/{Game}/PlayData/Shop"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject GameDataService GameDataService
+@inject PageState Page
+
+<PageTitle>@Localizer["Item shop"]</PageTitle>
+@* Green, Blue and Yellow's item shop for this player: the live season with what's on sale, the Don medals they have
+   in it, and what they bought in earlier seasons. Buying happens at the cabinet. *@
+<div class="mx-auto max-w-3xl">
+    <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Item shop"]</h1>
+    <GameLine Game="@GameName" />
+    <p class="mb-5 mt-1 text-sm @Css.Muted">@Localizer["Buy at the cabinet with Don medals; this page shows what's on sale and what you own."]</p>
+    @if (shop is null)
+    {
+        <div class="@Css.Card p-5"><Skeleton /></div>
+    }
+    else if (!shop.Enabled || Live is null)
+    {
+        <p class="@Css.Card p-6 text-center text-sm @Css.Muted">@string.Format(Localizer["{0}'s item shop isn't open on this server."], GameName)</p>
+    }
+    else
+    {
+        var live = Live;
+        var balance = (long)live.Earned - live.Spent;
+        var bought = live.Items.Count(i => i.PurchasedAt is not null);
+        <div class="grid gap-4 sm:grid-cols-2">
+            <section class="@Css.Card p-5">
+                <h2 class="text-xs font-medium uppercase tracking-wider @Css.Muted">@Localizer["This season"]</h2>
+                <p class="mt-1 font-semibold">@(live.Name.Length > 0 ? live.Name : string.Format(Localizer["Season {0}"], live.SeasonId))</p>
+                @if (live.Opens is { } opens && live.Closes is { } closes)
+                {
+                    <p class="text-sm @Css.Muted">@opens.ToString("d") – @closes.ToString("d") · @string.Format(Localizer["{0} days left"], Math.Max(0, (closes.Date - DateTime.Now.Date).Days))</p>
+                }
+                <p class="mt-2 text-sm">@string.Format(Localizer["{0} of {1} items bought, {2} left"], bought, live.Items.Count, live.Items.Count - bought)</p>
+            </section>
+            <section class="@Css.Card p-5">
+                <h2 class="text-xs font-medium uppercase tracking-wider @Css.Muted">@Localizer["Don medals"]</h2>
+                <p class="mt-1 text-2xl font-semibold tabular-nums">@balance.ToString("N0")</p>
+                <p class="text-sm @Css.Muted">@string.Format(Localizer["{0} earned this season · {1} spent"], live.Earned.ToString("N0"), live.Spent.ToString("N0"))</p>
+            </section>
+        </div>
+        <section class="mt-4">
+            <h2 class="mb-2 text-sm font-semibold">@Localizer["On sale now"]</h2>
+            <ul class="@Css.Card divide-y divide-zinc-100 overflow-hidden dark:divide-zinc-800">
+                @foreach (var item in live.Items)
+                {
+                    var owned = item.PurchasedAt is not null;
+                    <li class="flex items-center gap-3 px-4 py-3">
+                        <span class="@($"grid size-10 shrink-0 place-items-center rounded-xl {(owned ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800")}")">
+                            <Icon Name="@(item.Type == "song" ? "music" : item.Type == "tone" ? "drum" : "shirt")" Class="size-5" />
+                        </span>
+                        <span class="min-w-0 flex-1">
+                            <span class="block truncate text-sm font-medium">@ItemName(item)</span>
+                            <span class="block text-xs @Css.Muted">@TypeLabel(item.Type)</span>
+                        </span>
+                        @if (item.PurchasedAt is { } at)
+                        {
+                            <span class="text-right text-xs"><span class="block font-medium text-emerald-600 dark:text-emerald-400">@Localizer["Bought"]</span><span class="@Css.Muted">@at.ToLocalTime().ToString("d")</span></span>
+                        }
+                        else
+                        {
+                            <span class="text-right text-sm">
+                                <span class="block font-semibold tabular-nums">@item.Price.ToString("N0") <span class="text-xs font-normal @Css.Muted">@Localizer["medals"]</span></span>
+                                @if (item.Price > balance)
+                                {
+                                    <span class="block text-xs text-amber-700 dark:text-amber-300">@string.Format(Localizer["{0} more needed"], (item.Price - balance).ToString("N0"))</span>
+                                }
+                            </span>
+                        }
+                    </li>
+                }
+            </ul>
+        </section>
+        @if (Earlier.Count > 0)
+        {
+            <section class="mt-6">
+                <h2 class="mb-2 text-sm font-semibold">@Localizer["Earlier seasons"]</h2>
+                <div class="space-y-3">
+                    @foreach (var s in Earlier)
+                    {
+                        <div class="@Css.Card p-4">
+                            <p class="text-sm font-medium">@(s.Name.Length > 0 ? s.Name : string.Format(Localizer["Season {0}"], s.SeasonId))</p>
+                            <ul class="mt-1 space-y-0.5 text-sm">
+                                @foreach (var item in s.Items.Where(i => i.PurchasedAt is not null))
+                                {
+                                    <li class="flex gap-2"><span class="min-w-0 flex-1 truncate">@ItemName(item)</span><span class="text-xs @Css.Muted">@item.PurchasedAt!.Value.ToLocalTime().ToString("d")</span></li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </section>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public string Game { get; set; } = "";
+
+    private string GameName => EraPaths.Older(Game) ?? Game;
+    private ShopResponse? shop;
+    private Dictionary<uint, MusicDetail> songs = [];
+    private List<Costume> costumes = [];
+
+    private ShopSeason? Live => shop?.Seasons.FirstOrDefault(s => s.SeasonId == shop.LiveSeasonId);
+
+    // Other seasons the player bought something in.
+    private List<ShopSeason> Earlier => shop?.Seasons.Where(s => s.SeasonId != shop.LiveSeasonId && s.Items.Any(i => i.PurchasedAt is not null)).ToList() ?? [];
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Page.SetEraPlayData(GameName, Localizer["Play Data"], Baid, Localizer["Item shop"]);
+        shop = null;
+        if (!EraPaths.HasShop(GameName)) return;
+        try
+        {
+            var response = Client.GetFromJsonAsync<ShopResponse>($"api/{GameName}/Shop/{Baid}");
+            songs = await GameDataService.GetMusicDetailDictionary(GameName);
+            try { costumes = await Client.GetFromJsonAsync<List<Costume>>($"api/{GameName}/customization/costumes") ?? []; } catch (HttpRequestException) { }
+            shop = await response ?? new ShopResponse(GameName, false, null, []);
+        }
+        catch (HttpRequestException)
+        {
+            shop = new ShopResponse(GameName, false, null, []);
+        }
+    }
+
+    private string ItemName(ShopItem item) => item.Type switch
+    {
+        "song" => songs.TryGetValue(item.Id, out var s) && s.SongName.Length > 0 ? s.SongName : $"#{item.Id}",
+        "tone" => string.Format(Localizer["Drum sound {0}"], item.Id),
+        _ => costumes.FirstOrDefault(c => c.CostumeType == item.Type && c.CostumeId == item.Id) is { } c
+            ? (c.CostumeNameEN.Length > 0 ? c.CostumeNameEN : c.CostumeName)
+            : $"{TypeLabel(item.Type)} {item.Id}",
+    };
+
+    private string TypeLabel(string type) => type switch
+    {
+        "song" => Localizer["Song"], "tone" => Localizer["Drum sound"], "kigurumi" => Localizer["Kigurumi"], "head" => Localizer["Head"],
+        "body" => Localizer["Body"], "face" => Localizer["Face paint"], "puchi" => Localizer["Puchi"], _ => type,
+    };
+}

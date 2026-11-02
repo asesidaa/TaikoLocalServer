@@ -95,6 +95,7 @@ public sealed class GreenAuthConfigTests
         public DbSet<ServerOptions> ServerOptions => throw new NotSupportedException();
         public DbSet<Cabinet> Cabinets => throw new NotSupportedException();
         public DbSet<MovieLabel> MovieLabels => throw new NotSupportedException();
+        public DbSet<ShopLiveSeason> ShopLiveSeasons => throw new NotSupportedException();
         public Task<(int Count, DateTime? Latest)> NewBestTotalsAsync(uint baid, Difficulty? difficulty, CancellationToken cancellationToken) => throw new NotSupportedException();
         public Task<Dictionary<uint, int>> CreditCountsAsync(uint? baid, TimeSpan sessionGap, CancellationToken cancellationToken) => throw new NotSupportedException();
         public DbSet<UserSaveDataNijiiro> UserSaveDataNijiiro => throw new NotSupportedException();

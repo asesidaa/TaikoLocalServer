@@ -1830,6 +1830,19 @@ namespace TaikoLocalServer.Migrations
                     b.ToTable("ServerStatuses");
                 });
 
+            modelBuilder.Entity("TaikoLocalServer.Domain.Entities.ShopLiveSeason", b =>
+                {
+                    b.Property<string>("Era")
+                        .HasColumnType("TEXT");
+
+                    b.Property<uint>("SeasonId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Era");
+
+                    b.ToTable("ShopLiveSeasons");
+                });
+
             modelBuilder.Entity("TaikoLocalServer.Domain.Entities.SignInAttempt", b =>
                 {
                     b.Property<long>("Id")

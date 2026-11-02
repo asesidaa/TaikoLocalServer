@@ -22,6 +22,12 @@
         {
             @Card(EraPaths.DonChallenge, "medal", Localizer["Don Challenge"], Localizer["This month's tasks, your progress and the rewards."])
         }
+        @if (EraPaths.HasShop(GameName))
+        {
+            @Card(EraPaths.Shop, "ticket", Localizer["Item shop"], Localizer["What's on sale this season, your Don medals and what you bought."],
+                (ShopLive is { } live ? ((long)live.Earned - live.Spent).ToString("N0") : null, Localizer["Don medals"]),
+                (shop?.Seasons.Sum(x => x.Items.Count(i => i.PurchasedAt is not null)).ToString("N0"), Localizer["items bought"]))
+        }
         @* Stats needs numbers only Nijiiro's server keeps. *@
         <div class="rounded-2xl border border-dashed border-zinc-300 p-5 opacity-70 dark:border-zinc-700">
             <div class="flex items-center gap-2 text-zinc-500"><Icon Name="chart" /><span class="font-semibold">@Localizer["Stats"]</span></div>
@@ -37,15 +43,19 @@
     private string GameName => EraPaths.Older(Game) ?? Game;
     private EraScores? scores;
     private List<DanBestData>? dans;
+    private ShopResponse? shop;
+
+    private ShopSeason? ShopLive => shop?.Seasons.FirstOrDefault(x => x.SeasonId == shop.LiveSeasonId);
 
     protected override async Task OnParametersSetAsync()
     {
         Page.Set(GameName, Localizer["Play Data"]);
-        (scores, dans) = (null, null);
+        (scores, dans, shop) = (null, null, null);
         if (EraPaths.Older(Game) is null) return;
         await Task.WhenAll(
             Fill(async () => scores = await EraScores.LoadAsync(Client, GameDataService, GameName, Baid)),
-            Fill(async () => dans = (await Client.GetFromJsonAsync<DanBestDataResponse>($"api/{GameName}/DanBestData/{Baid}"))?.DanBestDataList ?? []));
+            Fill(async () => dans = (await Client.GetFromJsonAsync<DanBestDataResponse>($"api/{GameName}/DanBestData/{Baid}"))?.DanBestDataList ?? []),
+            Fill(async () => shop = EraPaths.HasShop(GameName) ? await Client.GetFromJsonAsync<ShopResponse>($"api/{GameName}/Shop/{Baid}") : null));
     }
 
     private async Task Fill(Func<Task> load)

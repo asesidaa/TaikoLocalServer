@@ -4203,4 +4203,61 @@
   <data name="{0} in {1}" xml:space="preserve">
     <value>{1}の{0}</value>
   </data>
+  <data name="Buy at the cabinet with Don medals; this page shows what's on sale and what you own." xml:space="preserve">
+    <value>購入は筐体でドンメダルを使って行います。このページでは販売中のものと持っているものを確認できます。</value>
+  </data>
+  <data name="{0}'s item shop isn't open on this server." xml:space="preserve">
+    <value>このサーバーでは{0}のアイテムショップは開いていません。</value>
+  </data>
+  <data name="This season" xml:space="preserve">
+    <value>今シーズン</value>
+  </data>
+  <data name="{0} of {1} items bought, {2} left" xml:space="preserve">
+    <value>{1}個中{0}個購入済み、残り{2}個</value>
+  </data>
+  <data name="Don medals" xml:space="preserve">
+    <value>ドンメダル</value>
+  </data>
+  <data name="{0} earned this season · {1} spent" xml:space="preserve">
+    <value>今シーズン{0}獲得・{1}使用</value>
+  </data>
+  <data name="On sale now" xml:space="preserve">
+    <value>販売中</value>
+  </data>
+  <data name="Bought" xml:space="preserve">
+    <value>購入済み</value>
+  </data>
+  <data name="medals" xml:space="preserve">
+    <value>メダル</value>
+  </data>
+  <data name="{0} more needed" xml:space="preserve">
+    <value>あと{0}必要</value>
+  </data>
+  <data name="Earlier seasons" xml:space="preserve">
+    <value>過去のシーズン</value>
+  </data>
+  <data name="What's on sale this season, your Don medals and what you bought." xml:space="preserve">
+    <value>今シーズンの販売品、ドンメダル、購入したもの。</value>
+  </data>
+  <data name="items bought" xml:space="preserve">
+    <value>購入したアイテム</value>
+  </data>
+  <data name="{0} cabinets show this season" xml:space="preserve">
+    <value>{0}の筐体はこのシーズンを表示します</value>
+  </data>
+  <data name="Make this the live season" xml:space="preserve">
+    <value>このシーズンを開催中にする</value>
+  </data>
+  <data name="Bought by 1 player · {1} items" xml:space="preserve">
+    <value>1人が購入・{1}個</value>
+  </data>
+  <data name="Bought by {0} players · {1} items" xml:space="preserve">
+    <value>{0}人が購入・{1}個</value>
+  </data>
+  <data name="Season {0} is live. Cabinets pick it up on their next start-up." xml:space="preserve">
+    <value>シーズン{0}を開催中にしました。筐体は次の起動時に反映します。</value>
+  </data>
+  <data name="Save the file first: the live season must be one that's saved." xml:space="preserve">
+    <value>先にファイルを保存してください。開催中にできるのは保存済みのシーズンだけです。</value>
+  </data>
 </root>

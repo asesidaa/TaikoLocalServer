@@ -7,12 +7,15 @@ using TaikoLocalServer.Domain.Enums;
 using TaikoLocalServer.Infrastructure.GameDataCatalog;
 using TaikoLocalServer.Infrastructure.GameDataCatalog.Green.Extractor;
 
+using TaikoLocalServer.Infrastructure.GameDataCatalog.Ac15;
+
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Green;
 
 public sealed class GreenEraGameDataCatalog(
     ILogger<GreenEraGameDataCatalog> logger,
     IOptions<ServerSettings>? serverSettings = null,
-    INijiiroCatalog? nijiiroCatalog = null) : IGreenCatalog
+    INijiiroCatalog? nijiiroCatalog = null,
+    IShopLiveSeasons? liveSeasons = null) : IGreenCatalog
 {
     private uint songHashVersion;
     private IReadOnlyList<Ac15MusicInfoEntry> musicInfoFileOrder = [];
@@ -114,7 +117,8 @@ public sealed class GreenEraGameDataCatalog(
             .GroupBy(entry => entry.UniqueId)
             .ToDictionary(group => group.Key, group => group.First());
         var greenSettings = GetGreenSettings();
-        itemShopCatalog = await new GreenItemShopLoader().LoadAsync(greenSettings, cancellationToken);
+        itemShopCatalog = await Ac15LiveShop.LoadAsync(GameEra.Green, greenSettings, liveSeasons,
+            settings => new GreenItemShopLoader().LoadAsync(settings, cancellationToken));
         itemShop = itemShopCatalog.ActiveItemsByNo;
         eventFolders = await new GreenEventFolderLoader().LoadAsync(
             new HashSet<uint>(musicInfos.Keys),

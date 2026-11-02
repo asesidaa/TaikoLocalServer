@@ -11,7 +11,7 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Route("api/[controller]")]
 [Authorize(Policy = AuthPolicies.Admin)]
 [ApiScope(ApiScopes.AdminServer, ApiScopes.AdminServer)]
-public class GamesController(IGameDataCatalog catalog, IOptions<ServerSettings> settings, ITaikoDbContext context)
+public class GamesController(IGameDataCatalog catalog, IOptions<ServerSettings> settings, ITaikoDbContext context, IShopLiveSeasons liveSeasons)
     : BaseAdminController<GamesController>
 {
     [HttpGet]
@@ -55,7 +55,7 @@ public class GamesController(IGameDataCatalog catalog, IOptions<ServerSettings> 
 
         return new GameStatus(era.ToString(), true, folder, found, load.At, load.Error, catalog.For(era).MusicInfos.Count,
             costumes, titles, tones, filesLoaded, filesTotal,
-            eraSettings?.EnableShop == true ? eraSettings.ActiveShopSeasonId : null,
+            eraSettings?.EnableShop == true ? liveSeasons.Get(era) ?? eraSettings.ActiveShopSeasonId : null,
             eraSettings?.IsDonChallengeEnabled() == true ? eraSettings.GetActiveDonChallengeBundleId() : null);
     }
 

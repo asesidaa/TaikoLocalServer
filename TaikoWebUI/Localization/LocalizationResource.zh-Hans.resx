@@ -4203,4 +4203,61 @@
   <data name="{0} in {1}" xml:space="preserve">
     <value>{1} 的{0}</value>
   </data>
+  <data name="Buy at the cabinet with Don medals; this page shows what's on sale and what you own." xml:space="preserve">
+    <value>在机台用咚奖牌购买；这个页面显示在售物品和你已拥有的物品。</value>
+  </data>
+  <data name="{0}'s item shop isn't open on this server." xml:space="preserve">
+    <value>这台服务器未开放 {0} 的道具商店。</value>
+  </data>
+  <data name="This season" xml:space="preserve">
+    <value>本季</value>
+  </data>
+  <data name="{0} of {1} items bought, {2} left" xml:space="preserve">
+    <value>已购买 {0}/{1} 件，剩余 {2} 件</value>
+  </data>
+  <data name="Don medals" xml:space="preserve">
+    <value>咚奖牌</value>
+  </data>
+  <data name="{0} earned this season · {1} spent" xml:space="preserve">
+    <value>本季获得 {0} · 已花费 {1}</value>
+  </data>
+  <data name="On sale now" xml:space="preserve">
+    <value>正在出售</value>
+  </data>
+  <data name="Bought" xml:space="preserve">
+    <value>已购买</value>
+  </data>
+  <data name="medals" xml:space="preserve">
+    <value>奖牌</value>
+  </data>
+  <data name="{0} more needed" xml:space="preserve">
+    <value>还差 {0}</value>
+  </data>
+  <data name="Earlier seasons" xml:space="preserve">
+    <value>往季</value>
+  </data>
+  <data name="What's on sale this season, your Don medals and what you bought." xml:space="preserve">
+    <value>本季在售物品、你的咚奖牌和已购买的物品。</value>
+  </data>
+  <data name="items bought" xml:space="preserve">
+    <value>已购物品</value>
+  </data>
+  <data name="{0} cabinets show this season" xml:space="preserve">
+    <value>{0} 机台显示这一季</value>
+  </data>
+  <data name="Make this the live season" xml:space="preserve">
+    <value>设为当前季度</value>
+  </data>
+  <data name="Bought by 1 player · {1} items" xml:space="preserve">
+    <value>1 位玩家购买 · {1} 件</value>
+  </data>
+  <data name="Bought by {0} players · {1} items" xml:space="preserve">
+    <value>{0} 位玩家购买 · {1} 件</value>
+  </data>
+  <data name="Season {0} is live. Cabinets pick it up on their next start-up." xml:space="preserve">
+    <value>第 {0} 季已设为当前。机台会在下次启动时生效。</value>
+  </data>
+  <data name="Save the file first: the live season must be one that's saved." xml:space="preserve">
+    <value>请先保存文件：只能把已保存的季度设为当前。</value>
+  </data>
 </root>

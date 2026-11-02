@@ -18,6 +18,7 @@ public partial interface ITaikoDbContext
     DbSet<ServerOptions> ServerOptions { get; }
     DbSet<Cabinet> Cabinets { get; }
     DbSet<MovieLabel> MovieLabels { get; }
+    DbSet<ShopLiveSeason> ShopLiveSeasons { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 

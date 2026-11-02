@@ -197,6 +197,7 @@ try
     }
     await app.Services.GetRequiredService<ServerAccess>().InitializeAsync();
     await app.Services.GetRequiredService<TaikoLocalServer.Application.Abstractions.ICabinetRegistry>().InitializeAsync();
+    await app.Services.GetRequiredService<TaikoLocalServer.Application.Abstractions.IShopLiveSeasons>().InitializeAsync();
 
     app.UseSerilogRequestLogging(options =>
     {

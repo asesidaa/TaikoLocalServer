@@ -12,7 +12,8 @@ namespace TaikoLocalServer.Infrastructure.GameDataCatalog.Blue;
 public sealed class BlueEraGameDataCatalog(
     ILogger<BlueEraGameDataCatalog> logger,
     IOptions<ServerSettings>? serverSettings = null,
-    INijiiroCatalog? nijiiroCatalog = null) : IBlueCatalog
+    INijiiroCatalog? nijiiroCatalog = null,
+    IShopLiveSeasons? liveSeasons = null) : IBlueCatalog
 {
     private uint songHashVersion;
     private IReadOnlyList<Ac15MusicInfoEntry> musicInfoFileOrder = [];
@@ -125,7 +126,8 @@ public sealed class BlueEraGameDataCatalog(
             .GroupBy(entry => entry.UniqueId)
             .ToDictionary(group => group.Key, group => group.First());
 
-        itemShopCatalog = await new BlueItemShopLoader().LoadAsync(blueSettings, cancellationToken);
+        itemShopCatalog = await Ac15LiveShop.LoadAsync(GameEra.Blue, blueSettings, liveSeasons,
+            settings => new BlueItemShopLoader().LoadAsync(settings, cancellationToken));
         itemShop = itemShopCatalog.ActiveItemsByNo;
         battleCatalog = await new BlueBattleDataLoader().LoadAsync(cancellationToken);
         eventFolders = await new BlueEventFolderLoader().LoadAsync(new HashSet<uint>(musicInfos.Keys), cancellationToken);

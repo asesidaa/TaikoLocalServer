@@ -2,6 +2,7 @@
    The live season is ServerSettings.json's Eras.<Game>.ActiveShopSeasonId. *@
 @using System.Text.Json.Nodes
 @inject HttpClient Client
+@inject ToastService Toast
 
 @{
     if (Shop["seasons"] is not JsonArray seasons) Shop["seasons"] = seasons = [];
@@ -28,12 +29,25 @@
     var s = list[selected];
     var seasonId = s["season_id"]?.GetValue<uint>() ?? 0;
     <div class="mt-4 space-y-3" role="tabpanel">
-        @if (seasonId == active)
-        {
-            <p class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
-                <Icon Name="check" Class="size-3.5" />@string.Format(Localizer["Active: {0} cabinets show this season (set in ServerSettings.json)"], Game)
-            </p>
-        }
+        <div class="flex flex-wrap items-center gap-2">
+            @if (seasonId == active)
+            {
+                <p class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                    <Icon Name="check" Class="size-3.5" />@Localizer["Live"]
+                </p>
+                <span class="text-xs @Css.Muted">@string.Format(Localizer["{0} cabinets show this season"], Game)</span>
+            }
+            else
+            {
+                <button class="@Css.GhostButton border border-zinc-200 !py-1.5 dark:border-zinc-700" disabled="@making" @onclick="() => MakeLive(seasonId)">
+                    <Icon Name="check" />@Localizer["Make this the live season"]
+                </button>
+            }
+            @if (sales.GetValueOrDefault(seasonId) is { } sold)
+            {
+                <span class="ml-auto text-xs @Css.Muted">@string.Format(sold.Players == 1 ? Localizer["Bought by 1 player · {1} items"] : Localizer["Bought by {0} players · {1} items"], sold.Players, sold.Items)</span>
+            }
+        </div>
         <label class="block text-xs @Css.Muted">@Localizer["Name"]
             <input class="@Css.Input mt-1" value="@s["telop"]" @onchange='e => Set(() => s["telop"] = e.Value?.ToString() ?? "")' />
         </label>
@@ -115,6 +129,35 @@
     private int selected;
     private uint? active;
     private JsonArray? picking;
+    private bool making;
+    private Dictionary<uint, ShopSeasonSales> sales = [];
+
+    // The live season is kept in the database (no restart); cabinets fetch the shop when they start up.
+    private async Task MakeLive(uint seasonId)
+    {
+        making = true;
+        try
+        {
+            var res = await Client.PostAsync($"api/{Game}/Shop/LiveSeason/{seasonId}", null);
+            if (res.IsSuccessStatusCode)
+            {
+                active = seasonId;
+                Toast.Show(string.Format(Localizer["Season {0} is live. Cabinets pick it up on their next start-up."], seasonId));
+            }
+            else
+            {
+                Toast.Show(Localizer["Save the file first: the live season must be one that's saved."], true);
+            }
+        }
+        catch (HttpRequestException)
+        {
+            Toast.Show(Localizer["Save Failed"], true);
+        }
+        finally
+        {
+            making = false;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -125,6 +168,14 @@
         catch (HttpRequestException)
         {
             // No badge.
+        }
+        try
+        {
+            sales = (await Client.GetFromJsonAsync<List<ShopSeasonSales>>($"api/{Game}/Shop/Sales") ?? []).ToDictionary(x => x.SeasonId);
+        }
+        catch (HttpRequestException)
+        {
+            // No counts.
         }
         // Open on the live season.
         var index = (Shop["seasons"] as JsonArray)?.OfType<JsonObject>().ToList().FindIndex(s => s["season_id"]?.GetValue<uint>() == active) ?? -1;

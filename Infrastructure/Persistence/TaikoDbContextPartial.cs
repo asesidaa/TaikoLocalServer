@@ -22,6 +22,7 @@ public partial class TaikoDbContext
     public virtual DbSet<ServerOptions> ServerOptions { get; set; } = null!;
     public virtual DbSet<Cabinet> Cabinets { get; set; } = null!;
     public virtual DbSet<MovieLabel> MovieLabels { get; set; } = null!;
+    public virtual DbSet<ShopLiveSeason> ShopLiveSeasons { get; set; } = null!;
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder)
     {
@@ -42,6 +43,7 @@ public partial class TaikoDbContext
         modelBuilder.Entity<TrustedBrowser>(entity => entity.HasIndex(e => e.TokenHash).IsUnique());
         modelBuilder.Entity<ServerOptions>(entity => entity.Property(e => e.Id).ValueGeneratedNever());
         modelBuilder.Entity<Cabinet>(entity => entity.HasKey(e => e.ChassisId));
+        modelBuilder.Entity<ShopLiveSeason>(entity => entity.HasKey(e => e.Era));
         modelBuilder.Entity<MovieLabel>(entity =>
         {
             entity.HasKey(e => e.MovieId);

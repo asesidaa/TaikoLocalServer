@@ -4203,4 +4203,61 @@
   <data name="{0} in {1}" xml:space="preserve">
     <value>{0} dans {1}</value>
   </data>
+  <data name="Buy at the cabinet with Don medals; this page shows what's on sale and what you own." xml:space="preserve">
+    <value>Les achats se font à la borne avec des médailles Don ; cette page montre ce qui est en vente et ce que vous possédez.</value>
+  </data>
+  <data name="{0}'s item shop isn't open on this server." xml:space="preserve">
+    <value>La boutique d'objets de {0} n'est pas ouverte sur ce serveur.</value>
+  </data>
+  <data name="This season" xml:space="preserve">
+    <value>Cette saison</value>
+  </data>
+  <data name="{0} of {1} items bought, {2} left" xml:space="preserve">
+    <value>{0} objets sur {1} achetés, {2} restants</value>
+  </data>
+  <data name="Don medals" xml:space="preserve">
+    <value>Médailles Don</value>
+  </data>
+  <data name="{0} earned this season · {1} spent" xml:space="preserve">
+    <value>{0} gagnées cette saison · {1} dépensées</value>
+  </data>
+  <data name="On sale now" xml:space="preserve">
+    <value>En vente</value>
+  </data>
+  <data name="Bought" xml:space="preserve">
+    <value>Acheté</value>
+  </data>
+  <data name="medals" xml:space="preserve">
+    <value>médailles</value>
+  </data>
+  <data name="{0} more needed" xml:space="preserve">
+    <value>encore {0}</value>
+  </data>
+  <data name="Earlier seasons" xml:space="preserve">
+    <value>Saisons précédentes</value>
+  </data>
+  <data name="What's on sale this season, your Don medals and what you bought." xml:space="preserve">
+    <value>Ce qui est en vente cette saison, vos médailles Don et vos achats.</value>
+  </data>
+  <data name="items bought" xml:space="preserve">
+    <value>objets achetés</value>
+  </data>
+  <data name="{0} cabinets show this season" xml:space="preserve">
+    <value>Les bornes {0} affichent cette saison</value>
+  </data>
+  <data name="Make this the live season" xml:space="preserve">
+    <value>En faire la saison en cours</value>
+  </data>
+  <data name="Bought by 1 player · {1} items" xml:space="preserve">
+    <value>Acheté par 1 joueur · {1} objets</value>
+  </data>
+  <data name="Bought by {0} players · {1} items" xml:space="preserve">
+    <value>Acheté par {0} joueurs · {1} objets</value>
+  </data>
+  <data name="Season {0} is live. Cabinets pick it up on their next start-up." xml:space="preserve">
+    <value>La saison {0} est en cours. Les bornes la prennent à leur prochain démarrage.</value>
+  </data>
+  <data name="Save the file first: the live season must be one that's saved." xml:space="preserve">
+    <value>Enregistrez d'abord le fichier : la saison en cours doit être enregistrée.</value>
+  </data>
 </root>
