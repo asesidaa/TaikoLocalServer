@@ -62,8 +62,8 @@
                         @foreach (var c in checks)
                         {
                             <li class="flex items-start gap-2.5">
-                                <span class="mt-px grid size-5 shrink-0 place-items-center rounded-full @ToneClass(c.Tone)" title="@ToneWord(c.Tone)">
-                                    <Icon Name="@(c.Tone switch { Tone.Ok => "check", Tone.None => "minus", _ => "alert" })" Class="size-3" /><span class="sr-only">@ToneWord(c.Tone):</span>
+                                <span class="grid size-6 shrink-0 place-items-center rounded-full @ToneClass(c.Tone)" title="@ToneWord(c.Tone)">
+                                    <Icon Name="@(c.Tone switch { Tone.Ok => "check", Tone.None => "minus", _ => "alert" })" Class="size-3.5" /><span class="sr-only">@ToneWord(c.Tone):</span>
                                 </span>
                                 <span class="min-w-0 text-sm">
                                     <span class="font-medium">@c.Label</span>

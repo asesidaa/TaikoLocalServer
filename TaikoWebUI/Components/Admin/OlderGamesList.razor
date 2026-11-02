@@ -26,10 +26,10 @@
                             <Icon Name="@(ready ? "check" : "alert")" Class="size-3.5" />@(ready ? Localizer["Ready"] : g.FolderFound ? Localizer["Didn't load"] : Localizer["Folder not found"])
                         </span>
                     </div>
-                    <p class="mt-0.5 truncate pl-4.5 font-mono text-xs @Css.Muted" title="@g.Folder">@g.Folder</p>
+                    <p class="mt-0.5 truncate pl-4 font-mono text-xs @Css.Muted" title="@g.Folder">@g.Folder</p>
                     @if (!ready)
                     {
-                        <p class="mt-1 pl-4.5 text-xs text-red-700 dark:text-red-300">
+                        <p class="mt-1 pl-4 text-xs text-red-700 dark:text-red-300">
                             @(g.Error is { } e && g.FolderFound ? e : string.Format(Localizer["Copy {0}'s data folder there, then Check again: no restart needed."], info.Name))
                         </p>
                     }

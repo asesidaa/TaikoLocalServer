@@ -249,11 +249,11 @@
             @label
             @if (dirty.Contains(id))
             {
-                <span class="size-1.5 rounded-full bg-primary-500" title="@Localizer["Unsaved changes"]"></span>
+                <span class="size-2 rounded-full bg-primary-500" title="@Localizer["Unsaved changes"]"></span>
             }
             else if (status is { Error: not null } or { Missing: true } || problems > 0)
             {
-                <span class="size-1.5 rounded-full bg-red-500" title="@Localizer["This file didn't load"]"></span>
+                <span class="size-2 rounded-full bg-red-500" title="@Localizer["This file didn't load"]"></span>
             }
         </button>
     };

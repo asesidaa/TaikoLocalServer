@@ -1,7 +1,7 @@
-@* A game's colour dot. White's gets a ring so it shows on a white page. *@
-<span class="@($"{Class} shrink-0 rounded-full {(Game.Name == "White" ? "ring-1 ring-zinc-400" : "")}")" style="background:@Game.Dot" aria-hidden="true"></span>
+@* A game's colour dot: one flat circle on the 8px grid (White is a grey fill, so it shows on a white page). *@
+<span class="@($"{Class} shrink-0 rounded-full")" style="background:@Game.Dot" aria-hidden="true"></span>
 
 @code {
     [Parameter, EditorRequired] public GameInfo Game { get; set; } = null!;
-    [Parameter] public string Class { get; set; } = "size-2.5";
+    [Parameter] public string Class { get; set; } = "size-2";
 }

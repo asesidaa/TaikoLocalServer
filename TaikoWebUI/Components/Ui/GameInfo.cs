@@ -10,7 +10,7 @@ public sealed record GameInfo(string Name, string Japanese, string Dot)
         new("Blue", "ブルー", "#3b82f6"),
         new("Yellow", "イエロー", "#eab308"),
         new("Red", "レッド", "#ef4444"),
-        new("White", "ホワイト", "#f4f4f5"),
+        new("White", "ホワイト", "#d4d4d8"),
         new("Murasaki", "むらさき", "#8b5cf6"),
         new("Kimidori", "きみどり", "#84cc16"),
         new("Momoiro", "ももいろ", "#f472b6"),
