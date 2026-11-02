@@ -186,7 +186,40 @@ pub fn run(era: Era, game: &Path, out: &Path) -> Result<Vec<Report>> {
     let mut tones = Report::new(&format!("{} tones", era.name()));
     crate::nub::convert(&src, &assets, &mut tones)?;
     reports.push(tones);
+    let manifest = out.join("data").join(era.name()).join(crate::MANIFEST);
+    crate::write_manifest(&manifest, era.name(), game, &reports, notes(era, &src, &assets, &reports))?;
     Ok(reports)
+}
+
+/// The manifest's notes: what the dump lacks (`gap`), what this game doesn't have (`absent`), and extras (`included`).
+fn notes(era: Era, src: &Source, assets: &Path, reports: &[Report]) -> Vec<serde_json::Value> {
+    let note = |kind: &str, code: &str, detail: Option<&str>| {
+        let mut n = serde_json::json!({ "kind": kind, "code": code });
+        if let Some(d) = detail {
+            n["detail"] = d.into();
+        }
+        n
+    };
+    let mut notes = Vec::new();
+    let (have, want) = config_dir(era, src);
+    if have != want && src.exists(&format!("{have}musicinfo.xml")) {
+        notes.push(note("gap", "early-config", have.trim_start_matches("config/").strip_suffix('/')));
+    }
+    if era == Era::Blue && !src.files(|p| p.starts_with(&format!("{have}battle/"))).any(|_| true) {
+        notes.push(note("gap", "no-battle", None));
+    }
+    // ui.json lists the sets that rendered (no ui.json: the dump has no Lumen packs, which the steps already show).
+    let ui = std::fs::read_to_string(assets.join("ui").join("ui.json")).ok().and_then(|s| serde_json::from_str::<serde_json::Value>(&s).ok());
+    if ui.is_some_and(|u| u.get("plate").is_none()) {
+        notes.push(note("absent", "no-title-plates", None));
+    }
+    if !reports.iter().any(|r| r.label.ends_with(" cos_icon")) {
+        notes.push(note("absent", "no-costume-icons", None));
+    }
+    if era == Era::Green && ["cos_name", "title_name", "tone_name"].iter().all(|d| src.exists(&format!("nutdata/{d}/nutdatapack.ndp"))) {
+        notes.push(note("included", "names", None));
+    }
+    notes
 }
 
 fn copy_server_files(era: Era, src: &Source, dst: &Path) -> Result<Report> {

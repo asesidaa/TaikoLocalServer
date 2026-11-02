@@ -145,6 +145,7 @@ fn run(args: Args) -> Result<Vec<Report>> {
     if let Some(era) = args.era {
         return ac15::run(era, &game, &out);
     }
+    let source = game.clone();
     let x64 = resolve_x64(&game)?;
     let game = game::Game::new(x64, args.mods)?;
     println!("game:   {}{}", game.base().display(), if game.modded() { " + Data_mods" } else { "" });
@@ -191,7 +192,45 @@ fn run(args: Args) -> Result<Vec<Report>> {
     tones::convert(&game, &game_data.join("tone"), &mut report)?;
     reports.push(report);
     fs::write(game_data.join(STAMP), serde_json::to_string(&serde_json::json!({ "mods": game.modded() }))?)?;
+    write_manifest(&out.join("data").join(MANIFEST), "nijiiro", &source, &reports, Vec::new())?;
     Ok(reports)
+}
+
+/// What a run did, for the server's Extract panel: `<out>/data/extract.json` (Nijiiro) or
+/// `<out>/data/<era>/extract.json`. Overwritten by every run that gets to the end, failed steps or not.
+pub const MANIFEST: &str = "extract.json";
+
+/// `steps` are the reports in printed order, labels without the era (`server files`, not `red server files`).
+/// `notes` are `{ kind: gap | absent | included, code, detail? }` (see the README).
+pub fn write_manifest(path: &Path, era: &str, source: &Path, reports: &[Report], notes: Vec<serde_json::Value>) -> Result<()> {
+    let prefix = format!("{era} ");
+    let steps: Vec<_> = reports.iter().map(|r| serde_json::json!({
+        "label": r.label.strip_prefix(&prefix).unwrap_or(&r.label),
+        "written": r.copied.len(), "upToDate": r.up_to_date.len(), "missing": r.missing.len(), "failed": r.failed.len(),
+    })).collect();
+    let manifest = serde_json::json!({
+        "era": era, "finishedAt": utc_now(), "source": source.display().to_string(), "steps": steps, "notes": notes,
+    });
+    fs::create_dir_all(path.parent().context("manifest has no folder")?)?;
+    fs::write(path, serde_json::to_string_pretty(&manifest)?).with_context(|| format!("writing {}", path.display()))
+}
+
+fn utc_now() -> String {
+    iso_utc(std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(0, |d| d.as_secs()))
+}
+
+/// `2026-11-02T21:00:00Z` from Unix seconds (days to civil date: Howard Hinnant's algorithm).
+fn iso_utc(secs: u64) -> String {
+    let (days, s) = ((secs / 86_400) as i64, secs % 86_400);
+    let z = days + 719_468;
+    let era = z.div_euclid(146_097);
+    let doe = z - era * 146_097;
+    let yoe = (doe - doe / 1_460 + doe / 36_524 - doe / 146_096) / 365;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let (d, m) = (doy - (153 * mp + 2) / 5 + 1, if mp < 10 { mp + 3 } else { mp - 9 });
+    let y = yoe + era * 400 + i64::from(m <= 2);
+    format!("{y:04}-{m:02}-{d:02}T{:02}:{:02}:{:02}Z", s / 3600, s / 60 % 60, s % 60)
 }
 
 /// Outputs are skipped when newer than their source, which can't tell a mod file from the original it
@@ -301,6 +340,26 @@ mod tests {
         assert!(second.copied.is_empty());
         assert_eq!(second.up_to_date.len(), present.len());
 
+        fs::remove_dir_all(&root).unwrap();
+    }
+
+    #[test]
+    fn manifest_lists_steps_without_the_era() {
+        assert_eq!(iso_utc(0), "1970-01-01T00:00:00Z");
+        assert_eq!(iso_utc(1_793_653_200), "2026-11-02T21:00:00Z");
+        assert_eq!(iso_utc(951_782_400), "2000-02-29T00:00:00Z");
+        let root = temp_dir("manifest");
+        let mut r = Report::new("red server files");
+        r.copied.push("a".into());
+        r.missing.push("b".into());
+        let path = root.join("data").join("red").join(MANIFEST);
+        write_manifest(&path, "red", Path::new("D:/Red"), &[r], vec![serde_json::json!({ "kind": "gap", "code": "early-config", "detail": "ST8100-7" })]).unwrap();
+        let m: serde_json::Value = serde_json::from_str(&fs::read_to_string(&path).unwrap()).unwrap();
+        assert_eq!(m["era"], "red");
+        assert_eq!(m["source"], "D:/Red");
+        assert_eq!(m["steps"], serde_json::json!([{ "label": "server files", "written": 1, "upToDate": 0, "missing": 1, "failed": 0 }]));
+        assert_eq!(m["notes"][0]["code"], "early-config");
+        assert!(m["finishedAt"].as_str().unwrap().ends_with('Z'));
         fs::remove_dir_all(&root).unwrap();
     }
 
