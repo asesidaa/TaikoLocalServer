@@ -112,7 +112,7 @@ pub fn convert(src: &crate::source::Source, out: &Path, report: &mut crate::Repo
     }
     let (glb_path, keys_path) = (out.join("don.glb"), out.join("facekeys.json"));
     if files.iter().all(|f| crate::nut::is_fresh(&glb_path, src, f) && crate::nut::is_fresh(&keys_path, src, f)) {
-        report.up_to_date.push(format!("don.glb ({} clips)", files.len() - 1));
+        report.up_to_date.extend(files.iter().filter(|&&f| f != BIND).map(|f| f.trim_start_matches("don3d/ani/").trim_end_matches(".bin").to_string()));
         return Ok(());
     }
     let rig = rig();

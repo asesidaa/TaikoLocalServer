@@ -47,7 +47,7 @@ pub fn convert(game: &crate::game::Game, dst_dir: &Path, report: &mut crate::Rep
         current &= crate::is_newer_than(&glb_path, src)? && crate::is_newer_than(&keys_path, src)?;
     }
     if current {
-        report.up_to_date.push(format!("{LIBRARY} ({} clips)", paths.len()));
+        report.up_to_date.extend(paths.iter().map(|p| p.file_stem().unwrap().to_string_lossy().into_owned()));
         return Ok(());
     }
 
