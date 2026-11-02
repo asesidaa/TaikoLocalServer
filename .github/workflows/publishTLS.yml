@@ -14,8 +14,22 @@ env:
   Build_Number: ${{ github.run_number }}
 
 jobs:
+  # One build per platform: the server (self-contained, single file) with extract next to it, packed as the release
+  # archive. Linux uses tar.gz, which keeps the executable bits (zip and the artifact store don't).
   publish:
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rid: win-x64
+            os: windows-latest
+            extract: extract.exe
+            archive: TaikoLocalServer-win-x64.zip
+          - rid: linux-x64
+            os: ubuntu-latest
+            extract: extract
+            archive: TaikoLocalServer-linux-x64.tar.gz
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v5
@@ -32,13 +46,13 @@ jobs:
       #
       # Retry guards against intermittent wasm-ld file-lock failures on
       # Windows runners (see run 25282588630).
-      - name: Publish (Release, win-x64, self-contained)
+      - name: Publish (Release, ${{ matrix.rid }}, self-contained)
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           for ($i = 1; $i -le 3; $i++) {
             try {
-              dotnet publish Host/Host.csproj -c Release -r win-x64 --self-contained true --nologo
+              dotnet publish Host/Host.csproj -c Release -r ${{ matrix.rid }} --self-contained true --nologo
               if ($LASTEXITCODE -eq 0) { break }
               throw "publish exited $LASTEXITCODE"
             } catch {
@@ -48,8 +62,8 @@ jobs:
             }
           }
 
-      # windows-latest ships a Rust toolchain. extract.exe goes next to
-      # TaikoLocalServer.exe so its default --out (<exe dir>/wwwroot) is right.
+      # Both runner images ship a Rust toolchain. extract goes next to the server's
+      # executable so its default --out (<exe dir>/wwwroot) is right.
       - name: Build and test extract
         shell: pwsh
         run: |
@@ -63,32 +77,47 @@ jobs:
         id: locate
         shell: pwsh
         run: |
-          $path = "Host/bin/Release/net10.0/win-x64/publish"
+          $path = "Host/bin/Release/net10.0/${{ matrix.rid }}/publish"
           if (-not (Test-Path $path)) { throw "publish dir missing: $path" }
-          Copy-Item tools/extract/target/release/extract.exe $path
+          Copy-Item tools/extract/target/release/${{ matrix.extract }} $path
           "path=$path" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          "name=TLS-${{ env.Major_Version_Number }}.${{ env.Minor_Version_Number }}.${{ env.Build_Number }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "name=TLS-${{ env.Major_Version_Number }}.${{ env.Minor_Version_Number }}.${{ env.Build_Number }}-${{ matrix.rid }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
+      - name: Pack (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Compress-Archive -Path "${{ steps.locate.outputs.path }}/*" -DestinationPath ${{ matrix.archive }}
+
+      - name: Pack (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          chmod +x "${{ steps.locate.outputs.path }}/TaikoLocalServer" "${{ steps.locate.outputs.path }}/extract"
+          tar -czf ${{ matrix.archive }} -C "${{ steps.locate.outputs.path }}" .
+
+      # Build/publish runs on every branch (catches breakage early); the
+      # 90-day-retention artifact is only uploaded for dev pushes, where the
+      # nightly release below picks it up.
       - name: Upload build artifact
-        # Build/publish runs on every branch (catches breakage early); the
-        # 90-day-retention artifact is only uploaded for dev pushes.
         if: github.ref == 'refs/heads/dev'
         uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.locate.outputs.name }}
-          path: ${{ steps.locate.outputs.path }}
+          path: ${{ matrix.archive }}
           if-no-files-found: error
-          include-hidden-files: true
 
-      # ---- Nightly release (dev pushes only) ---------------------------------
-      # Reuses the publish output from the same job — no rebuild.
-      # Deduped to one release per UTC day; same-day pushes overwrite.
-
+  # ---- Nightly release (dev pushes only) -------------------------------------
+  # Reuses both platforms' archives from the publish job — no rebuild.
+  # Deduped to one release per UTC day; same-day pushes overwrite.
+  nightly:
+    needs: publish
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
       - name: Decide nightly release tag and skip-condition
         id: nightly
-        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
-        env:
-          GH_TOKEN: ${{ github.token }}
         shell: pwsh
         run: |
           $today = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd')
@@ -109,32 +138,32 @@ jobs:
           }
           exit 0
 
-      - name: Zip publish output for release
-        id: zip
+      - name: Download both platforms' archives
         if: steps.nightly.outputs.skip == 'false'
-        shell: pwsh
-        run: |
-          $tag = "${{ steps.nightly.outputs.tag }}"
-          $zip = "TaikoLocalServer-$tag-win-x64.zip"
-          Compress-Archive -Path "${{ steps.locate.outputs.path }}/*" -DestinationPath $zip
-          "zip=$zip" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        uses: actions/download-artifact@v8
+        with:
+          path: archives
+          merge-multiple: true
 
       - name: Create or update nightly release
         if: steps.nightly.outputs.skip == 'false'
-        env:
-          GH_TOKEN: ${{ github.token }}
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           $tag   = "${{ steps.nightly.outputs.tag }}"
-          $zip   = "${{ steps.zip.outputs.zip }}"
           $title = "Nightly $tag"
           $body  = "Automated build of ``dev`` at ${{ github.sha }}.`nNot a stable release."
+
+          # The release's file names carry the tag: TaikoLocalServer-<tag>-<platform>.<ext>.
+          $files = @(
+            (Rename-Item archives/TaikoLocalServer-win-x64.zip "TaikoLocalServer-$tag-win-x64.zip" -PassThru).FullName,
+            (Rename-Item archives/TaikoLocalServer-linux-x64.tar.gz "TaikoLocalServer-$tag-linux-x64.tar.gz" -PassThru).FullName
+          )
 
           # Replace if the same-date release already exists for an older commit.
           # `gh release delete` exits 1 when the release doesn't exist; that's fine.
           gh release delete $tag --yes --cleanup-tag 2>$null
           $global:LASTEXITCODE = 0
 
-          gh release create $tag $zip --title $title --notes $body --prerelease --target ${{ github.sha }}
+          gh release create $tag @files --title $title --notes $body --prerelease --target ${{ github.sha }}
           if ($LASTEXITCODE -ne 0) { throw "gh release create failed with exit $LASTEXITCODE" }
