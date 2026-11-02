@@ -151,7 +151,21 @@ NDP3 as in Smash Forge's `NUD.cs` (MIT), big-endian, version `0x0200`. Header: `
 | +0x10 | four u32 material offsets (absolute): the first is the drawn pass, the second the outline shell (front faces culled) |
 | +0x20 | u16 index count, u8 strip flags (always a triangle strip with `0xFFFF` restarts), u8 |
 
-With weights, colour and UVs are interleaved in the vertex clump and position, normal and weights in the vertex-add clump (64 bytes a vertex); without, everything is in the vertex clump. A material is u32 flags, u32, u16 source blend, u16 texture count, u16 destination blend, u8 alpha test, u8 alpha function, u16, u16 cull (`0x405` back, `0x404` front, `0` none), …; its textures start at +0x20, 0x18 bytes each, the first u32 being the texture's `GIDX` id in the `.nut` beside the model. Only the formats above occur (vertex `0x11`/`0x06`, UV `0x12`/`0x10`). Positions are in model space even for single-bound objects (faces, hats), so a model renders in rest pose without its rig; with it, those objects get their bone at full weight.
+With weights, colour and UVs are interleaved in the vertex clump and position, normal and weights in the vertex-add clump (64 bytes a vertex); without, everything is in the vertex clump. A material is u32 flags, u32, u16 source blend, u16 texture count, u16 destination blend, u8 alpha test (2 = on), u8 alpha function, u16 alpha reference, u16 cull (`0x405` back, `0x404` front, `0` none), …; its textures start at +0x20, 0x18 bytes each, the first u32 being the texture's `GIDX` id in the `.nut` beside the model. Only the formats above occur (vertex `0x11`/`0x06`, UV `0x12`/`0x10`). Positions are in model space even for single-bound objects (faces, hats), so a model renders in rest pose without its rig; with it, those objects get their bone at full weight.
+
+### Drawing them (`data/shader/*.nsh`)
+
+The game's shaders are `NSP3` files: compiled RSX vertex and fragment programs with their parameter names. The fragment programs are a few NV40 instructions (16 bytes each, 16-bit halves swapped; layout as in nouveau's `nvfx_shader.h`), and these were decoded by hand. Each material's flags (low byte) pick its pass, matched to shaders by what the materials and shaders take; the low byte is in each GLB material's `extras.nudFlags`:
+
+| Flags | Where | Draws |
+| --- | --- | --- |
+| `0x10000001` | Bodies' and kigurumi's drum and limbs (the same flag Nijiiro's recolour materials carry, `_cus_0x10000001`) | `color_change`: `rgb = t.r·replaceR + t.g·replaceG + t.b·replaceB`, `a = t.a`, no lighting. The pass is opaque, so the masks under alpha 0 show: pure red (rims, hands, feet), red + green (the barrel) and red + blue (the drum skin). With the server's default colours (face 0, body 1, limb 3: red, teal, cream in Nijiiro's palette), that's limb = R, body = R + G, face = R + B, i.e. `replaceR` = limb, `replaceG` = body − limb, `replaceB` = face − limb. The palette itself is in the game's executable (encrypted), so its being Nijiiro's 63 colours is an inference |
+| `0x10000002` | The 29-vertex plane on the front of every head and kigurumi (bound to `body`) | `face_anime`: one texture lookup from `face_tex` (sampler 1); the plane's own texture isn't read. `face_tex` is the current expression: for body + head, frame k of the face set the "face" costume slot picks (`paint/paint_<id>.png`; `paint_000000` is the plain face), for a kigurumi its own `face/face_<id>.png` where there is one. Alpha-blended |
+| `0x10000000` | Most other parts | Plain texture (`constant`), unlit, often alpha-tested |
+| `0x10000003`, `0x10000008` | Second passes, front faces culled | The outline shell (`black_line`: pushed out along the normal, black; it's the only shader that reads vertex colour, so the vertex colours (all 1.0 but for green 0 or 0.5 on some body vertices) are most likely the outline's width). Exported as `extras.outline: true` on the first pass |
+| `0x1000000D` | Puchi cards | Alpha-blended texture |
+
+`alphaMode` follows the material (blend factors set: `BLEND`; alpha test: `MASK` with the reference / 255 as `alphaCutoff`; otherwise `OPAQUE`), not the texture's alpha. The default head's 4-vertex quad has a blank texture and draws nothing.
 
 ### The don rig and animations (`don3d/ani/*.bin`, `src/ani.rs`)
 

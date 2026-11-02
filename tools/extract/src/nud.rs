@@ -27,6 +27,14 @@ pub struct Part {
     /// The first pass's first texture (a `GIDX` id in the `.nut`); the second pass is the outline shell.
     pub texture: Option<u32>,
     pub double_sided: bool,
+    /// The first pass's material flags (`0x10000001`: its low byte picks the shader; see the README).
+    pub flags: u32,
+    /// Source or destination blend factor set: alpha-blended. Otherwise the pass is opaque and ignores texture alpha.
+    pub blend: bool,
+    /// Alpha test: the reference (0–255) a texel's alpha must reach.
+    pub alpha_ref: Option<u16>,
+    /// A second pass culling front faces: the black outline shell.
+    pub outline: bool,
 }
 
 struct R<'a>(&'a [u8]);
@@ -100,7 +108,7 @@ fn part(r: &R, h: usize, index_at: usize, vert_at: usize, add_at: usize) -> Resu
     ensure!(matches!(bones, 0 | 1) && matches!(normal, 1 | 6) && matches!(color, 0 | 2), "vertex type {vtype:#x}/{uvtype:#x} isn't supported");
     ensure!(r.u8(h + 34)? >> 4 != 4, "triangle-list polygons aren't supported");
 
-    let mut p = Part { positions: Vec::with_capacity(n * 3), normals: Vec::with_capacity(n * 3), colors: (color == 2).then(Vec::new), uvs: Vec::new(), joints: None, weights: None, indices: Vec::new(), texture: None, double_sided: false };
+    let mut p = Part { positions: Vec::with_capacity(n * 3), normals: Vec::with_capacity(n * 3), colors: (color == 2).then(Vec::new), uvs: Vec::new(), joints: None, weights: None, indices: Vec::new(), texture: None, double_sided: false, flags: 0, blend: false, alpha_ref: None, outline: false };
     // Colour and UVs: interleaved per vertex, after the position and normal when there are no bones.
     let uv_block = |p: &mut Part, mut o: usize| -> Result<usize> {
         if let Some(c) = p.colors.as_mut() {
@@ -157,17 +165,32 @@ fn part(r: &R, h: usize, index_at: usize, vert_at: usize, add_at: usize) -> Resu
     }
     ensure!(p.indices.iter().all(|&i| (i as usize) < n), "index out of range");
 
-    // Material: u32 flags, u32, u16 source blend, u16 texture count, u16 destination blend, u8 alpha test, u8 alpha
-    // function, u16, u16 cull mode (0x405 back, 0x404 front, 0 none), …; textures from +0x20, 0x18 bytes each, the
-    // first u32 being the texture's GIDX id.
+    // Material: u32 flags, u32, u16 source blend, u16 texture count, u16 destination blend, u8 alpha test (2 on), u8
+    // alpha function, u16 alpha reference, u16 cull mode (0x405 back, 0x404 front, 0 none), …; textures from +0x20,
+    // 0x18 bytes each, the first u32 being the texture's GIDX id.
     let mat = r.u32(h + 16)? as usize;
     if mat != 0 {
         if r.u16(mat + 10)? > 0 {
             p.texture = Some(r.u32(mat + 0x20)?);
         }
         p.double_sided = r.u16(mat + 18)? == 0;
+        p.flags = r.u32(mat)?;
+        p.blend = r.u16(mat + 8)? != 0 || r.u16(mat + 12)? != 0;
+        p.alpha_ref = (r.u8(mat + 14)? != 0).then(|| r.u16(mat + 16)).transpose()?;
     }
+    let second = r.u32(h + 20)? as usize;
+    p.outline = second != 0 && r.u16(second + 18)? == 0x404;
     Ok(p)
+}
+
+/// glTF's alpha mode for a pass: blended, alpha-tested (cutoff = reference / 255), or opaque. An opaque pass ignores
+/// texture alpha: the bodies' recolour masks keep colour under alpha 0.
+fn alpha_mode(p: &Part) -> (&'static str, Option<f32>) {
+    match (p.blend, p.alpha_ref) {
+        (true, _) => ("BLEND", None),
+        (false, Some(r)) => ("MASK", Some(r.min(255) as f32 / 255.0)),
+        _ => ("OPAQUE", None),
+    }
 }
 
 /// The model's objects as glTF meshes (one primitive per polygon) with their textures embedded. With the rig and its
@@ -176,7 +199,7 @@ fn part(r: &R, h: usize, index_at: usize, vert_at: usize, add_at: usize) -> Resu
 pub fn glb(objects: &[Object], textures: &[crate::nut::Texture], rig: Option<(&[crate::ani::Bone], &crate::ani::Pose)>, clip: Option<(&[u8], usize)>) -> Result<Vec<u8>> {
     let by_id: HashMap<u32, &image::RgbaImage> = textures.iter().map(|t| (t.id, &t.image)).collect();
     let mut g = Gltf::default();
-    let mut images: HashMap<u32, (usize, bool)> = HashMap::new();
+    let mut images: HashMap<u32, usize> = HashMap::new();
     let mut nodes = Vec::new();
     if let Some((bones, bind)) = rig {
         nodes.push(crate::ani::push_bones(&mut g, bones, bind));
@@ -221,9 +244,8 @@ pub fn glb(objects: &[Object], textures: &[crate::nut::Texture], rig: Option<(&[
             let indices = g.accessor(&ib, UNSIGNED_INT, p.indices.len(), "SCALAR", Some(ELEMENT_ARRAY_BUFFER), None);
 
             let mut pbr = json!({ "baseColorFactor": [1.0, 1.0, 1.0, 1.0], "metallicFactor": 0.0, "roughnessFactor": 1.0 });
-            let mut blend = false;
             if let Some(img) = p.texture.and_then(|id| by_id.get(&id).map(|img| (id, img))) {
-                let (texture, has_alpha) = match images.get(&img.0) {
+                let texture = match images.get(&img.0) {
                     Some(&t) => t,
                     None => {
                         let mut png = Vec::new();
@@ -231,20 +253,25 @@ pub fn glb(objects: &[Object], textures: &[crate::nut::Texture], rig: Option<(&[
                         let view = g.view(&png, None);
                         g.images.push(json!({ "name": format!("{:08x}", img.0), "mimeType": "image/png", "bufferView": view }));
                         g.textures.push(json!({ "sampler": 0, "source": g.images.len() - 1 }));
-                        let t = (g.textures.len() - 1, img.1.pixels().any(|px| px[3] < 255));
+                        let t = g.textures.len() - 1;
                         images.insert(img.0, t);
                         t
                     }
                 };
-                blend = has_alpha;
                 pbr["baseColorTexture"] = json!({ "index": texture, "texCoord": 0 });
             }
-            g.materials.push(json!({
+            let (mode, cutoff) = alpha_mode(p);
+            let mut material = json!({
                 "name": format!("{}-{}", o.name, primitives.len()),
-                "alphaMode": if blend { "BLEND" } else { "OPAQUE" },
+                "alphaMode": mode,
                 "doubleSided": p.double_sided,
                 "pbrMetallicRoughness": pbr,
-            }));
+                "extras": { "nudFlags": p.flags, "outline": p.outline },
+            });
+            if let Some(c) = cutoff {
+                material["alphaCutoff"] = json!(c);
+            }
+            g.materials.push(material);
             primitives.push(json!({ "attributes": attributes, "indices": indices, "material": g.materials.len() - 1 }));
         }
         if primitives.is_empty() {
@@ -339,6 +366,14 @@ pub fn convert(src: &crate::source::Source, out: &std::path::Path) -> Result<Vec
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn alpha_mode_follows_the_material_not_the_texture() {
+        let part = |blend, alpha_ref| Part { positions: vec![], normals: vec![], colors: None, uvs: vec![], joints: None, weights: None, indices: vec![], texture: None, double_sided: false, flags: 0x1000_0001, blend, alpha_ref, outline: true };
+        assert_eq!(alpha_mode(&part(false, None)), ("OPAQUE", None), "the bodies' recolour pass: texture alpha is ignored");
+        assert_eq!(alpha_mode(&part(false, Some(255))), ("MASK", Some(1.0)));
+        assert_eq!(alpha_mode(&part(true, Some(255))), ("BLEND", None));
+    }
 
     #[test]
     fn half_floats() {
