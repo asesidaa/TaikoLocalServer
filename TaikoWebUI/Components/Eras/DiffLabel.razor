@@ -1,7 +1,22 @@
-@* A difficulty as a coloured dot and its name (older games have no difficulty art). *@
-<span class="@($"inline-flex items-center gap-1.5 {Class}")"><span class="size-2 shrink-0 rounded-full" style="background:@GameData.DifficultyColor(Difficulty)" aria-hidden="true"></span>@GameData.DifficultyName(Difficulty)</span>
+@* A difficulty: Nijiiro's difficulty icon (the same in every game) and its name. Until the icon loads, or when the game
+   files aren't extracted (the loader keeps a missing asset hidden), a coloured dot stands in. *@
+<span class="@($"inline-flex items-center gap-1.5 {Class}")">
+    <img data-asset="@GameData.DifficultyIcon(Difficulty)" alt="" hidden class="@($"peer {Size} object-contain")" />
+    <span class="size-2 shrink-0 rounded-full peer-[:not([hidden])]:hidden" style="background:@GameData.DifficultyColor(Difficulty)" aria-hidden="true"></span>
+    @if (ShowName)
+    {
+        @GameData.DifficultyName(Difficulty)
+    }
+    else
+    {
+        <span class="sr-only">@GameData.DifficultyName(Difficulty)</span>
+    }
+</span>
 
 @code {
     [Parameter] public Difficulty Difficulty { get; set; }
     [Parameter] public string Class { get; set; } = "";
+    /// <summary>The icon's size: size-6 (24px) inline and in tabs, size-8 (32px) in score rows.</summary>
+    [Parameter] public string Size { get; set; } = "size-6";
+    [Parameter] public bool ShowName { get; set; } = true;
 }

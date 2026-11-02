@@ -33,7 +33,7 @@
                             <li class="flex flex-wrap items-center gap-x-3 gap-y-0.5 px-4 py-2 text-sm sm:flex-nowrap">
                                 <time class="w-12 shrink-0 text-xs tabular-nums @Css.Muted">@p.PlayTime.ToLocalTime().ToString("t")</time>
                                 <span class="min-w-0 flex-1 truncate font-medium">@scores.Name(p.SongId)</span>
-                                <DiffLabel Difficulty="p.Difficulty" Class="text-xs" />
+                                <DiffLabel Difficulty="p.Difficulty" Size="size-8" ShowName="false" />
                                 <EraCrown Crown="p.Crown" Class="w-24 shrink-0" />
                                 <span class="w-20 shrink-0 text-right tabular-nums">@p.Score.ToString("N0")</span>
                             </li>
