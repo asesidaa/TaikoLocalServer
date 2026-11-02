@@ -24,7 +24,7 @@
                 <li>
                     <button class="flex w-full items-center gap-3 px-1 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
                             @onclick='() => Nav.NavigateTo(PlayDataPaths.Song(Baid, p.SongId, (int)p.Difficulty))'>
-                        <img data-asset="@GameData.DifficultyIcon(p.Difficulty)" alt="@GameData.DifficultyName(p.Difficulty)" class="size-7 object-contain" />
+                        <img data-asset="@GameData.DifficultyIcon(p.Difficulty)" alt="@GameData.DifficultyName(p.Difficulty)" class="size-8 object-contain" />
                         <span class="min-w-0 flex-1">
                             <span class="block truncate text-sm">@p.Name</span>
                             <span class="block truncate text-xs @Css.Muted">★@p.Stars@(p.NameEn.Length > 0 ? " · " + p.NameEn : "")</span>
