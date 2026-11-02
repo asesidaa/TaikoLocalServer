@@ -87,6 +87,7 @@ builder.Services.AddScoped<PageState>();
 builder.Services.AddScoped<ToastService>();
 builder.Services.AddScoped<AssetStatus>();
 builder.Services.AddScoped<PlayerSelection>();
+builder.Services.AddScoped<AdminView>();
 builder.Services.AddBlazoredLocalStorage();
 
 var host = builder.Build();

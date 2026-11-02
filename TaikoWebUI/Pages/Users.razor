@@ -115,9 +115,14 @@
     private (string Key, string Label)[] Filters =>
         [("all", Localizer["All"]), ("registered", Localizer["Registered"]), ("unregistered", Localizer["Not registered"]), ("admins", Localizer["Admins"])];
 
+    /// <summary>?user=: open with this user picked (the admin view's way back).</summary>
+    [SupplyParameterFromQuery(Name = "user")] public int? UserQuery { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         Page.Set(Localizer["Admin"], Localizer["User Management"]);
+        if (UserQuery is > 0 && await Client.GetAsync($"api/Users/{UserQuery}") is { IsSuccessStatusCode: true } res)
+            selected = await res.Content.ReadFromJsonAsync<User>();
         await Reload();
     }
 

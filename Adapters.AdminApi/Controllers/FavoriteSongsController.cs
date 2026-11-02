@@ -35,6 +35,7 @@ public class FavoriteSongsController(ITaikoDbContext context, IGameDataCatalog c
         }
 
         user.FavoriteSongsArray = favorites;
+        this.LogIfSomeoneElse(context, "favourites.edit", request.Baid, $"#{request.SongId} {(request.IsFavorite ? "added" : "removed")}");
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }
@@ -78,6 +79,7 @@ public class FavoriteSongsController(ITaikoDbContext context, IGameDataCatalog c
         }
 
         user.FavoriteSongsArray = songs;
+        this.LogIfSomeoneElse(context, "favourites.edit", baid, $"{songs.Count} songs");
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }

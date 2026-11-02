@@ -1,4 +1,5 @@
 @page "/"
+@page "/Users/{baid:int}/Dashboard"
 @attribute [Authorize]
 @implements IDisposable
 @inject PageState Page
@@ -114,14 +115,29 @@
     private DashboardServer? server;
     private int? toFix;
 
-    private uint Baid => AuthService.LoginRequired ? AuthService.GetLoggedInBaid() : Players.Baid;
+    /// <summary>An admin's view of another player's Dashboard (AdminView); otherwise yours.</summary>
+    [Parameter] public int? baid { get; set; }
+
+    private uint Baid => baid is > 0 ? (uint)baid.Value : AuthService.LoginRequired ? AuthService.GetLoggedInBaid() : Players.Baid;
+    private uint loaded;
 
     protected override async Task OnInitializedAsync()
     {
         Page.Set(Localizer["Dashboard"]);
         Players.Changed += OnPlayerChanged;
         if (!AuthService.LoginRequired) await Players.LoadAsync();
+        loaded = Baid;
         await Task.WhenAll(LoadPlayer(), LoadNotice(), LoadServer());
+    }
+
+    // "/" and /Users/{baid}/Dashboard share this component: Exit from the admin view switches player without a new page.
+    protected override async Task OnParametersSetAsync()
+    {
+        if (loaded == Baid) return;
+        loaded = Baid;
+        user = null;
+        recent = null;
+        await LoadPlayer();
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();

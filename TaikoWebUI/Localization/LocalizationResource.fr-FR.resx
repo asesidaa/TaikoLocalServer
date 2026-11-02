@@ -3651,4 +3651,28 @@
   <data name="{0} days played · longest streak {1} days" xml:space="preserve">
     <value>{0} jours joués · plus longue série {1} jours</value>
   </data>
+  <data name="{0} (admin view)" xml:space="preserve">
+    <value>{0} (vue admin)</value>
+  </data>
+  <data name="Admin view: these are &lt;b&gt;{0}&lt;/b&gt;'s pages (User ID {1}). Changes you make are saved to their account." xml:space="preserve">
+    <value>Vue admin : ce sont les pages de &lt;b&gt;{0}&lt;/b&gt; (ID utilisateur {1}). Vos modifications sont enregistrées sur son compte.</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>Quitter</value>
+  </data>
+  <data name="Edited a profile" xml:space="preserve">
+    <value>A modifié un profil</value>
+  </data>
+  <data name="Changed favourites" xml:space="preserve">
+    <value>A modifié les favoris</value>
+  </data>
+  <data name="Added an access code" xml:space="preserve">
+    <value>A ajouté un code d'accès</value>
+  </data>
+  <data name="Renamed an access code" xml:space="preserve">
+    <value>A renommé un code d'accès</value>
+  </data>
+  <data name="Removed an access code" xml:space="preserve">
+    <value>A retiré un code d'accès</value>
+  </data>
 </root>

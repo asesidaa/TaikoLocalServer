@@ -18,6 +18,16 @@ public static class ActivityExtensions
         });
     }
 
+    /// <summary>
+    /// Records a change to <paramref name="baid"/>'s own data (profile, cards, favourites) when someone else made it: an
+    /// admin, usually from the admin view. A player's changes to their own data aren't logged.
+    /// </summary>
+    public static void LogIfSomeoneElse(this ControllerBase controller, ITaikoDbContext context, string action, uint baid, string detail = "")
+    {
+        if (controller.HttpContext.RequestServices.GetRequiredService<IServerAccess>().LoginRequired && controller.User.GetBaid() != baid)
+            controller.LogActivity(context, action, baid, detail);
+    }
+
     /// <summary>"•••• 1234": access codes in the log and in running text never show in full.</summary>
     public static string MaskAccessCode(string accessCode) =>
         "•••• " + (accessCode.Length > 4 ? accessCode[^4..] : accessCode);

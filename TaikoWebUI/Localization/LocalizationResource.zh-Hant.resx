@@ -3651,4 +3651,28 @@
   <data name="{0} days played · longest streak {1} days" xml:space="preserve">
     <value>遊玩{0}天 · 最長連續{1}天</value>
   </data>
+  <data name="{0} (admin view)" xml:space="preserve">
+    <value>{0}(管理員檢視)</value>
+  </data>
+  <data name="Admin view: these are &lt;b&gt;{0}&lt;/b&gt;'s pages (User ID {1}). Changes you make are saved to their account." xml:space="preserve">
+    <value>管理員檢視:這是 &lt;b&gt;{0}&lt;/b&gt; 的頁面(使用者 ID {1})。你所做的變更會儲存到其帳號。</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>退出</value>
+  </data>
+  <data name="Edited a profile" xml:space="preserve">
+    <value>編輯了個人資料</value>
+  </data>
+  <data name="Changed favourites" xml:space="preserve">
+    <value>變更了收藏</value>
+  </data>
+  <data name="Added an access code" xml:space="preserve">
+    <value>新增了存取碼</value>
+  </data>
+  <data name="Renamed an access code" xml:space="preserve">
+    <value>重新命名了存取碼</value>
+  </data>
+  <data name="Removed an access code" xml:space="preserve">
+    <value>移除了存取碼</value>
+  </data>
 </root>

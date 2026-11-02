@@ -79,6 +79,7 @@ else
         <ConnectionBar />
         <main class="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
             <ServerBanner Admin="Unaffected" />
+            <AdminViewBanner />
             @if (AuthService.TwoFactorSetupRequired && !Nav.Uri.Contains("/Settings", StringComparison.OrdinalIgnoreCase))
             {
                 <div role="alert" class="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-200">

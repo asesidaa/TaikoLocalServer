@@ -38,6 +38,7 @@ public class CardsController(ITaikoDbContext context, IServerAccess access) : Ba
         var name = request.Name.Trim();
         if (name.Length > 20) return BadRequest(new { message = "At most 20 characters." });
         card.Name = name;
+        this.LogIfSomeoneElse(context, "card.rename", card.Baid, ActivityExtensions.MaskAccessCode(card.AccessCode));
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }
@@ -58,6 +59,7 @@ public class CardsController(ITaikoDbContext context, IServerAccess access) : Ba
             return BadRequest(new { message = "Last Card" });
 
         context.Cards.Remove(card);
+        this.LogIfSomeoneElse(context, "card.remove", card.Baid, ActivityExtensions.MaskAccessCode(card.AccessCode));
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }
@@ -120,6 +122,7 @@ public class CardsController(ITaikoDbContext context, IServerAccess access) : Ba
             AccessCode = accessCode
         };
         context.Cards.Add(newCard);
+        this.LogIfSomeoneElse(context, "card.bind", baid, ActivityExtensions.MaskAccessCode(accessCode));
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }

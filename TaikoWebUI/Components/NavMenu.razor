@@ -2,6 +2,7 @@
 @inject AuthService AuthService
 @inject NavigationManager Nav
 @inject PlayerSelection Players
+@inject AdminView View
 @inject IOptions<WebUiSettings> Settings
 @using Microsoft.Extensions.Options
 
@@ -10,8 +11,8 @@
     <span class="font-display text-[17px] tracking-wide">@Settings.Value.Title</span>
 </div>
 <nav class="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
-    <p class="px-3 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@(AuthService.LoginRequired ? Localizer["Account"] : Localizer["Players"])</p>
-    @Link("/", "dashboard", Localizer["Dashboard"])
+    <p class="truncate px-3 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@(View.Baid > 0 ? string.Format(Localizer["{0} (admin view)"], ViewName) : AuthService.LoginRequired ? Localizer["Account"] : Localizer["Players"])</p>
+    @Link(View.Baid > 0 ? $"/Users/{Baid}/Dashboard" : "/", "dashboard", Localizer["Dashboard"])
     @if (Baid > 0)
     {
         @Link($"/Users/{Baid}/Profile", "profile", Localizer["Profile"])
@@ -20,7 +21,7 @@
             [($"/Users/{Baid}/Stats", Localizer["Stats"]), ($"/Users/{Baid}/Favourites", Localizer["Favourites"]),
              ($"/Users/{Baid}/HighScores", Localizer["High Scores"]), ($"/Users/{Baid}/PlayHistory", Localizer["Play History"]),
              ($"/Users/{Baid}/DaniDojo", Localizer["Dani Dojo"])])
-        @Link("/Settings", "settings", Localizer["Settings"], prefix: true)
+        @Link(View.Baid > 0 ? $"/Users/{Baid}/Settings" : "/Settings", "settings", Localizer["Settings"], prefix: true)
     }
     @* Local mode has no accounts: the admin pages are open to everyone, and Access (sign-in rules) doesn't apply. *@
     @if (AuthService.IsAdmin || !AuthService.LoginRequired)
@@ -48,7 +49,7 @@
             }
             <div class="min-w-0 flex-1">
                 <p class="truncate text-sm font-medium">@me?.UserSetting.MyDonName</p>
-                <p class="truncate text-xs @Css.Muted">ID: @Baid@(AuthService.IsAdmin ? $" · {Localizer["Admin"]}" : "")</p>
+                <p class="truncate text-xs @Css.Muted">ID: @AuthService.GetLoggedInBaid()@(AuthService.IsAdmin ? $" · {Localizer["Admin"]}" : "")</p>
             </div>
             <button class="@Css.IconButton hover:!text-primary-600" aria-label="@Localizer["Log Out"]" @onclick="OnLogout"><Icon Name="logOut" /></button>
         </div>
@@ -63,8 +64,10 @@ else if (!AuthService.LoginRequired)
     private bool playDataOpen = true;
     private User? me;
 
-    // The signed-in user, or (Local mode) the player picked in the top bar.
-    private uint Baid => AuthService.LoginRequired ? AuthService.GetLoggedInBaid() : Players.Baid;
+    // Whose pages the player links open: the player in the admin view, else the signed-in user, or (Local mode) the
+    // player picked in the top bar.
+    private uint Baid => View.Baid > 0 ? View.Baid : AuthService.LoginRequired ? AuthService.GetLoggedInBaid() : Players.Baid;
+    private string ViewName => View.Name.Length > 0 ? View.Name : $"#{View.Baid}";
 
     // prefix: the link stays active on its sub-routes (a page's tabs).
     private bool IsActive(string href, bool prefix = false)
@@ -118,6 +121,7 @@ else if (!AuthService.LoginRequired)
         AuthService.LoginStatusChanged += OnAuthChanged;
         Nav.LocationChanged += OnLocationChanged;
         Players.Changed += OnPlayerChanged;
+        View.Changed += OnPlayerChanged;
         await LoadUserName();
         if (!AuthService.LoginRequired) await Players.LoadAsync();
     }
@@ -146,5 +150,6 @@ else if (!AuthService.LoginRequired)
         AuthService.LoginStatusChanged -= OnAuthChanged;
         Nav.LocationChanged -= OnLocationChanged;
         Players.Changed -= OnPlayerChanged;
+        View.Changed -= OnPlayerChanged;
     }
 }
