@@ -33,6 +33,11 @@ const ERA_SCALE = 0.01;
 // texture's channels, face_anime shows the face set's current frame. The outline (black_line) is Nijiiro's hull: as
 // wide as the vertex colour's green says (the only thing that reads it), drawn the same way.
 const ERA_COLOR_CHANGE = 0x01, ERA_FACE = 0x02;
+// The rim lines' half-width, in Nijiiro units (so they scale with don-chan, as Nijiiro's modelled lines do).
+const ERA_LINE_WIDTH = 0.0012;
+// Set while the line pass renders: color_change writes which colour slot each pixel takes, the other parts only hide
+// what's behind them.
+const eraAlphaPass = { value: 0 };
 const OUTLINE = { visible: true, thickness: 0.0025 };
 const CAM_X = -0.017, CAM_YAW = THREE.MathUtils.degToRad(-29);
 const PUCHI_Y = 0.115;
@@ -220,6 +225,8 @@ export function mount(el) {
     const c = colours();
     for (const tex of m.faceTextures) tex.dispose();
     m.faceTextures = [];
+    // Hidden in the alpha pass: the face plane (a decal over the skin), the outline hulls and the puchi.
+    m.noAlpha ??= new Set();
     for (const root of Object.values(m.roots)) {
       const meshes = [];
       root.traverse(obj => { if (obj.isMesh && !obj.userData.donOutline) meshes.push(obj); });
@@ -229,24 +236,27 @@ export function mount(el) {
         const shader = (src.userData?.nudFlags ?? 0) & 0xff;
         if (shader === ERA_COLOR_CHANGE) obj.material = eraColorChange(src, c);
         else if (shader === ERA_FACE) {
-          // The plane's own texture is never read: it shows the face set's frame (12 rows, as Nijiiro's).
+          // The plane's own texture is never read: it shows the face set's frame (12 rows, as Nijiiro's). Cut out at half
+          // alpha rather than blended, so its edges are as crisp as Nijiiro's face.
           const frame = m.faceTex.clone();
           frame.repeat.set(1, 1 / 12);
           frame.needsUpdate = true;
           m.faceTextures.push(frame);
-          obj.material = new THREE.MeshBasicMaterial({ map: frame, transparent: true, depthWrite: false, side: src.side });
+          obj.material = new THREE.MeshBasicMaterial({ map: frame, alphaTest: 0.5, side: src.side });
+          m.noAlpha.add(obj);
         } else {
-          obj.material = new THREE.MeshBasicMaterial({ map: src.map, transparent: src.transparent, alphaTest: src.alphaTest,
-            depthWrite: src.depthWrite, side: src.side });
+          obj.material = eraOccluder(new THREE.MeshBasicMaterial({ map: src.map, transparent: src.transparent, alphaTest: src.alphaTest,
+            depthWrite: src.depthWrite, side: src.side }));
           if (obj.material.map) obj.material.map.colorSpace = THREE.SRGBColorSpace;
         }
         if (src.userData?.outline && !obj.userData.donEraOutlined && obj.geometry.attributes.normal) {
           obj.userData.donEraOutlined = true;
-          addMeshOutline(obj, 1 / ERA_SCALE);
+          m.noAlpha.add(addMeshOutline(obj, 1 / ERA_SCALE));
         }
         if (root === m.roots.puchi) {
           obj.material.depthTest = obj.material.depthWrite = false;
           obj.renderOrder = 1000;
+          m.noAlpha.add(obj);
         }
       }
       setMeshOutlineParams(root, OUTLINE.visible, OUTLINE.thickness);
@@ -254,6 +264,10 @@ export function mount(el) {
   }
 
   // color_change: rgb = t.r·limb + t.g·(body − limb) + t.b·(face − limb), opaque (the RGB under alpha 0 counts), unlit.
+  // Its a = t.a goes to the frame, where the game's outline_post draws black where alpha changes: the rim lines. The
+  // masks' alpha edges sit where the rims meet the barrel and the skin, but the strip and the half-ring each have
+  // their own, so following alpha doubles every line. The line pass writes the colour slot instead (g: limb 0.25,
+  // body 0.5, face 0.75; r = 1 marks don-chan), and eraLines draws one line where it changes, as Nijiiro's.
   function eraColorChange(src, c) {
     const map = src.map;
     // A mask: its channels are weights, not colours (no sRGB decode). They're only a few texels wide, so each channel is
@@ -266,11 +280,81 @@ export function mount(el) {
       Object.assign(shader.uniforms, { eraLimb: { value: limb }, eraBody: { value: body }, eraFace: { value: face } });
       shader.fragmentShader = shader.fragmentShader
         .replace("#include <common>", "#include <common>\nuniform vec3 eraLimb;\nuniform vec3 eraBody;\nuniform vec3 eraFace;")
-        .replace("#include <map_fragment>", `vec4 eraMask = step(0.5, texture2D(map, vMapUv));
-          diffuseColor = vec4(eraMask.r * eraLimb + eraMask.g * (eraBody - eraLimb) + eraMask.b * (eraFace - eraLimb), 1.0);`);
+        .replace("#include <map_fragment>", `vec4 eraTex = texture2D(map, vMapUv);
+          vec4 eraMask = step(0.5, eraTex);
+          vec3 eraRgb = eraMask.r * eraLimb + eraMask.g * (eraBody - eraLimb) + eraMask.b * (eraFace - eraLimb);
+          diffuseColor = vec4(eraRgb, 1.0);`)
+        .replace("#include <dithering_fragment>", "#include <dithering_fragment>\nif (eraAlphaPass > 0.5) gl_FragColor = vec4(1.0, eraMask.g > 0.5 ? 0.5 : eraMask.b > 0.5 ? 0.75 : 0.25, 0.0, 1.0);")
+        .replace("#include <common>", "#include <common>\nuniform float eraAlphaPass;");
+      shader.uniforms.eraAlphaPass = eraAlphaPass;
     };
     mat.customProgramCacheKey = () => "eraColorChange";
     return mat;
+  }
+
+  // A part that's drawn as it is (0x00 textures): in the alpha pass it only hides what's behind it, so no line shows
+  // through a kigurumi's hull.
+  function eraOccluder(mat) {
+    mat.onBeforeCompile = shader => {
+      shader.uniforms.eraAlphaPass = eraAlphaPass;
+      shader.fragmentShader = shader.fragmentShader
+        .replace("#include <common>", "#include <common>\nuniform float eraAlphaPass;")
+        .replace("#include <dithering_fragment>", "#include <dithering_fragment>\nif (eraAlphaPass > 0.5) gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);");
+    };
+    mat.customProgramCacheKey = () => "eraOccluder";
+    return mat;
+  }
+
+  // ---- The rim lines (outline_post): the alpha pass into a target, then a full-screen pass drawing black over the
+  // frame where the colour slot changes between don-chan's pixels (never at his edge against the background: the hull
+  // outlines that).
+  let lines = null;
+  function eraLines() {
+    if (lines) return lines;
+    const target = new THREE.WebGLRenderTarget(1, 1);
+    const material = new THREE.ShaderMaterial({
+      uniforms: { tAlpha: { value: target.texture }, step: { value: new THREE.Vector2() } },
+      vertexShader: "varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
+      fragmentShader: `uniform sampler2D tAlpha; uniform vec2 step; varying vec2 vUv;
+        void main() {
+          vec4 c = texture2D(tAlpha, vUv);
+          if (c.r < 0.5) discard;
+          float edge = 0.0;
+          for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) {
+            vec4 t = texture2D(tAlpha, vUv + vec2(float(i), float(j)) * step);
+            if (t.r > 0.5) edge = max(edge, abs(t.g - c.g));
+          }
+          float line = clamp(edge * 16.0 - 0.5, 0.0, 1.0);
+          if (line <= 0.0) discard;
+          gl_FragColor = vec4(0.0, 0.0, 0.0, line);
+        }`,
+      transparent: true, depthTest: false, depthWrite: false, toneMapped: false,
+    });
+    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+    quad.frustumCulled = false;
+    const quadScene = new THREE.Scene();
+    quadScene.add(quad);
+    return lines = { target, material, quadScene, quadCamera: new THREE.Camera() };
+  }
+
+  function drawEraLines(upp) {
+    const L = eraLines(), size = renderer.getDrawingBufferSize(new THREE.Vector2());
+    if (L.target.width !== size.x || L.target.height !== size.y) L.target.setSize(size.x, size.y);
+    for (const obj of model.noAlpha) obj.visible = false;
+    eraAlphaPass.value = 1;
+    renderer.setRenderTarget(L.target);
+    renderer.clear();
+    renderer.render(scene, camera);
+    renderer.setRenderTarget(null);
+    eraAlphaPass.value = 0;
+    for (const obj of model.noAlpha) obj.visible = true;
+    renderer.render(scene, camera);
+    // The taps' reach: the line's half-width on screen, in the target's texels.
+    const texels = Math.max(1, ERA_LINE_WIDTH / upp * dpr);
+    L.material.uniforms.step.value.set(texels / size.x, texels / size.y);
+    renderer.autoClear = false;
+    renderer.render(L.quadScene, L.quadCamera);
+    renderer.autoClear = true;
   }
 
   const colours = () => ({
@@ -388,7 +472,10 @@ export function mount(el) {
         model.puchi.quaternion.copy(camera.quaternion);
       }
     }
-    if (w && h) renderer.render(scene, camera);
+    if (w && h) {
+      if (model?.era) drawEraLines(upp);
+      else renderer.render(scene, camera);
+    }
   }
   renderer.setAnimationLoop(frame);
 
@@ -397,6 +484,11 @@ export function mount(el) {
     seq++;
     if (model) release(model, []);
     model = null;
+    if (lines) {
+      lines.target.dispose();
+      lines.material.dispose();
+      lines.quadScene.children[0].geometry.dispose();
+    }
     for (const p of blobs.values()) p.then(url => url && URL.revokeObjectURL(url));
     renderer.dispose();
     renderer.forceContextLoss();
