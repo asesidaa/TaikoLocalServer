@@ -41,17 +41,21 @@ Supported eras:
 ### Setup Steps
 
 1. Extract the server's release anywhere.
-2. Open [Configurations/ServerSettings.json](./Host/Configurations/ServerSettings.json) and set:
-   - `"Mode"`: `"Local"` (the default, no logins) or `"Server"` (accounts and admins). See [Local or Server mode](#local-or-server-mode).
-   - `"ServerName"` (optional): the name the web UI shows, `"TaikoLocalServer"` by default.
-   - `"Eras"` › `"Nijiiro"` › `"GameDataPath"`: your game install, the folder that contains `Data`, for example `"C:/Games/Taiko no Tatsujin Nijiiro Version"`. The web UI uses it to copy the game files the server needs. If the game is on another PC, leave it empty: you can send its folder from your browser instead (see step 5).
-3. (Optional) In the `Certificates` folder, import `root.pfx` into the trusted root store and `cert.pfx` into the personal store. The other import options can stay at their defaults.
-4. Start the server: `TaikoLocalServer.exe` on Windows, which asks for administrator rights, or `./TaikoLocalServer` on Linux, as root or with permission to bind low ports. It listens on ports 80 and 443 as well as the game's ports. Then open [http://localhost](http://localhost).
-   - **Server mode:** the web UI opens on a setup page until an admin exists. Enter the **setup code** printed in the server's console, then your card's access code and a password for the admin account (see [Web UI admins](#web-ui-admins-server-mode)).
-   - **Local mode:** the web UI opens straight away.
-5. Add the game files. In Server mode this is the setup's **Game files** step. Afterwards, and in Local mode, use **Admin › Server Management › Games**; until it's done, admins see a "Game files are missing" banner. Tick Nijiiro and press **Extract**: the server reads that folder. It copies the datatables the server needs and converts the don-chan models, textures and animations for the web UI's 3D preview (about 175 MB). It writes only into the server's `wwwroot` folder, never into your game folder. Run it again after a game update; files that are already up to date are skipped.
+2. (Optional) In the `Certificates` folder, import `root.pfx` into the trusted root store and `cert.pfx` into the personal store. The other import options can stay at their defaults.
+3. Start the server: `TaikoLocalServer.exe` on Windows, which asks for administrator rights, or `./TaikoLocalServer` on Linux, as root or with permission to bind low ports. It listens on ports 80 and 443 as well as the game's ports. On the first start its console says where to open the **setup wizard** (for example `http://localhost:5000/setup`, and this PC's network address for a browser on another device) and prints a **setup code**. Until setup is finished, the setup wizard is the only page the web UI opens; cabinets can already connect.
+4. Go through the setup wizard. Everything it asks is saved for you (to [Configurations/ServerSettings.json](./Host/Configurations/ServerSettings.json) and the database), so there's nothing to edit by hand:
+   - **Setup code:** the code from the console. It proves you're at the server. It changes every time the server starts, and stops working once setup is finished.
+   - **How it's used:** **Just me, at home** (Local mode: no accounts or passwords) or **For other players too** (Server mode: everyone signs in with their card and a password). See [Local or Server mode](#local-or-server-mode).
+   - **Admin account** (Server mode): your card's access code and a password (see [Web UI admins](#web-ui-admins-server-mode)). The card doesn't need to have played here yet.
+   - **Games:** the games your cabinets run, Nijiiro and any of the [older games](#older-games-ac15-eras). Changing them restarts the server, which takes a few seconds; the wizard carries on.
+   - **Game files:** see step 5.
+   - **Sign-up** (Server mode): who can make an account. Only people you invite (the default), anyone who's played on your cabinets, or anyone. You can change it later in **Admin › Access**.
+   - **Finish:** check the summary and press **Finish setup**. If you chose Server mode the server restarts, and you're signed in as the admin.
+5. Add the game files: the wizard's **Game files** step, or later **Admin › Server Management › Games** (until it's done, admins see a "Game files are missing" banner). For each game:
+   - **The game is on this PC:** choose **On the server**, press **Browse…** and pick the game's folder. Only a folder that is that game is marked (Nijiiro's install has `Data`; an older game's is its RPCS3 install, its `USRDIR/data`, or a `.zip` of it). Then press **Extract**. Several games run one after another.
+   - **The game is on another PC** (for example the server runs on a Linux box): open the web UI on the game PC, choose **From this browser** and press **Choose <Game>'s folder…**. The browser sends only the files the server reads (for Nijiiro about 600 MB of a 15 GB install), and the server extracts from them, then deletes them. Only admins can do this, and only the files the extractor lists are accepted; set `"AllowRemoteGameDir": false` to turn it off.
 
-   **The game is on another PC** (for example the server runs on a Linux box): open the web UI on the game PC, switch to **From this browser** and press **Choose Nijiiro's folder…** instead. Pick the game folder (the one that contains `Data`, so `Data_mods` comes along). The browser sends only the files the server reads (about 600 MB of a 15 GB install), and the server extracts from them, then deletes them. Only admins can do this, and only the files the extractor lists are accepted; set `"AllowRemoteGameDir": false` to turn it off.
+   Extract copies the datatables the server needs and converts the don-chan models, textures and animations for the web UI's 3D preview (about 175 MB for Nijiiro). It writes only into the server's `wwwroot` folder, never into your game folder. **Include Nijiiro's mods folder** layers Nijiiro's `Data_mods` over its own files (only Nijiiro has one). Run it again after a game update; files that are already up to date are skipped.
 
    Or run it from a command line on the game PC with a copy of the server, then copy its `wwwroot` output into the server's `wwwroot` folder:
    ```bash
@@ -63,7 +67,7 @@ Supported eras:
 ### Older games (AC15 eras)
 
 The server also runs Green, Blue, Yellow, Red, White, Murasaki, Kimidori and Momoiro cabinets. Each is off until you turn it on in [ServerSettings.json](./Host/Configurations/ServerSettings.json) (`"Eras"` › `"<Era>"` › `"Enabled": true`); at least one era must be on. For each one you turn on, the server needs that game's files at `wwwroot/data/<era>/data` (for example `wwwroot/data/green/data`):
-   - **Extract them (recommended):** set the game's `"GamePath"` to its RPCS3 install (or its `USRDIR/data` folder, or a `.zip` of it), restart, then in **Admin › Server Management › Games** tick the game and press **Extract**. Several games run one after another. Extract copies the files the server reads and converts the game's models, art and drum sounds for the web UI, and afterwards says what the copy lacks (an early Red's config, Blue's battle files). You can also pick the game's folder in the browser instead (`"AllowRemoteGameDir"`, on by default).
+   - **Extract them (recommended):** turn the game on in the setup wizard's **Games** step (or in ServerSettings.json), then in **Game files** (or **Admin › Server Management › Games**) press **Browse…**, pick its RPCS3 install (or its `USRDIR/data` folder, or a `.zip` of it) and press **Extract**. Several games run one after another. Extract copies the files the server reads and converts the game's models, art and drum sounds for the web UI, and afterwards says what the copy lacks (an early Red's config, Blue's battle files). You can also pick the game's folder in the browser instead (`"AllowRemoteGameDir"`, on by default).
    - **Or copy them:** put the game's original `USRDIR/data` folder there yourself, or set its `"GameDataPath"`.
 
 The files each era reads from it:
@@ -118,7 +122,7 @@ PowerShell may need Administrator privileges unless Windows Developer Mode allow
 
 Server configuration lives under [Host/Configurations](./Host/Configurations/). Runtime data lives under [Host/wwwroot/data](./Host/wwwroot/data/) in a source checkout and under `wwwroot/data` next to a published executable.
 
-The most important server settings are:
+The most important server settings are below. The setup wizard sets the mode, the games and their folders for you; `"ServerName"` (the name the web UI shows, `"TaikoLocalServer"` by default) is only in the file.
 
 ### Local or Server mode
 
@@ -133,7 +137,7 @@ To switch modes, change `"Mode"` and restart the server. Players and scores carr
 
 ### Web UI admins (Server mode)
 
-The first time the server starts in Server mode without an admin, it prints a **setup code** in its console, for example `K7QF-2M9X`. Open the web UI: it goes to the setup page until an admin exists. Enter the code, then your card and a password, and that account becomes the admin. The card doesn't need to have played on this server yet. The code is printed again whenever the web UI is opened, and changes each start until an admin exists.
+The setup wizard makes the first admin (see [Setup Steps](#setup-steps)). If the server is ever in Server mode without an admin (switched from Local, say), it prints a **setup code** in its console again (`Setup code: XXXX-XXXX`), and the web UI opens the setup wizard until an admin exists. The card doesn't need to have played on this server yet. The code is printed again whenever the web UI is opened, and changes each start.
 
 Admins can also be managed from the command line, run from the server folder:
 
