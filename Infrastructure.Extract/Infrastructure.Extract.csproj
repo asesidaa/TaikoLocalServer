@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BCnEncoder.Net" />
         <PackageReference Include="System.IO.Hashing" />
     </ItemGroup>
 

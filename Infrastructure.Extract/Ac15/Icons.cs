@@ -59,7 +59,7 @@ public static class Icons
                     report.Failed.Add($"{rel}: {e.Message}");
                 }
             }
-            if (images.Count == 0) continue;
+            if (images.Count == 0 && report.Failed.Count == 0) continue;
             var dir = Path.Combine(outDir, kind);
             Directory.CreateDirectory(dir);
             foreach (var (name, (rel, image)) in images)

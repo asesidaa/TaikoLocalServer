@@ -18,6 +18,7 @@ public static class Ac15Extractor
         var reports = new List<Report> { ServerFiles.Copy(era, src, Path.Combine(dataDir, "data"), log) };
         var assets = Path.Combine(outDir, GameData, era.Name());
         reports.AddRange(Icons.Convert(era, src, assets));
+        reports.Add(UiSets.Convert(era, src, assets));
         Manifest.Write(Path.Combine(dataDir, Manifest.FileName), era.Name(), game, reports, Notes(era, src, assets, reports));
         return reports;
     }
@@ -31,6 +32,7 @@ public static class Ac15Extractor
         // Unnumbered name packs are read for their entry names, so they're sent whole.
         rules.AddRange(ServerFiles.NameDirs.SelectMany(d => new[] { "title_name", "tone_name" }.Select(n => Rule.Files($"{d}{n}/nutdatapack.ndp"))));
         rules.AddRange(Icons.Inputs());
+        rules.AddRange(UiSets.Inputs());
         JsonArray Pick(bool names) => new(rules.Where(r => r.NamesOnly == names).Select(r => (JsonNode)JsonValue.Create("data/" + r.Path)).ToArray());
         return new JsonObject { ["files"] = Pick(false), ["names"] = Pick(true), ["mods"] = null };
     }

@@ -29,7 +29,7 @@ public static class Png
                     int a = i >= 4 ? row[i - 4] : 0, b = up.IsEmpty ? 0 : up[i], c = i >= 4 && !up.IsEmpty ? up[i - 4] : 0;
                     var predictor = filter switch { 1 => a, 2 => b, 4 => Paeth(a, b, c), _ => 0 };
                     candidate[i] = (byte)(row[i] - predictor);
-                    sum += Math.Abs((sbyte)candidate[i]);
+                    sum += Math.Abs((int)(sbyte)candidate[i]);
                 }
                 if (sum >= best) continue;
                 best = sum;
