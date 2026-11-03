@@ -9,15 +9,15 @@
     <span class="font-display text-[17px] tracking-wide">@AuthService.ServerName</span>
 </div>
 <nav class="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
+    @if (Baid > 0 && AuthService.EnabledGames.Count > 1)
+    {
+        @* Which game's pages these are; switching keeps the page when that game has it. *@
+        <GameMenu Games="AuthService.EnabledGames" Value="@Game" ValueChanged="SwitchGame" Class="mb-1.5 mt-2" Dim="@(Played is { } played ? g => !played.Contains(g) : null)" />
+    }
     <p class="truncate px-3 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@(View.Baid > 0 ? string.Format(Localizer["{0} (admin view)"], ViewName) : AuthService.LoginRequired ? Localizer["Account"] : Localizer["Players"])</p>
     @Link(View.Baid > 0 ? $"/Users/{Baid}/Dashboard" : "/", "dashboard", Localizer["Dashboard"])
     @if (Baid > 0)
     {
-        @if (AuthService.EnabledGames.Count > 1)
-        {
-            @* Which game's pages these are; switching keeps the page when that game has it. *@
-            <GameMenu Games="AuthService.EnabledGames" Value="@Game" ValueChanged="SwitchGame" Class="my-1.5" Dim="@(Played is { } played ? g => !played.Contains(g) : null)" />
-        }
         @Link(EraPaths.Profile(Baid, Game), "profile", Localizer["Profile"])
         @* The game's whole song list (with this player's results): its own item, not a Play Data page. *@
         @Link(EraPaths.Of(Baid, Game, PlayDataPaths.Songs), "music", Localizer["Song List"], prefix: true)
