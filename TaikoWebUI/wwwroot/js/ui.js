@@ -16,9 +16,11 @@
   document.head.append(Object.assign(document.createElement("script"),
     { type: "importmap", textContent: JSON.stringify({ imports: { three: new URL("lib/three/three.module.min.js", document.baseURI).href } }) }));
 
-  // ---- The don note from the game (extract; api/Brand/Icon) as the favicon, when it's there ----
+  // ---- The don note from the game (extract; api/Brand/Icon) as the favicon and logo, when it's there ----
+  // The logo's <img> shows through CSS (html[data-brand-icon]), so Blazor's renders don't fight it.
   const brand = new Image();
   brand.onload = () => {
+    root.dataset.brandIcon = "";
     const link = document.getElementById("favicon");
     if (link) { link.type = "image/png"; link.href = brand.src; }
   };

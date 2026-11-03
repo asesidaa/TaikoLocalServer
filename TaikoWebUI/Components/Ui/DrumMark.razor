@@ -1,0 +1,11 @@
+@* The WebUI mark: the game's don note once extract has cut it (api/Brand/Icon; ui.js shows it), else a don face
+   (red) with its ka rim (blue). Sizes stay multiples of 8. *@
+<img class="brand-img" src="api/Brand/Icon" width="@Size" height="@Size" alt="" aria-hidden="true" />
+<svg class="brand-svg" width="@Size" height="@Size" viewBox="0 0 32 32" aria-hidden="true">
+    <circle cx="16" cy="16" r="15" fill="#42b8c7" />
+    <circle cx="16" cy="16" r="11.5" fill="#f84828" />
+</svg>
+
+@code {
+    [Parameter] public int Size { get; set; } = 32;
+}
