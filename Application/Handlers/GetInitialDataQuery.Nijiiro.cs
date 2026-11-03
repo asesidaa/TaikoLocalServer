@@ -4,6 +4,8 @@ namespace TaikoLocalServer.Application.Handlers;
 
 public partial class GetInitialDataQueryHandler
 {
+    private static readonly uint[] NijiiroGenericMasterTypes = [2, 3, 4, 5, 6, 7, 8, 13, 15, 24, 25, 26, 27, 28, 29, 30, 31];
+
     private partial ValueTask<CommonInitialDataCheckResponse> HandleNijiiro(GetInitialDataQuery request, CancellationToken cancellationToken)
     {
         var songIdMax = settings.EnableMoreSongs ? settings.MoreSongsSize : DomainConstants.MusicIdMax;
@@ -46,8 +48,12 @@ public partial class GetInitialDataQueryHandler
             response.AryMovieInfoes.Add(movieData.Value);
         }
 
+        // The generic masters (getgenericmaster) at version 1. The cabinet keeps its own costume, title and other masks
+        // for these and resets any it gets no version for; left empty, the 39.06 exe crashes on the next card scan
+        // (it masks the player's costume flags with them).
         CommonInitialDataCheckResponse.VerupNoData1[] verupNo1List =
         [
+            .. NijiiroGenericMasterTypes.Select(type => new CommonInitialDataCheckResponse.VerupNoData1 { MasterType = type, VerupNo = 1 }),
             GetVerupNoData1(DomainConstants.ShopVerupMasterType, gameDataService.Nijiiro().GetShopFolderVerup()),
         ];
         response.AryVerupNoData1s.AddRange(verupNo1List);

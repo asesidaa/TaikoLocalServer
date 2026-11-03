@@ -68,28 +68,7 @@ public sealed class EventFolderLookupSharedTests
         Assert.Equal(11u, response.VerupNo);
     }
 
-    [Fact]
-    public async Task InitialData_NijiiroVerupNoRowsUseCatalogValuesOnly()
-    {
-        var catalog = new FileGameDataCatalog([
-            new TestNijiiroCatalog(
-                ImmutableDictionary<uint, EventFolderData>.Empty,
-                shopFolderVerup: 11)
-        ]);
-        var handler = new GetInitialDataQueryHandler(
-            catalog,
-            new NullCabinetRegistry(),
-            NullLogger<GetInitialDataQueryHandler>.Instance,
-            Options.Create(new ServerSettings()));
-
-        var response = await handler.Handle(new GetInitialDataQuery(GameEra.Nijiiro), CancellationToken.None);
-
-        var row = Assert.Single(response.AryVerupNoData1s);
-        Assert.Equal(DomainConstants.ShopVerupMasterType, row.MasterType);
-        Assert.Equal(11u, row.VerupNo);
-    }
-
-    private sealed class TestNijiiroCatalog(
+    internal sealed class TestNijiiroCatalog(
         ImmutableDictionary<uint, EventFolderData> eventFolders,
         uint shopFolderVerup = 1,
         Dictionary<string, int>? tokenData = null) : INijiiroCatalog
