@@ -1,7 +1,7 @@
 ﻿{
   "ServerSettings": {
     "Mode": "Local",
-    "AllowRemoteGameDir": false,
+    "AllowRemoteGameDir": true,
     "ApiTokens": false,
     "RestrictChassisIds": false,
     "MuchaUrl": "v402-front.mucha-prd.nbgi-amnet.jp:10122",
