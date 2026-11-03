@@ -52,7 +52,7 @@ Supported eras:
    - **Sign-up** (Server mode): who can make an account. Only people you invite (the default), anyone who's played on your cabinets, or anyone. You can change it later in **Admin › Access**.
    - **Finish:** check the summary and press **Finish setup**. If you chose Server mode the server restarts, and you're signed in as the admin.
 5. Add the game files: the wizard's **Game files** step, or later **Admin › Server Management › Games** (until it's done, admins see a "Game files are missing" banner). For each game:
-   - **The game is on this PC:** choose **On the server**, press **Browse…** and pick the game's folder. Only a folder that is that game is marked (Nijiiro's install has `Data`; an older game's is its RPCS3 install, its `USRDIR/data`, or a `.zip` of it). Then press **Extract**. Several games run one after another.
+   - **The game is on this PC:** choose **On the server**, press **Browse…** and pick the game's folder. Only a folder that is that game is marked (Nijiiro's game folder, or its `Data/x64`; an older game's is the folder it runs from, any folder in it down to `USRDIR/data`, or a `.zip` of it). Then press **Extract**. Several games run one after another.
    - **The game is on another PC** (for example the server runs on a Linux box): open the web UI on the game PC, choose **From this browser** and press **Choose <Game>'s folder…**. The browser sends only the files the server reads (for Nijiiro about 600 MB of a 15 GB install), and the server extracts from them, then deletes them. Only admins can do this, and only the files the extractor lists are accepted; set `"AllowRemoteGameDir": false` to turn it off.
 
    Extract copies the datatables the server needs and converts the don-chan models, textures and animations for the web UI's 3D preview (about 175 MB for Nijiiro). It writes only into the server's `wwwroot` folder, never into your game folder. **Include Nijiiro's mods folder** layers Nijiiro's `Data_mods` over its own files (only Nijiiro has one). Run it again after a game update; files that are already up to date are skipped.
@@ -67,7 +67,7 @@ Supported eras:
 ### Older games (AC15 eras)
 
 The server also runs Green, Blue, Yellow, Red, White, Murasaki, Kimidori and Momoiro cabinets. Each is off until you turn it on in [ServerSettings.json](./Host/Configurations/ServerSettings.json) (`"Eras"` › `"<Era>"` › `"Enabled": true`); at least one era must be on. For each one you turn on, the server needs that game's files at `wwwroot/data/<era>/data` (for example `wwwroot/data/green/data`):
-   - **Extract them (recommended):** turn the game on in the setup wizard's **Games** step (or in ServerSettings.json), then in **Game files** (or **Admin › Server Management › Games**) press **Browse…**, pick its RPCS3 install (or its `USRDIR/data` folder, or a `.zip` of it) and press **Extract**. Several games run one after another. Extract copies the files the server reads and converts the game's models, art and drum sounds for the web UI, and afterwards says what the copy lacks (an early Red's config, Blue's battle files). You can also pick the game's folder in the browser instead (`"AllowRemoteGameDir"`, on by default).
+   - **Extract them (recommended):** turn the game on in the setup wizard's **Games** step (or in ServerSettings.json), then in **Game files** (or **Admin › Server Management › Games**) press **Browse…**, pick the folder it runs from (or any folder in it down to `USRDIR/data`, or a `.zip` of it) and press **Extract**. Several games run one after another. Extract copies the files the server reads and converts the game's models, art and drum sounds for the web UI, and afterwards says what the copy lacks (an early Red's config, Blue's battle files). You can also pick the game's folder in the browser instead (`"AllowRemoteGameDir"`, on by default).
    - **Or copy them:** put the game's original `USRDIR/data` folder there yourself, or set its `"GameDataPath"`.
 
 The files each era reads from it:
@@ -88,7 +88,7 @@ Settings for each era:
 
 - `ServerSettings:Eras:<Era>:Enabled` - registers or removes era routes.
 - `ServerSettings:Eras:<Era>:GameDataPath` - AC15 source data path for Green, Blue, Yellow, Red, and White.
-- `ServerSettings:Eras:<Era>:GamePath` - the game's install (RPCS3 folder, its `USRDIR/data`, or a `.zip`), read by **Extract** in Server Management › Games.
+- `ServerSettings:Eras:<Era>:GamePath` - the game's folder (the folder it runs from, any folder in it down to `USRDIR/data`, or a `.zip`), read by **Extract** in Server Management › Games.
 - `ServerSettings:Eras:<Era>:AutoExtractCatalog` - allows first-run AC15 customization catalog extraction.
 - `ServerSettings:Eras:<Era>:CustomizationNameDataPath` - optional override directory for AC15 customization display names.
 - `ServerSettings:Eras:<Era>:EnableShop` and `ActiveShopSeasonId` - controls Green, Blue, and Yellow item-shop availability.

@@ -159,13 +159,14 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
         }
     }
 
-    // Nijiiro's install has Data/x64/datatable. An older game's folder is (or holds) its USRDIR/data, which has fumen
-    // (the places GameSource.Open looks), or is a .zip of it (not looked into).
+    // Nijiiro's install has Data/x64/datatable, or it's that Data/x64 itself (as extract takes it). An older game's folder
+    // is (or holds) its USRDIR/data, which has fumen (the places GameSource.Open looks), or is a .zip of it (not looked into).
     private static bool LooksLike(GameEra game, string path)
     {
         try
         {
-            if (game == GameEra.Nijiiro) return Directory.Exists(Path.Combine(path, "Data", "x64", "datatable"));
+            if (game == GameEra.Nijiiro)
+                return Directory.Exists(Path.Combine(path, "Data", "x64", "datatable")) || Directory.Exists(Path.Combine(path, "datatable"));
             if (File.Exists(path)) return path.EndsWith(".zip", StringComparison.OrdinalIgnoreCase);
             return new[] { "", "data", "USRDIR/data", "dev_hdd0/game/SCEEXE000/USRDIR/data" }
                 .Select(rel => Path.Combine(path, rel))
@@ -201,8 +202,8 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
         var full = Path.GetFullPath(path);
         if (!LooksLike(game, full))
             return game == GameEra.Nijiiro
-                ? "That folder isn't Nijiiro's install: it has no Data/x64/datatable."
-                : $"That folder doesn't have {game} in it: no USRDIR/data folder with fumen.";
+                ? "That folder isn't Nijiiro's game folder: there's no Data/x64/datatable in it."
+                : $"That folder isn't {game}'s game folder: there's no USRDIR/data in it for {game}.";
         lock (gate)
             if (running) return "extract is running.";
 

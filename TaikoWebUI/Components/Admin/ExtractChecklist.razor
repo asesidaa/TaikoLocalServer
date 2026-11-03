@@ -45,12 +45,10 @@ else
 @code {
     /// <summary>One game's own card (Game data › Overview) instead of every game that's on.</summary>
     [Parameter] public string? Only { get; set; }
-    /// <summary>Without the card and title (Setup's step has both); every game starts ticked.</summary>
+    /// <summary>Without the card and title (Setup's step has both); every game starts ticked, and the games that are off aren't listed.</summary>
     [Parameter] public bool Bare { get; set; }
     /// <summary>A run finished (successfully or not): the games' data has been reloaded.</summary>
     [Parameter] public EventCallback OnFinished { get; set; }
-    /// <summary>What to call the games that aren't offered (setup: the ones not picked).</summary>
-    [Parameter] public string? OffLabel { get; set; }
 
     private sealed record Picked(int Files, long Bytes, string Folder);
     private sealed record PickResult(string? Error, int Files, long Bytes, string Folder);
@@ -111,11 +109,11 @@ else
                     </li>
                 }
             </ul>
-            var off = GameInfo.All.Where(i => status.Games.All(g => g.Game != i.Name)).ToList();
+            var off = Bare ? [] : GameInfo.All.Where(i => status.Games.All(g => g.Game != i.Name)).ToList();
             if (off.Count > 0)
             {
                 <p class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs @Css.Muted">
-                    <span>@(OffLabel ?? Localizer["Off, so not offered:"])</span>
+                    <span>@Localizer["Off, so not offered:"]</span>
                     @foreach (var i in off)
                     {
                         <span class="inline-flex items-center gap-1.5"><GameDot Game="i" />@i.Name</span>

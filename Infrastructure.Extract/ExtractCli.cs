@@ -17,7 +17,7 @@ public static class ExtractCli
 
         Without --era, --game is a Nijiiro install (the folder holding Data/x64, or Data/x64 itself); --mods layers its
         LayeredFS Data_mods folder over Data. <game>: green, blue, yellow, red, white, murasaki, kimidori, momoiro; --game
-        is then the RPCS3 install (or its USRDIR/data), or a .zip of it. --out defaults to the wwwroot next to the server.
+        is then the folder the game runs from (or any folder in it down to USRDIR/data), or a .zip of it. --out defaults to the wwwroot next to the server.
         """;
 
     public static bool IsExtractCommand(string[] args) => args.Length > 0 && args[0] == "extract";

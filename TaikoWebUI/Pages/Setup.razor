@@ -206,7 +206,7 @@
             case "files":
                 <h1 class="text-xl font-semibold">@Localizer["Add the game files"]</h1>
                 <p class="mt-1 mb-4 text-sm @Css.Muted">@Localizer["Song names, costumes and the data cabinets need come from your copies of the games. Pick each game's folder; nothing in it is changed."]</p>
-                <ExtractChecklist Bare OnFinished="LoadExtract" OffLabel="@Localizer["Not chosen in the last step:"]" />
+                <ExtractChecklist Bare OnFinished="LoadExtract" />
                 @if (!FilesReady)
                 {
                     <p class="mt-3 text-xs @Css.Muted">@Localizer["Nijiiro cabinets can't play until Nijiiro is extracted. You can skip this and do it later in Server Management › Games."]</p>
