@@ -75,7 +75,8 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
         var profile = await context.UserWebProfiles.FindAsync([baid], HttpContext.RequestAborted);
-        return new UiTheme { Dark = profile?.DarkMode, Accent = profile?.Accent, Language = profile?.Language, Quality3D = profile?.Quality3D };
+        return new UiTheme { Dark = profile?.DarkMode, Accent = profile?.Accent, Language = profile?.Language, Quality3D = profile?.Quality3D,
+            SongLanguage = profile?.SongLanguage is { } song ? (int)song : -1 };
     }
 
     [HttpPut("{baid}/Theme")]
@@ -89,12 +90,15 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
             return BadRequest(new { message = "Unknown language." });
         if (theme.Quality3D is { } q && !Enum.IsDefined(q))
             return BadRequest(new { message = "Unknown quality." });
+        if (theme.SongLanguage is < -1 or > 3)
+            return BadRequest(new { message = "Unknown song language." });
         var profile = await context.UserWebProfiles.FindAsync([baid], HttpContext.RequestAborted);
         if (profile is null) return NotFound();
         profile.DarkMode = theme.Dark ?? profile.DarkMode;
         profile.Accent = theme.Accent ?? profile.Accent;
         profile.Language = theme.Language ?? profile.Language;
         profile.Quality3D = theme.Quality3D ?? profile.Quality3D;
+        if (theme.SongLanguage is { } songLanguage) profile.SongLanguage = songLanguage < 0 ? null : (uint)songLanguage;
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return NoContent();
     }

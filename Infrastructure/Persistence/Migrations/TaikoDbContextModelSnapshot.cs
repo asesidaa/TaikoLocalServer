@@ -4870,6 +4870,9 @@ namespace TaikoLocalServer.Migrations
                     b.Property<int?>("Quality3D")
                         .HasColumnType("INTEGER");
 
+                    b.Property<uint?>("SongLanguage")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Baid");
 
                     b.ToTable("UserWebProfiles");

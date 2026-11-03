@@ -22,7 +22,7 @@
     @* Your own display choice (not on an admin's view of someone else's). *@
     @if (Baid is null)
     {
-        <DisplayCard />
+        <DisplayCard Baid="Owner" />
     }
     @if (AuthService.LoginRequired && Owner == AuthService.GetLoggedInBaid())
     {

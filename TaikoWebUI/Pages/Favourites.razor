@@ -6,6 +6,7 @@
 @inject GameDataService GameDataService
 @inject ToastService Toast
 @inject IJSRuntime Js
+@inject PlayerSelection Players
 
 <PageTitle>@Localizer["Favourites"]</PageTitle>
 
@@ -52,7 +53,7 @@
                                     class="flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left @(on ? "bg-zinc-100 dark:bg-zinc-800" : "hover:bg-zinc-50 dark:hover:bg-zinc-800/60")">
                                 <GenreBar Genre="s.Genre" Class="h-7" />
                                 <span class="min-w-0 flex-1">
-                                    <span class="block truncate text-sm">@s.SongName</span>
+                                    <span class="block truncate text-sm">@s.Title(Language)</span>
                                     <span class="block truncate text-xs @Css.Muted">@Subtitle(s) · ID @s.SongId</span>
                                 </span>
                                 <span class="shrink-0 text-primary-500"><Icon Name="heart" /></span>
@@ -92,7 +93,7 @@
                     var id = order[i];
                     var s = Song(id);
                     <li @key="id" data-id="@id" class="flex items-center gap-2 bg-white px-3 py-2 sm:gap-3 dark:bg-zinc-900">
-                        <button data-fv-grip aria-label="@string.Format(Localizer["Move {0}, position {1} of {2}. Use the up and down arrow keys."], s?.SongName ?? $"#{id}", i + 1, order.Count)"
+                        <button data-fv-grip aria-label="@string.Format(Localizer["Move {0}, position {1} of {2}. Use the up and down arrow keys."], s?.Title(Language) ?? $"#{id}", i + 1, order.Count)"
                                 class="grid size-9 shrink-0 cursor-grab touch-none place-items-center rounded-lg text-zinc-400 hover:bg-zinc-100 active:cursor-grabbing dark:hover:bg-zinc-800">
                             <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.6" /><circle cx="15" cy="6" r="1.6" /><circle cx="9" cy="12" r="1.6" /><circle cx="15" cy="12" r="1.6" /><circle cx="9" cy="18" r="1.6" /><circle cx="15" cy="18" r="1.6" /></svg>
                         </button>
@@ -105,14 +106,14 @@
                             <GenreBar Genre="s.Genre" Class="h-9" />
                         }
                         <span class="min-w-0 flex-1">
-                            <span class="block truncate text-sm font-medium">@(s?.SongName ?? $"#{id}")</span>
+                            <span class="block truncate text-sm font-medium">@(s?.Title(Language) ?? $"#{id}")</span>
                             <span class="block truncate text-xs @Css.Muted">@(s is null ? Localizer["Not on this server"] : Subtitle(s))</span>
                         </span>
                         @if (s is { StarOni: > 0 })
                         {
                             <span class="hidden shrink-0 items-center gap-1 text-xs tabular-nums sm:flex @Css.Muted"><img data-asset="@GameData.DifficultyIcon(Difficulty.Oni)" alt="@GameData.DifficultyName(Difficulty.Oni)" class="size-5 object-contain" />★@s.StarOni</span>
                         }
-                        <button aria-label="@string.Format(Localizer["Remove {0} from favourites"], s?.SongName ?? $"#{id}")" title="@Localizer["Remove from favourites"]"
+                        <button aria-label="@string.Format(Localizer["Remove {0} from favourites"], s?.Title(Language) ?? $"#{id}")" title="@Localizer["Remove from favourites"]"
                                 class="grid size-9 shrink-0 place-items-center rounded-lg text-primary-500 hover:bg-primary-500/10" @onclick="() => Remove(id)"><Icon Name="heartFill" /></button>
                     </li>
                 }
@@ -148,13 +149,16 @@
 
     private bool Dirty => !order.SequenceEqual(saved);
     private MusicDetail? Song(uint id) => songs?.GetValueOrDefault(id);
-    private string Subtitle(MusicDetail s) => s.SongNameEN.Length > 0 ? s.SongNameEN : GameData.Genre(s.Genre).Name;
+    private string Subtitle(MusicDetail s) => s.Subtitle(Language) is { Length: > 0 } sub ? sub : GameData.Genre(s.Genre).Name;
+    // Settings › Display's song title language, else the player's profile Language.
+    private uint Language => Players.Users.FirstOrDefault(u => u.Baid == Baid)?.UserSetting is { } s ? s.SongLanguage ?? s.MyDonNameLanguage : 0;
 
     private (string Key, string Label)[] Sorts =>
         [("genre", Localizer["Genre"]), ("title", Localizer["Title"]), ("oni", Localizer["Oni level"]), ("recent", Localizer["Recently added"])];
 
     private bool Matches(MusicDetail s, string q) =>
-        s.SongId.ToString() == q || s.SongName.Contains(q, StringComparison.OrdinalIgnoreCase) || s.SongNameEN.Contains(q, StringComparison.OrdinalIgnoreCase);
+        s.SongId.ToString() == q || s.SongName.Contains(q, StringComparison.OrdinalIgnoreCase) || s.SongNameEN.Contains(q, StringComparison.OrdinalIgnoreCase)
+        || s.SongNameCN.Contains(q, StringComparison.OrdinalIgnoreCase) || s.SongNameKO.Contains(q, StringComparison.OrdinalIgnoreCase);
 
     // Up to 8 songs that aren't favourites yet; null while the box is empty.
     private List<MusicDetail>? Hits => query.Trim() is { Length: > 0 } q && songs is not null
@@ -209,7 +213,7 @@
         var to = key switch { "ArrowUp" => i - 1, "ArrowDown" => i + 1, "Home" => 0, _ => order.Count - 1 };
         if (i < 0 || to < 0 || to >= order.Count || to == i) return Task.CompletedTask;
         Move(id, to);
-        announce = string.Format(Localizer["{0}, position {1} of {2}"], Song(id)?.SongName ?? $"#{id}", to + 1, order.Count);
+        announce = string.Format(Localizer["{0}, position {1} of {2}"], Song(id)?.Title(Language) ?? $"#{id}", to + 1, order.Count);
         StateHasChanged();
         return Task.CompletedTask;
     }
@@ -232,7 +236,7 @@
         order.Add(s.SongId);
         sort = "";
         highlight = 0;
-        Toast.Show(string.Format(Localizer["Added {0} at the end"], s.SongName));
+        Toast.Show(string.Format(Localizer["Added {0} at the end"], s.Title(Language)));
         _ = search.FocusAsync();
     }
 

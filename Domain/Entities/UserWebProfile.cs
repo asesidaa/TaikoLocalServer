@@ -25,6 +25,9 @@ public class UserWebProfile
     public string? Language { get; set; }
     /// <summary>How finely player cards draw the 3D don-chan for them (Settings › Display); null = never picked.</summary>
     public RenderQuality? Quality3D { get; set; }
+    /// <summary>The language song titles show in here (Settings › Display): a profile Language (0 Japanese … 3 Korean);
+    /// null = the profile's own Language.</summary>
+    public uint? SongLanguage { get; set; }
 
     public virtual UserDatum? Ba { get; set; }
 }

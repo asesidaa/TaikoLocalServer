@@ -6,6 +6,7 @@
 @inject PageState Page
 @inject ToastService Toast
 @inject IJSRuntime Js
+@inject PlayerSelection Players
 @using TaikoWebUI.Components.Profile
 
 <PageTitle>@Localizer["Profile"]</PageTitle>
@@ -62,8 +63,11 @@ else
                 <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Name"]</span>
                 <input maxlength="10" value="@s.MyDonName" class="@Css.Input mt-1.5" @oninput="e => Set(x => x.MyDonName = e.Value?.ToString() ?? string.Empty)" />
             </label>
-            <SelectField Label="@Localizer["Language"]" Options="@GameData.NameLanguages.Select(l => (string)Localizer[l]).ToList()"
-                         Value="s.MyDonNameLanguage" ValueChanged="v => Set(x => x.MyDonNameLanguage = v)" />
+            <div>
+                <SelectField Label="@Localizer["Language"]" Options="@GameData.NameLanguages.Select(l => (string)Localizer[l]).ToList()"
+                             Value="s.MyDonNameLanguage" ValueChanged="v => Set(x => x.MyDonNameLanguage = v)" />
+                <p class="mt-1 text-xs @Css.Muted">@Localizer["The language your name is written in. Song titles here show in it too, unless Settings › Display picks another."]</p>
+            </div>
             <label class="block">
                 <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Title"]</span>
                 <button class="@Css.Input mt-1.5 flex items-center justify-between text-left" @onclick="() => titlesOpen = true">

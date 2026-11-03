@@ -132,6 +132,9 @@ public partial class Profile : IDisposable
         if (changes.Count == 0) return true;
         var response = await Client.PatchAsJsonAsync($"api/UserSettings/{Baid}", changes, CancellationToken.None);
         if (response.IsSuccessStatusCode) saved = now;
+        // Pages that name songs read the language from the loaded player list.
+        if (response.IsSuccessStatusCode && Players.Users.FirstOrDefault(u => u.Baid == Baid) is { } user)
+            user.UserSetting.MyDonNameLanguage = setting!.MyDonNameLanguage;
         return response.IsSuccessStatusCode;
     }
 

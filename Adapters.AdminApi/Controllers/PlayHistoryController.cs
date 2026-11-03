@@ -185,7 +185,7 @@ public partial class PlayHistoryController(ITaikoDbContext context, IGameDataCat
             return forbid;
 
         var day = await Plays(baid, date.Date, date.Date.AddDays(1));
-        return new PlayHistoryDay { Sessions = Sessions(day, diff, best) };
+        return new PlayHistoryDay { Sessions = Sessions(day, diff, best, await Language(baid)) };
     }
 
     /// <summary>
@@ -198,7 +198,8 @@ public partial class PlayHistoryController(ITaikoDbContext context, IGameDataCat
         if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
             return forbid;
         var since = DateTime.Today.AddDays(1 - Math.Clamp(days, 1, 31));
-        var sessions = Sessions(await Plays(baid, since, DateTime.MaxValue), 0, false);
+        var language = await Language(baid);
+        var sessions = Sessions(await Plays(baid, since, DateTime.MaxValue), 0, false, language);
         foreach (var (game, rows) in new[]
                  {
                      ("Green", await EraPlays(context.SongPlayDataGreen, baid, since)), ("Blue", await EraPlays(context.SongPlayDataBlue, baid, since)),
@@ -206,12 +207,14 @@ public partial class PlayHistoryController(ITaikoDbContext context, IGameDataCat
                      ("White", await EraPlays(context.SongPlayDataWhite, baid, since)), ("Murasaki", await EraPlays(context.SongPlayDataMurasaki, baid, since)),
                      ("Kimidori", await EraPlays(context.SongPlayDataKimidori, baid, since)), ("Momoiro", await EraPlays(context.SongPlayDataMomoiro, baid, since)),
                  })
-            sessions.AddRange(Sessions(rows, 0, false, game));
+            sessions.AddRange(Sessions(rows, 0, false, language, game));
         return new PlayHistoryDay { Sessions = sessions.OrderByDescending(s => s.Start).ToList() };
     }
 
     // Groups plays into sessions (newest first), keeping the plays that match the filters; sessions left empty are dropped.
-    private List<PlaySession> Sessions(List<Row> plays, int diff, bool best, string game = "Nijiiro")
+    private Task<uint> Language(uint baid) => SongLanguage.ForAsync(context, baid, HttpContext.RequestAborted);
+
+    private List<PlaySession> Sessions(List<Row> plays, int diff, bool best, uint language, string game = "Nijiiro")
     {
         var songs = game == "Nijiiro" ? catalog.Nijiiro().GetMusicDetailDictionary() : [];
         var sessions = new List<List<Row>>();
@@ -228,8 +231,8 @@ public partial class PlayHistoryController(ITaikoDbContext context, IGameDataCat
             Plays = s.Where(p => Matches(p, diff, best)).OrderByDescending(p => p.Play.Credit).ThenBy(p => p.SongNumber).Select(p =>
             {
                 var song = songs.GetValueOrDefault(p.SongId);
-                p.Play.Name = song?.SongName ?? (game == "Nijiiro" ? $"#{p.SongId}" : "");
-                p.Play.NameEn = song?.SongNameEN ?? "";
+                p.Play.Name = song?.Title(language) ?? (game == "Nijiiro" ? $"#{p.SongId}" : "");
+                p.Play.NameEn = song?.Subtitle(language) ?? "";
                 p.Play.Stars = song is null ? 0 : p.Difficulty switch
                 {
                     Difficulty.Easy => song.StarEasy, Difficulty.Normal => song.StarNormal, Difficulty.Hard => song.StarHard,

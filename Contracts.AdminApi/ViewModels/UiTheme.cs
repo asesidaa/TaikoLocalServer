@@ -10,4 +10,7 @@ public class UiTheme
     public string? Language { get; set; }
     /// <summary>How finely player cards draw the 3D don-chan (Settings › Display).</summary>
     public RenderQuality? Quality3D { get; set; }
+    /// <summary>The language song titles show in (Settings › Display): 0 Japanese, 1 English, 2 Chinese, 3 Korean, or -1
+    /// for the profile's Language.</summary>
+    public int? SongLanguage { get; set; }
 }

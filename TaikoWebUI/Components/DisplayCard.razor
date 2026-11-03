@@ -1,9 +1,11 @@
-@* Settings › Display: how finely player cards draw the 3D don-chan for you. Kept on this device (the embed reads it)
-   and, signed in, on your account so your other devices use it too. Only while cards are 3D (Player Settings). *@
+@* Settings › Display: how finely player cards draw the 3D don-chan for you (kept on this device, the embed reads it,
+   and, signed in, on your account so your other devices use it too), and the language song titles show in (on the
+   player's web profile: the server names songs with it). *@
 @inject HttpClient Client
 @inject AuthService AuthService
 @inject ToastService Toast
 @inject IJSRuntime Js
+@inject PlayerSelection Players
 
 <section class="@Css.Card p-5 sm:p-6">
     <h2 class="font-semibold">@Localizer["Display"]</h2>
@@ -21,10 +23,46 @@
             }
         </div>
     </div>
+    <div class="mt-4 flex flex-wrap items-center gap-3 border-t border-zinc-100 pt-4 dark:border-zinc-800">
+        <span class="min-w-0 flex-1">
+            <span class="block text-sm font-medium">@Localizer["Song titles"]</span>
+            <span class="block max-w-2xl text-xs @Css.Muted">@Localizer["The language song titles show in here."]</span>
+        </span>
+        <select class="@Css.Input w-auto dark:[&>option]:bg-zinc-900" aria-label="@Localizer["Song titles"]" disabled="@(songLanguage is null)"
+                @onchange="e => SetSongLanguage(int.Parse(e.Value!.ToString()!))">
+            <option value="-1" selected="@(songLanguage == -1)">@Localizer["My profile's language"]</option>
+            @for (var i = 0; i < 4; i++)
+            {
+                var value = i;
+                <option value="@value" selected="@(songLanguage == value)">@Localizer[GameData.NameLanguages[value]]</option>
+            }
+        </select>
+    </div>
 </section>
 
 @code {
+    /// <summary>The player whose settings these are (song titles are per player).</summary>
+    [Parameter] public uint Baid { get; set; }
+
     private RenderQuality? quality;
+    private int? songLanguage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Baid == 0) return;
+        try { songLanguage = (await Client.GetFromJsonAsync<UiTheme>($"api/Users/{Baid}/Theme"))?.SongLanguage ?? -1; }
+        catch (HttpRequestException) { }
+    }
+
+    private async Task SetSongLanguage(int value)
+    {
+        songLanguage = value;
+        var res = await Client.PutAsJsonAsync($"api/Users/{Baid}/Theme", new UiTheme { SongLanguage = value });
+        if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
+        // Pages that name songs themselves read it from the loaded player list.
+        if (Players.Users.FirstOrDefault(u => u.Baid == Baid) is { } user) user.UserSetting.SongLanguage = value < 0 ? null : (uint)value;
+        Toast.Show(Localizer["Saved"]);
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

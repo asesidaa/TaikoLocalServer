@@ -56,7 +56,8 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
             // The picked difficulty also filters: only songs with that chart (in practice Ura Oni).
             Stars(s)[diff - 1] > 0 &&
             (query.Length == 0 || s.SongId.ToString() == query ||
-             s.SongName.Contains(query, StringComparison.OrdinalIgnoreCase) || s.SongNameEN.Contains(query, StringComparison.OrdinalIgnoreCase)));
+             s.SongName.Contains(query, StringComparison.OrdinalIgnoreCase) || s.SongNameEN.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+             s.SongNameCN.Contains(query, StringComparison.OrdinalIgnoreCase) || s.SongNameKO.Contains(query, StringComparison.OrdinalIgnoreCase)));
         // Your result on that chart: any of the ones picked (none picked: every song).
         var wanted = (results ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToHashSet();
         if (wanted.Count > 0)
@@ -84,12 +85,13 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         page = Math.Min(page, pages);
         var shown = all.Skip((page - 1) * limit).Take(limit).ToList();
         var totals = allPlays ?? await PlayCounts(shown.Select(s => s.SongId).ToList());
+        var language = await SongLanguage.ForAsync(context, baid, HttpContext.RequestAborted);
         return new SongListPage
         {
             Total = all.Count, AllSongs = songs.Count, Page = page, TotalPages = pages,
             Items = shown.Select(s => new SongListItem
             {
-                SongId = s.SongId, Name = s.SongName, NameEn = s.SongNameEN, Genre = s.Genre, Favorite = favorites.Contains(s.SongId),
+                SongId = s.SongId, Name = s.Title(language), NameEn = s.Subtitle(language), Genre = s.Genre, Favorite = favorites.Contains(s.SongId),
                 IsNew = s.IsNew, TotalPlays = totals.GetValueOrDefault(s.SongId),
                 Stars = Stars(s),
                 Crowns = Enumerable.Range(1, 5).Select(i => best.TryGetValue((s.SongId, (Difficulty)i), out var c) ? c : (CrownType?)null).ToArray(),
@@ -120,9 +122,10 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         var ai = await context.AiScoreDataNijiiro.Where(a => a.Baid == baid && a.SongId == songId).Include(a => a.AiSectionScoreData)
             .ToListAsync(HttpContext.RequestAborted);
         var stars = Stars(s);
+        var language = await SongLanguage.ForAsync(context, baid, HttpContext.RequestAborted);
         return new SongDetail
         {
-            SongId = s.SongId, Name = s.SongName, NameEn = s.SongNameEN, Genre = s.Genre, Stars = stars,
+            SongId = s.SongId, Name = s.Title(language), NameEn = s.Subtitle(language), Genre = s.Genre, Stars = stars,
             Favorite = save.FavoriteSongsArray.Contains(songId), IsNew = s.IsNew,
             TotalPlays = await context.SongPlayDataNijiiro.CountAsync(p => p.SongId == songId && !p.Skipped, HttpContext.RequestAborted),
             Charts = Enumerable.Range(1, 5).Where(i => stars[i - 1] > 0).Select(i =>

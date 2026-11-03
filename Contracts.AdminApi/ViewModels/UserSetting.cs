@@ -71,6 +71,9 @@ public class UserSetting
     // Player card (WebUI only; stored in UserWebProfiles).
     /// <summary>Game palette index (0 = Don red).</summary>
     public uint CardColor { get; set; }
+
+    /// <summary>Settings › Display's song title language, when set (else song titles follow MyDonNameLanguage).</summary>
+    public uint? SongLanguage { get; set; }
     public CardPattern CardPattern { get; set; }
     /// <summary>Game palette index, or -1 for no fade.</summary>
     public int CardFade { get; set; } = -1;

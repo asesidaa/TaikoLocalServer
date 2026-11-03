@@ -4581,4 +4581,16 @@
   <data name="Stopped" xml:space="preserve">
     <value>停止しました</value>
   </data>
+  <data name="The language your name is written in. Song titles here show in it too, unless Settings › Display picks another." xml:space="preserve">
+    <value>名前を表示する言語です。設定 › 表示で別の言語を選ばない限り、ここでの曲名もこの言語で表示されます。</value>
+  </data>
+  <data name="Song titles" xml:space="preserve">
+    <value>曲名</value>
+  </data>
+  <data name="The language song titles show in here." xml:space="preserve">
+    <value>ここで曲名を表示する言語です。</value>
+  </data>
+  <data name="My profile's language" xml:space="preserve">
+    <value>プロフィールの言語</value>
+  </data>
 </root>

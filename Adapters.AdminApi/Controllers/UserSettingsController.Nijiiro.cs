@@ -148,6 +148,7 @@ public partial class UserSettingsController
             CardPattern = profile.CardPattern,
             CardFade = profile.CardFade,
             CardAnimation = profile.CardAnimation,
+            SongLanguage = profile.SongLanguage,
         };
     }
 }

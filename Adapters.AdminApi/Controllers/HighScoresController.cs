@@ -41,13 +41,14 @@ public class HighScoresController(ITaikoDbContext context, IGameDataCatalog cata
             .GroupBy(p => p.SongId).ToDictionary(g => g.Key, g => g.MaxBy(p => p.Score)!.PlayTime);
 
         var query = q?.Trim() ?? "";
+        var language = await SongLanguage.ForAsync(context, baid, HttpContext.RequestAborted);
         var rows = mine.Where(b => b.Difficulty == d && songs.ContainsKey(b.SongId)).Select(b =>
         {
             var s = songs[b.SongId];
             var other = theirs.GetValueOrDefault(b.SongId);
             return new HighScoreRow
             {
-                SongId = b.SongId, Name = s.SongName, NameEn = s.SongNameEN, Genre = s.Genre, Stars = Stars(s, d),
+                SongId = b.SongId, Name = s.Title(language), NameEn = s.Subtitle(language), Genre = s.Genre, Stars = Stars(s, d),
                 Score = b.BestScore, Crown = b.BestCrown, Rank = b.BestScoreRank, Accuracy = b.BestRate / 100.0,
                 SetOn = setOn.TryGetValue(b.SongId, out var at) ? at : null,
                 VsScore = other?.BestScore, VsCrown = other?.BestCrown,
