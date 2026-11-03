@@ -1,0 +1,29 @@
+{
+  "defaultSet": "dan_data",
+  "sets": [
+    {
+      "id": "dan_data",
+      "name": "Default"
+    },
+    {
+      "id": "nijiiro2020",
+      "name": "Nijiiro 2020"
+    },
+    {
+      "id": "nijiiro2021",
+      "name": "Nijiiro 2021"
+    },
+    {
+      "id": "nijiiro2022",
+      "name": "Nijiiro 2022"
+    },
+    {
+      "id": "nijiiro2023",
+      "name": "Nijiiro 2023"
+    },
+    {
+      "id": "nijiiro2024",
+      "name": "Nijiiro 2024"
+    }
+  ]
+}

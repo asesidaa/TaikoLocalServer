@@ -122,6 +122,9 @@
     <Content Update="wwwroot\data\qrcode_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\special_songs_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
 
+    <!--Dani Dojo course sets by year (Server Management › Dani Dojo); dan_data.json above is the Default set-->
+    <Content Update="wwwroot\data\dan\*.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+
     <!--Names shared by the older games-->
     <Content Update="wwwroot\data\shared\costume_name_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Update="wwwroot\data\shared\title_name_data.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>

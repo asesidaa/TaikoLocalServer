@@ -1,0 +1,914 @@
+[
+  {
+    "danId": 1,
+    "verupNo": 1,
+    "title": "5kyuu",
+    "aryOdaiSong": [
+      {
+        "songNo": 1301,
+        "level": 2,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 1338,
+        "level": 2,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 1291,
+        "level": 3,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 92,
+        "goldBorderTotal": 95
+      },
+      {
+        "odaiType": 8,
+        "borderType": 1,
+        "redBorderTotal": 724,
+        "goldBorderTotal": 748
+      }
+    ]
+  },
+  {
+    "danId": 2,
+    "verupNo": 1,
+    "title": "4kyuu",
+    "aryOdaiSong": [
+      {
+        "songNo": 1316,
+        "level": 2,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 97,
+        "level": 2,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 1194,
+        "level": 3,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 94,
+        "goldBorderTotal": 97
+      },
+      {
+        "odaiType": 8,
+        "borderType": 1,
+        "redBorderTotal": 1122,
+        "goldBorderTotal": 1159
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 112,
+        "goldBorderTotal": 56
+      }
+    ]
+  },
+  {
+    "danId": 3,
+    "verupNo": 1,
+    "title": "3kyuu",
+    "aryOdaiSong": [
+      {
+        "songNo": 981,
+        "level": 3,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 1209,
+        "level": 3,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 1141,
+        "level": 3,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 96,
+        "goldBorderTotal": 99
+      },
+      {
+        "odaiType": 8,
+        "borderType": 1,
+        "redBorderTotal": 1247,
+        "goldBorderTotal": 1287
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 96,
+        "goldBorderTotal": 48
+      }
+    ]
+  },
+  {
+    "danId": 4,
+    "verupNo": 1,
+    "title": "2kyuu",
+    "aryOdaiSong": [
+      {
+        "songNo": 1304,
+        "level": 3,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 1270,
+        "level": 3,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 1144,
+        "level": 4,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 97,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 8,
+        "borderType": 1,
+        "redBorderTotal": 1512,
+        "goldBorderTotal": 1560
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 91,
+        "goldBorderTotal": 45
+      }
+    ]
+  },
+  {
+    "danId": 5,
+    "verupNo": 1,
+    "title": "1kyuu",
+    "aryOdaiSong": [
+      {
+        "songNo": 1392,
+        "level": 3,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 882,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 39,
+        "level": 3,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 98,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 8,
+        "borderType": 1,
+        "redBorderTotal": 1589,
+        "goldBorderTotal": 1639
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 59,
+        "goldBorderTotal": 29
+      }
+    ]
+  },
+  {
+    "danId": 6,
+    "verupNo": 1,
+    "title": "1dan",
+    "aryOdaiSong": [
+      {
+        "songNo": 318,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 613,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 741,
+        "level": 4,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 98,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 2,
+        "borderType": 1,
+        "redBorderTotal": 866,
+        "goldBorderTotal": 917
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 28,
+        "goldBorderTotal": 14
+      },
+      {
+        "odaiType": 6,
+        "borderType": 1,
+        "redBorderTotal": 293,
+        "goldBorderTotal": 327
+      }
+    ]
+  },
+  {
+    "danId": 7,
+    "verupNo": 1,
+    "title": "2dan",
+    "aryOdaiSong": [
+      {
+        "songNo": 1277,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 469,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 107,
+        "level": 4,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 98,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 2,
+        "borderType": 1,
+        "redBorderTotal": 965,
+        "goldBorderTotal": 1017
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 26,
+        "goldBorderTotal": 13
+      },
+      {
+        "odaiType": 6,
+        "borderType": 1,
+        "redBorderTotal": 210,
+        "goldBorderTotal": 235
+      }
+    ]
+  },
+  {
+    "danId": 8,
+    "verupNo": 1,
+    "title": "3dan",
+    "aryOdaiSong": [
+      {
+        "songNo": 1033,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 149,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 1019,
+        "level": 4,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 99,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 2,
+        "borderType": 1,
+        "redBorderTotal": 1086,
+        "goldBorderTotal": 1138
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 24,
+        "goldBorderTotal": 12
+      },
+      {
+        "odaiType": 6,
+        "borderType": 1,
+        "redBorderTotal": 344,
+        "goldBorderTotal": 386
+      }
+    ]
+  },
+  {
+    "danId": 9,
+    "verupNo": 1,
+    "title": "4dan",
+    "aryOdaiSong": [
+      {
+        "songNo": 703,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 652,
+        "level": 5,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 266,
+        "level": 4,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 99,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 2,
+        "borderType": 1,
+        "redBorderTotal": 1484,
+        "goldBorderTotal": 1548
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 28,
+        "goldBorderTotal": 14
+      },
+      {
+        "odaiType": 6,
+        "borderType": 1,
+        "redBorderTotal": 143,
+        "goldBorderTotal": 161
+      }
+    ]
+  },
+  {
+    "danId": 10,
+    "verupNo": 1,
+    "title": "5dan",
+    "aryOdaiSong": [
+      {
+        "songNo": 626,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 459,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 108,
+        "level": 4,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 99,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 2,
+        "borderType": 1,
+        "redBorderTotal": 1708,
+        "goldBorderTotal": 1771
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 26,
+        "goldBorderTotal": 13
+      },
+      {
+        "odaiType": 6,
+        "borderType": 1,
+        "redBorderTotal": 117,
+        "goldBorderTotal": 132
+      }
+    ]
+  },
+  {
+    "danId": 11,
+    "verupNo": 1,
+    "title": "6dan",
+    "aryOdaiSong": [
+      {
+        "songNo": 95,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 1082,
+        "level": 5,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 970,
+        "level": 4,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 100,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 2,
+        "borderType": 1,
+        "redBorderTotal": 1613,
+        "goldBorderTotal": 1664
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 18,
+        "goldBorderTotal": 9
+      },
+      {
+        "odaiType": 6,
+        "borderType": 2,
+        "redBorder_1": 21,
+        "goldBorder_1": 25,
+        "redBorder_2": 62,
+        "goldBorder_2": 74,
+        "redBorder_3": 158,
+        "goldBorder_3": 185
+      }
+    ]
+  },
+  {
+    "danId": 12,
+    "verupNo": 1,
+    "title": "7dan",
+    "aryOdaiSong": [
+      {
+        "songNo": 356,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 944,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 1069,
+        "level": 4,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 100,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 2,
+        "borderType": 1,
+        "redBorderTotal": 1720,
+        "goldBorderTotal": 1765
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 15,
+        "goldBorderTotal": 8
+      },
+      {
+        "odaiType": 6,
+        "borderType": 2,
+        "redBorder_1": 81,
+        "goldBorder_1": 88,
+        "redBorder_2": 90,
+        "goldBorder_2": 105,
+        "redBorder_3": 257,
+        "goldBorder_3": 293
+      }
+    ]
+  },
+  {
+    "danId": 13,
+    "verupNo": 1,
+    "title": "8dan",
+    "aryOdaiSong": [
+      {
+        "songNo": 588,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 31,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 418,
+        "level": 4,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 100,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 2,
+        "borderType": 1,
+        "redBorderTotal": 2051,
+        "goldBorderTotal": 2094
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 13,
+        "goldBorderTotal": 7
+      },
+      {
+        "odaiType": 6,
+        "borderType": 2,
+        "redBorder_1": 149,
+        "goldBorder_1": 174,
+        "redBorder_2": 68,
+        "goldBorder_2": 72,
+        "redBorder_3": 150,
+        "goldBorder_3": 180
+      }
+    ]
+  },
+  {
+    "danId": 14,
+    "verupNo": 1,
+    "title": "9dan",
+    "aryOdaiSong": [
+      {
+        "songNo": 572,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 1067,
+        "level": 5,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 938,
+        "level": 5,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 100,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 2,
+        "borderType": 1,
+        "redBorderTotal": 2067,
+        "goldBorderTotal": 2099
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 8,
+        "goldBorderTotal": 4
+      },
+      {
+        "odaiType": 6,
+        "borderType": 2,
+        "redBorder_1": 45,
+        "goldBorder_1": 52,
+        "redBorder_2": 32,
+        "goldBorder_2": 35,
+        "redBorder_3": 200,
+        "goldBorder_3": 240
+      }
+    ]
+  },
+  {
+    "danId": 15,
+    "verupNo": 1,
+    "title": "10dan",
+    "aryOdaiSong": [
+      {
+        "songNo": 499,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 994,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 4122,
+        "level": 5,
+        "isHiddenSongName": false
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 100,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 3,
+        "borderType": 1,
+        "redBorderTotal": 75,
+        "goldBorderTotal": 50
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 8,
+        "goldBorderTotal": 4
+      },
+      {
+        "odaiType": 6,
+        "borderType": 2,
+        "redBorder_1": 174,
+        "goldBorder_1": 208,
+        "redBorder_2": 64,
+        "goldBorder_2": 69,
+        "redBorder_3": 56,
+        "goldBorder_3": 62
+      }
+    ]
+  },
+  {
+    "danId": 16,
+    "verupNo": 1,
+    "title": "11dan",
+    "aryOdaiSong": [
+      {
+        "songNo": 286,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 220,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 4120,
+        "level": 5,
+        "isHiddenSongName": true
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 100,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 3,
+        "borderType": 1,
+        "redBorderTotal": 50,
+        "goldBorderTotal": 30
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 6,
+        "goldBorderTotal": 3
+      },
+      {
+        "odaiType": 6,
+        "borderType": 2,
+        "redBorder_1": 50,
+        "goldBorder_1": 60,
+        "redBorder_2": 68,
+        "goldBorder_2": 74,
+        "redBorder_3": 11,
+        "goldBorder_3": 12
+      }
+    ]
+  },
+  {
+    "danId": 17,
+    "verupNo": 1,
+    "title": "12dan",
+    "aryOdaiSong": [
+      {
+        "songNo": 495,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 264,
+        "level": 5,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 4118,
+        "level": 5,
+        "isHiddenSongName": true
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 100,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 3,
+        "borderType": 1,
+        "redBorderTotal": 30,
+        "goldBorderTotal": 15
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 5,
+        "goldBorderTotal": 2
+      },
+      {
+        "odaiType": 6,
+        "borderType": 2,
+        "redBorder_1": 39,
+        "goldBorder_1": 48,
+        "redBorder_2": 78,
+        "goldBorder_2": 96,
+        "redBorder_3": 81,
+        "goldBorder_3": 95
+      }
+    ]
+  },
+  {
+    "danId": 18,
+    "verupNo": 1,
+    "title": "13dan",
+    "aryOdaiSong": [
+      {
+        "songNo": 818,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 1108,
+        "level": 4,
+        "isHiddenSongName": false
+      },
+      {
+        "songNo": 4119,
+        "level": 5,
+        "isHiddenSongName": true
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 100,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 3,
+        "borderType": 1,
+        "redBorderTotal": 15,
+        "goldBorderTotal": 6
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 4,
+        "goldBorderTotal": 2
+      },
+      {
+        "odaiType": 6,
+        "borderType": 2,
+        "redBorder_1": 69,
+        "goldBorder_1": 80,
+        "redBorder_2": 123,
+        "goldBorder_2": 133,
+        "redBorder_3": 95,
+        "goldBorder_3": 104
+      }
+    ]
+  },
+  {
+    "danId": 19,
+    "verupNo": 1,
+    "title": "14dan",
+    "aryOdaiSong": [
+      {
+        "songNo": 1099,
+        "level": 4,
+        "isHiddenSongName": true
+      },
+      {
+        "songNo": 1072,
+        "level": 5,
+        "isHiddenSongName": true
+      },
+      {
+        "songNo": 765,
+        "level": 5,
+        "isHiddenSongName": true
+      }
+    ],
+    "aryOdaiBorder": [
+      {
+        "odaiType": 1,
+        "borderType": 1,
+        "redBorderTotal": 100,
+        "goldBorderTotal": 100
+      },
+      {
+        "odaiType": 3,
+        "borderType": 1,
+        "redBorderTotal": 8,
+        "goldBorderTotal": 1
+      },
+      {
+        "odaiType": 4,
+        "borderType": 1,
+        "redBorderTotal": 3,
+        "goldBorderTotal": 1
+      },
+      {
+        "odaiType": 6,
+        "borderType": 2,
+        "redBorder_1": 125,
+        "goldBorder_1": 157,
+        "redBorder_2": 113,
+        "goldBorder_2": 133,
+        "redBorder_3": 140,
+        "goldBorder_3": 148
+      }
+    ]
+  }
+]
