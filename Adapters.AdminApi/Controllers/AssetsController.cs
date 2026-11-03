@@ -49,7 +49,7 @@ public class AssetsController : BaseAdminController<AssetsController>
             return NotFound();
         }
 
-        Response.Headers.CacheControl = "private, max-age=86400";
+        Response.Headers.CacheControl = "private, no-cache";
         return PhysicalFile(fullPath, contentType);
     }
 }
