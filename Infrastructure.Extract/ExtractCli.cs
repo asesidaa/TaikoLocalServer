@@ -1,4 +1,5 @@
 using TaikoLocalServer.Infrastructure.Extract.Ac15;
+using TaikoLocalServer.Infrastructure.Extract.Nijiiro;
 
 namespace TaikoLocalServer.Infrastructure.Extract;
 
@@ -10,11 +11,13 @@ public static class ExtractCli
 {
     private const string Usage = """
         Usage:
+          TaikoLocalServer extract --game <Nijiiro install> [--mods] [--out <wwwroot>]
           TaikoLocalServer extract --era <game> --game <folder or .zip> [--out <wwwroot>]
-          TaikoLocalServer extract --inputs --era <game>
+          TaikoLocalServer extract --inputs [--era <game>]
 
-        <game>: green, blue, yellow, red, white, murasaki, kimidori, momoiro. --game is the RPCS3 install (or its
-        USRDIR/data), or a .zip of it. --out defaults to the wwwroot next to the server.
+        Without --era, --game is a Nijiiro install (the folder holding Data/x64, or Data/x64 itself); --mods layers its
+        LayeredFS Data_mods folder over Data. <game>: green, blue, yellow, red, white, murasaki, kimidori, momoiro; --game
+        is then the RPCS3 install (or its USRDIR/data), or a .zip of it. --out defaults to the wwwroot next to the server.
         """;
 
     public static bool IsExtractCommand(string[] args) => args.Length > 0 && args[0] == "extract";
@@ -23,7 +26,7 @@ public static class ExtractCli
     public static int Run(string[] args, string defaultOut, TextWriter output, TextWriter error)
     {
         string? era = null, game = null, outDir = null;
-        var inputs = false;
+        bool inputs = false, mods = false;
         for (var i = 0; i < args.Length; i++)
         {
             switch (args[i])
@@ -32,20 +35,21 @@ public static class ExtractCli
                 case "--game" when i + 1 < args.Length: game = args[++i]; break;
                 case "--out" when i + 1 < args.Length: outDir = args[++i]; break;
                 case "--inputs": inputs = true; break;
+                case "--mods": mods = true; break;
                 default:
                     error.WriteLine(Usage);
                     return 1;
             }
         }
-        if (era is null || !EraInfo.TryParse(era, out var parsed))
+        Era parsed = default;
+        if (era is not null && !EraInfo.TryParse(era, out parsed))
         {
-            // shortcut: Nijiiro isn't ported yet; tools/extract still does it.
-            error.WriteLine(era is null ? "Nijiiro isn't supported here yet: use tools/extract." : $"Unknown game {era}.\n{Usage}");
+            error.WriteLine($"Unknown game {era}.\n{Usage}");
             return 1;
         }
         if (inputs)
         {
-            output.WriteLine(Ac15Extractor.Inputs(parsed).ToJsonString(Ac15Extractor.Compact));
+            output.WriteLine((era is null ? NijiiroExtractor.Inputs() : Ac15Extractor.Inputs(parsed)).ToJsonString(Ac15Extractor.Compact));
             return 0;
         }
         if (game is null)
@@ -55,7 +59,9 @@ public static class ExtractCli
         }
         try
         {
-            var reports = Ac15Extractor.Run(parsed, game, outDir ?? defaultOut, output);
+            var reports = era is null
+                ? NijiiroExtractor.Run(game, outDir ?? defaultOut, mods, output)
+                : Ac15Extractor.Run(parsed, game, outDir ?? defaultOut, output);
             foreach (var r in reports)
                 r.Print(output);
             return reports.Any(r => r.Missing.Count > 0 || r.Failed.Count > 0) ? 2 : 0;

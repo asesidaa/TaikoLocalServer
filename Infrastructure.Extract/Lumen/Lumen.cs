@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.Text;
+using System.Text.Json.Nodes;
 using TaikoLocalServer.Infrastructure.Extract.Textures;
 
 namespace TaikoLocalServer.Infrastructure.Extract.Lumen;
@@ -13,7 +14,7 @@ public sealed class LumenFile
 {
     private const uint TSymbols = 0xF001, TColors = 0xF002, TMatrices = 0xF003, TPositions = 0xF103, TBounds = 0xF004;
     private const uint TAtlases = 0xF007, TShape = 0xF022, TGraphic = 0xF024, TSprite = 0x0027, TLabel = 0x002B;
-    private const uint TFrame = 0x0001, TKeyframe = 0xF105, TPlace = 0x0004, TRemove = 0x0005, TEnd = 0xFF00;
+    private const uint TFrame = 0x0001, TKeyframe = 0xF105, TPlace = 0x0004, TRemove = 0x0005, TText = 0x0025, TEnd = 0xFF00;
     /// <summary>The older games' (PS3) graphic: one textured quad, <c>x y u v</c> × 4, then the atlas id and the fill.</summary>
     private const uint TQuad = 0xF023;
     /// <summary><c>F024</c> fill type 0: a solid colour, with the colour index stored where the atlas id normally is.</summary>
@@ -22,11 +23,17 @@ public sealed class LumenFile
     private static readonly float[] Identity = [1, 0, 0, 1, 0, 0]; // a b c d tx ty
 
     public List<string> Symbols { get; } = [];
-    private readonly List<float[]> colors = [], matrices = [], positions = [];
+    private readonly List<float[]> colors = [], matrices = [], positions = [], bounds = [];
     /// <summary>Every atlas in a Nijiiro file has the same size; the PS3 files' differ (<see cref="RenderLayers"/>).</summary>
     private (float W, float H) atlasSize;
+    private int atlasCount;
+    private readonly Dictionary<uint, Text> texts = [];
     private readonly Dictionary<uint, List<Graphic>> shapes = [];
     private readonly Dictionary<uint, Sprite> sprites = [];
+
+    /// <summary>A text field: the game fills it at runtime, so only its box and style matter here. The template is a symbol
+    /// holding HTML: <c>&lt;p align="center"&gt;&lt;font ... size="22" color="#000000"&gt;sample&lt;/font&gt;&lt;/p&gt;</c>.</summary>
+    private sealed record Text(uint Bounds, uint Template, float Outline);
 
     private sealed record Graphic(uint Atlas, ushort Fill, float[][] Verts, ushort[] Indices); // verts: x y u v
 
@@ -102,10 +109,16 @@ public sealed class LumenFile
                     for (var i = 0; i < Count(); i++) lm.positions.Add(Vec(p + 4 + i * 8, 2));
                     break;
                 case TBounds:
-                    break; // only text fields use them (Nijiiro's nameplate)
+                    for (var i = 0; i < Count(); i++) lm.bounds.Add(Vec(p + 4 + i * 16, 4));
+                    break;
                 case TAtlases:
                     // Entries: id, name symbol, width, height.
-                    if (Count() > 0) lm.atlasSize = (F32(p + 12), F32(p + 16));
+                    lm.atlasCount = Count();
+                    if (lm.atlasCount > 0) lm.atlasSize = (F32(p + 12), F32(p + 16));
+                    break;
+                case TText:
+                    // Words: id, ?, template symbol, ?, ?, bounds index, … word 15 = outline width.
+                    lm.texts[U32(p)] = new Text(U32(p + 20), U32(p + 8), F32(p + 60));
                     break;
                 case TQuad:
                     Shape().Add(new Graphic(U32(p + 64), U16(p + 68), Enumerable.Range(0, 4).Select(k => Vec(p + k * 16, 4)).ToArray(), [0, 1, 2, 0, 2, 3]));
@@ -258,6 +271,104 @@ public sealed class LumenFile
             (image.Pixels[i * 4], image.Pixels[i * 4 + 1], image.Pixels[i * 4 + 2], image.Pixels[i * 4 + 3]) =
                 (Byte(outPx[i].R), Byte(outPx[i].G), Byte(outPx[i].B), Byte(outPx[i].A));
         return image;
+    }
+
+    private uint? FrameOf(uint sprite, string label, out Sprite? s) =>
+        sprites.TryGetValue(sprite, out s) ? s.Labels.Where(l => l.Name == label).Select(l => (uint?)l.Frame).FirstOrDefault() : null;
+
+    /// <summary>Where <paramref name="sprite"/> places <paramref name="instance"/> at <paramref name="label"/> (its translation).</summary>
+    public float[]? PositionOf(uint sprite, string label, string instance) =>
+        FrameOf(sprite, label, out var s) is { } frame
+            ? DisplayList(s!, frame).Where(e => Symbol(e.Obj.Name) == instance).Select(e => new[] { e.Obj.Matrix[4], e.Obj.Matrix[5] }).FirstOrDefault()
+            : null;
+
+    /// <summary>The text fields <paramref name="sprite"/> shows at <paramref name="label"/>, by instance name: <c>{ box: [x0,y0,x1,y1],
+    /// size, color, align, outline }</c> in the sprite's stage units, with the style read from the field's HTML template.</summary>
+    public JsonObject TextFields(uint sprite, string label)
+    {
+        var fields = new JsonObject();
+        if (FrameOf(sprite, label, out var s) is not { } frame) return fields;
+        foreach (var (_, o) in DisplayList(s!, frame))
+        {
+            if (!texts.TryGetValue(o.Character, out var t)) continue;
+            var b = t.Bounds < bounds.Count ? bounds[(int)t.Bounds] : [0, 0, 0, 0];
+            var m = o.Matrix;
+            var html = Symbol(t.Template);
+            string? Attr(string name)
+            {
+                var at = html.IndexOf($"{name}=\"", StringComparison.Ordinal);
+                if (at < 0) return null;
+                var start = at + name.Length + 2;
+                var end = html.IndexOf('"', start);
+                return end < 0 ? html[start..] : html[start..end];
+            }
+            fields[Symbol(o.Name)] = new JsonObject
+            {
+                ["box"] = Floats([m[0] * b[0] + m[4], m[3] * b[1] + m[5], m[0] * b[2] + m[4], m[3] * b[3] + m[5]]),
+                ["size"] = (double)(float.TryParse(Attr("size"), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var size) ? size : 0),
+                ["color"] = Attr("color") ?? "#000000",
+                ["align"] = Attr("align") ?? "left",
+                ["outline"] = (double)t.Outline,
+            };
+        }
+        return fields;
+    }
+
+    private static JsonArray Floats(IEnumerable<float> values) => new(values.Select(v => (JsonNode)JsonValue.Create((double)v)).ToArray());
+
+    /// <summary>A <c>lumen-scene</c> v1 document (played by the WebUI's lumen-player.js) holding <paramref name="sets"/> (each
+    /// <c>{ "sprite": id, … }</c>) and every shape and sprite they reach. The atlas is saved beside it as <c>atlas.png</c>.</summary>
+    public JsonObject SceneJson(JsonObject sets)
+    {
+        var keep = new SortedSet<uint>();
+        var stack = new Stack<uint>(sets.Select(e => e.Value?["sprite"]?.GetValue<uint>()).OfType<uint>());
+        while (stack.TryPop(out var id))
+            if (keep.Add(id))
+                foreach (var (c, _) in Placements(id)) stack.Push(c);
+        static double Round(float v, double k) => Math.Round(v * k, MidpointRounding.AwayFromZero) / k;
+        static JsonArray Rounded(IEnumerable<float> values, double k) => new(values.Select(v => (JsonNode)JsonValue.Create(Round(v, k))).ToArray());
+        var (shapeJson, spriteJson) = (new JsonObject(), new JsonObject());
+        foreach (var id in keep)
+        {
+            if (shapes.TryGetValue(id, out var graphics))
+                shapeJson[id.ToString()] = new JsonArray(graphics.Select(g => (JsonNode)new JsonObject
+                {
+                    ["atlas"] = g.Atlas,
+                    ["fill"] = g.Fill,
+                    ["verts"] = Rounded(g.Verts.SelectMany(v => v), 1e5),
+                    ["indices"] = new JsonArray(g.Indices.Select(i => (JsonNode)i).ToArray()),
+                }).ToArray());
+            if (!sprites.TryGetValue(id, out var sp)) continue;
+            // place: [1, char, mode, depth, clip, transform, colorMult, colorAdd, instanceName?]; remove: [0, depth]
+            JsonNode Op(Op op)
+            {
+                if (op.Remove) return new JsonArray(0, op.Depth);
+                var v = new JsonArray(1, op.Character, op.Mode, op.Depth, op.Clip, op.Transform, op.ColorMult, op.ColorAdd);
+                if (Symbol(op.Name).Length > 0) v.Add(Symbol(op.Name));
+                return v;
+            }
+            var labels = new JsonObject();
+            foreach (var (name, frame) in sp.Labels) labels[name] = frame;
+            spriteJson[id.ToString()] = new JsonObject
+            {
+                ["frameCount"] = sp.Frames.Count == 0 ? 1 : sp.Frames.Max(f => f.Id + 1),
+                ["labels"] = labels,
+                ["frames"] = new JsonArray(sp.Frames.Select(f => (JsonNode)new JsonArray(f.Id, new JsonArray(f.Ops.Select(Op).ToArray()))).ToArray()),
+            };
+        }
+        return new JsonObject
+        {
+            ["format"] = "lumen-scene",
+            ["version"] = 1,
+            ["fps"] = 60,
+            ["atlas"] = new JsonObject { ["image"] = "atlas.png", ["width"] = (double)atlasSize.W, ["height"] = (double)atlasSize.H, ["layers"] = atlasCount },
+            ["colors"] = new JsonArray(colors.Select(c => (JsonNode)Rounded(c, 1e5)).ToArray()),
+            ["matrices"] = new JsonArray(matrices.Select(m => (JsonNode)Rounded(m, 1e5)).ToArray()),
+            ["positions"] = new JsonArray(positions.Select(p => (JsonNode)Rounded(p, 1e3)).ToArray()),
+            ["shapes"] = shapeJson,
+            ["sprites"] = spriteJson,
+            ["sets"] = sets.DeepClone(),
+        };
     }
 
     private SceneData Scene(uint sprite, string label)
