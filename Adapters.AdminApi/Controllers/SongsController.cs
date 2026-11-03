@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Linq.Expressions;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
@@ -14,7 +13,6 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) : BaseAdminController<SongsController>
 {
     private const int MaxLimit = 200;
-    private static readonly StringComparer TitleOrder = StringComparer.Create(CultureInfo.GetCultureInfo("ja-JP"), false);
 
     /// <param name="diff">The difficulty (1 Easy … 5 Ura Oni) that <paramref name="status"/> and the stars sort refer to.</param>
     /// <param name="status">all, unplayed, notcleared, nofc; AI Battle: aiunplayed, ailost, aiwon.</param>
@@ -70,9 +68,10 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         }
         // Most played needs every song's count, not just this page's (read from the SongId/Skipped index).
         var allPlays = sort == "plays" ? await PlayCounts(null) : null;
+        var language = await SongLanguage.ForAsync(context, User, baid, HttpContext.RequestAborted);
         list = sort switch
         {
-            "title" => list.OrderBy(s => s.SongName, TitleOrder),
+            "title" => list.OrderBy(s => s.Title(language), SongLanguage.TitleOrder(language)).ThenBy(s => s.SongId),
             "stars" => list.OrderByDescending(s => Stars(s)[diff - 1]).ThenBy(s => s.SongId),
             "plays" => list.OrderByDescending(s => allPlays!.GetValueOrDefault(s.SongId)).ThenBy(s => s.SongId),
             "new" => list.OrderByDescending(s => s.IsNew).ThenBy(s => s.SongId),
@@ -85,7 +84,6 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         page = Math.Min(page, pages);
         var shown = all.Skip((page - 1) * limit).Take(limit).ToList();
         var totals = allPlays ?? await PlayCounts(shown.Select(s => s.SongId).ToList());
-        var language = await SongLanguage.ForAsync(context, User, baid, HttpContext.RequestAborted);
         return new SongListPage
         {
             Total = all.Count, AllSongs = songs.Count, Page = page, TotalPages = pages,

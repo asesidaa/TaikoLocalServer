@@ -1,4 +1,3 @@
-using System.Globalization;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
@@ -12,7 +11,6 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [ApiScope(ApiScopes.ReadScores, ApiScopes.AdminUsers)]
 public class HighScoresController(ITaikoDbContext context, IGameDataCatalog catalog) : BaseAdminController<HighScoresController>
 {
-    private static readonly StringComparer TitleOrder = StringComparer.Create(CultureInfo.GetCultureInfo("ja-JP"), false);
 
     /// <param name="diff">1 Easy … 5 Ura Oni.</param>
     /// <param name="crown">-1 any, else the crown (0 not cleared … 3 donderful).</param>
@@ -64,7 +62,7 @@ public class HighScoresController(ITaikoDbContext context, IGameDataCatalog cata
         {
             "score" => shown.OrderByDescending(r => r.Score),
             "date" => shown.OrderByDescending(r => r.SetOn),
-            "title" => shown.OrderBy(r => r.Name, TitleOrder),
+            "title" => shown.OrderBy(r => r.Name, SongLanguage.TitleOrder(language)),
             _ => shown.OrderByDescending(r => r.Stars).ThenByDescending(r => r.Score),
         };
         var list = shown.ToList();

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Claims;
 
 namespace TaikoLocalServer.Adapters.AdminApi.Authorization;
@@ -12,4 +13,8 @@ public static class SongLanguage
         return await context.UserWebProfiles.Where(p => p.Baid == who).Select(p => p.SongLanguage).FirstOrDefaultAsync(ct)
             ?? await context.UserData.Where(u => u.Baid == who).Select(u => u.MyDonNameLanguage).FirstOrDefaultAsync(ct);
     }
+
+    /// <summary>Titles sort in the language they show in (1 English, 2/4 Chinese Traditional, 3 Korean, else Japanese).</summary>
+    public static StringComparer TitleOrder(uint language) =>
+        StringComparer.Create(CultureInfo.GetCultureInfo(language switch { 1 => "en-US", 2 or 4 => "zh-TW", 3 => "ko-KR", _ => "ja-JP" }), false);
 }

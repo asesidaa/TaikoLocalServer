@@ -135,7 +135,12 @@
                                     @Localizer["Song"]@if (F.Sort == "title"){<Icon Name="chevDown" Class="size-3.5" />}
                                 </button>
                             </th>
-                            <th class="hidden px-2 py-2.5 text-right font-medium lg:table-cell" title="@Localizer["Plays by every player"]">@Localizer["Plays"]</th>
+                            <th class="hidden px-2 py-2.5 text-right font-medium lg:table-cell" title="@Localizer["Plays by every player"]">
+                                <button class="inline-flex items-center gap-1 hover:text-zinc-900 dark:hover:text-zinc-100 @(F.Sort == "plays" ? "text-zinc-900 dark:text-zinc-100" : "")"
+                                        @onclick='() => Change(() => F.Sort = "plays")'>
+                                    @Localizer["Plays"]@if (F.Sort == "plays"){<Icon Name="chevDown" Class="size-3.5" />}
+                                </button>
+                            </th>
                             @foreach (var (d, name) in GameData.Difficulties)
                             {
                                 var on = F.Difficulty == (int)d;
