@@ -87,7 +87,8 @@
         puchi = DanView ? 0 : Setting.Puchi,
         bodyColor = Setting.BodyColor, faceColor = Setting.FaceColor, limbColor = Setting.LimbColor,
         anim = DanView ? CardStyle.Clip(CardAnimation.Clear) : CardStyle.Clip(Setting.CardAnimation),
-        cosFile = DanView ? DanCostume : "",
+        // Wearing Nijiiro's kigurumi 36 shows the rank the player has reached, as the game does.
+        cosFile = DanView || (Setting.Kigurumi == 36 && Game == "") ? DanCostume : "",
         zoom, camY, game = Game,
     };
 
