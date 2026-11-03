@@ -51,13 +51,17 @@ else
     [Parameter] public EventCallback OnFinished { get; set; }
 
     private sealed record Picked(int Files, long Bytes, string Folder);
-    private sealed record PickResult(string? Error, int Files, long Bytes, string Folder);
+    private sealed record PickResult(string? Error, int Files, long Bytes, string Folder, string? Other);
+    /// <summary>A folder picked in the browser that isn't the game (<see cref="Other"/>: the older game it is, if known).</summary>
+    private sealed record WrongPick(string Folder, string? Other);
     private sealed record SendResult(string? Error, bool Mods);
 
     private ExtractStatus? status;
     private bool browser, mods = true, starting, reportOpen;
     private readonly HashSet<string> ticked = [];
     private readonly Dictionary<string, Picked> picks = [];
+    private readonly Dictionary<string, WrongPick> wrong = [];
+    private readonly HashSet<string> hints = [];
     private readonly Dictionary<string, ElementReference> folderInputs = [];
     private string? open, sending, error, browsing;
     private double sent, total;
@@ -84,7 +88,7 @@ else
                 <p class="text-sm @Css.Muted">@string.Format(Localizer["{0} is off in ServerSettings.json."], Only)</p>
                 return;
             }
-            <div class="rounded-xl bg-zinc-100 p-3 dark:bg-zinc-800/60">@Source(g)</div>
+            <div class="rounded-xl bg-zinc-100 p-3 dark:bg-zinc-800/60">@SourceRow(g)</div>
             <div class="mt-2">@State(g)</div>
             @Details(g, true)
         }
@@ -103,7 +107,7 @@ else
                             @State(g)
                         </div>
                         <div class="mt-1.5 pl-7">
-                            @Source(g)
+                            @SourceRow(g)
                             @Details(g, false)
                         </div>
                     </li>
@@ -123,7 +127,7 @@ else
         }
         if (Shown.Any(g => g.Game == "Nijiiro"))
         {
-            <div class="mt-3"><Toggle Label="@Localizer["Include Nijiiro's mods folder"]" Description="@Localizer["Files in Data_mods replace the game's own. Only Nijiiro has a mods folder."]" Icon="archive" @bind-Value="mods" /></div>
+            <div class="mt-3"><Toggle Label="@Localizer["Include Nijiiro's mods folder"]" Description="@Localizer["Files in Data_mods replace the game's own."]" Icon="archive" @bind-Value="mods" /></div>
         }
         if (error is { } e)
         {
@@ -162,10 +166,82 @@ else
         </span>
     };
 
+    private RenderFragment SourceRow(ExtractGame g) => __builder =>
+    {
+        // Only while the game isn't extracted: after that the folder is known to be right.
+        var hint = !g.Extracted && g.Last is null;
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <div class="min-w-0 flex-1">@Source(g)</div>
+            @if (hint)
+            {
+                <button type="button" aria-expanded="@Css.Aria(hints.Contains(g.Game))" @onclick="() => ToggleHint(g.Game)"
+                        class="ml-auto inline-flex shrink-0 items-center gap-1 text-xs font-medium @Css.Muted hover:text-zinc-900 dark:hover:text-zinc-100">
+                    <Icon Name="info" />@Localizer["Which folder?"]<Icon Name="chevDown" Class="@($"size-4 {(hints.Contains(g.Game) ? "rotate-180" : "")}")" />
+                </button>
+            }
+        </div>
+        if (hint && hints.Contains(g.Game))
+        {
+            @FolderTree(g.Game)
+        }
+    };
+
+    // The layout extract expects (Infrastructure.Extract/README.md), generic: the top folder is described, not named, as
+    // folder names differ from one setup to the next. Nijiiro: the folder holding Data/x64, or Data/x64 itself; Data_mods
+    // only with mods. An older game: the folder it runs from, or any folder down to USRDIR/data.
+    private RenderFragment FolderTree(string game) => __builder =>
+    {
+        (int Depth, string Name, string? Mark)[] rows = game == "Nijiiro"
+            ?
+            [
+                (0, Localizer["Your Nijiiro game folder"], Localizer["pick this"]), (1, "Data", null), (2, "x64", Localizer["or this"]),
+                (3, "datatable  (musicinfo.bin …)", null), (3, "model, sound, ui …", null), (1, "Data_mods", Localizer["only with mods"]),
+            ]
+            :
+            [
+                (0, string.Format(Localizer["Your {0} game folder"], game), Localizer["pick this"]), (1, "dev_hdd0 / game / SCEEXE000", null),
+                (2, "USRDIR", null), (3, "data", Localizer["or any folder down to this"]), (4, "config, don3d, nutdata, sound …", null),
+            ];
+        <ul class="mt-2 rounded-lg bg-zinc-950 px-3 py-2 font-mono text-[11px] leading-5 text-zinc-400" aria-label="@string.Format(Localizer["Which folder to pick for {0}"], game)">
+            @foreach (var (depth, name, mark) in rows)
+            {
+                <li class="flex gap-2" style="padding-left:@(depth * 14)px">
+                    @if (depth > 0)
+                    {
+                        <span class="shrink-0 text-zinc-600" aria-hidden="true">└</span>
+                    }
+                    <span class="flex min-w-0 flex-wrap items-center gap-x-2">
+                        <span class="@($"min-w-0 [overflow-wrap:anywhere] {(mark is not null ? "font-semibold text-white" : "")}")">@name</span>
+                        @if (mark is not null)
+                        {
+                            <span class="rounded bg-primary-500/20 px-1.5 font-sans text-[11px] font-medium text-primary-300">@mark</span>
+                        }
+                    </span>
+                </li>
+            }
+        </ul>
+    };
+
+    private void ToggleHint(string game)
+    {
+        if (!hints.Remove(game)) hints.Add(game);
+    }
+
     private RenderFragment Source(ExtractGame g) => __builder =>
     {
         if (browser)
         {
+            if (wrong.TryGetValue(g.Game, out var bad))
+            {
+                <p class="flex gap-1.5 text-xs text-red-700 dark:text-red-300" role="alert">
+                    <Icon Name="alert" Class="size-4 shrink-0" />
+                    <span>@(bad.Other is { } other
+                        ? string.Format(Localizer["{0} is {1}'s game folder, not {2}'s. See which folder below."], bad.Folder, other, g.Game)
+                        : string.Format(g.Game == "Nijiiro"
+                            ? Localizer["{0} isn't Nijiiro's game folder: there's no Data/x64 in it. See which folder below."]
+                            : Localizer["{0} isn't {1}'s game folder: there's no USRDIR/data in it. See which folder below."], bad.Folder, g.Game))</span>
+                </p>
+            }
             if (picks.TryGetValue(g.Game, out var p))
             {
                 <span class="flex min-w-0 items-center gap-1.5 text-xs @Css.Muted">
@@ -175,7 +251,7 @@ else
             }
             @* A real file input (not a JS click) so every browser treats the pick as the user's own. *@
             <label class="@($"{Css.GhostButton} mt-1 cursor-pointer border border-zinc-200 !px-2.5 !py-1 text-xs focus-within:ring-2 focus-within:ring-primary-500 dark:border-zinc-700 {(Running ? "pointer-events-none opacity-50" : "")}")">
-                <Icon Name="archive" />@string.Format(Localizer["Choose {0}'s folder…"], g.Game)
+                <Icon Name="folder" />@(wrong.ContainsKey(g.Game) ? Localizer["Choose again…"] : string.Format(Localizer["Choose {0}'s folder…"], g.Game))
                 <input @ref="folderInputs[g.Game]" type="file" webkitdirectory class="sr-only" disabled="@Running" @onchange="() => Pick(g.Game)" />
             </label>
             return;
@@ -404,9 +480,17 @@ else
         if (result.Error is { } e)
         {
             picks.Remove(game);
-            error = e == "no-game" ? string.Format(Localizer["That folder doesn't have {0} in it. Pick the game's folder (or its USRDIR or data folder)."], game) : e;
+            if (e != "no-game")
+            {
+                error = e;
+                return;
+            }
+            wrong[game] = new WrongPick(result.Folder, result.Other);
+            ticked.Remove(game);
+            hints.Add(game);
             return;
         }
+        wrong.Remove(game);
         picks[game] = new Picked(result.Files, result.Bytes, result.Folder);
         ticked.Add(game);
     }

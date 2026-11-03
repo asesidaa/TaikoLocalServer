@@ -4380,8 +4380,8 @@
   <data name="Off, so not offered:" xml:space="preserve">
     <value>已关闭，不可选：</value>
   </data>
-  <data name="Files in Data_mods replace the game's own. Only Nijiiro has a mods folder." xml:space="preserve">
-    <value>用 Data_mods 中的文件替换游戏自带的文件。只有 Nijiiro 有 MOD 文件夹。</value>
+  <data name="Files in Data_mods replace the game's own." xml:space="preserve">
+    <value>用 Data_mods 中的文件替换游戏自带的文件。</value>
   </data>
   <data name="Only the files extract needs are sent, and they're deleted after the run." xml:space="preserve">
     <value>只发送提取需要的文件，提取完成后会删除。</value>

@@ -4380,8 +4380,8 @@
   <data name="Off, so not offered:" xml:space="preserve">
     <value>Désactivés, donc non proposés :</value>
   </data>
-  <data name="Files in Data_mods replace the game's own. Only Nijiiro has a mods folder." xml:space="preserve">
-    <value>Les fichiers de Data_mods remplacent ceux du jeu. Seul Nijiiro a un dossier de mods.</value>
+  <data name="Files in Data_mods replace the game's own." xml:space="preserve">
+    <value>Les fichiers de Data_mods remplacent ceux du jeu.</value>
   </data>
   <data name="Only the files extract needs are sent, and they're deleted after the run." xml:space="preserve">
     <value>Seuls les fichiers nécessaires sont envoyés, et ils sont supprimés après l'extraction.</value>

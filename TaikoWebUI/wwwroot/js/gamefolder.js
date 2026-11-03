@@ -34,16 +34,36 @@ const locate = (game, paths) => {
   return { root, relative: p => p.startsWith(root) ? p.slice(root.length) : null };
 };
 
-// Returns { error, files, bytes, folder }: error "no-game" when the folder doesn't hold that game.
+// Which older game a picked folder is, as ExtractRunner.OlderGameOf: each keeps the older games' config folders too, so
+// it's the newest one there (any variant: an early Red has only ST8100-7). Kimidori and Momoiro have none: their
+// PARAM.SFO, next to USRDIR, is titled "…(ST51)" and "…(ST41)". null when it can't tell.
+const ConfigsNewestFirst = [["Green", "S11100"], ["Blue", "S10100"], ["Yellow", "ST9100"], ["Red", "ST8100"], ["White", "ST7100"], ["Murasaki", "ST6100"]];
+const olderGameOf = async (root, files) => {
+  const configs = new Set(files.map(f => f.webkitRelativePath.startsWith(root + "data/config/") ? f.webkitRelativePath.slice(root.length + 12).split("/")[0] : null));
+  for (const [game, id] of ConfigsNewestFirst)
+    if ([...configs].some(c => c?.startsWith(id + "-"))) return game;
+  const sfoPath = root.replace(/USRDIR\/$/, "") + "PARAM.SFO";
+  const sfo = files.find(f => f.webkitRelativePath === sfoPath);
+  const title = sfo ? await sfo.text() : "";
+  return title.includes("(ST51)") ? "Kimidori" : title.includes("(ST41)") ? "Momoiro" : null;
+};
+
+// Returns { error, files, bytes, folder, other }: error "no-game" when the folder doesn't hold that game (other: the
+// older game it is instead, if it can tell); folder is the picked folder's name.
 export async function pick(input, game, withMods) {
   try {
     const files = [...input.files];
     input.value = "";
+    const name = files[0]?.webkitRelativePath.split("/")[0] ?? "";
     const res = await authFetch(`api/Extract/Inputs?game=${game}`);
-    if (!res.ok) return { error: await message(res), files: 0, bytes: 0, folder: "" };
+    if (!res.ok) return { error: await message(res), files: 0, bytes: 0, folder: name };
     const list = await res.json();
     const where = locate(game, files.map(f => f.webkitRelativePath));
-    if (!where) return { error: "no-game", files: 0, bytes: 0, folder: "" };
+    if (!where) return { error: "no-game", files: 0, bytes: 0, folder: name };
+    if (game !== "Nijiiro") {
+      const other = await olderGameOf(where.root, files);
+      if (other && other !== game) return { error: "no-game", files: 0, bytes: 0, folder: name, other };
+    }
 
     const sets = withMods && list.mods ? [list, list.mods] : [list];
     // false: send it; true: only its name matters (movies, models); null: extract doesn't read it.
