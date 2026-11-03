@@ -24,29 +24,14 @@ public static class NijiiroModels
             return;
         }
         Directory.CreateDirectory(dstDir);
-        foreach (var modelDir in entries.Where(Directory.Exists))
-        foreach (var sub in Directory.EnumerateFileSystemEntries(modelDir).Order(StringComparer.Ordinal))
-        {
-            var name = Path.GetFileName(sub);
-            if (!File.Exists(Path.Combine(sub, $"{name}.numdlb"))) continue;
-            var dst = Path.Combine(dstDir, $"{name}.glb");
-            // Up to date only if newer than every file of the model (mesh, skeleton, materials and their textures), so a
-            // changed texture (a mod, say) rebuilds it too.
-            if (NewerThanFolder(dst, sub))
-            {
-                report.UpToDate.Add(name);
-                continue;
-            }
-            try
-            {
-                File.WriteAllBytes(dst, BuildGlb(sub, name));
-                report.Written.Add(name);
-            }
-            catch (InvalidDataException e)
-            {
-                report.Failed.Add($"{name}: {e.Message}");
-            }
-        }
+        var subs = entries.Where(Directory.Exists)
+            .SelectMany(modelDir => Directory.EnumerateFileSystemEntries(modelDir).Order(StringComparer.Ordinal))
+            .Where(sub => File.Exists(Path.Combine(sub, $"{Path.GetFileName(sub)}.numdlb"))).ToList();
+        string Dst(string sub) => Path.Combine(dstDir, $"{Path.GetFileName(sub)}.glb");
+        // Up to date only if newer than every file of the model (mesh, skeleton, materials and their textures), so a
+        // changed texture (a mod, say) rebuilds it too.
+        report.Each(subs, Path.GetFileName, sub => NewerThanFolder(Dst(sub), sub),
+            sub => File.WriteAllBytes(Dst(sub), BuildGlb(sub, Path.GetFileName(sub))));
     }
 
     private static bool NewerThanFolder(string dst, string dir)

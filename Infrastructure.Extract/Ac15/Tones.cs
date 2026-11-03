@@ -83,25 +83,12 @@ public static class Tones
         if (files.Count == 0) return report;
         var dir = Path.Combine(outDir, "tone");
         Directory.CreateDirectory(dir);
-        foreach (var rel in files)
+        static string Id(string rel) => rel[Prefix.Length..^"_C.nub".Length];
+        report.Each(files, Id, rel => src.IsFresh(Path.Combine(dir, $"{Id(rel)}_don.wav"), rel), rel =>
         {
-            var id = rel[Prefix.Length..^"_C.nub".Length];
-            if (src.IsFresh(Path.Combine(dir, $"{id}_don.wav"), rel))
-            {
-                report.UpToDate.Add(id);
-                continue;
-            }
-            try
-            {
-                foreach (var ((rate, pcm), hit) in Streams(src.Read(rel)).Zip(["don", "ka"]))
-                    File.WriteAllBytes(Path.Combine(dir, $"{id}_{hit}.wav"), Wav(rate, pcm));
-                report.Written.Add(id);
-            }
-            catch (InvalidDataException e)
-            {
-                report.Failed.Add($"{id}: {e.Message}");
-            }
-        }
+            foreach (var ((rate, pcm), hit) in Streams(src.Read(rel)).Zip(["don", "ka"]))
+                File.WriteAllBytes(Path.Combine(dir, $"{Id(rel)}_{hit}.wav"), Wav(rate, pcm));
+        });
         return report;
     }
 }

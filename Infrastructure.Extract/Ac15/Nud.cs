@@ -309,51 +309,38 @@ public static class Nud
             var report = new Report($"{era.Name()} {name} {(model ? "models" : "textures")}");
             var dstDir = Path.Combine(outDir, name);
             Directory.CreateDirectory(dstDir);
-            foreach (var rel in files)
+            string Stem(string rel) => rel[prefix.Length..^4];
+            string Dst(string rel) => Path.Combine(dstDir, $"{Stem(rel)}.{(model ? "glb" : "png")}");
+            report.Each(files, Stem, rel => src.IsFresh(Dst(rel), rel), rel =>
             {
-                var stem = rel[prefix.Length..^4];
-                var dst = Path.Combine(dstDir, $"{stem}.{(model ? "glb" : "png")}");
-                if (src.IsFresh(dst, rel))
+                if (model)
                 {
-                    report.UpToDate.Add(stem);
-                    continue;
-                }
-                try
-                {
-                    if (model)
+                    var nut = rel.Replace(".nud", ".nut");
+                    var textures = src.Exists(nut) ? Ntp3.Decode(src.Read(nut)) : [];
+                    var parsed = Parse(src.Read(rel));
+                    // A puchi has its own two-bone rig (the don rig's first two) and its idle loop beside it.
+                    var (bind, looped) = (rel.Replace(".nud", "_bind.bin"), rel.Replace(".nud", "_loop.bin"));
+                    byte[] glb;
+                    if (dir == "parts/acc" && src.Exists(bind))
                     {
-                        var nut = rel.Replace(".nud", ".nut");
-                        var textures = src.Exists(nut) ? Ntp3.Decode(src.Read(nut)) : [];
-                        var parsed = Parse(src.Read(rel));
-                        // A puchi has its own two-bone rig (the don rig's first two) and its idle loop beside it.
-                        var (bind, looped) = (rel.Replace(".nud", "_bind.bin"), rel.Replace(".nud", "_loop.bin"));
-                        byte[] glb;
-                        if (dir == "parts/acc" && src.Exists(bind))
-                        {
-                            var puchi = DonRig.Rig().Take(2).ToList();
-                            var pose = DonRig.Pose(puchi, DonRig.Frames(src.Read(bind), DonRig.PuchiSlots)[0].Span);
-                            glb = Glb(parsed, textures, (puchi, pose), src.Exists(looped) ? (src.Read(looped), DonRig.PuchiSlots) : null);
-                        }
-                        else
-                        {
-                            glb = Glb(parsed, textures, rig, null);
-                        }
-                        File.WriteAllBytes(dst, glb);
+                        var puchi = DonRig.Rig().Take(2).ToList();
+                        var pose = DonRig.Pose(puchi, DonRig.Frames(src.Read(bind), DonRig.PuchiSlots)[0].Span);
+                        glb = Glb(parsed, textures, (puchi, pose), src.Exists(looped) ? (src.Read(looped), DonRig.PuchiSlots) : null);
                     }
                     else
                     {
-                        // A face holds its 12 expressions as 12 textures: stacked top to bottom, as Nijiiro's atlases are.
-                        var images = Ntp3.Decode(src.Read(rel)).Select(t => t.Image).ToList();
-                        if (images.Count == 0) throw new InvalidDataException("no texture");
-                        RgbaImage.Stack(images).SavePng(dst);
+                        glb = Glb(parsed, textures, rig, null);
                     }
-                    report.Written.Add(stem);
+                    File.WriteAllBytes(Dst(rel), glb);
                 }
-                catch (InvalidDataException e)
+                else
                 {
-                    report.Failed.Add($"{stem}: {e.Message}");
+                    // A face holds its 12 expressions as 12 textures: stacked top to bottom, as Nijiiro's atlases are.
+                    var images = Ntp3.Decode(src.Read(rel)).Select(t => t.Image).ToList();
+                    if (images.Count == 0) throw new InvalidDataException("no texture");
+                    RgbaImage.Stack(images).SavePng(Dst(rel));
                 }
-            }
+            });
             reports.Add(report);
         }
         return reports;

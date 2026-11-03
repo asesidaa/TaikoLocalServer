@@ -145,26 +145,11 @@ public static class NijiiroExtractor
             return;
         }
         Directory.CreateDirectory(dstDir);
-        foreach (var src in entries.Where(p => p.EndsWith(".nutexb", StringComparison.Ordinal) && File.Exists(p)))
-        {
-            var name = Path.GetFileNameWithoutExtension(src);
-            var dst = Path.Combine(dstDir, $"{name}.png");
-            if (NijiiroGame.IsNewer(dst, src))
-            {
-                report.UpToDate.Add(name);
-                continue;
-            }
-            // One bad texture shouldn't stop the rest.
-            try
-            {
-                Nutexb.Decode(File.ReadAllBytes(src)).SavePng(dst);
-                report.Written.Add(name);
-            }
-            catch (InvalidDataException e)
-            {
-                report.Failed.Add($"{name}: {e.Message}");
-            }
-        }
+        var sources = entries.Where(p => p.EndsWith(".nutexb", StringComparison.Ordinal) && File.Exists(p)).ToList();
+        string Dst(string src) => Path.Combine(dstDir, $"{Path.GetFileNameWithoutExtension(src)}.png");
+        // One bad texture doesn't stop the rest.
+        report.Each(sources, Path.GetFileNameWithoutExtension, src => NijiiroGame.IsNewer(Dst(src), src),
+            src => Nutexb.Decode(File.ReadAllBytes(src)).SavePng(Dst(src)));
     }
 
     /// <summary>The glyph sheets (<c>font/&lt;sheet&gt;.{nutexb,xml}</c>), split into 256-code-point pages so the WebUI's
