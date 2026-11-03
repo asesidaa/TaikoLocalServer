@@ -27,7 +27,16 @@ public record ExtractRun(
     DateTime? FinishedAt,
     IReadOnlyList<ExtractStep> Steps,
     IReadOnlyDictionary<string, int> ExitCodes,
-    IReadOnlyList<string> Output);
+    IReadOnlyList<string> Output,
+    ExtractProgress? Progress = null,
+    bool Stopped = false);
+
+/// <summary>Where the current game's extract is: the step (as <see cref="ExtractStep.Label"/>) and its number, counted as
+/// steps start (extract prints its steps' counts only at the end), its items done out of
+/// <see cref="Total"/> (0 while it doesn't know them), the last item done, the seconds since the step started and since
+/// anything last moved (a slow step on a small machine still moves; a stall doesn't). Seconds, so the browser's clock
+/// doesn't matter.</summary>
+public record ExtractProgress(string Step, int Number, int Done, int Total, string? Item, double StepSeconds, double IdleSeconds);
 
 /// <summary>What extract wrote for a game (data/&lt;game&gt;/extract.json, data/extract.json for Nijiiro).</summary>
 public record ExtractManifest(string Era, DateTime FinishedAt, string Source, IReadOnlyList<ExtractStep> Steps, IReadOnlyList<ExtractNote> Notes);

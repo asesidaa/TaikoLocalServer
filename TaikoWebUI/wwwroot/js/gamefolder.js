@@ -14,6 +14,8 @@ const BatchBytes = 64 * 1024 * 1024, BatchFiles = 500;
 
 // The picked games' files waiting to be sent: game → [{ path, body }].
 const picked = new Map();
+// The send in progress, for stop().
+let sending = null;
 
 // Where the game is in the picked folder, as the prefix its files' paths share, and how a path relative to the game
 // folder (what extract --inputs lists) is made. Nijiiro: the folder holding Data/x64 (the pick may be it, a folder
@@ -99,8 +101,10 @@ export async function pick(input, game, withMods) {
 }
 
 // Sends a picked game's files (replacing what was sent for it before). Returns { error, mods }: mods is whether any
-// Data_mods file was sent (Nijiiro).
+// Data_mods file was sent (Nijiiro); error "stopped" after stop().
 export async function send(game, progress) {
+  const controller = sending = new AbortController();
+  const signal = controller.signal;
   try {
     const queue = picked.get(game);
     if (!queue) return { error: "no-game", mods: false };
@@ -112,7 +116,7 @@ export async function send(game, progress) {
       if (!batch.length) return;
       const form = new FormData();
       for (const b of batch) form.append(b.path, b.body, "file");
-      const r = await authFetch(`api/Extract/Upload?game=${game}`, { method: "POST", body: form });
+      const r = await authFetch(`api/Extract/Upload?game=${game}`, { method: "POST", body: form, signal });
       if (!r.ok) throw new Error(await message(r));
       done += size;
       batch = [];
@@ -129,6 +133,16 @@ export async function send(game, progress) {
     picked.delete(game);
     return { error: null, mods: queue.some(item => item.path.startsWith("Data_mods/")) };
   } catch (e) {
-    return { error: e.message || String(e), mods: false };
+    if (!signal.aborted) return { error: e.message || String(e), mods: false };
+    // What was sent is of no use on its own: the server drops it (the picked files stay, to send again).
+    await authFetch(`api/Extract/Upload?game=${game}`, { method: "DELETE" }).catch(() => { });
+    return { error: "stopped", mods: false };
+  } finally {
+    if (sending === controller) sending = null;
   }
+}
+
+// Stops the send in progress, if any: send() then returns error "stopped".
+export function stop() {
+  sending?.abort();
 }

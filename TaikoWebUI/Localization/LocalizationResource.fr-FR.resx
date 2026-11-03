@@ -4545,4 +4545,40 @@
   <data name="{0}'s don-chan models aren't extracted, so the card has no don-chan." xml:space="preserve">
     <value>Les modèles de don-chan de {0} ne sont pas extraits, donc la carte n'a pas de don-chan.</value>
   </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Arrêter</value>
+  </data>
+  <data name="Stopping…" xml:space="preserve">
+    <value>Arrêt…</value>
+  </data>
+  <data name="about {0} left in this step" xml:space="preserve">
+    <value>environ {0} restant pour cette étape</value>
+  </data>
+  <data name="Step {0} of {1}" xml:space="preserve">
+    <value>Étape {0} sur {1}</value>
+  </data>
+  <data name="just now" xml:space="preserve">
+    <value>à l'instant</value>
+  </data>
+  <data name="{0} ago" xml:space="preserve">
+    <value>il y a {0}</value>
+  </data>
+  <data name="{0} s" xml:space="preserve">
+    <value>{0} s</value>
+  </data>
+  <data name="{0} min" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="Nothing has moved for {0}. A big file can take this long on a small server; if it stays stuck, stop and extract again." xml:space="preserve">
+    <value>Rien n'a bougé depuis {0}. Un gros fichier peut prendre ce temps sur un petit serveur ; si cela reste bloqué, arrêtez et relancez l'extraction.</value>
+  </data>
+  <data name="Stopped sending. The files you picked are still there to send again." xml:space="preserve">
+    <value>Envoi arrêté. Les fichiers choisis sont toujours là pour un nouvel envoi.</value>
+  </data>
+  <data name="Extract stopped. What it wrote is kept: extract again to carry on from there." xml:space="preserve">
+    <value>Extraction arrêtée. Ce qui a été écrit est conservé : relancez l'extraction pour reprendre là où elle s'est arrêtée.</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>Arrêté</value>
+  </data>
 </root>

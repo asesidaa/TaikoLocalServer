@@ -32,8 +32,12 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
     private readonly ConcurrentDictionary<GameEra, ExtractInputs> inputs = new();
     private IReadOnlyList<GameEra> runGames = [];
     private GameEra? current;
-    private bool running, mods;
+    private bool running, mods, stopped;
     private DateTime? startedAt, finishedAt;
+    private Moving? progress;
+
+    private sealed record Moving(string Step, int Number, int Done, int Total, string? Item, DateTime StepStartedAt, DateTime UpdatedAt);
+    private CancellationTokenSource? stop;
 
     private static readonly string UploadRoot = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "TaikoLocalServer-game-upload"));
     private static string UploadPath(GameEra game) => Path.Combine(UploadRoot, game.ToString().ToLowerInvariant());
@@ -86,7 +90,10 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
             {
                 var run = startedAt is { } started
                     ? new ExtractRun(runGames.Select(g => g.ToString()).ToList(), current?.ToString(), running, mods, started, finishedAt,
-                        steps.ToList(), new Dictionary<string, int>(exitCodes), output.ToList())
+                        steps.ToList(), new Dictionary<string, int>(exitCodes), output.ToList(),
+                        progress is { } p ? new ExtractProgress(p.Step, p.Number, p.Done, p.Total, p.Item,
+                            (DateTime.UtcNow - p.StepStartedAt).TotalSeconds, (DateTime.UtcNow - p.UpdatedAt).TotalSeconds) : null,
+                        stopped)
                     : null;
                 return new ExtractStatus(RemoteAllowed, games, run);
             }
@@ -116,9 +123,23 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
             exitCodes.Clear();
             steps.Clear();
             output.Clear();
+            progress = null;
+            stopped = false;
+            stop = new CancellationTokenSource();
         }
         _ = Task.Run(() => RunAllAsync(withMods, uploaded));
         return null;
+    }
+
+    public bool Stop()
+    {
+        lock (gate)
+        {
+            if (!running || stop is null) return false;
+            stopped = true;
+            stop.Cancel();
+            return true;
+        }
     }
 
     public Task<(ExtractInputs? Inputs, string? Error)> InputsAsync(GameEra game, CancellationToken cancellationToken)
@@ -307,8 +328,10 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
             {
                 lock (gate)
                 {
+                    if (stopped) break;
                     current = game;
                     steps.Clear();
+                    progress = null;
                 }
                 var code = await RunOneAsync(game, withMods, uploaded.Contains(game));
                 lock (gate) exitCodes[game.ToString()] = code;
@@ -320,7 +343,10 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
             {
                 running = false;
                 current = null;
+                progress = null;
                 finishedAt = DateTime.UtcNow;
+                stop?.Dispose();
+                stop = null;
             }
         }
     }
@@ -333,11 +359,25 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
         if (withMods && game == GameEra.Nijiiro) args.Add("--mods");
 
         var code = -1;
+        CancellationToken cancel;
+        lock (gate) cancel = stop!.Token;
         try
         {
             using var report = new LineWriter(line => Add(line, game));
-            code = await Task.Run(() => ExtractCli.Run([.. args], PathHelper.GetRootPath(), report, report));
+            var watch = new ReportWatch(p => Moved(p, game), cancel);
+            code = await Task.Run(() =>
+            {
+                Report.Watch.Value = watch;
+                return ExtractCli.Run([.. args], PathHelper.GetRootPath(), report, report);
+            });
             logger.LogInformation("extract {Game} finished with exit code {ExitCode}", game, code);
+            await catalog.ReloadAsync(game);
+        }
+        catch (OperationCanceledException)
+        {
+            Add("Stopped.", game);
+            logger.LogInformation("extract {Game} stopped", game);
+            // What was written is whole files: the game uses them until the next extract finishes the rest.
             await catalog.ReloadAsync(game);
         }
         catch (Exception e)
@@ -389,6 +429,22 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
         catch (IOException e)
         {
             logger.LogWarning(e, "Couldn't remove the uploaded {Game} files in {Path}", game, UploadPath(game));
+        }
+    }
+
+    private void Moved(ReportProgress p, GameEra game)
+    {
+        var now = DateTime.UtcNow;
+        var prefix = game.ToString().ToLowerInvariant() + " ";
+        var label = p.Step.StartsWith(prefix, StringComparison.Ordinal) ? p.Step[prefix.Length..] : p.Step;
+        lock (gate)
+        {
+            var same = progress is { } last && last.Step == label;
+            // Items finish out of order across threads: keep the highest count.
+            if (same && progress!.Done > p.Done) return;
+            progress = same
+                ? progress! with { Done = p.Done, Total = p.Total, Item = p.Item ?? progress.Item, UpdatedAt = now }
+                : new Moving(label, (progress?.Number ?? 0) + 1, p.Done, p.Total, p.Item, now, now);
         }
     }
 

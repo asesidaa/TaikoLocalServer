@@ -4545,4 +4545,40 @@
   <data name="{0}'s don-chan models aren't extracted, so the card has no don-chan." xml:space="preserve">
     <value>{0} 的小咚模型尚未提取，所以卡片上沒有小咚。</value>
   </data>
+  <data name="Stop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Stopping…" xml:space="preserve">
+    <value>正在停止…</value>
+  </data>
+  <data name="about {0} left in this step" xml:space="preserve">
+    <value>此步驟約剩 {0}</value>
+  </data>
+  <data name="Step {0} of {1}" xml:space="preserve">
+    <value>第 {0} 步，共 {1} 步</value>
+  </data>
+  <data name="just now" xml:space="preserve">
+    <value>剛剛</value>
+  </data>
+  <data name="{0} ago" xml:space="preserve">
+    <value>{0}前</value>
+  </data>
+  <data name="{0} s" xml:space="preserve">
+    <value>{0} 秒</value>
+  </data>
+  <data name="{0} min" xml:space="preserve">
+    <value>{0} 分鐘</value>
+  </data>
+  <data name="Nothing has moved for {0}. A big file can take this long on a small server; if it stays stuck, stop and extract again." xml:space="preserve">
+    <value>已經 {0} 沒有進展。在小型伺服器上，大檔案可能需要這麼久；如果一直卡住，請停止後重新擷取。</value>
+  </data>
+  <data name="Stopped sending. The files you picked are still there to send again." xml:space="preserve">
+    <value>已停止傳送。所選檔案仍在，可以再次傳送。</value>
+  </data>
+  <data name="Extract stopped. What it wrote is kept: extract again to carry on from there." xml:space="preserve">
+    <value>擷取已停止。已寫入的內容會保留：再次擷取即可從中斷處繼續。</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>已停止</value>
+  </data>
 </root>

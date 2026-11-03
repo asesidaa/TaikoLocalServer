@@ -4545,4 +4545,40 @@
   <data name="{0}'s don-chan models aren't extracted, so the card has no don-chan." xml:space="preserve">
     <value>{0}のどんちゃんのモデルが取り込まれていないため、カードにどんちゃんは表示されません。</value>
   </data>
+  <data name="Stop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Stopping…" xml:space="preserve">
+    <value>停止中…</value>
+  </data>
+  <data name="about {0} left in this step" xml:space="preserve">
+    <value>この手順はあと約{0}</value>
+  </data>
+  <data name="Step {0} of {1}" xml:space="preserve">
+    <value>手順 {0}/{1}</value>
+  </data>
+  <data name="just now" xml:space="preserve">
+    <value>たった今</value>
+  </data>
+  <data name="{0} ago" xml:space="preserve">
+    <value>{0}前</value>
+  </data>
+  <data name="{0} s" xml:space="preserve">
+    <value>{0}秒</value>
+  </data>
+  <data name="{0} min" xml:space="preserve">
+    <value>{0}分</value>
+  </data>
+  <data name="Nothing has moved for {0}. A big file can take this long on a small server; if it stays stuck, stop and extract again." xml:space="preserve">
+    <value>{0}の間、進んでいません。小さなサーバーでは大きなファイルにこのくらいかかることがあります。止まったままなら、停止してもう一度取り込んでください。</value>
+  </data>
+  <data name="Stopped sending. The files you picked are still there to send again." xml:space="preserve">
+    <value>送信を停止しました。選んだファイルはそのままなので、もう一度送信できます。</value>
+  </data>
+  <data name="Extract stopped. What it wrote is kept: extract again to carry on from there." xml:space="preserve">
+    <value>取り込みを停止しました。書き出した分は残っているので、もう一度取り込むと続きから始まります。</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>停止しました</value>
+  </data>
 </root>

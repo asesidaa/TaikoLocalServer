@@ -42,6 +42,16 @@ public class ExtractController(IExtractRunner extract, ITaikoDbContext context) 
         return Accepted(extract.Status);
     }
 
+    /// <summary>Stops the run at the current game's next file; the games after it don't start.</summary>
+    [HttpPost("Stop")]
+    public async Task<IActionResult> Stop()
+    {
+        if (!extract.Stop()) return Conflict(new { message = "Nothing is extracting." });
+        this.LogActivity(context, "gamedata.extract.stop", null, extract.Status.Run?.Current ?? "");
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return Ok(extract.Status);
+    }
+
     /// <summary>The folders on the server, to pick a game's install (null <paramref name="path"/>: the drives).</summary>
     [HttpGet("Folders")]
     public IActionResult Folders([FromQuery] string game = nameof(GameEra.Nijiiro), [FromQuery] string? path = null)

@@ -15,6 +15,10 @@ public interface IExtractRunner
     /// <summary>Starts a run of <paramref name="games"/> in the background. Returns null when it started, else why it didn't.</summary>
     string? Start(IReadOnlyList<GameEra> games, bool mods, IReadOnlySet<GameEra> uploaded);
 
+    /// <summary>Stops the run: the current game stops at its next file, and the games after it don't start. False when
+    /// nothing runs. What was written stays, so the next extract carries on from there.</summary>
+    bool Stop();
+
     /// <summary>The files to send for a game (<c>extract --inputs</c>), or null with why not.</summary>
     Task<(ExtractInputs? Inputs, string? Error)> InputsAsync(GameEra game, CancellationToken cancellationToken);
 

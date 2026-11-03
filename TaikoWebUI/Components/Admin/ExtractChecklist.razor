@@ -57,7 +57,7 @@ else
     private sealed record SendResult(string? Error, bool Mods);
 
     private ExtractStatus? status;
-    private bool browser, mods = true, starting, reportOpen;
+    private bool browser, mods = true, starting, stopping, reportOpen;
     private readonly HashSet<string> ticked = [];
     private readonly Dictionary<string, Picked> picks = [];
     private readonly Dictionary<string, WrongPick> wrong = [];
@@ -291,7 +291,8 @@ else
         if (run is { Running: true } && run.Games.Contains(g.Game))
             return run.Current == g.Game ? "running" : run.ExitCodes.ContainsKey(g.Game) ? Done(g) : "waiting";
         if (sending is not null && Chosen.Any(c => c.Game == g.Game)) return "waiting";
-        if (run?.ExitCodes.TryGetValue(g.Game, out var code) == true && code != 0) return "failed";
+        // A stopped game ends without an exit code of its own (-1): it stopped, it didn't fail.
+        if (run?.ExitCodes.TryGetValue(g.Game, out var code) == true && code != 0) return run.Stopped && code == -1 ? "stopped" : "failed";
         return g.Last is not null || g.Extracted ? Done(g) : "none";
     }
 
@@ -309,6 +310,9 @@ else
                 break;
             case "failed":
                 <span class="inline-flex items-center gap-1 text-xs font-medium text-red-600 dark:text-red-400"><Icon Name="alert" Class="size-4" />@Localizer["Didn't finish"]</span>
+                break;
+            case "stopped":
+                <span class="inline-flex items-center gap-1 text-xs font-medium text-amber-700 dark:text-amber-300"><Icon Name="alert" Class="size-4" />@Localizer["Stopped"]</span>
                 break;
             case "gap":
                 <span class="inline-flex items-center gap-1 text-xs font-medium text-amber-700 dark:text-amber-300"><Icon Name="alert" Class="size-4" />@Localizer["Extracted, with a gap"]</span>
@@ -333,8 +337,46 @@ else
         else if (state == "running")
         {
             var run = status!.Run!;
+            // How many steps there'll be: the last extract's count (none before a game's first extract).
             var expected = g.Last?.Steps.Count ?? 0;
-            @Bar(string.Format(Localizer["Extracting {0}…"], g.Game), expected > 0 ? Math.Min(99, run.Steps.Count * 100 / expected) : null, g.Game)
+            var at = run.Progress;
+            var inStep = at is { Total: > 0 } ? (double)at.Done / at.Total : 0;
+            int? percent = run.Stopped ? null
+                : expected > 0 && at is not null ? Math.Min(99, (int)((at.Number - 1 + inStep) * 100 / expected))
+                : at is { Total: > 0 } ? (int)(inStep * 100) : null;
+            @Bar(run.Stopped ? Localizer["Stopping…"] : string.Format(Localizer["Extracting {0}…"], g.Game), percent, g.Game)
+            @if (at is not null && !run.Stopped)
+            {
+                <div class="mt-2 rounded-lg bg-zinc-100 px-3 py-2 text-xs dark:bg-zinc-800/60">
+                    <p class="flex flex-wrap items-baseline gap-x-2">
+                        <span class="font-medium" aria-live="polite">@StepLabel(at.Step)</span>
+                        @if (at.Total > 0)
+                        {
+                            <span class="tabular-nums">@string.Format(Localizer["{0} of {1}"], at.Done.ToString("N0"), at.Total.ToString("N0"))</span>
+                        }
+                        @if (StepLeft(at) is { } left)
+                        {
+                            <span class="@Css.Muted">@string.Format(Localizer["about {0} left in this step"], left)</span>
+                        }
+                        @if (expected > 0)
+                        {
+                            <span class="ml-auto tabular-nums @Css.Muted">@string.Format(Localizer["Step {0} of {1}"], Math.Min(at.Number, expected), expected)</span>
+                        }
+                    </p>
+                    @* Still moving, or stuck: what was done last, and how long ago. *@
+                    <p class="mt-0.5 flex gap-2 @Css.Muted">
+                        @if (at.Item is { } item)
+                        {
+                            <span class="min-w-0 truncate font-mono">@item</span>
+                        }
+                        <span class="shrink-0 tabular-nums">@(at.IdleSeconds < 2 ? Localizer["just now"] : string.Format(Localizer["{0} ago"], Span(at.IdleSeconds)))</span>
+                    </p>
+                    @if (at.IdleSeconds >= 60)
+                    {
+                        <p class="mt-1 text-amber-700 dark:text-amber-300">@string.Format(Localizer["Nothing has moved for {0}. A big file can take this long on a small server; if it stays stuck, stop and extract again."], Span(at.IdleSeconds))</p>
+                    }
+                </div>
+            }
             <ul class="mt-2 space-y-1 text-xs" aria-live="polite">
                 @foreach (var s in run.Steps)
                 {
@@ -444,8 +486,12 @@ else
         {
             var done = run is { Running: true } ? run.ExitCodes.Count + 1 : 1;
             var of = run is { Running: true } ? run.Games.Count : Chosen.Count;
-            <button disabled class="@Css.PrimaryButton"><Icon Name="rotate" Class="size-4 animate-spin" />
-                @(of > 1 ? string.Format(Localizer["Extracting {0} of {1}…"], done, of) : Localizer["Extracting…"])</button>
+            <div class="flex flex-wrap items-center gap-2">
+                <button disabled class="@Css.PrimaryButton"><Icon Name="rotate" Class="size-4 animate-spin" />
+                    @(of > 1 ? string.Format(Localizer["Extracting {0} of {1}…"], done, of) : Localizer["Extracting…"])</button>
+                <button class="@Css.GhostButton" disabled="@(stopping || run?.Stopped == true)" @onclick="Stop">
+                    <Icon Name="x" />@(stopping || run?.Stopped == true ? Localizer["Stopping…"] : Localizer["Stop"])</button>
+            </div>
             return;
         }
         var n = Chosen.Count;
@@ -513,6 +559,11 @@ else
                     sent = total = 0;
                     StateHasChanged();
                     var result = await module.InvokeAsync<SendResult>("send", game, self);
+                    if (result.Error == "stopped")
+                    {
+                        Toast.Show(Localizer["Stopped sending. The files you picked are still there to send again."]);
+                        return;
+                    }
                     if (result.Error is { } e)
                     {
                         error = string.Format(Localizer["Couldn't send {0}'s files: {1}"], game, e);
@@ -541,8 +592,42 @@ else
         {
             sending = null;
             starting = false;
+            stopping = false;
         }
     }
+
+    // Sending: the browser stops sending. Extracting: the server stops at the next file; what it wrote stays.
+    private async Task Stop()
+    {
+        stopping = true;
+        try
+        {
+            if (sending is not null && module is not null)
+            {
+                await module.InvokeVoidAsync("stop");
+                return;
+            }
+            var res = await Client.PostAsync("api/Extract/Stop", null);
+            if (res.IsSuccessStatusCode) status = await res.Content.ReadFromJsonAsync<ExtractStatus>() ?? status;
+        }
+        catch (Exception e) when (e is HttpRequestException or System.Text.Json.JsonException or JSException)
+        {
+            error = e.Message;
+        }
+        finally
+        {
+            if (sending is null) stopping = false;
+        }
+    }
+
+    // Time left in the step, at the pace so far; none until a few items and seconds in (too early to say).
+    private string? StepLeft(ExtractProgress at) =>
+        at is { Total: > 0, Done: >= 3 } && at.StepSeconds >= 3 && at.Done < at.Total
+            ? Span(at.StepSeconds / at.Done * (at.Total - at.Done)) : null;
+
+    private string Span(double seconds) => seconds < 60
+        ? string.Format(Localizer["{0} s"], Math.Max(1, (int)Math.Round(seconds)))
+        : string.Format(Localizer["{0} min"], (int)Math.Ceiling(seconds / 60));
 
     [JSInvokable]
     public Task Progress(double done, double all)
@@ -575,6 +660,14 @@ else
             if (status?.Run is not { Running: false } run) continue;
             var failed = run.ExitCodes.Where(c => c.Value != 0).Select(c => c.Key).ToList();
             ticked.Clear();
+            stopping = false;
+            if (run.Stopped)
+            {
+                Toast.Show(Localizer["Extract stopped. What it wrote is kept: extract again to carry on from there."]);
+                StateHasChanged();
+                await OnFinished.InvokeAsync();
+                return;
+            }
             Toast.Show(failed.Count > 0
                 ? string.Format(Localizer["{0} didn't finish. The report says why."], string.Join(", ", failed))
                 : run.Games.Count == 1 ? string.Format(Localizer["Extracted {0}. The server reloaded its files."], run.Games[0])
