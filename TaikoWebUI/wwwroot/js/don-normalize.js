@@ -23,6 +23,10 @@ const meshOutlineUniforms = {
   thickness: { value: 0.0012 },
 };
 const HEAD_FACE_RIM_SIZE = 0.17618;
+// _AT_ZERO: the game's alpha test keeps alpha > 0, so a texel with alpha exactly 0 is dropped (cut-out cards, as on
+// head_091000's bows); anything above draws opaque.
+const ALPHA_ZERO = 0.5 / 255;
+
 function extrasText(material) {
   const anyMat = material;
   const data = anyMat?.userData || {};
@@ -95,9 +99,10 @@ export function materialFlags(material) {
     alphaTestOneSuffix: hasAlphaTestOne,
     alphaTestZero: hasAlphaTestZero,
     transparentOutline: isDonCusMaterial && hasBlendSuffix && !isFace && !isFaceHip && !isGlass,
-    // outlineCutout — trace the outline through the texture alpha channel:
-    //   only _AT_ONE hard-cutout materials (without an overriding _A_AB blend flag).
-    outlineCutout: effectiveAlphaTestOne,
+    // outlineCutout — trace the outline through the texture alpha channel: _AT_ONE hard-cutout materials, and _AT_ZERO
+    //   ones (cut-out cards, e.g. head_091000's bows), both without an overriding _A_AB blend flag; else a card's
+    //   outline is a solid black copy of the whole card.
+    outlineCutout: effectiveAlphaTestOne || (hasAlphaTestZero && !hasBlendSuffix && !isTras && !isNom),
     // forceOpaque — override any GLTF alphaMode:BLEND for materials that are actually opaque.
     // Materials are forced opaque when:
     // 1. They have Don custom material naming with no blend suffix
@@ -155,7 +160,7 @@ function recolorMaterial(source, colors, flags) {
     depthWrite: (flags.alphaTestOne || flags.forceOpaque || flags.forceDepthWrite || flags.forceTransparent) ? true : !source.transparent,
     side: THREE.DoubleSide,
     alphaMap: source.alphaMap || null,
-    alphaTest: flags.alphaTestOne ? Math.max(source.alphaTest || 0, 0.5) : (source.alphaTest || 0),
+    alphaTest: flags.alphaTestOne ? Math.max(source.alphaTest || 0, 0.5) : flags.forceDepthWrite ? Math.max(source.alphaTest || 0, ALPHA_ZERO) : (source.alphaTest || 0),
   });
   copyDebugMaterialMetadata(source, material);
   const bodyColor = new THREE.Color(colors.body || '#ffffff');
@@ -319,7 +324,7 @@ function basicMaterial(source, flags, faceTexture, colors) {
     map: source.map || null,
     transparent: flags.forceTransparent ? true : ((flags.alphaTestOne || flags.forceOpaque) ? false : usesAlphaBlend),
     alphaMap: source.alphaMap || null,
-    alphaTest: flags.alphaTestOne ? Math.max(alphaTest, 0.5) : alphaTest,
+    alphaTest: flags.alphaTestOne ? Math.max(alphaTest, 0.5) : flags.forceDepthWrite ? Math.max(alphaTest, ALPHA_ZERO) : alphaTest,
     opacity: source.opacity ?? 1,
     side: THREE.DoubleSide,
     depthWrite: (flags.alphaTestOne || flags.alphaTestOneSuffix || flags.forceOpaque || flags.forceDepthWrite || flags.forceTransparent) ? true : !usesAlphaBlend,
