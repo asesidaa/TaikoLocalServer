@@ -233,6 +233,27 @@ public sealed class Ac15ProfileSettingsServiceTests
     }
 
     [Fact]
+    public async Task SaveAsync_WithoutFreeEditing_KeepsToUnlockedPieces()
+    {
+        var user = new UserDatum { Baid = 1, MyDonName = "DON" };
+        var save = UserSaveDataGreenExtensions.CreateDefaultGreenSaveData(1);
+        save.CostumeFlg1 = BitsetCodec.Encode([0, 5], Ac15EraProfiles.Green.Limits.CostumeFlagBytes);
+        Task<Ac15ProfileSettingsResult> Save(Ac15CostumeSlotUpdateDto slot) =>
+            Ac15ProfileSettingsService.SaveAsync<UserSaveDataGreen, DanScoreDatumGreen>(
+                user, save, null, Ac15EraProfiles.Green,
+                new Ac15ProfileSettingsUpdateDto(new Ac15ProfileIdentityDto("DON", 0),
+                    new Ac15CustomizationUpdateDto(CostumeSlots: [slot], Title: null, Tone: null, Colors: null),
+                    new Ac15ProfileOptionGroupsUpdateDto(null, null, null, null, null, null)),
+                new Ac15ProfileEditPolicy(AllowFreeProfileEditing: false),
+                CancellationToken.None).AsTask();
+
+        Assert.Equal(Ac15ProfileSettingsResultStatus.BadRequest, (await Save(new("kigurumi", 12, null))).Status);
+        Assert.Equal(Ac15ProfileSettingsResultStatus.BadRequest, (await Save(new("kigurumi", 5, [5, 12]))).Status);
+        Assert.Equal(Ac15ProfileSettingsResultStatus.Success, (await Save(new("kigurumi", 5, null))).Status);
+        Assert.Equal(5u, save.Costume1);
+    }
+
+    [Fact]
     public async Task SaveAsync_PersistsSupportedGroupsAndLeavesOmittedUnlocksUnchanged()
     {
         await using var database = await SchemaDatabase.CreateAsync();
@@ -273,7 +294,7 @@ public sealed class Ac15ProfileSettingsServiceTests
                     Taikojuku: new Ac15TaikojukuFolderDanUpdateDto(3),
                     Tutorials: new Ac15TutorialOptionsDto(true),
                     CustomizationBehavior: new Ac15CustomizationBehaviorOptionsDto(false))),
-            new Ac15ProfileEditPolicy(AllowFreeProfileEditing: false),
+            new Ac15ProfileEditPolicy(AllowFreeProfileEditing: true),
             CancellationToken.None);
 
         Assert.Equal(Ac15ProfileSettingsResultStatus.Success, result.Status);

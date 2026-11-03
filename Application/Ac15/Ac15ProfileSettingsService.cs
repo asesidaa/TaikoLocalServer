@@ -66,14 +66,13 @@ public static class Ac15ProfileSettingsService
         where TSave : class, IAc15ProfileSettingsSaveData
         where TDanScore : class, IAc15DanScoreDatum
     {
-        _ = policy;
-
-        var validation = await ValidateUpdateAsync(
-            request,
-            profile,
-            danScores,
-            user.Baid,
-            cancellationToken);
+        var validation = (policy.AllowFreeProfileEditing ? null : LockedPick(saveData, profile, request.Customization))
+            ?? await ValidateUpdateAsync(
+                request,
+                profile,
+                danScores,
+                user.Baid,
+                cancellationToken);
         if (validation is not null)
         {
             return Ac15ProfileSettingsResult.BadRequest(validation);
@@ -89,6 +88,29 @@ public static class Ac15ProfileSettingsService
 
         ApplyOptions(saveData, request.Options);
         return Ac15ProfileSettingsResult.Success();
+    }
+
+    // Without free editing a player keeps to what they unlocked in the game, and can't change the unlocks.
+    private static string? LockedPick<TSave>(TSave saveData, Ac15EraProfile profile, Ac15CustomizationUpdateDto? customization)
+        where TSave : IAc15ProfileSettingsSaveData
+    {
+        if (customization is null) return null;
+        bool Unlocked(byte[]? flags, int bytes, uint id, uint current) =>
+            id == 0 || id == current || BitsetCodec.Decode(flags, bytes).Contains(id);
+        foreach (var slot in customization.CostumeSlots ?? [])
+        {
+            if (slot.UnlockedIds is not null
+                || (KnownCostumeSlots.Contains(slot.Slot, StringComparer.Ordinal)
+                    && !Unlocked(GetCostumeFlag(saveData, slot.Slot), profile.Limits.CostumeFlagBytes, slot.CurrentId, GetCostume(saveData, slot.Slot))))
+                return $"Costume {slot.CurrentId} isn't unlocked.";
+        }
+        if (customization.Title is { } title
+            && (title.UnlockedTitleIds is not null || !Unlocked(saveData.TitleFlg, profile.Limits.TitleFlagBytes, title.TitleId, saveData.TitleplateId)))
+            return $"Title {title.TitleId} isn't unlocked.";
+        if (customization.Tone is { } tone
+            && (tone.UnlockedToneIds is not null || !Unlocked(saveData.ToneFlg, profile.Limits.ToneFlagBytes, tone.ToneId, saveData.DefaultToneSetting)))
+            return $"Drum sound {tone.ToneId} isn't unlocked.";
+        return null;
     }
 
     private static Ac15CustomizationDto? BuildCustomization<TSave>(TSave saveData, Ac15EraProfile profile)

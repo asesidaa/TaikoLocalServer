@@ -7,6 +7,7 @@
 @inject PageState Page
 @inject ToastService Toast
 @inject IJSRuntime Js
+@inject AuthService AuthService
 
 <PageTitle>@Localizer["Profile"]</PageTitle>
 @* An older game's profile as one form: name and title, costume (unlocked items only), colours and game options.
@@ -59,7 +60,7 @@
                 {
                     <label class="block text-xs @Css.Muted">@Localizer["Title"]
                         <select class="@Css.Input mt-1" value="@form.TitleId" @onchange="e => PickTitle(uint.Parse(e.Value!.ToString()!))">
-                            @foreach (var id in title.UnlockedTitleIds.Append(title.TitleId).Distinct().Order())
+                            @foreach (var id in Choices(title.UnlockedTitleIds, title.TitleId, titles.Keys))
                             {
                                 <option value="@id">@TitleName(id)</option>
                             }
@@ -77,7 +78,7 @@
                         {
                             <label class="text-xs @Css.Muted">@SlotLabel(slot.Slot)
                                 <select class="@Css.Input mt-1" value="@form.Slots[slot.Slot]" @onchange="e => form.Slots[slot.Slot] = uint.Parse(e.Value!.ToString()!)">
-                                    @foreach (var id in slot.UnlockedIds.Append(slot.CurrentId).Distinct().Order())
+                                    @foreach (var id in Choices(slot.UnlockedIds, slot.CurrentId, costumes.Where(c => c.CostumeType == slot.Slot).Select(c => c.CostumeId)))
                                     {
                                         <option value="@id">@CostumeName(slot.Slot, id)</option>
                                     }
@@ -88,7 +89,7 @@
                         {
                             <label class="text-xs @Css.Muted">@Localizer["Drum sound"]
                                 <select class="@Css.Input mt-1" value="@form.ToneId" @onchange="e => form.ToneId = uint.Parse(e.Value!.ToString()!)">
-                                    @foreach (var id in tone.UnlockedToneIds.Append(tone.ToneId).Distinct().Order())
+                                    @foreach (var id in Choices(tone.UnlockedToneIds, tone.ToneId, tones.Keys))
                                     {
                                         <option value="@id">@ToneName(id)</option>
                                     }
@@ -258,9 +259,9 @@
         return new(
             new Ac15ProfileIdentityDto(f.Name, f.Language),
             s.Customization is null ? null : new Ac15CustomizationUpdateDto(
-                f.Slots.Select(x => new Ac15CostumeSlotUpdateDto(x.Key, x.Value, null)).ToList(),
-                caps.SupportsTitle && s.Customization.Title is not null ? new Ac15TitleSelectionUpdateDto(f.TitleText, f.TitleId, null) : null,
-                caps.SupportsTone && s.Customization.Tone is not null ? new Ac15ToneSelectionUpdateDto(f.ToneId, null) : null,
+                f.Slots.Select(x => new Ac15CostumeSlotUpdateDto(x.Key, x.Value, FreeEdit ? s.Customization.CostumeSlots.First(c => c.Slot == x.Key).UnlockedIds : null)).ToList(),
+                caps.SupportsTitle && s.Customization.Title is not null ? new Ac15TitleSelectionUpdateDto(f.TitleText, f.TitleId, FreeEdit ? s.Customization.Title.UnlockedTitleIds : null) : null,
+                caps.SupportsTone && s.Customization.Tone is not null ? new Ac15ToneSelectionUpdateDto(f.ToneId, FreeEdit ? s.Customization.Tone.UnlockedToneIds : null) : null,
                 caps.SupportsColors && s.Customization.Colors is not null ? new Ac15CostumeColorsDto(f.Body, f.Face, f.Limb) : null),
             new Ac15ProfileOptionGroupsUpdateDto(
                 caps.SupportsDisplayDanOnNamePlate ? new Ac15NamePlateOptionsDto(f.DanOnPlate) : null,
@@ -297,6 +298,12 @@
             saving = false;
         }
     }
+
+    // As Nijiiro's profile: Free profile editing (or an admin, or Local mode) offers every piece, not only those unlocked.
+    private bool FreeEdit => AuthService.AllowFreeProfileEditing || AuthService.IsAdmin || !AuthService.LoginRequired;
+
+    private IEnumerable<uint> Choices(IEnumerable<uint> unlocked, uint current, IEnumerable<uint> all) =>
+        (FreeEdit ? unlocked.Concat(all) : unlocked).Append(current).Distinct().Order();
 
     private void PickTitle(uint id)
     {
