@@ -1,14 +1,11 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
+using TaikoLocalServer.Infrastructure.Extract.Nijiiro;
 
 namespace TaikoLocalServer.Infrastructure.Extract.Ac15;
 
 /// <summary><c>extract --era &lt;era&gt; --game &lt;data folder or zip&gt;</c>: the older games.</summary>
 public static class Ac15Extractor
 {
-    /// <summary>The folder under <c>&lt;out&gt;</c> for converted assets; the server serves it through <c>api/Assets</c>.</summary>
-    public const string GameData = "game_data";
-
     public static List<Report> Run(Era era, string game, string outDir, TextWriter log)
     {
         using var src = GameSource.Open(game);
@@ -16,7 +13,7 @@ public static class Ac15Extractor
         log.WriteLine($"output: {outDir}");
         var dataDir = Path.Combine(outDir, "data", era.Name());
         var reports = new List<Report> { ServerFiles.Copy(era, src, Path.Combine(dataDir, "data"), log) };
-        var assets = Path.Combine(outDir, GameData, era.Name());
+        var assets = Path.Combine(outDir, NijiiroExtractor.GameData, era.Name());
         reports.AddRange(Icons.Convert(era, src, assets));
         reports.Add(UiSets.Convert(era, src, assets));
         reports.AddRange(Nud.Convert(era, src, assets));
@@ -63,6 +60,4 @@ public static class Ac15Extractor
             notes.Add(new("included", "names"));
         return notes;
     }
-
-    internal static readonly JsonSerializerOptions Compact = new() { WriteIndented = false };
 }

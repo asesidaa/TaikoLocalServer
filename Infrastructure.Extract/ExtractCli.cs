@@ -49,7 +49,7 @@ public static class ExtractCli
         }
         if (inputs)
         {
-            output.WriteLine((era is null ? NijiiroExtractor.Inputs() : Ac15Extractor.Inputs(parsed)).ToJsonString(Ac15Extractor.Compact));
+            output.WriteLine((era is null ? NijiiroExtractor.Inputs() : Ac15Extractor.Inputs(parsed)).ToJsonString());
             return 0;
         }
         if (game is null)

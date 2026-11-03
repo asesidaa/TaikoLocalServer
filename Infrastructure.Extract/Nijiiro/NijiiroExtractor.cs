@@ -21,6 +21,9 @@ public static class NijiiroExtractor
     private static readonly string[] FontSheets = ["jp_30", "en_30", "tw_30", "kr_30"];
     /// <summary>The tone ids the game ships (<c>GameData.Tones</c> in the WebUI).</summary>
     private const int Tones = 20;
+    /// <summary>The folder under <c>&lt;out&gt;</c> for everything but the datatables; the server serves it through
+    /// <c>api/Assets</c>. The older games' go in <c>game_data/&lt;era&gt;</c>.</summary>
+    public const string GameData = "game_data";
     /// <summary>Records which layers the outputs came from, so switching <c>--mods</c> on or off rebuilds them.</summary>
     private const string Stamp = "extract.json";
 
@@ -55,7 +58,7 @@ public static class NijiiroExtractor
         var game = new NijiiroGame(x64, mods);
         log.WriteLine($"game:   {game.Base}{(game.Modded ? " + Data_mods" : "")}");
         log.WriteLine($"output: {outDir}");
-        var gameData = Path.Combine(outDir, Ac15.Ac15Extractor.GameData);
+        var gameData = Path.Combine(outDir, GameData);
         // The folder used to be called don-model: keep what an older extract wrote.
         var old = Path.Combine(outDir, "don-model");
         if (Directory.Exists(old) && !Directory.Exists(gameData)) Directory.Move(old, gameData);
