@@ -1,5 +1,5 @@
-@* One joined 40px control: ( ‹ | Part name ⌄ | › ). The wrapper owns the border, radius and focus ring;
-   stepping moves through the available ids and wraps at the ends. *@
+@* One joined 40px control: ( ‹ | Part name ⌄ | › | search ). The wrapper owns the border, radius and focus ring;
+   stepping moves through the available ids and wraps at the ends; search opens the item picker. *@
 <div>
     <span class="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1 text-sm">
         <span class="font-medium text-zinc-700 dark:text-zinc-300">@Label</span>
@@ -15,8 +15,17 @@
             }
         </select>
         @StepButton(1)
+        <button type="button" disabled="@(Disabled || Ids.Count < 2)" aria-label="@($"{Localizer["Search"]} {Label}")" @onclick="() => searching = true"
+                class="grid w-10 shrink-0 place-items-center self-stretch border-l border-zinc-200 text-zinc-500 outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 focus-visible:bg-zinc-100 active:bg-zinc-200 disabled:pointer-events-none dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700/60 dark:hover:text-white dark:focus-visible:bg-zinc-700/60 dark:active:bg-zinc-700">
+            <Icon Name="search" />
+        </button>
     </div>
 </div>
+
+@if (searching)
+{
+    <ItemPicker Title="@Label" Items="@Ids.Select(id => (id, NameOf(id))).ToList()" OnPick="Pick" OnClose="() => searching = false" />
+}
 
 @code {
     [Parameter, EditorRequired] public string Label { get; set; } = "";
@@ -26,6 +35,8 @@
     [Parameter] public EventCallback<uint> ValueChanged { get; set; }
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public RenderFragment? Hint { get; set; }
+
+    private bool searching;
 
     private RenderFragment StepButton(int dir) => __builder =>
     {
@@ -40,6 +51,12 @@
         var at = Ids.ToList().IndexOf(Value);
         var next = Ids[((at < 0 ? 0 : at) + dir + Ids.Count) % Ids.Count];
         return ValueChanged.InvokeAsync(next);
+    }
+
+    private Task Pick(uint id)
+    {
+        searching = false;
+        return ValueChanged.InvokeAsync(id);
     }
 
     private Task OnSelect(ChangeEventArgs e) =>

@@ -11,7 +11,7 @@
             <label class="relative block">
                 <span class="sr-only">@Localizer["Search"]</span>
                 <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="search" /></span>
-                <input type="search" autofocus autocomplete="off" value="@query" class="@Css.Input pl-9"
+                <input @ref="search" type="search" autocomplete="off" value="@query" class="@Css.Input pl-9"
                        placeholder="@string.Format(Localizer["Search {0} by name or ID"], Items.Count.ToString("N0"))"
                        @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
             </label>
@@ -59,6 +59,10 @@
     [Parameter] public EventCallback OnClose { get; set; }
 
     private string query = "";
+    private ElementReference search;
+
+    // Not autofocus: the browser honours that once per page, so a second picker would open unfocused.
+    protected override Task OnAfterRenderAsync(bool firstRender) => firstRender ? search.FocusAsync().AsTask() : Task.CompletedTask;
 
     private Task Close() => OnClose.InvokeAsync();
     private Task OnKey(KeyboardEventArgs e) => e.Key == "Escape" ? Close() : Task.CompletedTask;
