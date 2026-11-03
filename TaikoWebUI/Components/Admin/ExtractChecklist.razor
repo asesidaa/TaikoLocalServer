@@ -89,6 +89,7 @@ else
                 return;
             }
             <div class="rounded-xl bg-zinc-100 p-3 dark:bg-zinc-800/60">@SourceRow(g)</div>
+            @NijiiroOptions(g)
             <div class="mt-2">@State(g)</div>
             @Details(g, true)
         }
@@ -108,6 +109,7 @@ else
                         </div>
                         <div class="mt-1.5 pl-7">
                             @SourceRow(g)
+                            @NijiiroOptions(g)
                             @Details(g, false)
                         </div>
                     </li>
@@ -124,11 +126,6 @@ else
                     }
                 </p>
             }
-        }
-        if (Shown.Any(g => g.Game == "Nijiiro"))
-        {
-            <div class="mt-3"><Toggle Label="@Localizer["Include Nijiiro's mods folder"]" Description="@Localizer["Files in Data_mods replace the game's own."]" Icon="archive" @bind-Value="mods" /></div>
-            <div class="mt-3"><Toggle Label="@Localizer["Nijiiro's datatables only"]" Description="@Localizer["Copies just the song list, word list and other datatables, for an update that changed only those."]" Icon="database" @bind-Value="datatablesOnly" /></div>
         }
         if (error is { } e)
         {
@@ -155,6 +152,16 @@ else
     };
 
     // Where the games are read from: their folders on the server, or picked in this browser (AllowRemoteGameDir).
+    // Nijiiro's own options, in its row.
+    private RenderFragment NijiiroOptions(ExtractGame g) => __builder =>
+    {
+        if (g.Game != "Nijiiro") return;
+        <div class="mt-1.5 flex flex-wrap gap-x-5">
+            <Toggle Small Label="@Localizer["Include the mods folder"]" Description="@Localizer["Files in Data_mods replace the game's own."]" Disabled="Running" @bind-Value="mods" />
+            <Toggle Small Label="@Localizer["Datatables only"]" Description="@Localizer["Copies just the song list, word list and other datatables, for an update that changed only those."]" Disabled="Running" @bind-Value="datatablesOnly" />
+        </div>
+    };
+
     private RenderFragment SourceToggle => __builder =>
     {
         if (status is not { RemoteGameDir: true }) return;

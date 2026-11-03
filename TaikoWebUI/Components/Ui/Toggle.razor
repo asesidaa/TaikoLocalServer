@@ -1,4 +1,14 @@
-@* Switch with a label and optional hint; the whole row is the hit target. *@
+@* Switch with a label and optional hint; the whole row is the hit target. Small: a compact one for set-and-forget
+   options, its hint on hover. *@
+@if (Small)
+{
+    <label title="@Description" class="inline-flex items-center gap-2 py-1 text-xs @(Disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer")">
+        <input type="checkbox" class="peer sr-only" checked="@Value" disabled="@Disabled" @onchange="OnChange" />
+        <span class="relative h-4 w-7 shrink-0 rounded-full bg-zinc-300 transition-colors after:absolute after:left-0.5 after:top-0.5 after:size-3 after:rounded-full after:bg-white after:shadow after:transition-transform after:duration-150 peer-checked:bg-primary-500 peer-checked:after:translate-x-3 peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500/40 dark:bg-zinc-700"></span>
+        <span class="font-medium">@Label</span>
+    </label>
+    return;
+}
 <label class="flex items-center gap-3 py-2 @(Disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer")">
     @if (!string.IsNullOrEmpty(Image))
     {
@@ -30,6 +40,7 @@
     [Parameter] public bool Value { get; set; }
     /// <summary>Shown but can't be changed (the reason belongs in the Description).</summary>
     [Parameter] public bool Disabled { get; set; }
+    [Parameter] public bool Small { get; set; }
     [Parameter] public EventCallback<bool> ValueChanged { get; set; }
 
     private Task OnChange(ChangeEventArgs e) => ValueChanged.InvokeAsync(e.Value is true);
