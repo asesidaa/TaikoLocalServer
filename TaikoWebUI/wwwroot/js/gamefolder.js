@@ -16,6 +16,8 @@ const BatchBytes = 64 * 1024 * 1024, BatchFiles = 500;
 const picked = new Map();
 // The send in progress, for stop().
 let sending = null;
+// Nijiiro's datatables (the game's, and Data_mods' re-encrypted ones): all "Datatables only" sends.
+const isTable = item => /^(Data\/x64|Data_mods\/x64_enc)\/datatable\//.test(item.path);
 
 // Where the game is in the picked folder, as the prefix its files' paths share, and how a path relative to the game
 // folder (what extract --inputs lists) is made. Nijiiro: the folder holding Data/x64 (the pick may be it, a folder
@@ -50,8 +52,9 @@ const olderGameOf = async (root, files) => {
   return title.includes("(ST51)") ? "Kimidori" : title.includes("(ST41)") ? "Momoiro" : null;
 };
 
-// Returns { error, files, bytes, folder, other }: error "no-game" when the folder doesn't hold that game (other: the
-// older game it is instead, if it can tell); folder is the picked folder's name.
+// Returns { error, files, bytes, tables, folder, other }: error "no-game" when the folder doesn't hold that
+// game (other: the older game it is instead, if it can tell); tables: the datatables among the files; folder is the
+// picked folder's name.
 export async function pick(input, game, withMods) {
   try {
     const files = [...input.files];
@@ -94,20 +97,22 @@ export async function pick(input, game, withMods) {
     }
     picked.set(game, queue);
     const folder = (where.root || files[0]?.webkitRelativePath.split("/")[0] + "/").replace(/\/$/, "");
-    return { error: null, files: queue.length, bytes, folder };
+    const tables = queue.filter(isTable);
+    return { error: null, files: queue.length, bytes, tables: tables.length, folder };
   } catch (e) {
     return { error: e.message || String(e), files: 0, bytes: 0, folder: "" };
   }
 }
 
-// Sends a picked game's files (replacing what was sent for it before). Returns { error, mods }: mods is whether any
-// Data_mods file was sent (Nijiiro); error "stopped" after stop().
-export async function send(game, progress) {
+// Sends a picked game's files (replacing what was sent for it before); tablesOnly: just its datatables (Nijiiro).
+// Returns { error, mods }: mods is whether any Data_mods file was sent (Nijiiro); error "stopped" after stop().
+export async function send(game, progress, tablesOnly) {
   const controller = sending = new AbortController();
   const signal = controller.signal;
   try {
-    const queue = picked.get(game);
-    if (!queue) return { error: "no-game", mods: false };
+    const all = picked.get(game);
+    if (!all) return { error: "no-game", mods: false };
+    const queue = tablesOnly ? all.filter(isTable) : all;
     const total = queue.reduce((n, item) => n + item.body.size, 0);
     let res = await authFetch(`api/Extract/Upload?game=${game}`, { method: "DELETE" });
     if (!res.ok) return { error: await message(res), mods: false };

@@ -50,8 +50,11 @@ else
     /// <summary>A run finished (successfully or not): the games' data has been reloaded.</summary>
     [Parameter] public EventCallback OnFinished { get; set; }
 
-    private sealed record Picked(int Files, long Bytes, string Folder);
-    private sealed record PickResult(string? Error, int Files, long Bytes, string Folder, string? Other);
+    private sealed record Picked(int Files, long Bytes, int Tables, string Folder);
+    private sealed record PickResult(string? Error, int Files, long Bytes, int Tables, string Folder, string? Other);
+    // Datatables only: Nijiiro sends just those.
+    private bool TablesOnly(string game) => datatablesOnly && game == "Nijiiro";
+    private int ToSend(string game, Picked p) => TablesOnly(game) ? p.Tables : p.Files;
     /// <summary>A folder picked in the browser that isn't the game (<see cref="Other"/>: the older game it is, if known).</summary>
     private sealed record WrongPick(string Folder, string? Other);
     private sealed record SendResult(string? Error, bool Mods);
@@ -254,7 +257,7 @@ else
             {
                 <span class="flex min-w-0 items-center gap-1.5 text-xs @Css.Muted">
                     <Icon Name="cloud" Class="size-4 shrink-0" />
-                    <span class="truncate">@string.Format(Localizer["From this browser: {0} · {1} files to send"], p.Folder, p.Files.ToString("N0"))</span>
+                    <span class="truncate">@string.Format(Localizer["From this browser: {0} · {1} files to send"], p.Folder, ToSend(g.Game, p).ToString("N0"))</span>
                 </span>
             }
             @* A real file input (not a JS click) so every browser treats the pick as the user's own. *@
@@ -340,7 +343,7 @@ else
         var state = StateOf(g);
         if (state == "sending")
         {
-            @Bar(string.Format(Localizer["Sending {0} files…"], picks.GetValueOrDefault(g.Game)?.Files.ToString("N0")), total > 0 ? (int)(sent * 100 / total) : 0, g.Game)
+            @Bar(string.Format(Localizer["Sending {0} files…"], (picks.GetValueOrDefault(g.Game) is { } sendingPick ? ToSend(g.Game, sendingPick).ToString("N0") : "")), total > 0 ? (int)(sent * 100 / total) : 0, g.Game)
         }
         else if (state == "running")
         {
@@ -545,7 +548,7 @@ else
             return;
         }
         wrong.Remove(game);
-        picks[game] = new Picked(result.Files, result.Bytes, result.Folder);
+        picks[game] = new Picked(result.Files, result.Bytes, result.Tables, result.Folder);
         ticked.Add(game);
     }
 
@@ -566,7 +569,7 @@ else
                     sending = game;
                     sent = total = 0;
                     StateHasChanged();
-                    var result = await module.InvokeAsync<SendResult>("send", game, self);
+                    var result = await module.InvokeAsync<SendResult>("send", game, self, TablesOnly(game));
                     if (result.Error == "stopped")
                     {
                         Toast.Show(Localizer["Stopped sending. The files you picked are still there to send again."]);
