@@ -84,6 +84,9 @@ public sealed class ServerAccess(
                 JwtKey = !string.IsNullOrEmpty(legacyKey) && legacyKey != LegacyDefaultJwtKey
                     ? legacyKey
                     : Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                // A database from before ServerSecrets existed (the SetupWizard migration had no row to mark): its players
+                // mean it's an install in use, so it counts as set up.
+                SetupFinishedAt = await db.UserData.AnyAsync(cancellationToken) ? DateTime.UtcNow : null,
             };
             db.ServerSecrets.Add(secrets);
         }

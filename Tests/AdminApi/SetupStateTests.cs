@@ -84,4 +84,21 @@ public sealed class SetupStateTests : IAsyncLifetime
         await server.InitializeAsync();
         Assert.True(server.SetupPending);
     }
+
+    [Fact]
+    public async Task AnInstallFromBeforeServerSecrets_WithAnAdmin_IsntPending()
+    {
+        // No ServerSecrets row (it's made on first start), but players: the migrations ran on an install in use.
+        using (var scope = services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<TaikoDbContext>();
+            db.UserData.Add(new UserDatum { Baid = 1, IsAdmin = true });
+            await db.SaveChangesAsync();
+        }
+
+        var access = Access(ServerMode.Server);
+        await access.InitializeAsync();
+        Assert.False(access.SetupPending);
+        Assert.Null(access.SetupCode);
+    }
 }
