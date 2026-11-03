@@ -1,31 +1,58 @@
-@* One joined 40px control: ( ‹ | Part name ⌄ | › | search ). The wrapper owns the border, radius and focus ring;
-   stepping moves through the available ids and wraps at the ends; search opens the item picker. *@
-<div>
+@* One joined 40px control: ( ‹ | Part name ⌄ | › ). The wrapper owns the border, radius and focus ring;
+   stepping moves through the available ids and wraps at the ends. The name opens a searchable list under it (like
+   User Management's picker): a pick, a click outside or Escape closes it. *@
+@inject IJSRuntime Js
+
+<div class="relative">
     <span class="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1 text-sm">
         <span class="font-medium text-zinc-700 dark:text-zinc-300">@Label</span>
         @Hint
     </span>
     <div class="mt-1.5 flex h-10 items-stretch overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 transition-[border-color,box-shadow] focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20 dark:border-zinc-700 dark:bg-zinc-800/60 @(Disabled ? "cursor-not-allowed opacity-50" : "")">
         @StepButton(-1)
-        <select aria-label="@Label" disabled="@Disabled" value="@Value" @onchange="OnSelect"
-                class="w-0 min-w-0 flex-1 border-x border-zinc-200 bg-transparent px-3 text-sm outline-none disabled:cursor-not-allowed dark:border-zinc-700 dark:[&>option]:bg-zinc-900">
-            @foreach (var id in Ids)
-            {
-                <option value="@id">@NameOf(id)</option>
-            }
-        </select>
-        @StepButton(1)
-        <button type="button" disabled="@(Disabled || Ids.Count < 2)" aria-label="@($"{Localizer["Search"]} {Label}")" @onclick="() => searching = true"
-                class="grid w-10 shrink-0 place-items-center self-stretch border-l border-zinc-200 text-zinc-500 outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 focus-visible:bg-zinc-100 active:bg-zinc-200 disabled:pointer-events-none dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700/60 dark:hover:text-white dark:focus-visible:bg-zinc-700/60 dark:active:bg-zinc-700">
-            <Icon Name="search" />
+        <button type="button" aria-label="@Label" aria-haspopup="listbox" aria-expanded="@Css.Aria(open)" disabled="@Disabled" @onclick="Toggle"
+                class="flex w-0 min-w-0 flex-1 items-center gap-2 border-x border-zinc-200 px-3 text-left text-sm outline-none disabled:cursor-not-allowed dark:border-zinc-700">
+            <span class="min-w-0 flex-1 truncate">@NameOf(Value)</span>
+            <Icon Name="chevDown" Class="size-4 shrink-0 text-zinc-400" />
         </button>
+        @StepButton(1)
     </div>
+    @if (open)
+    {
+        <div class="fixed inset-0 z-20" @onclick="Close"></div>
+        <div @ref="panel" role="dialog" aria-label="@Label" @onkeydown="Key" style="--origin:top center"
+             class="pop absolute inset-x-0 top-full z-30 mt-1 rounded-2xl border border-zinc-200 bg-white p-2 shadow-xl dark:border-zinc-700 dark:bg-zinc-900">
+            <label class="relative block">
+                <span class="sr-only">@Localizer["Search"]</span>
+                <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"><Icon Name="search" /></span>
+                <input type="search" autocomplete="off" value="@query" class="@Css.Input pl-9"
+                       placeholder="@string.Format(Localizer["Search {0} by name or ID"], Ids.Count.ToString("N0"))"
+                       @oninput="e => query = e.Value?.ToString() ?? string.Empty" />
+            </label>
+            <ul role="listbox" aria-label="@Label" class="mt-2 max-h-72 space-y-0.5 overflow-y-auto">
+                @{
+                    var q = query.Trim();
+                    var hits = Ids.Where(id => q.Length == 0 || id.ToString() == q || NameOf(id).Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
+                }
+                @if (hits.Count == 0)
+                {
+                    <li class="px-3 py-6 text-center text-sm @Css.Muted">@Localizer["Nothing matches."]</li>
+                }
+                @foreach (var id in hits)
+                {
+                    var on = id == Value;
+                    <li>
+                        <button type="button" role="option" aria-selected="@Css.Aria(on)" aria-current="@(on ? "true" : null)" @onclick="() => Pick(id)"
+                                class="flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left text-sm @(on ? "bg-primary-500/10" : "hover:bg-zinc-100 dark:hover:bg-zinc-800/60")">
+                            <span class="min-w-0 flex-1 truncate">@NameOf(id)</span>
+                            <span class="font-mono text-xs tabular-nums text-zinc-400">#@id</span>
+                        </button>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
 </div>
-
-@if (searching)
-{
-    <ItemPicker Title="@Label" Items="@Ids.Select(id => (id, NameOf(id))).ToList()" OnPick="Pick" OnClose="() => searching = false" />
-}
 
 @code {
     [Parameter, EditorRequired] public string Label { get; set; } = "";
@@ -36,7 +63,18 @@
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public RenderFragment? Hint { get; set; }
 
-    private bool searching;
+    private bool open, focused;
+    private string query = "";
+    private ElementReference panel;
+
+    // Opening focuses the search box and scrolls the current pick into view.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!open) { focused = false; return; }
+        if (focused) return;
+        focused = true;
+        await Js.InvokeVoidAsync("ui.focusIn", panel);
+    }
 
     private RenderFragment StepButton(int dir) => __builder =>
     {
@@ -45,6 +83,19 @@
             <Icon Name="@(dir < 0 ? "chevLeft" : "chevRight")" />
         </button>
     };
+
+    private void Toggle()
+    {
+        open = !open;
+        query = "";
+    }
+
+    private void Close() => open = false;
+
+    private void Key(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") Close();
+    }
 
     private Task Step(int dir)
     {
@@ -55,10 +106,7 @@
 
     private Task Pick(uint id)
     {
-        searching = false;
+        open = false;
         return ValueChanged.InvokeAsync(id);
     }
-
-    private Task OnSelect(ChangeEventArgs e) =>
-        uint.TryParse(e.Value?.ToString(), out var id) ? ValueChanged.InvokeAsync(id) : Task.CompletedTask;
 }

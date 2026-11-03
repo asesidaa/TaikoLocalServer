@@ -309,7 +309,8 @@
     getQuality3D: () => store.get("ui.quality3d") || "standard",
     setQuality3D: q => store.set("ui.quality3d", q),
     getAccent: () => root.dataset.accent,
-    focusIn: el => el?.querySelector("input, button")?.focus(),
+    // Focus a popup's first field and bring its current pick (if any) into view.
+    focusIn: el => { el?.querySelector("input, button")?.focus(); el?.querySelector("[role=listbox] [aria-current]")?.scrollIntoView({ block: "nearest" }); },
     copy: text => navigator.clipboard?.writeText(text).then(() => true, () => false) ?? false,
     // Live log: it follows new lines only while the reader is at the bottom.
     atBottom: el => !el || el.scrollHeight - el.scrollTop - el.clientHeight < 40,
