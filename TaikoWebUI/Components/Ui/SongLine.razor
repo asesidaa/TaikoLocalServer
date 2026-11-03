@@ -1,11 +1,12 @@
-@* A song as one line: genre bar, Japanese name, and the English name under it when there is one. *@
+@* A song as one line: genre bar, its title in the viewer's song language, and its subtitle under it when it has one. *@
+@inject GameDataService GameDataService
 <span class="flex items-stretch gap-2 @Class">
     <GenreBar Genre="Song.Genre" />
     <span class="min-w-0">
-        <span class="block truncate">@Song.SongName</span>
-        @if (!string.IsNullOrEmpty(Song.SongNameEN) && Song.SongNameEN != Song.SongName)
+        <span class="block truncate">@GameDataService.SongTitle(Song)</span>
+        @if (GameDataService.SongSubtitle(Song) is { Length: > 0 } sub)
         {
-            <span class="block truncate text-xs @Css.Muted">@Song.SongNameEN</span>
+            <span class="block truncate text-xs @Css.Muted">@sub</span>
         }
     </span>
 </span>

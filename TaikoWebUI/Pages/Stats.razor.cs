@@ -50,8 +50,7 @@ public partial class Stats
 
     protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
 
-    // In Settings › Display's song title language, else the player's profile Language.
-    private string SongName(uint id) => music.TryGetValue(id, out var m) ? m.Title(setting is { } s ? s.SongLanguage ?? s.MyDonNameLanguage : 0) : $"#{id}";
+    private string SongName(uint id) => GameDataService.GetMusicNameBySongId(music, id) is { Length: > 0 } n ? n : $"#{id}";
 
     // ---- Tiles ----
     private int SongsPlayed => best.Select(b => b.SongId).Distinct().Count();

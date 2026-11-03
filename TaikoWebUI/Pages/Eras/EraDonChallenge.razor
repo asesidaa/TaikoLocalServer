@@ -106,7 +106,7 @@
     private DonChallengeResponse? data;
     private Dictionary<uint, MusicDetail> songs = [];
 
-    private string SongName(uint id) => songs.TryGetValue(id, out var s) && s.SongName.Length > 0 ? s.SongName : $"#{id}";
+    private string SongName(uint id) => songs.TryGetValue(id, out var s) && GameDataService.SongTitle(s) is { Length: > 0 } title ? title : $"#{id}";
 
     protected override async Task OnParametersSetAsync()
     {

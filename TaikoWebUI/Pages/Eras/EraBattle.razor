@@ -116,7 +116,7 @@
     private BattleResponse? data;
     private Dictionary<uint, MusicDetail> songs = [];
 
-    private string SongName(uint? id) => id is { } s && songs.TryGetValue(s, out var m) && m.SongName.Length > 0 ? m.SongName : id is { } n ? $"#{n}" : "–";
+    private string SongName(uint? id) => id is { } s && songs.TryGetValue(s, out var m) && GameDataService.SongTitle(m) is { Length: > 0 } title ? title : id is { } n ? $"#{n}" : "–";
 
     protected override async Task OnParametersSetAsync()
     {

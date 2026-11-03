@@ -81,7 +81,7 @@
     private GhostResponse? data;
     private Dictionary<uint, MusicDetail> songs = [];
 
-    private string SongName(uint id) => songs.TryGetValue(id, out var m) && m.SongName.Length > 0 ? m.SongName : $"#{id}";
+    private string SongName(uint id) => songs.TryGetValue(id, out var m) && GameDataService.SongTitle(m) is { Length: > 0 } title ? title : $"#{id}";
 
     protected override async Task OnParametersSetAsync()
     {

@@ -74,7 +74,7 @@
             .Concat(dans!.Where(d => courses.All(c => c.DanId != d.DanId)).OrderBy(d => d.DanId).Select(d => (d.DanId, $"#{d.DanId}", (DanBestData?)d, (DanData?)null)))
             .ToList();
 
-    private string SongName(uint id) => songs.TryGetValue(id, out var s) && s.SongName.Length > 0 ? s.SongName : $"#{id}";
+    private string SongName(uint id) => songs.TryGetValue(id, out var s) && GameDataService.SongTitle(s) is { Length: > 0 } title ? title : $"#{id}";
 
     protected override async Task OnParametersSetAsync()
     {

@@ -129,7 +129,7 @@
 
     private string ItemName(ShopItem item) => item.Type switch
     {
-        "song" => songs.TryGetValue(item.Id, out var s) && s.SongName.Length > 0 ? s.SongName : $"#{item.Id}",
+        "song" => songs.TryGetValue(item.Id, out var s) && GameDataService.SongTitle(s) is { Length: > 0 } title ? title : $"#{item.Id}",
         "tone" => string.Format(Localizer["Drum sound {0}"], item.Id),
         _ => costumes.FirstOrDefault(c => c.CostumeType == item.Type && c.CostumeId == item.Id) is { } c
             ? (c.CostumeNameEN.Length > 0 ? c.CostumeNameEN : c.CostumeName)

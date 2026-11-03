@@ -5,7 +5,7 @@
 @inject AuthService AuthService
 @inject ToastService Toast
 @inject IJSRuntime Js
-@inject PlayerSelection Players
+@inject GameDataService GameDataService
 
 <section class="@Css.Card p-5 sm:p-6">
     <h2 class="font-semibold">@Localizer["Display"]</h2>
@@ -59,8 +59,7 @@
         songLanguage = value;
         var res = await Client.PutAsJsonAsync($"api/Users/{Baid}/Theme", new UiTheme { SongLanguage = value });
         if (!res.IsSuccessStatusCode) { Toast.Show(Localizer["Save Failed"], true); return; }
-        // Pages that name songs themselves read it from the loaded player list.
-        if (Players.Users.FirstOrDefault(u => u.Baid == Baid) is { } user) user.UserSetting.SongLanguage = value < 0 ? null : (uint)value;
+        await GameDataService.LoadSongLanguageAsync(Baid);
         Toast.Show(Localizer["Saved"]);
     }
 

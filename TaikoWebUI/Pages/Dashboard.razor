@@ -149,8 +149,8 @@
             foreach (var p in session.Plays)
             {
                 var song = songs.GetValueOrDefault(p.SongId);
-                p.Name = song is { SongName.Length: > 0 } ? song.SongName : $"#{p.SongId}";
-                p.NameEn = song is { SongNameEN.Length: > 0 } && song.SongNameEN != p.Name ? song.SongNameEN : "";
+                p.Name = song is not null && GameDataService.SongTitle(song) is { Length: > 0 } title ? title : $"#{p.SongId}";
+                p.NameEn = song is null ? "" : GameDataService.SongSubtitle(song);
                 p.Stars = song is null ? 0 : (int)(p.Difficulty switch
                 {
                     Difficulty.Easy => song.StarEasy, Difficulty.Normal => song.StarNormal, Difficulty.Hard => song.StarHard,

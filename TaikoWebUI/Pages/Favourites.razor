@@ -6,7 +6,6 @@
 @inject GameDataService GameDataService
 @inject ToastService Toast
 @inject IJSRuntime Js
-@inject PlayerSelection Players
 
 <PageTitle>@Localizer["Favourites"]</PageTitle>
 
@@ -149,9 +148,8 @@
 
     private bool Dirty => !order.SequenceEqual(saved);
     private MusicDetail? Song(uint id) => songs?.GetValueOrDefault(id);
-    private string Subtitle(MusicDetail s) => s.Subtitle(Language) is { Length: > 0 } sub ? sub : GameData.Genre(s.Genre).Name;
-    // Settings › Display's song title language, else the player's profile Language.
-    private uint Language => Players.Users.FirstOrDefault(u => u.Baid == Baid)?.UserSetting is { } s ? s.SongLanguage ?? s.MyDonNameLanguage : 0;
+    private string Subtitle(MusicDetail s) => s.Subtitle(Language);
+    private uint Language => GameDataService.SongLanguage;
 
     private (string Key, string Label)[] Sorts =>
         [("genre", Localizer["Genre"]), ("title", Localizer["Title"]), ("oni", Localizer["Oni level"]), ("recent", Localizer["Recently added"])];

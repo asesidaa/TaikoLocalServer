@@ -41,7 +41,7 @@ public class HighScoresController(ITaikoDbContext context, IGameDataCatalog cata
             .GroupBy(p => p.SongId).ToDictionary(g => g.Key, g => g.MaxBy(p => p.Score)!.PlayTime);
 
         var query = q?.Trim() ?? "";
-        var language = await SongLanguage.ForAsync(context, baid, HttpContext.RequestAborted);
+        var language = await SongLanguage.ForAsync(context, User, baid, HttpContext.RequestAborted);
         var rows = mine.Where(b => b.Difficulty == d && songs.ContainsKey(b.SongId)).Select(b =>
         {
             var s = songs[b.SongId];

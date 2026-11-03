@@ -39,7 +39,7 @@
                     {
                         <tr>
                             <td class="max-w-72 px-4 py-2">
-                                <p class="truncate font-medium">@s.SongName</p>
+                                <p class="truncate font-medium">@GameDataService.SongTitle(s)</p>
                                 <p class="font-mono text-[11px] @Css.Muted">#@s.SongId</p>
                             </td>
                             @foreach (var (d, _) in GameData.Difficulties)

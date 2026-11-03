@@ -212,7 +212,7 @@ public partial class PlayHistoryController(ITaikoDbContext context, IGameDataCat
     }
 
     // Groups plays into sessions (newest first), keeping the plays that match the filters; sessions left empty are dropped.
-    private Task<uint> Language(uint baid) => SongLanguage.ForAsync(context, baid, HttpContext.RequestAborted);
+    private Task<uint> Language(uint baid) => SongLanguage.ForAsync(context, User, baid, HttpContext.RequestAborted);
 
     private List<PlaySession> Sessions(List<Row> plays, int diff, bool best, uint language, string game = "Nijiiro")
     {

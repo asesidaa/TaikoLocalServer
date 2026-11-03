@@ -597,8 +597,8 @@
         foreach (var x in list)
         {
             // Songs without a name in this language fall back to Japanese, then to the ID.
-            var name = GameDataService.GetMusicNameBySongId(music, x.SongId, CultureInfo.CurrentCulture.ToString());
-            x.MusicName = name.Length > 0 ? name : music.TryGetValue(x.SongId, out var m) && m.SongName.Length > 0 ? m.SongName : $"{Localizer["Unknown song"]} #{x.SongId}";
+            var name = GameDataService.GetMusicNameBySongId(music, x.SongId);
+            x.MusicName = name.Length > 0 ? name : $"{Localizer["Unknown song"]} #{x.SongId}";
         }
         scores = list.OrderBy(x => !music.ContainsKey(x.SongId)).ThenBy(x => x.MusicName).ThenBy(x => x.Difficulty).ToList();
     }

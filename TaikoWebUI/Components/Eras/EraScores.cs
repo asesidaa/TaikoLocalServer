@@ -11,17 +11,17 @@ namespace TaikoWebUI.Components.Eras;
 /// One player's results in an older game (api/{game}/PlayData: a row per chart with its plays) and that game's songs,
 /// for its Song List, High Scores, Play History and Play Data index.
 /// </summary>
-public sealed record EraScores(IReadOnlyList<SongBestData> Bests, IReadOnlyDictionary<uint, MusicDetail> Songs)
+public sealed record EraScores(IReadOnlyList<SongBestData> Bests, IReadOnlyDictionary<uint, MusicDetail> Songs, uint SongLanguage = 0)
 {
     public static async Task<EraScores> LoadAsync(HttpClient client, GameDataService gameData, string game, long baid)
     {
         var bests = client.GetFromJsonAsync<SongBestResponse>($"api/{game}/PlayData/{baid}");
         var songs = gameData.GetMusicDetailDictionary(game);
-        return new((await bests)?.SongBestData ?? [], await songs);
+        return new((await bests)?.SongBestData ?? [], await songs, gameData.SongLanguage);
     }
 
     public string Name(uint songId) =>
-        Songs.TryGetValue(songId, out var s) && s.SongName.Length > 0 ? s.SongName : $"#{songId}";
+        Songs.TryGetValue(songId, out var s) && s.Title(SongLanguage) is { Length: > 0 } title ? title : $"#{songId}";
 
     public IEnumerable<SongPlayDatumDto> Plays => Bests.SelectMany(b => b.RecentPlayData);
 

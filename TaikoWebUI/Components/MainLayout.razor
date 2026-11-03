@@ -8,6 +8,8 @@
 @inject NavigationManager Nav
 @inject HttpClient Client
 @inject AppStatus Status
+@inject GameDataService GameDataService
+@inject PlayerSelection Players
 
 @if (!AuthService.Ready)
 {
@@ -242,6 +244,8 @@ else
         Status.Changed += Refresh;
         Status.SavingPaused += OnSavingPaused;
         Nav.LocationChanged += OnLocationChanged;
+        Players.Changed += OnPlayerChanged;
+        await LoadSongLanguage();
         await CheckAssets();
         await LoadServerState();
     }
@@ -269,10 +273,22 @@ else
 
     private async void OnChanged(object? sender, EventArgs e)
     {
+        await LoadSongLanguage();
         await CheckAssets();
         Refresh();
     }
     private void Refresh() => InvokeAsync(StateHasChanged);
+
+    // Song titles everywhere follow the viewer's language: the signed-in player's, or in Local mode the picked one's.
+    private Task LoadSongLanguage() =>
+        GameDataService.LoadSongLanguageAsync(AuthService.LoginRequired ? (AuthService.IsLoggedIn ? AuthService.GetLoggedInBaid() : 0) : Players.Baid);
+
+    private async void OnPlayerChanged()
+    {
+        if (AuthService.LoginRequired) return;
+        await LoadSongLanguage();
+        Refresh();
+    }
 
     private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
     {
@@ -288,6 +304,7 @@ else
     public void Dispose()
     {
         AuthService.LoginStatusChanged -= OnChanged;
+        Players.Changed -= OnPlayerChanged;
         Page.Changed -= Refresh;
         Toast.Changed -= Refresh;
         Overlay.Changed -= Refresh;

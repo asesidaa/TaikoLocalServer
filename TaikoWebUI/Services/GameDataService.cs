@@ -55,8 +55,23 @@ public class GameDataService(HttpClient client)
         return lockedTitles!;
     }
 
-    public string GetMusicNameBySongId(Dictionary<uint, MusicDetail> musicDetails, uint songId, string? language) =>
-        musicDetails.TryGetValue(songId, out var m) ? Pick(language, m.SongName, m.SongNameEN, m.SongNameCN, m.SongNameKO) : string.Empty;
+    /// <summary>The language song titles show in for whoever is looking (their Settings › Display › Song titles, else
+    /// their profile's Language), loaded by the layout; 0 (Japanese) until then.</summary>
+    public uint SongLanguage { get; private set; }
+
+    public async Task LoadSongLanguageAsync(uint baid)
+    {
+        if (baid == 0) return;
+        try { SongLanguage = await client.GetFromJsonAsync<uint>($"api/Users/{baid}/SongLanguage"); }
+        catch (Exception e) when (e is HttpRequestException or System.Text.Json.JsonException) { }
+    }
+
+    public string SongTitle(MusicDetail song) => song.Title(SongLanguage);
+
+    public string SongSubtitle(MusicDetail song) => song.Subtitle(SongLanguage);
+
+    public string GetMusicNameBySongId(Dictionary<uint, MusicDetail> musicDetails, uint songId) =>
+        musicDetails.TryGetValue(songId, out var m) ? SongTitle(m) : string.Empty;
 
     public SongGenre GetMusicGenreBySongId(Dictionary<uint, MusicDetail> musicDetails, uint songId) =>
         musicDetails.TryGetValue(songId, out var m) ? m.Genre : SongGenre.Variety;

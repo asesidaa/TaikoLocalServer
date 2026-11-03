@@ -38,6 +38,15 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
         };
     }
 
+    /// <summary>The language song titles show in for this player (Settings › Display, else their profile's Language).</summary>
+    [HttpGet("{baid}/SongLanguage")]
+    public async Task<ActionResult<uint>> GetSongLanguage(uint baid)
+    {
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
+        return await SongLanguage.ForAsync(context, new System.Security.Claims.ClaimsPrincipal(), baid, HttpContext.RequestAborted);
+    }
+
     /// <summary>Their player card's look, which every game's profile shows.</summary>
     [HttpGet("{baid}/Card")]
     public async Task<ActionResult<CardLook>> GetCard(uint baid)

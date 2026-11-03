@@ -90,7 +90,9 @@
         return songs.Where(s => (genre is null || s.Genre == genre) &&
                                 (q.Length == 0 || s.SongId.ToString() == q ||
                                  s.SongName.Contains(q, StringComparison.OrdinalIgnoreCase) ||
-                                 s.SongNameEN.Contains(q, StringComparison.OrdinalIgnoreCase))).ToList();
+                                 s.SongNameEN.Contains(q, StringComparison.OrdinalIgnoreCase) ||
+                                 s.SongNameCN.Contains(q, StringComparison.OrdinalIgnoreCase) ||
+                                 s.SongNameKO.Contains(q, StringComparison.OrdinalIgnoreCase))).ToList();
     }
 
     private RenderFragment Chip(SongGenre? g) => __builder =>

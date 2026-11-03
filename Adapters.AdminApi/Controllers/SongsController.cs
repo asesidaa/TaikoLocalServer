@@ -85,7 +85,7 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         page = Math.Min(page, pages);
         var shown = all.Skip((page - 1) * limit).Take(limit).ToList();
         var totals = allPlays ?? await PlayCounts(shown.Select(s => s.SongId).ToList());
-        var language = await SongLanguage.ForAsync(context, baid, HttpContext.RequestAborted);
+        var language = await SongLanguage.ForAsync(context, User, baid, HttpContext.RequestAborted);
         return new SongListPage
         {
             Total = all.Count, AllSongs = songs.Count, Page = page, TotalPages = pages,
@@ -122,7 +122,7 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
         var ai = await context.AiScoreDataNijiiro.Where(a => a.Baid == baid && a.SongId == songId).Include(a => a.AiSectionScoreData)
             .ToListAsync(HttpContext.RequestAborted);
         var stars = Stars(s);
-        var language = await SongLanguage.ForAsync(context, baid, HttpContext.RequestAborted);
+        var language = await SongLanguage.ForAsync(context, User, baid, HttpContext.RequestAborted);
         return new SongDetail
         {
             SongId = s.SongId, Name = s.Title(language), NameEn = s.Subtitle(language), Genre = s.Genre, Stars = stars,
