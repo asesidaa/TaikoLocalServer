@@ -18,4 +18,6 @@ public sealed record ClientAuthConfigResponse(
     /// <summary>The games this server runs (ServerSettings.Eras), e.g. Nijiiro, Green.</summary>
     IReadOnlyList<string>? EnabledEras = null,
     /// <summary>Older games' favourite-song caps, by game.</summary>
-    IReadOnlyDictionary<string, int>? FavoriteSongLimits = null);
+    IReadOnlyDictionary<string, int>? FavoriteSongLimits = null,
+    /// <summary>The name the web UI shows (ServerSettings.ServerName).</summary>
+    string ServerName = "TaikoLocalServer");

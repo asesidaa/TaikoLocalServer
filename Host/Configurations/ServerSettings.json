@@ -1,6 +1,7 @@
 ﻿{
   "ServerSettings": {
     "Mode": "Local",
+    "ServerName": "TaikoLocalServer",
     "AllowRemoteGameDir": true,
     "ApiTokens": false,
     "RestrictChassisIds": false,

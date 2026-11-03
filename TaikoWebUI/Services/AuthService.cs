@@ -28,6 +28,8 @@ public sealed class AuthService : IDisposable
     public bool LoginRequired => authConfig.AuthenticationRequired;
     /// <summary>Server mode with no admin yet: Register takes the one-time setup code from the server console.</summary>
     public bool SetupPending => authConfig.SetupPending;
+    /// <summary>The app's name (ServerSettings.ServerName).</summary>
+    public string ServerName => string.IsNullOrWhiteSpace(authConfig.ServerName) ? "TaikoLocalServer" : authConfig.ServerName;
     public bool OnlyAdmin => authConfig.OnlyAdmin;
     public int BoundAccessCodeUpperLimit => authConfig.BoundAccessCodeUpperLimit;
     public SignUpMode SignUpMode => authConfig.SignUpMode;

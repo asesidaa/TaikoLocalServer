@@ -62,7 +62,7 @@ public class AuthController(
         return Ok(new ClientAuthConfigResponse(access.Mode, access.LoginRequired, rules.OnlyAdmin, rules.AccessCodeLimit,
             rules.SignUpMode, rules.AllowUserDelete, rules.AllowFreeProfileEditing, access.SetupPending, rules.TwoFactor,
             rules.AllowCustomTitles,
-            EnabledEras(), FavoriteSongLimits()));
+            EnabledEras(), FavoriteSongLimits(), serverSettings.Value.ServerName));
     }
 
     private List<string> EnabledEras() =>

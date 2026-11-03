@@ -88,9 +88,6 @@
 #blazor-error-ui .reload { margin-left: .5rem; text-decoration: underline; color: inherit; }
 #blazor-error-ui .dismiss { position: absolute; right: .75rem; top: .5rem; cursor: pointer; }
 /* DrumMark: the game's don note when ui.js could load it, else the drawn mark. */
-.brand-img { display: none; }
-html[data-brand-icon] .brand-img { display: block; }
-html[data-brand-icon] .brand-svg { display: none; }
 
 .blazor-error-boundary { padding: 1rem; border-radius: 1rem; background: #b92a13; color: #fff; }
 .blazor-error-boundary::after { content: "An error has occurred."; }

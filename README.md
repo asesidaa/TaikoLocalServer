@@ -43,6 +43,7 @@ Supported eras:
 1. Extract the server's release anywhere.
 2. Open [Configurations/ServerSettings.json](./Host/Configurations/ServerSettings.json) and set:
    - `"Mode"`: `"Local"` (the default, no logins) or `"Server"` (accounts and admins). See [Local or Server mode](#local-or-server-mode).
+   - `"ServerName"` (optional): the name the web UI shows, `"TaikoLocalServer"` by default.
    - `"Eras"` › `"Nijiiro"` › `"GameDataPath"`: your game install, the folder that contains `Data`, for example `"C:/Games/Taiko no Tatsujin Nijiiro Version"`. The web UI uses it to copy the game files the server needs. If the game is on another PC, leave it empty: you can send its folder from your browser instead (see step 5).
 3. (Optional) In the `Certificates` folder, import `root.pfx` into the trusted root store and `cert.pfx` into the personal store. The other import options can stay at their defaults.
 4. Start the server: `TaikoLocalServer.exe` on Windows, which asks for administrator rights, or `./TaikoLocalServer` on Linux, as root or with permission to bind low ports. It listens on ports 80 and 443 as well as the game's ports. Then open [http://localhost](http://localhost).

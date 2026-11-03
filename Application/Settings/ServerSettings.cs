@@ -8,6 +8,9 @@ public sealed class ServerSettings
     /// </summary>
     public ServerMode? Mode { get; set; }
 
+    /// <summary>The name the web UI shows (sidebar, sign-in, setup, the tab title).</summary>
+    public string ServerName { get; set; } = "TaikoLocalServer";
+
     /// <summary>
     /// Let admins send the game files from their browser (Server Management › Game data: pick the game folder) when
     /// the game isn't on this machine. On by default (still admins only, and only the files extract lists); off: only

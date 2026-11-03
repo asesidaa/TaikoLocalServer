@@ -3,12 +3,9 @@
 @inject NavigationManager Nav
 @inject PlayerSelection Players
 @inject AdminView View
-@inject IOptions<WebUiSettings> Settings
-@using Microsoft.Extensions.Options
 
 <div class="flex h-16 items-center gap-2.5 px-5">
-    <DrumMark />
-    <span class="font-display text-[17px] tracking-wide">@Settings.Value.Title</span>
+    <span class="font-display text-[17px] tracking-wide">@AuthService.ServerName</span>
 </div>
 <nav class="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
     <p class="truncate px-3 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">@(View.Baid > 0 ? string.Format(Localizer["{0} (admin view)"], ViewName) : AuthService.LoginRequired ? Localizer["Account"] : Localizer["Players"])</p>

@@ -6,10 +6,8 @@
 @inject OverlayHost Overlay
 @inject AssetStatus AssetStatus
 @inject NavigationManager Nav
-@inject IOptions<WebUiSettings> Settings
 @inject HttpClient Client
 @inject AppStatus Status
-@using Microsoft.Extensions.Options
 
 @if (!AuthService.Ready)
 {
@@ -20,8 +18,7 @@ else if ((AuthService.LoginRequired && !AuthService.IsLoggedIn) || OnSetup)
     @* Logged out, or first-run setup: auth layout, no sidebar. Brand left, language + theme right, card centred. *@
     <div class="flex min-h-dvh flex-col">
         <header class="flex h-16 items-center gap-2.5 px-4 sm:px-6">
-            <DrumMark />
-            <span class="font-display text-[17px] tracking-wide">@Settings.Value.Title</span>
+            <span class="font-display text-[17px] tracking-wide">@AuthService.ServerName</span>
             <div class="ml-auto flex items-center gap-1"><TopControls /></div>
         </header>
         <main class="flex flex-1 flex-col items-center justify-center px-4 pb-24 pt-4 sm:pb-32">@Body</main>
