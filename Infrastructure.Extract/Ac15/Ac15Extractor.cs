@@ -19,6 +19,9 @@ public static class Ac15Extractor
         var assets = Path.Combine(outDir, GameData, era.Name());
         reports.AddRange(Icons.Convert(era, src, assets));
         reports.Add(UiSets.Convert(era, src, assets));
+        reports.AddRange(Nud.Convert(era, src, assets));
+        reports.Add(DonRig.Convert(era, src, Path.Combine(assets, "animation")));
+        reports.Add(Tones.Convert(era, src, assets));
         Manifest.Write(Path.Combine(dataDir, Manifest.FileName), era.Name(), game, reports, Notes(era, src, assets, reports));
         return reports;
     }
@@ -33,6 +36,9 @@ public static class Ac15Extractor
         rules.AddRange(ServerFiles.NameDirs.SelectMany(d => new[] { "title_name", "tone_name" }.Select(n => Rule.Files($"{d}{n}/nutdatapack.ndp"))));
         rules.AddRange(Icons.Inputs());
         rules.AddRange(UiSets.Inputs());
+        rules.AddRange(Nud.Inputs());
+        rules.Add(Rule.Files("don3d/ani/"));
+        rules.AddRange(Tones.Inputs());
         JsonArray Pick(bool names) => new(rules.Where(r => r.NamesOnly == names).Select(r => (JsonNode)JsonValue.Create("data/" + r.Path)).ToArray());
         return new JsonObject { ["files"] = Pick(false), ["names"] = Pick(true), ["mods"] = null };
     }
