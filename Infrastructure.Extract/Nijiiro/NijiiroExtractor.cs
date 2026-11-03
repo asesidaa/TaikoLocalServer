@@ -51,13 +51,21 @@ public static class NijiiroExtractor
         };
     }
 
-    public static List<Report> Run(string gameDir, string outDir, bool mods, TextWriter log)
+    /// <summary><paramref name="datatablesOnly"/>: copy only the datatables (always, as the up-to-date check can't tell a
+    /// mod's from the game's), leaving the rest and keeping the last run's other steps in the manifest.</summary>
+    public static List<Report> Run(string gameDir, string outDir, bool mods, TextWriter log, bool datatablesOnly = false)
     {
         var x64 = new[] { Path.Combine(gameDir, "Data", "x64"), gameDir }.FirstOrDefault(c => Directory.Exists(Path.Combine(c, "datatable")))
             ?? throw new IOException($"{gameDir} doesn't look like a Nijiiro install: no Data/x64/datatable folder found");
         var game = new NijiiroGame(x64, mods);
         log.WriteLine($"game:   {game.Base}{(game.Modded ? " + Data_mods" : "")}");
         log.WriteLine($"output: {outDir}");
+        if (datatablesOnly)
+        {
+            var only = new List<Report> { CopyDatatables(game, Path.Combine(outDir, "data", "datatable"), force: true) };
+            Manifest.Write(Path.Combine(outDir, "data", Manifest.FileName), "nijiiro", gameDir, only, [], keepOtherSteps: true);
+            return only;
+        }
         var gameData = Path.Combine(outDir, GameData);
         // The folder used to be called don-model: keep what an older extract wrote.
         var old = Path.Combine(outDir, "don-model");
@@ -119,7 +127,7 @@ public static class NijiiroExtractor
             File.Delete(path);
     }
 
-    private static Report CopyDatatables(NijiiroGame game, string dstDir)
+    private static Report CopyDatatables(NijiiroGame game, string dstDir, bool force = false)
     {
         Directory.CreateDirectory(dstDir);
         var report = new Report("datatables");
@@ -128,7 +136,7 @@ public static class NijiiroExtractor
             var (src, dst) = (game.Datatable(name), Path.Combine(dstDir, name));
             if (!File.Exists(src))
                 report.Missing.Add(name);
-            else if (NijiiroGame.IsNewer(dst, src) && new FileInfo(dst).Length == new FileInfo(src).Length)
+            else if (!force && NijiiroGame.IsNewer(dst, src) && new FileInfo(dst).Length == new FileInfo(src).Length)
                 report.UpToDate.Add(name);
             else
             {

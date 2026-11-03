@@ -11,6 +11,7 @@ TaikoLocalServer extract --game "G:\Games\Taiko no Tatsujin Nijiiro Version (SBW
 | `--game` | The game install folder, the one containing `Data/x64`. Passing `Data/x64` itself also works. `Data_mods` is read only with `--mods`. |
 | `--out` | The server's `wwwroot` folder. Defaults to the `wwwroot` next to `TaikoLocalServer.exe`. |
 | `--mods` | Layer the install's LayeredFS `Data_mods` folder over `Data`, as the game sees it with the plugin. A file in `Data_mods/x64/<path>` replaces `Data/x64/<path>` (fonts, models, UI), and folders gain the mods' extra entries. Datatables (e.g. new songs) come from `Data_mods/x64_enc/datatable`, the re-encrypted ones; the JSON in `Data_mods/x64/datatable` is ignored. Switching `--mods` on or off rebuilds every output once. |
+| `--datatables` | Nijiiro only: copy just the datatables (`musicinfo.bin`, `wordlist.bin` …), always, for a game update that changed only those. Everything else extract wrote stays as it is, and so do the other steps in `extract.json`. |
 | `--era` | An older game instead: `green`, `blue`, `yellow`, `red`, `white`, `murasaki`, `kimidori` or `momoiro`. `--game` is then its RPCS3 install (or its `USRDIR/data`), or a `.zip` of it. |
 | `--inputs` | Print the game files extract reads, as JSON, and exit (the WebUI's "Choose game folder" sends only these). With `--era`, that game's, relative to `USRDIR`. |
 

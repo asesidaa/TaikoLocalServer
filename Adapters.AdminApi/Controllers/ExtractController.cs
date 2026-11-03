@@ -34,10 +34,15 @@ public class ExtractController(IExtractRunner extract, ITaikoDbContext context) 
             uploaded.Add(game);
         }
 
-        if (extract.Start(games, request.Mods, uploaded) is { } error)
+        if (extract.Start(games, request.Mods, uploaded, request.DatatablesOnly) is { } error)
             return Conflict(new { message = error });
         var detail = string.Join(", ", games.Select(g => uploaded.Contains(g) ? $"{g} (sent from the browser)" : g.ToString()));
-        this.LogActivity(context, "gamedata.extract", null, request.Mods && games.Contains(GameEra.Nijiiro) ? $"{detail}, with mods" : detail);
+        if (games.Contains(GameEra.Nijiiro))
+        {
+            if (request.Mods) detail += ", with mods";
+            if (request.DatatablesOnly) detail += ", Nijiiro datatables only";
+        }
+        this.LogActivity(context, "gamedata.extract", null, detail);
         await context.SaveChangesAsync(HttpContext.RequestAborted);
         return Accepted(extract.Status);
     }

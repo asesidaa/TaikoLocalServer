@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using TaikoLocalServer.Infrastructure.Extract;
 using TaikoLocalServer.Infrastructure.Extract.Nijiiro;
 using TaikoLocalServer.Infrastructure.Extract.Textures;
 
@@ -100,5 +101,36 @@ public sealed class NijiiroExtractTests
         Assert.Equal(0, icon.Pixel(0, 1)[3]); // padding above the note
         Assert.Equal([255, 0, 0, 255], icon.Pixel(0, 2).ToArray());
         Assert.Null(NijiiroUi.FirstBlob(new RgbaImage(4, 4)));
+    }
+
+    // A game update that changed only the datatables: they are copied again (even when not older, as a mod layer may have
+    // changed), the rest of the extract is left alone, and the last run's other steps stay in extract.json.
+    [Fact]
+    public void DatatablesOnly_CopiesThemAndKeepsTheRest()
+    {
+        var root = Directory.CreateTempSubdirectory("tls-dt-").FullName;
+        try
+        {
+            var (game, outDir) = (Path.Combine(root, "game"), Path.Combine(root, "out"));
+            var src = Directory.CreateDirectory(Path.Combine(game, "Data", "x64", "datatable")).FullName;
+            File.WriteAllText(Path.Combine(src, "musicinfo.bin"), "new");
+            var dst = Directory.CreateDirectory(Path.Combine(outDir, "data", "datatable")).FullName;
+            File.WriteAllText(Path.Combine(dst, "musicinfo.bin"), "old");
+            File.SetLastWriteTimeUtc(Path.Combine(dst, "musicinfo.bin"), DateTime.UtcNow.AddDays(1));
+            var model = Directory.CreateDirectory(Path.Combine(outDir, NijiiroExtractor.GameData, "body")).FullName;
+            File.WriteAllText(Path.Combine(model, "body_0001.glb"), "kept");
+            File.WriteAllText(Path.Combine(outDir, "data", "extract.json"),
+                """{"era":"nijiiro","steps":[{"label":"datatables","written":0},{"label":"body models","written":5}],"notes":[]}""");
+
+            ExtractCli.Run(["--game", game, "--datatables"], outDir, TextWriter.Null, TextWriter.Null);
+
+            Assert.Equal("new", File.ReadAllText(Path.Combine(dst, "musicinfo.bin")));
+            Assert.Equal("kept", File.ReadAllText(Path.Combine(model, "body_0001.glb")));
+            var steps = JsonNode.Parse(File.ReadAllText(Path.Combine(outDir, "data", "extract.json")))!["steps"]!.AsArray();
+            Assert.Equal(["datatables", "body models"], steps.Select(st => (string)st!["label"]!).ToList());
+            Assert.Equal(1, (int)steps[0]!["written"]!);
+            Assert.Equal(5, (int)steps[1]!["written"]!);
+        }
+        finally { Directory.Delete(root, true); }
     }
 }

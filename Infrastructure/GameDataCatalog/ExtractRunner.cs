@@ -32,7 +32,7 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
     private readonly ConcurrentDictionary<GameEra, ExtractInputs> inputs = new();
     private IReadOnlyList<GameEra> runGames = [];
     private GameEra? current;
-    private bool running, mods, stopped;
+    private bool running, mods, stopped, datatablesOnly;
     private DateTime? startedAt, finishedAt;
     private Moving? progress;
 
@@ -93,14 +93,14 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
                         steps.ToList(), new Dictionary<string, int>(exitCodes), output.ToList(),
                         progress is { } p ? new ExtractProgress(p.Step, p.Number, p.Done, p.Total, p.Item,
                             (DateTime.UtcNow - p.StepStartedAt).TotalSeconds, (DateTime.UtcNow - p.UpdatedAt).TotalSeconds) : null,
-                        stopped)
+                        stopped, datatablesOnly)
                     : null;
                 return new ExtractStatus(RemoteAllowed, games, run);
             }
         }
     }
 
-    public string? Start(IReadOnlyList<GameEra> games, bool withMods, IReadOnlySet<GameEra> uploaded)
+    public string? Start(IReadOnlyList<GameEra> games, bool withMods, IReadOnlySet<GameEra> uploaded, bool onlyDatatables = false)
     {
         if (games.Count == 0) return "Pick a game to extract.";
         if (uploaded.Count > 0 && !RemoteAllowed) return "Sending game folders from the browser is off (AllowRemoteGameDir).";
@@ -116,6 +116,7 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
             if (running) return "extract is already running.";
             running = true;
             mods = withMods;
+            datatablesOnly = onlyDatatables;
             runGames = games.Distinct().ToList();
             startedAt = DateTime.UtcNow;
             finishedAt = null;
@@ -357,6 +358,7 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
         if (game != GameEra.Nijiiro) args.AddRange(["--era", game.ToString().ToLowerInvariant()]);
         args.AddRange(["--game", uploaded ? UploadPath(game) : GamePath(game)]);
         if (withMods && game == GameEra.Nijiiro) args.Add("--mods");
+        if (datatablesOnly && game == GameEra.Nijiiro) args.Add("--datatables");
 
         var code = -1;
         CancellationToken cancel;

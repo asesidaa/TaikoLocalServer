@@ -12,8 +12,9 @@ public interface IExtractRunner
 {
     ExtractStatus Status { get; }
 
-    /// <summary>Starts a run of <paramref name="games"/> in the background. Returns null when it started, else why it didn't.</summary>
-    string? Start(IReadOnlyList<GameEra> games, bool mods, IReadOnlySet<GameEra> uploaded);
+    /// <summary>Starts a run of <paramref name="games"/> in the background (<paramref name="datatablesOnly"/>: Nijiiro copies
+    /// only its datatables). Returns null when it started, else why it didn't.</summary>
+    string? Start(IReadOnlyList<GameEra> games, bool mods, IReadOnlySet<GameEra> uploaded, bool datatablesOnly = false);
 
     /// <summary>Stops the run: the current game stops at its next file, and the games after it don't start. False when
     /// nothing runs. What was written stays, so the next extract carries on from there.</summary>

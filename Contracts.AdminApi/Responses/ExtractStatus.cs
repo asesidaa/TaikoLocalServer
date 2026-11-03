@@ -29,7 +29,8 @@ public record ExtractRun(
     IReadOnlyDictionary<string, int> ExitCodes,
     IReadOnlyList<string> Output,
     ExtractProgress? Progress = null,
-    bool Stopped = false);
+    bool Stopped = false,
+    bool DatatablesOnly = false);
 
 /// <summary>Where the current game's extract is: the step (as <see cref="ExtractStep.Label"/>) and its number, counted as
 /// steps start (extract prints its steps' counts only at the end), its items done out of

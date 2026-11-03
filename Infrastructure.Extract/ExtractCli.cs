@@ -11,12 +11,12 @@ public static class ExtractCli
 {
     private const string Usage = """
         Usage:
-          TaikoLocalServer extract --game <Nijiiro install> [--mods] [--out <wwwroot>]
+          TaikoLocalServer extract --game <Nijiiro install> [--mods] [--datatables] [--out <wwwroot>]
           TaikoLocalServer extract --era <game> --game <folder or .zip> [--out <wwwroot>]
           TaikoLocalServer extract --inputs [--era <game>]
 
         Without --era, --game is a Nijiiro install (the folder holding Data/x64, or Data/x64 itself); --mods layers its
-        LayeredFS Data_mods folder over Data. <game>: green, blue, yellow, red, white, murasaki, kimidori, momoiro; --game
+        LayeredFS Data_mods folder over Data; --datatables copies only the datatables. <game>: green, blue, yellow, red, white, murasaki, kimidori, momoiro; --game
         is then the folder the game runs from (or any folder in it down to USRDIR/data), or a .zip of it. --out defaults to the wwwroot next to the server.
         """;
 
@@ -26,7 +26,7 @@ public static class ExtractCli
     public static int Run(string[] args, string defaultOut, TextWriter output, TextWriter error)
     {
         string? era = null, game = null, outDir = null;
-        bool inputs = false, mods = false;
+        bool inputs = false, mods = false, datatables = false;
         for (var i = 0; i < args.Length; i++)
         {
             switch (args[i])
@@ -36,6 +36,7 @@ public static class ExtractCli
                 case "--out" when i + 1 < args.Length: outDir = args[++i]; break;
                 case "--inputs": inputs = true; break;
                 case "--mods": mods = true; break;
+                case "--datatables": datatables = true; break;
                 default:
                     error.WriteLine(Usage);
                     return 1;
@@ -45,6 +46,11 @@ public static class ExtractCli
         if (era is not null && !EraInfo.TryParse(era, out parsed))
         {
             error.WriteLine($"Unknown game {era}.\n{Usage}");
+            return 1;
+        }
+        if (datatables && era is not null)
+        {
+            error.WriteLine($"--datatables is only for Nijiiro.\n{Usage}");
             return 1;
         }
         if (inputs)
@@ -60,7 +66,7 @@ public static class ExtractCli
         try
         {
             var reports = era is null
-                ? NijiiroExtractor.Run(game, outDir ?? defaultOut, mods, output)
+                ? NijiiroExtractor.Run(game, outDir ?? defaultOut, mods, output, datatables)
                 : Ac15Extractor.Run(parsed, game, outDir ?? defaultOut, output);
             foreach (var r in reports)
                 r.Print(output);

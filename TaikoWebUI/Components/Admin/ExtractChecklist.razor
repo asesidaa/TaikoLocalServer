@@ -57,7 +57,7 @@ else
     private sealed record SendResult(string? Error, bool Mods);
 
     private ExtractStatus? status;
-    private bool browser, mods = true, starting, stopping, reportOpen;
+    private bool browser, mods = true, datatablesOnly, starting, stopping, reportOpen;
     private readonly HashSet<string> ticked = [];
     private readonly Dictionary<string, Picked> picks = [];
     private readonly Dictionary<string, WrongPick> wrong = [];
@@ -128,6 +128,7 @@ else
         if (Shown.Any(g => g.Game == "Nijiiro"))
         {
             <div class="mt-3"><Toggle Label="@Localizer["Include Nijiiro's mods folder"]" Description="@Localizer["Files in Data_mods replace the game's own."]" Icon="archive" @bind-Value="mods" /></div>
+            <div class="mt-3"><Toggle Label="@Localizer["Nijiiro's datatables only"]" Description="@Localizer["Copies just the song list, word list and other datatables, for an update that changed only those."]" Icon="database" @bind-Value="datatablesOnly" /></div>
         }
         if (error is { } e)
         {
@@ -338,7 +339,7 @@ else
         {
             var run = status!.Run!;
             // How many steps there'll be: the last extract's count (none before a game's first extract).
-            var expected = g.Last?.Steps.Count ?? 0;
+            var expected = run.DatatablesOnly && g.Game == "Nijiiro" ? 1 : g.Last?.Steps.Count ?? 0;
             var at = run.Progress;
             var inStep = at is { Total: > 0 } ? (double)at.Done / at.Total : 0;
             int? percent = run.Stopped ? null
@@ -575,7 +576,7 @@ else
                 }
                 sending = null;
             }
-            var res = await Client.PostAsJsonAsync("api/Extract", new ExtractRequest(games, withMods, browser ? games : []));
+            var res = await Client.PostAsJsonAsync("api/Extract", new ExtractRequest(games, withMods, browser ? games : [], datatablesOnly));
             if (!res.IsSuccessStatusCode)
             {
                 error = (await res.Content.ReadFromJsonAsync<Dictionary<string, string>>())?.GetValueOrDefault("message") ?? Localizer["Couldn't start extract."];
