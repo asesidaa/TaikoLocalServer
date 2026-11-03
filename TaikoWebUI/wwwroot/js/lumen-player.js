@@ -1,11 +1,11 @@
 // lumen-player.js: plays Taiko Nijiiro Lumen UI animations (title plates, dan badges, …) with WebGL.
-// Input: a lumen-scene v1 JSON (+ its atlas PNG) as written by tools/extract. No dependencies.
+// Input: a lumen-scene v1 JSON (+ its atlas PNG) as written by Infrastructure.Extract. No dependencies.
 //
 //   const scene = await LumenScene.load("/api/Assets/ui/nameplate/scene.json", { fetch: authedFetch });
 //   const player = scene.player(canvas, { set: "plates", label: "gold", scale: 1 });
 //   player.setLabel("ai_3");  player.pause();  player.play();  player.destroy();
 //
-// Semantics match tools/extract/src/lumen.rs: depth-ordered display lists, place/move/remove,
+// Semantics match Infrastructure.Extract/Lumen/Lumen.cs: depth-ordered display lists, place/move/remove,
 // matrix or position transforms, colour multiply/add, textured or solid fills, and clip masks
 // (a placement's clip depth hides deeper objects outside its shape). The root sprite holds the
 // label's pose; nested sprites loop independently at 60 fps (each from when it was placed).

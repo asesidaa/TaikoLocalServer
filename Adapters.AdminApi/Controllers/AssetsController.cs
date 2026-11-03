@@ -5,7 +5,7 @@ using TaikoLocalServer.Infrastructure.GameDataCatalog;
 namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 
 /// <summary>
-/// Serves the game assets written by <c>tools/extract</c> to the WebUI's own pages, for logged-in users only.
+/// Serves the game assets written by the extractor (Infrastructure.Extract) to the WebUI's own pages, for logged-in users only.
 /// They live in the exe's <c>wwwroot/game_data</c>, which the static-file middleware deliberately does not serve.
 /// A loose measure, not DRM: the WebUI holds them as blobs, and anything a browser renders can be dumped.
 /// </summary>

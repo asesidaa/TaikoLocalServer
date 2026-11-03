@@ -14,8 +14,8 @@ env:
   Build_Number: ${{ github.run_number }}
 
 jobs:
-  # One build per platform: the server (self-contained, single file) with extract next to it, packed as the release
-  # archive. Linux uses tar.gz, which keeps the executable bits (zip and the artifact store don't).
+  # One build per platform: the server (self-contained, single file; `TaikoLocalServer extract` is built in), packed as
+  # the release archive. Linux uses tar.gz, which keeps the executable bits (zip and the artifact store don't).
   publish:
     strategy:
       fail-fast: false
@@ -23,11 +23,9 @@ jobs:
         include:
           - rid: win-x64
             os: windows-latest
-            extract: extract.exe
             archive: TaikoLocalServer-win-x64.zip
           - rid: linux-x64
             os: ubuntu-latest
-            extract: extract
             archive: TaikoLocalServer-linux-x64.tar.gz
     runs-on: ${{ matrix.os }}
     steps:
@@ -62,24 +60,12 @@ jobs:
             }
           }
 
-      # Both runner images ship a Rust toolchain. extract goes next to the server's
-      # executable so its default --out (<exe dir>/wwwroot) is right.
-      - name: Build and test extract
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          cargo test --release --locked --manifest-path tools/extract/Cargo.toml
-          if ($LASTEXITCODE -ne 0) { throw "cargo test exited $LASTEXITCODE" }
-          cargo build --release --locked --manifest-path tools/extract/Cargo.toml
-          if ($LASTEXITCODE -ne 0) { throw "cargo build exited $LASTEXITCODE" }
-
       - name: Locate publish output
         id: locate
         shell: pwsh
         run: |
           $path = "Host/bin/Release/net10.0/${{ matrix.rid }}/publish"
           if (-not (Test-Path $path)) { throw "publish dir missing: $path" }
-          Copy-Item tools/extract/target/release/${{ matrix.extract }} $path
           "path=$path" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           "name=TLS-${{ env.Major_Version_Number }}.${{ env.Minor_Version_Number }}.${{ env.Build_Number }}-${{ matrix.rid }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
@@ -91,7 +77,7 @@ jobs:
       - name: Pack (Linux)
         if: runner.os == 'Linux'
         run: |
-          chmod +x "${{ steps.locate.outputs.path }}/TaikoLocalServer" "${{ steps.locate.outputs.path }}/extract"
+          chmod +x "${{ steps.locate.outputs.path }}/TaikoLocalServer"
           tar -czf ${{ matrix.archive }} -C "${{ steps.locate.outputs.path }}" .
 
       # Build/publish runs on every branch (catches breakage early); the

@@ -3,7 +3,7 @@ using TaikoLocalServer.Contracts.AdminApi.Responses;
 namespace TaikoLocalServer.Application.Abstractions;
 
 /// <summary>
-/// Runs tools/extract, one run at a time, then reloads the game data: on the configured GamePath, or on game files an
+/// Runs the extractor (Infrastructure.Extract), one run at a time, then reloads the game data: on the configured GamePath, or on game files an
 /// admin sent from their browser (ServerSettings.AllowRemoteGameDir).
 /// </summary>
 public interface IExtractRunner

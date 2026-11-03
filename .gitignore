@@ -399,9 +399,6 @@ FodyWeavers.xsd
 TaikoLocalServer/wwwroot/data/music_attribute.bin
 /Published
 
-# Rust build output (tools/extract)
-tools/extract/target/
-
 # Tailwind standalone CLI for the WebUI CSS build (downloaded, pinned version)
 tools/tailwindcss/
 

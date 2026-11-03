@@ -7,6 +7,7 @@ using TaikoLocalServer.Adapters.GameProtocol.CnR00;
 using TaikoLocalServer.Adapters.GameProtocol.WwR08;
 using TaikoLocalServer.Application;
 using TaikoLocalServer.Infrastructure;
+using TaikoLocalServer.Infrastructure.Extract;
 using TaikoLocalServer.Infrastructure.Identity;
 using TaikoLocalServer.Infrastructure.Persistence;
 using TaikoLocalServer.Cli;
@@ -17,6 +18,10 @@ using Throw;
 using Serilog;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
+
+// `TaikoLocalServer extract …` converts game files into wwwroot without starting the server.
+if (ExtractCli.IsExtractCommand(args))
+    return ExtractCli.Run(args[1..], TaikoLocalServer.Infrastructure.GameDataCatalog.PathHelper.GetRootPath(), Console.Out, Console.Error);
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()

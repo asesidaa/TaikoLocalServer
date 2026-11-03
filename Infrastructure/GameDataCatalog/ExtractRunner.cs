@@ -1,16 +1,18 @@
-using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Application.Settings;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
+using TaikoLocalServer.Infrastructure.Extract;
+using TaikoLocalServer.Infrastructure.Extract.Nijiiro;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog;
 
 /// <summary>
-/// Runs <c>extract(.exe)</c> from next to the server exe with <c>--game GamePath --out wwwroot</c>, captures its
-/// report, and reloads the game data when it's done. One run at a time. With AllowRemoteGameDir, the game folder can
+/// Runs the extractor (Infrastructure.Extract, the same code as <c>TaikoLocalServer extract</c>) with
+/// <c>--game GamePath --out wwwroot</c>, captures its report, and reloads the game data when it's done. One run at a time. With AllowRemoteGameDir, the game folder can
 /// instead be the files an admin sent from their browser (only the ones <c>extract --inputs</c> lists), kept in a temp
 /// folder in the install's layout until the run.
 /// </summary>
@@ -25,40 +27,28 @@ public sealed class ExtractRunner(IOptions<ServerSettings> settings, IGameDataCa
     private int? exitCode;
     private ExtractInputs? inputs;
 
-    private static string ExePath => Path.Combine(AppContext.BaseDirectory, OperatingSystem.IsWindows() ? "extract.exe" : "extract");
     private static readonly string UploadPath = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "TaikoLocalServer-game-upload"));
     private string GamePath => settings.Value.GamePath?.Trim() ?? "";
-    private bool RemoteAllowed => settings.Value.AllowRemoteGameDir && File.Exists(ExePath);
+    private bool RemoteAllowed => settings.Value.AllowRemoteGameDir;
 
     public ExtractStatus Status
     {
         get
         {
             lock (gate)
-                return new ExtractStatus(File.Exists(ExePath), GamePath, GamePath.Length > 0 && Directory.Exists(GamePath), RemoteAllowed,
+                return new ExtractStatus(GamePath, GamePath.Length > 0 && Directory.Exists(GamePath), RemoteAllowed,
                     running, mods, startedAt, finishedAt, exitCode, output.ToList());
         }
     }
 
     public string? Start(bool withMods, bool uploaded = false)
     {
-        if (!File.Exists(ExePath)) return "extract isn't next to the server exe.";
         if (uploaded && !RemoteAllowed) return "Sending the game folder from the browser is off (AllowRemoteGameDir).";
         if (uploaded && !File.Exists(Path.Combine(UploadPath, "Data", "x64", "datatable", "musicinfo.bin"))) return "No game folder was sent.";
         if (!uploaded && (GamePath.Length == 0 || !Directory.Exists(GamePath))) return "GamePath isn't set, or the folder doesn't exist.";
 
-        var info = new ProcessStartInfo(ExePath)
-        {
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-        };
-        info.ArgumentList.Add("--game");
-        info.ArgumentList.Add(uploaded ? UploadPath : GamePath);
-        info.ArgumentList.Add("--out");
-        info.ArgumentList.Add(PathHelper.GetRootPath());
-        if (withMods) info.ArgumentList.Add("--mods");
+        List<string> args = ["--game", uploaded ? UploadPath : GamePath];
+        if (withMods) args.Add("--mods");
 
         lock (gate)
         {
@@ -70,21 +60,15 @@ public sealed class ExtractRunner(IOptions<ServerSettings> settings, IGameDataCa
             exitCode = null;
             output.Clear();
         }
-        _ = Task.Run(() => RunAsync(info, uploaded));
+        _ = Task.Run(() => RunAsync([.. args], uploaded));
         return null;
     }
 
-    public async Task<(ExtractInputs? Inputs, string? Error)> InputsAsync(CancellationToken cancellationToken)
+    public Task<(ExtractInputs? Inputs, string? Error)> InputsAsync(CancellationToken cancellationToken)
     {
-        if (!RemoteAllowed) return (null, "Sending the game folder from the browser is off (AllowRemoteGameDir).");
-        if (inputs is not null) return (inputs, null);
-        var info = new ProcessStartInfo(ExePath, "--inputs") { RedirectStandardOutput = true, UseShellExecute = false, CreateNoWindow = true };
-        using var process = Process.Start(info)!;
-        var json = await process.StandardOutput.ReadToEndAsync(cancellationToken);
-        await process.WaitForExitAsync(cancellationToken);
-        if (process.ExitCode != 0) return (null, "This extract is too old to list its inputs; update it.");
-        inputs = JsonSerializer.Deserialize<ExtractInputs>(json, JsonSerializerOptions.Web);
-        return (inputs, null);
+        if (!RemoteAllowed) return Task.FromResult<(ExtractInputs?, string?)>((null, "Sending the game folder from the browser is off (AllowRemoteGameDir)."));
+        inputs ??= NijiiroExtractor.Inputs().Deserialize<ExtractInputs>(JsonSerializerOptions.Web);
+        return Task.FromResult<(ExtractInputs?, string?)>((inputs, null));
     }
 
     public string? ClearUpload()
@@ -133,26 +117,20 @@ public sealed class ExtractRunner(IOptions<ServerSettings> settings, IGameDataCa
         return null;
     }
 
-    private async Task RunAsync(ProcessStartInfo info, bool uploaded)
+    private async Task RunAsync(string[] args, bool uploaded)
     {
         var code = -1;
         try
         {
-            using var process = new Process { StartInfo = info };
-            process.OutputDataReceived += (_, e) => Add(e.Data);
-            process.ErrorDataReceived += (_, e) => Add(e.Data);
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-            await process.WaitForExitAsync();
-            code = process.ExitCode;
+            using var report = new LineWriter(Add);
+            code = await Task.Run(() => ExtractCli.Run(args, PathHelper.GetRootPath(), report, report));
             logger.LogInformation("extract finished with exit code {ExitCode}", code);
             await catalog.ReloadAsync();
         }
         catch (Exception e)
         {
             Add($"error: {e.Message}");
-            logger.LogError(e, "extract failed to run");
+            logger.LogError(e, "extract failed");
         }
         finally
         {
@@ -184,5 +162,32 @@ public sealed class ExtractRunner(IOptions<ServerSettings> settings, IGameDataCa
         if (line is null) return;
         lock (gate)
             if (output.Count < MaxLines) output.Add(line);
+    }
+
+    /// <summary>Hands each line written to it to <paramref name="onLine"/>, as the report goes.</summary>
+    private sealed class LineWriter(Action<string> onLine) : TextWriter
+    {
+        private readonly StringBuilder line = new();
+        public override Encoding Encoding => Encoding.UTF8;
+
+        public override void Write(char value)
+        {
+            if (value == '\n')
+            {
+                onLine(line.ToString().TrimEnd('\r'));
+                line.Clear();
+            }
+            else
+            {
+                line.Append(value);
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (line.Length > 0) onLine(line.ToString());
+            line.Clear();
+            base.Dispose(disposing);
+        }
     }
 }

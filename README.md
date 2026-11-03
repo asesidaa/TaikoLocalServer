@@ -23,15 +23,15 @@ It is composed of two major components :
 4. Start the server: `TaikoLocalServer.exe` on Windows, which asks for administrator rights, or `./TaikoLocalServer` on Linux, as root or with permission to bind low ports. It listens on ports 80 and 443 as well as the game's ports. Then open [http://localhost](http://localhost).
    - **Server mode:** the web UI opens on a setup page until an admin exists. Enter the **setup code** printed in the server's console, then your card's access code and a password for the admin account (see [Web UI admins](#web-ui-admins-server-mode)).
    - **Local mode:** the web UI opens straight away.
-5. Add the game files. In Server mode this is the setup's **Game files** step. Afterwards, and in Local mode, use **Admin › Server Management › Game Data**; until it's done, admins see a "Game files are missing" banner. Press **Extract game files**: this runs `extract` (`extract.exe` on Windows, next to the server) on your `GamePath`. It copies the datatables the server needs and converts the don-chan models, textures and animations for the web UI's 3D preview (about 175 MB). It writes only into the server's `wwwroot` folder, never into your game folder. Run it again after a game update; files that are already up to date are skipped.
+5. Add the game files. In Server mode this is the setup's **Game files** step. Afterwards, and in Local mode, use **Admin › Server Management › Game Data**; until it's done, admins see a "Game files are missing" banner. Press **Extract game files**: the server reads your `GamePath`. It copies the datatables the server needs and converts the don-chan models, textures and animations for the web UI's 3D preview (about 175 MB). It writes only into the server's `wwwroot` folder, never into your game folder. Run it again after a game update; files that are already up to date are skipped.
 
-   **The game is on another PC** (for example the server runs on a Linux box): with `"AllowRemoteGameDir": true`, open the web UI on the game PC and press **Choose game folder** instead. Pick the game folder (the one that contains `Data`, so `Data_mods` comes along). The browser sends only the files extract reads (about 600 MB of a 15 GB install), and the server runs extract on them, then deletes them.
+   **The game is on another PC** (for example the server runs on a Linux box): with `"AllowRemoteGameDir": true`, open the web UI on the game PC and press **Choose game folder** instead. Pick the game folder (the one that contains `Data`, so `Data_mods` comes along). The browser sends only the files the server reads (about 600 MB of a 15 GB install), and the server extracts from them, then deletes them.
 
-   Or run extract yourself on the game PC, then copy its `wwwroot` output into the server's `wwwroot` folder:
+   Or run it from a command line on the game PC with a copy of the server, then copy its `wwwroot` output into the server's `wwwroot` folder:
    ```bash
-   extract.exe --game "C:\Games\Taiko no Tatsujin Nijiiro Version"
+   TaikoLocalServer.exe extract --game "C:\Games\Taiko no Tatsujin Nijiiro Version"
    ```
-   If it reports anything as `MISSING` or `FAILED`, check that the path points at a complete install. See [tools/extract](./tools/extract/README.md) for details.
+   If it reports anything as `MISSING` or `FAILED`, check that the path points at a complete install. See [Infrastructure.Extract](./Infrastructure.Extract/README.md) for details.
 6. Start your game! (The first boot with the server takes a good minute, be patient!)
 
 ## Configuration

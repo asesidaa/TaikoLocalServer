@@ -9,7 +9,7 @@
 {
     <Skeleton />
 }
-else if (status.ExtractFound && status.GamePathFound)
+else if (status.GamePathFound)
 {
     <div class="space-y-3 text-sm">
         <div class="flex items-start gap-2">
@@ -65,15 +65,8 @@ else
     @* The ways out: set GamePath (the server runs it), allow sending it from the browser, or run it by hand. *@
     <div class="space-y-3 text-sm">
         <p class="@Css.Muted">
-            @if (!status.ExtractFound)
-            {
-                @Localizer["extract.exe isn't next to TaikoLocalServer.exe, so run it yourself:"]
-            }
-            else
-            {
-                @((MarkupString)string.Format(Localizer["Set GamePath Hint"], "<code class=\"font-mono text-xs\">GamePath</code>", "<code class=\"font-mono text-xs\">Host/Configurations/ServerSettings.json</code>"))
-                <span class="mt-1 block">@((MarkupString)string.Format(Localizer["Allow Remote Game Dir Hint"], "<code class=\"font-mono text-xs\">\"AllowRemoteGameDir\": true</code>"))</span>
-            }
+            @((MarkupString)string.Format(Localizer["Set GamePath Hint"], "<code class=\"font-mono text-xs\">GamePath</code>", "<code class=\"font-mono text-xs\">Host/Configurations/ServerSettings.json</code>"))
+            <span class="mt-1 block">@((MarkupString)string.Format(Localizer["Allow Remote Game Dir Hint"], "<code class=\"font-mono text-xs\">\"AllowRemoteGameDir\": true</code>"))</span>
         </p>
         @Command
         <button class="@Css.GhostButton !px-0" @onclick="Refresh"><Icon Name="rotate" />@Localizer["Check again"]</button>
@@ -99,7 +92,7 @@ else
 
     private sealed record SendResult(string? Error, bool Mods);
 
-    private RenderFragment Command => @<code class="mt-2 block overflow-x-auto whitespace-nowrap rounded-lg bg-zinc-900 px-3 py-2 font-mono text-xs text-zinc-100">extract --game "@(status!.GamePath.Length > 0 ? status.GamePath : "<Nijiiro game folder>")" --mods</code>;
+    private RenderFragment Command => @<code class="mt-2 block overflow-x-auto whitespace-nowrap rounded-lg bg-zinc-900 px-3 py-2 font-mono text-xs text-zinc-100">TaikoLocalServer extract --game "@(status!.GamePath.Length > 0 ? status.GamePath : "<Nijiiro game folder>")" --mods</code>;
 
     // Extracting, then how the last run went and its report.
     private RenderFragment RunState => @<text>

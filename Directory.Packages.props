@@ -46,6 +46,9 @@
     <PackageVersion Include="Swan.Core" Version="7.0.0-beta.2" />
     <PackageVersion Include="Throw" Version="1.4.0" />
 
+    <!-- Infrastructure.Extract (game files to wwwroot: textures, models) -->
+    <PackageVersion Include="System.IO.Hashing" Version="10.0.14" />
+
     <!-- TaikoWebUI (Blazor WASM) -->
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
