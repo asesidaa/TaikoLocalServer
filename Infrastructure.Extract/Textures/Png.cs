@@ -15,27 +15,18 @@ public static class Png
     {
         var stride = image.Width * 4;
         var raw = new byte[(stride + 1) * image.Height];
-        var candidate = new byte[stride];
+        var zeros = new byte[stride];
+        var candidates = new byte[4][];
+        for (var f = 0; f < 4; f++) candidates[f] = new byte[stride];
         for (var y = 0; y < image.Height; y++)
         {
             var row = image.Pixels.AsSpan(y * stride, stride);
-            var up = y > 0 ? image.Pixels.AsSpan((y - 1) * stride, stride) : Span<byte>.Empty;
-            var best = long.MaxValue;
-            foreach (var filter in (ReadOnlySpan<byte>)[0, 1, 2, 4])
-            {
-                long sum = 0;
-                for (var i = 0; i < stride; i++)
-                {
-                    int a = i >= 4 ? row[i - 4] : 0, b = up.IsEmpty ? 0 : up[i], c = i >= 4 && !up.IsEmpty ? up[i - 4] : 0;
-                    var predictor = filter switch { 1 => a, 2 => b, 4 => Paeth(a, b, c), _ => 0 };
-                    candidate[i] = (byte)(row[i] - predictor);
-                    sum += Math.Abs((int)(sbyte)candidate[i]);
-                }
-                if (sum >= best) continue;
-                best = sum;
-                raw[y * (stride + 1)] = filter;
-                candidate.CopyTo(raw.AsSpan(y * (stride + 1) + 1));
-            }
+            var up = y > 0 ? image.Pixels.AsSpan((y - 1) * stride, stride) : zeros;
+            Span<long> sums = [None(row, candidates[0]), Sub(row, candidates[1]), Up(row, up, candidates[2]), Paeth(row, up, candidates[3])];
+            var best = 0;
+            for (var f = 1; f < 4; f++) if (sums[f] < sums[best]) best = f;
+            raw[y * (stride + 1)] = (byte)(best == 3 ? 4 : best);
+            candidates[best].CopyTo(raw.AsSpan(y * (stride + 1) + 1));
         }
         using var deflated = new MemoryStream();
         using (var z = new ZLibStream(deflated, CompressionLevel.Optimal, leaveOpen: true))
@@ -54,10 +45,43 @@ public static class Png
         return png.ToArray();
     }
 
-    private static int Paeth(int a, int b, int c)
+    // Each filter writes its row and returns the sum of its bytes read as signed, the usual heuristic for picking one.
+    private static long None(ReadOnlySpan<byte> row, Span<byte> dst)
     {
-        int p = a + b - c, pa = Math.Abs(p - a), pb = Math.Abs(p - b), pc = Math.Abs(p - c);
-        return pa <= pb && pa <= pc ? a : pb <= pc ? b : c;
+        row.CopyTo(dst);
+        return AbsSum(dst);
+    }
+
+    private static long Sub(ReadOnlySpan<byte> row, Span<byte> dst)
+    {
+        row[..4].CopyTo(dst);
+        for (var i = 4; i < row.Length; i++) dst[i] = (byte)(row[i] - row[i - 4]);
+        return AbsSum(dst);
+    }
+
+    private static long Up(ReadOnlySpan<byte> row, ReadOnlySpan<byte> up, Span<byte> dst)
+    {
+        for (var i = 0; i < row.Length; i++) dst[i] = (byte)(row[i] - up[i]);
+        return AbsSum(dst);
+    }
+
+    private static long Paeth(ReadOnlySpan<byte> row, ReadOnlySpan<byte> up, Span<byte> dst)
+    {
+        for (var i = 0; i < 4; i++) dst[i] = (byte)(row[i] - up[i]); // a = c = 0: Paeth picks b
+        for (var i = 4; i < row.Length; i++)
+        {
+            int a = row[i - 4], b = up[i], c = up[i - 4];
+            int p = a + b - c, pa = Math.Abs(p - a), pb = Math.Abs(p - b), pc = Math.Abs(p - c);
+            dst[i] = (byte)(row[i] - (pa <= pb && pa <= pc ? a : pb <= pc ? b : c));
+        }
+        return AbsSum(dst);
+    }
+
+    private static long AbsSum(ReadOnlySpan<byte> bytes)
+    {
+        long sum = 0;
+        foreach (var v in bytes) sum += Math.Abs((int)(sbyte)v);
+        return sum;
     }
 
     private static void Chunk(Stream png, string type, byte[] data)
