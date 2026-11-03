@@ -76,10 +76,10 @@ else
             </label>
             <label class="block">
                 <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Title Plate"]</span>
-                <select class="@Css.Input mt-1.5 dark:[&>option]:bg-zinc-900" @onchange="e => Set(x => x.TitlePlateId = uint.Parse(e.Value!.ToString()!))">
+                <select class="@Css.Input mt-1.5 dark:[&>option]:bg-zinc-900" value="@s.TitlePlateId" @onchange="e => Set(x => x.TitlePlateId = uint.Parse(e.Value!.ToString()!))">
                     @foreach (var id in titlePlateIds)
                     {
-                        <option value="@id" selected="@(id == s.TitlePlateId)">@(id < GameData.TitlePlates.Length ? GameData.TitlePlates[id].Name : $"#{id}")</option>
+                        <option value="@id">@(id < GameData.TitlePlates.Length ? GameData.TitlePlates[id].Name : $"#{id}")</option>
                     }
                 </select>
             </label>
@@ -112,7 +112,7 @@ else
     {
         var s = setting!;
         var kigurumi = s.Kigurumi != 0;
-        <div class="grid gap-4 xl:grid-cols-2">
+        <div class="grid grid-cols-1 gap-4 xl:grid-cols-2">
             <PartPicker Label="@Localizer["Kigurumi"]" Ids="kigurumiIds" NameOf="@(id => CostumeName("kigurumi", id))" Value="s.Kigurumi" ValueChanged="v => Set(x => x.Kigurumi = v)">
                 <Hint>
                     @if (kigurumi)

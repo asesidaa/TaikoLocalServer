@@ -184,7 +184,7 @@ else
         var custom = settings!.Customization!;
         // As Nijiiro: a kigurumi replaces head, body and face paint.
         var kigurumi = f.Slots.GetValueOrDefault("kigurumi") != 0;
-        <div class="grid gap-4 xl:grid-cols-2">
+        <div class="grid grid-cols-1 gap-4 xl:grid-cols-2">
             @foreach (var slot in custom.CostumeSlots)
             {
                 var name = slot.Slot;

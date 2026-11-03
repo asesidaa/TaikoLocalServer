@@ -28,13 +28,13 @@
             <span class="block text-sm font-medium">@Localizer["Song titles"]</span>
             <span class="block max-w-2xl text-xs @Css.Muted">@Localizer["The language song titles show in here."]</span>
         </span>
-        <select class="@Css.Input w-auto dark:[&>option]:bg-zinc-900" aria-label="@Localizer["Song titles"]" disabled="@(songLanguage is null)"
+        <select class="@Css.Input w-auto dark:[&>option]:bg-zinc-900" aria-label="@Localizer["Song titles"]" disabled="@(songLanguage is null)" value="@songLanguage"
                 @onchange="e => SetSongLanguage(int.Parse(e.Value!.ToString()!))">
-            <option value="-1" selected="@(songLanguage == -1)">@Localizer["My profile's language"]</option>
+            <option value="-1">@Localizer["My profile's language"]</option>
             @for (var i = 0; i < 4; i++)
             {
                 var value = i;
-                <option value="@value" selected="@(songLanguage == value)">@Localizer[GameData.NameLanguages[value]]</option>
+                <option value="@value">@Localizer[GameData.NameLanguages[value]]</option>
             }
         </select>
     </div>
