@@ -1,0 +1,113 @@
+@* Pick a game's install on the server (ExtractChecklist's "Browse…"): the server's drives and folders, each marked
+   when it looks like the game; the pick is saved as Eras.<Game>.GamePath (Nijiiro's GameDataPath), no restart. *@
+@inject HttpClient Client
+
+<Dialog Title="@string.Format(Localizer["{0}'s folder on the server"], Game)" Width="max-w-lg" OnClose="OnClose">
+    <ChildContent>
+        <div class="flex items-center gap-1">
+            <button type="button" class="@Css.GhostButton !px-2" disabled="@(listing?.Path is null || busy)" aria-label="@Localizer["Up one folder"]"
+                    @onclick="() => Open(listing!.Parent)"><Icon Name="chevLeft" /></button>
+            <span class="min-w-0 flex-1 truncate font-mono text-xs @Css.Muted" title="@listing?.Path">@(listing?.Path ?? Localizer["This PC"])</span>
+        </div>
+        @if (listing?.Error is { } e)
+        {
+            <p class="mt-2 text-sm text-red-600 dark:text-red-400">@e</p>
+        }
+        @if (listing?.IsGame == true)
+        {
+            <p class="mt-2 flex items-center gap-1.5 text-sm font-medium text-emerald-700 dark:text-emerald-300"><Icon Name="check" />@string.Format(Localizer["This looks like {0}."], Game)</p>
+        }
+        <ul class="mt-2 max-h-72 overflow-y-auto rounded-xl border border-zinc-200 dark:border-zinc-700">
+            @if (listing is null)
+            {
+                <li class="p-3"><Skeleton /></li>
+            }
+            else if (listing.Entries.Count == 0)
+            {
+                <li class="px-3 py-2.5 text-sm @Css.Muted">@Localizer["No folders in here."]</li>
+            }
+            else
+            {
+                @foreach (var entry in listing.Entries)
+                {
+                    <li>
+                        <button type="button" disabled="@busy" @onclick="() => entry.IsFile ? Use(entry.Path) : Open(entry.Path)"
+                                class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800/60">
+                            <Icon Name="@(entry.IsFile ? "archive" : listing.Path is null ? "server" : "folder")" Class="@($"size-4 shrink-0 {(entry.IsGame ? "text-primary-500" : Css.Muted)}")" />
+                            <span class="min-w-0 flex-1 truncate">@entry.Name</span>
+                            @if (entry.IsGame)
+                            {
+                                <span class="shrink-0 rounded-full bg-primary-500/10 px-2 py-0.5 text-xs font-medium text-primary-700 dark:text-primary-300">@Game</span>
+                            }
+                        </button>
+                    </li>
+                }
+            }
+        </ul>
+        @if (error is { } err)
+        {
+            <p class="mt-2 text-sm text-red-600 dark:text-red-400">@err</p>
+        }
+    </ChildContent>
+    <Footer>
+        <button type="button" class="@Css.GhostButton" @onclick="OnClose">@Localizer["Cancel"]</button>
+        <button type="button" class="@Css.PrimaryButton" disabled="@(listing?.IsGame != true || busy)" @onclick="() => Use(listing!.Path!)">@Localizer["Use this folder"]</button>
+    </Footer>
+</Dialog>
+
+@code {
+    [Parameter, EditorRequired] public string Game { get; set; } = "";
+    /// <summary>Where to start: the game's folder so far, else the drives.</summary>
+    [Parameter] public string? Start { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    /// <summary>Saved: the extract status with the game's new folder.</summary>
+    [Parameter] public EventCallback<ExtractStatus> OnPicked { get; set; }
+
+    private FolderListing? listing;
+    private string? error;
+    private bool busy;
+
+    protected override Task OnInitializedAsync() => Open(string.IsNullOrWhiteSpace(Start) ? null : Start);
+
+    private async Task Open(string? path)
+    {
+        error = null;
+        listing = null;
+        var query = $"api/Extract/Folders?game={Uri.EscapeDataString(Game)}" + (path is null ? "" : $"&path={Uri.EscapeDataString(path)}");
+        try
+        {
+            listing = await Client.GetFromJsonAsync<FolderListing>(query);
+            // A folder that's gone (the old setting): start at the drives instead.
+            if (listing is { Error: not null, Entries.Count: 0 } && path is not null && path == Start)
+                listing = await Client.GetFromJsonAsync<FolderListing>($"api/Extract/Folders?game={Uri.EscapeDataString(Game)}");
+        }
+        catch (HttpRequestException e)
+        {
+            error = e.Message;
+        }
+    }
+
+    private async Task Use(string path)
+    {
+        busy = true;
+        error = null;
+        try
+        {
+            var res = await Client.PutAsJsonAsync("api/Extract/Path", new ExtractPathRequest(Game, path));
+            if (!res.IsSuccessStatusCode)
+            {
+                error = (await res.Content.ReadFromJsonAsync<Dictionary<string, string>>())?.GetValueOrDefault("message") ?? Localizer["Couldn't save that folder."];
+                return;
+            }
+            if (await res.Content.ReadFromJsonAsync<ExtractStatus>() is { } status) await OnPicked.InvokeAsync(status);
+        }
+        catch (HttpRequestException e)
+        {
+            error = e.Message;
+        }
+        finally
+        {
+            busy = false;
+        }
+    }
+}

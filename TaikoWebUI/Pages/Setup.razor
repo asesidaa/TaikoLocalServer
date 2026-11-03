@@ -2,188 +2,448 @@
 @implements IDisposable
 @using TaikoWebUI.Components.Admin
 @inject AuthService AuthService
-@inject AssetStatus AssetStatus
+@inject HttpClient Client
 @inject NavigationManager Nav
-@inject PageState Page
 
-<PageTitle>@Localizer["Set up the server"]</PageTitle>
-@* Server mode, first start: the only open page until an admin exists (MainLayout redirects here). *@
-<div class="mx-auto w-full max-w-md @Css.Card p-6 sm:p-8">
-    <h1 class="mb-5 font-display text-xl">@Localizer["Set up the server"]</h1>
-    <StepProgress Labels="labels" Current="step" />
-
-    <form class="mt-6" novalidate @onsubmit="Next">
-        <div class="rise" @key="step">
-            @switch (step)
+<PageTitle>@($"{AuthService.ServerName} · {Localizer["setup"]}")</PageTitle>
+@* The setup wizard, the only open page until setup is finished (MainLayout redirects here): the code from the
+   console, how the server is used, the admin (Server mode), the games, their files, who may sign up (Server mode).
+   Finish saves it to ServerSettings.json and the database; a change of games or mode restarts the server. *@
+<div class="w-full max-w-4xl self-start">
+    <div class="grid gap-6 lg:grid-cols-[14rem_minmax(0,1fr)]">
+        <ol class="hidden space-y-1 lg:block" aria-label="@Localizer["Setup steps"]">
+            @for (var n = 0; n < Steps.Count; n++)
             {
-                case 0:
-                    <h2 class="text-lg font-semibold">@Localizer["Setup code"]</h2>
-                    <p class="mt-1 text-sm @Css.Muted">@Localizer["Setup Code Hint"]</p>
-                    <code class="mt-3 block overflow-x-auto whitespace-nowrap rounded-lg bg-zinc-900 px-3 py-2 font-mono text-xs text-zinc-100">[WRN] No admin account yet. Setup code: <span class="text-amber-300">K7QM-2XPA</span></code>
-                    <input maxlength="9" autocomplete="off" spellcheck="false" autofocus placeholder="XXXX-XXXX" value="@setupCode" aria-label="@Localizer["Setup code"]"
-                           class="@Css.Input mt-5 py-3.5 text-center font-mono text-lg uppercase tracking-[.3em]" @oninput="OnCodeInput" />
-                    <p class="mt-3 text-xs @Css.Muted">@Localizer["Can't see the console?"] <code class="font-mono">TaikoLocalServer.exe admin promote &lt;access code&gt;</code></p>
-                    break;
-                case 1:
-                    <h2 class="text-lg font-semibold">@Localizer["Admin account"]</h2>
-                    <p class="mt-1 text-sm @Css.Muted">@Localizer["Admin Account Hint"]</p>
-                    <div class="mt-5 space-y-4">
-                        <AccessCodeField @bind-Value="code" />
-                        <PasswordField Label="@Localizer["Password"]" AutoComplete="new-password" @bind-Value="password" />
-                        <PasswordField Label="@Localizer["Confirm password"]" AutoComplete="new-password" @bind-Value="confirm" />
-                    </div>
-                    break;
-                case 2:
-                    <h2 class="text-lg font-semibold">@Localizer["Game files"]</h2>
-                    <p class="mt-1 mb-4 text-sm @Css.Muted">@Localizer["Game Files Hint"]</p>
-                    @* Every game that's on, all ticked; Continue needs Nijiiro's, the others can be done later. *@
-                    <ExtractChecklist Bare OnFinished="CheckAssets" />
-                    @if (AuthService.NijiiroOn && assetsMissing != false)
-                    {
-                        <p class="mt-3 text-xs @Css.Muted">@Localizer["Cabinets can't play until Nijiiro's are extracted."]</p>
-                    }
-                    <OlderGamesList Class="mt-5" OnChecked="r => older = r" />
-                    @if (older.Ready < older.Total)
-                    {
-                        <p class="mt-2 text-xs @Css.Muted">@Localizer["A game that isn't ready can be extracted later in Server Management › Games."]</p>
-                    }
-                    break;
-                default:
-                    <div class="pop py-2 text-center" style="--origin:center">
-                        <span class="mx-auto grid size-12 place-items-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"><Icon Name="check" Class="size-6" /></span>
-                        <p class="mt-3 font-semibold">@Localizer["The server is ready"]</p>
-                    </div>
-                    <dl class="mt-4 divide-y divide-zinc-100 text-sm dark:divide-zinc-800">
-                        @foreach (var (k, v) in Summary())
+                var i = n;
+                <li class="@($"flex items-center gap-3 rounded-xl px-3 py-2 text-sm {(i == step ? "bg-white font-medium shadow-sm dark:bg-zinc-900" : i < step ? "" : Css.Muted)}")" aria-current="@(i == step ? "step" : null)">
+                    <span class="@($"grid size-6 shrink-0 place-items-center rounded-full text-xs font-semibold {(i < step ? "bg-primary-500 text-white" : i == step ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900" : "bg-zinc-200 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400")}")">
+                        @if (i < step)
                         {
-                            <div class="flex justify-between gap-4 py-2"><dt class="@Css.Muted">@k</dt><dd class="font-medium">@v</dd></div>
+                            <Icon Name="check" />
                         }
-                    </dl>
-                    <p class="mt-3 text-xs @Css.Muted">@Localizer["Who can sign up is set in Admin › Access."]</p>
-                    break;
+                        else
+                        {
+                            @(i + 1)
+                        }
+                    </span>
+                    @Title(Steps[i])
+                </li>
             }
+        </ol>
+        <div class="min-w-0">
+            <div class="mb-4 lg:hidden">
+                <div class="flex items-baseline justify-between text-xs @Css.Muted">
+                    <span>@string.Format(Localizer["Step {0} of {1}"], step + 1, Steps.Count)</span>
+                    <span class="font-medium text-zinc-700 dark:text-zinc-300">@Title(Current)</span>
+                </div>
+                <div class="mt-1.5 h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+                    <div class="h-full rounded-full bg-primary-500" style="width:@((step + 1) * 100 / Steps.Count)%"></div>
+                </div>
+            </div>
+            <section class="@Css.Card p-6">
+                <div class="rise" @key="Current">@View</div>
+                @if (restarting)
+                {
+                    <p class="mt-4 flex items-center gap-2 text-sm @Css.Muted" role="status"><Icon Name="rotate" Class="size-4 animate-spin" />@Localizer["Restarting the server to apply it. This takes a few seconds…"]</p>
+                }
+                <div class="mt-4"><ErrorBox Message="@error" /></div>
+                @if (Current != "code" && !finished)
+                {
+                    <div class="mt-6 flex items-center gap-3 border-t border-zinc-100 pt-4 dark:border-zinc-800">
+                        @if (step > 1)
+                        {
+                            <button type="button" class="@Css.GhostButton" disabled="@busy" @onclick="Back">@Localizer["Back"]</button>
+                        }
+                        <span class="ml-auto"></span>
+                        @if (Current == "files" && !FilesReady)
+                        {
+                            <button type="button" class="@Css.GhostButton" disabled="@busy" @onclick="Next">@Localizer["Skip for now"]</button>
+                        }
+                        else if (Current == "done")
+                        {
+                            <button type="button" class="@Css.PrimaryButton" disabled="@busy" @onclick="Finish">@Localizer["Finish setup"]</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="@Css.PrimaryButton" disabled="@(busy || !CanNext)" @onclick="Next">@Localizer["Continue"]<Icon Name="chevRight" /></button>
+                        }
+                    </div>
+                }
+            </section>
+            <p class="mt-4 text-center text-xs @Css.Muted">@Localizer["Only this page is open until setup is finished. Cabinets can already connect."]</p>
         </div>
-        <div class="mt-4"><ErrorBox Message="@error" /></div>
-        <div class="mt-6 flex items-center justify-end gap-2">
-            @switch (step)
-            {
-                case 0:
-                case 1:
-                    <button class="@Css.PrimaryButton" disabled="@(busy || (step == 0 && setupCode.Length != 9))">@Localizer["Continue"]<Icon Name="chevRight" /></button>
-                    break;
-                case 2:
-                    <button class="@Css.PrimaryButton">@(assetsMissing == false || !AuthService.NijiiroOn ? Localizer["Continue"] : Localizer["Skip for now"])<Icon Name="chevRight" /></button>
-                    break;
-                default:
-                    @* A full reload: the server no longer reports setup as pending. *@
-                    <button type="button" class="@Css.GhostButton" @onclick='() => Nav.NavigateTo("/Admin/Server", forceLoad: true)'>@Localizer["Server Management"]</button>
-                    <button type="button" class="@Css.PrimaryButton" @onclick='() => Nav.NavigateTo("/", forceLoad: true)'>@Localizer["Go to the Dashboard"]</button>
-                    break;
-            }
-        </div>
-    </form>
+    </div>
 </div>
 
 @code {
     private int step;
     private string setupCode = "";
-    private string code = "";
+    private ServerMode? mode;
+    private string accessCode = "";
     private string password = "";
     private string confirm = "";
+    private HashSet<string> games = ["Nijiiro"];
+    private SignUpMode signUp = SignUpMode.InviteOnly;
     private string? error;
-    private bool busy;
-    private bool? assetsMissing;
-    private List<string> labels = [];
-    private (int Ready, int Total) older;
+    private bool busy, restarting, finished;
+    private ExtractStatus? extract;
 
-    protected override async Task OnInitializedAsync()
+    // Local mode has no admin account and no sign-up rules.
+    private List<string> Steps =>
+    [
+        "code", "mode", .. mode == ServerMode.Local ? Array.Empty<string>() : ["admin"],
+        "games", "files", .. mode == ServerMode.Local ? Array.Empty<string>() : ["signup"], "done",
+    ];
+
+    private string Current => Steps[Math.Min(step, Steps.Count - 1)];
+
+    private bool FilesReady => !games.Contains("Nijiiro") || Extracted("Nijiiro");
+
+    private bool Extracted(string game) => extract?.Games.FirstOrDefault(g => g.Game == game) is { } g && (g.Extracted || g.Last is not null);
+
+    private bool CanNext => Current switch
+    {
+        "mode" => mode is not null,
+        "admin" => accessCode.Length == 20 && password.Length >= 8 && password == confirm,
+        "games" => games.Count > 0,
+        _ => true,
+    };
+
+    private string Title(string s) => s switch
+    {
+        "code" => Localizer["Setup code"],
+        "mode" => Localizer["How it's used"],
+        "admin" => Localizer["Admin account"],
+        "games" => Localizer["Games"],
+        "files" => Localizer["Game files"],
+        "signup" => Localizer["Sign-up"],
+        _ => Localizer["Finish"],
+    };
+
+    protected override void OnInitialized()
     {
         if (!AuthService.SetupPending) Nav.NavigateTo("/", replace: true);
-        labels = [Localizer["Setup code"], Localizer["Admin account"], Localizer["Game files"], Localizer["Done"]];
-        Page.Set(Localizer["Set up the server"]);
-        // Signing in at the end of step 2 re-creates this page, and the sign-in state arrives a moment later.
-        AuthService.LoginStatusChanged += OnLoginChanged;
-        await Resume();
+        // The games the server already runs (a restart in the middle of setup keeps them).
+        if (AuthService.EnabledGames.Count > 0) games = [.. AuthService.EnabledGames];
     }
 
-    // Carry on as the new admin.
-    private async Task Resume()
+    public void Dispose() => Client.DefaultRequestHeaders.Remove(SetupHeader);
+
+    private const string SetupHeader = "X-Setup-Code";
+
+    private RenderFragment View => __builder =>
     {
-        if (step >= 2 || !AuthService.IsLoggedIn || !AuthService.IsAdmin) return;
-        code = (await AuthService.GetLoggedInUser())?.AccessCodes.FirstOrDefault() ?? "";
-        step = 2;
-        await CheckAssets();
-        StateHasChanged();
-    }
+        switch (Current)
+        {
+            case "code":
+                <h1 class="text-xl font-semibold">@Localizer["Set up your server"]</h1>
+                <p class="mt-1 text-sm @Css.Muted">@Localizer["Enter the setup code from the server's console. It proves you're at the server, not just on the same network."]</p>
+                <div class="mt-4 overflow-x-auto rounded-xl bg-zinc-950 p-3 font-mono text-[11px] leading-5 text-zinc-300" aria-hidden="true">
+                    <div><span class="text-amber-400">[WRN]</span> <span class="text-white">Setup isn't finished.</span> Open the setup wizard in a browser:</div>
+                    <div class="pl-12 text-white">@(Nav.BaseUri)setup</div>
+                    <div><span class="text-amber-400">[WRN]</span> Setup code: <span class="font-semibold text-white">XXXX-XXXX</span></div>
+                </div>
+                <form class="mt-4" novalidate @onsubmit="CheckCode">
+                    <label class="block">
+                        <span class="text-sm font-medium">@Localizer["Setup code"]</span>
+                        <input maxlength="9" autocomplete="off" spellcheck="false" autofocus placeholder="XXXX-XXXX" value="@setupCode"
+                               class="@Css.Input mt-1.5 text-center font-mono text-lg uppercase tracking-[.3em]" @oninput="OnCodeInput" />
+                    </label>
+                    <p class="mt-1.5 text-xs @Css.Muted">@Localizer["It changes every time the server starts, and stops working once setup is finished."]</p>
+                    <button class="@Css.PrimaryButton mt-4 w-full" disabled="@(busy || setupCode.Length != 9)">@Localizer["Continue"]</button>
+                </form>
+                break;
+            case "mode":
+                <h1 class="text-xl font-semibold">@Localizer["How will you use it?"]</h1>
+                <p class="mt-1 text-sm @Css.Muted">@((MarkupString)string.Format(Localizer["You can change this later in {0}."], "<span class=\"font-mono text-xs\">ServerSettings.json</span>"))</p>
+                <div class="mt-4 space-y-3" role="radiogroup">
+                    @RadioCard(mode == ServerMode.Local, () => mode = ServerMode.Local, "home", Localizer["Just me, at home"],
+                        Localizer["Local mode. No accounts or passwords: anyone who opens the Web UI can pick a player and change anything. Best for one cabinet on your own network."])
+                    @RadioCard(mode == ServerMode.Server, () => mode = ServerMode.Server, "users", Localizer["For other players too"],
+                        Localizer["Server mode. Everyone signs in with their card and a password; only admins can manage the server. Best for an arcade, a club, or anything on the internet."])
+                </div>
+                break;
+            case "admin":
+                <h1 class="text-xl font-semibold">@Localizer["Create your admin account"]</h1>
+                <p class="mt-1 text-sm @Css.Muted">@Localizer["You sign in with your card's access code and a password, like every player."]</p>
+                <div class="mt-4 space-y-3">
+                    <AccessCodeField @bind-Value="accessCode" />
+                    <p class="-mt-1 text-xs @Css.Muted">@Localizer["The 20 digits on the card you play with. It doesn't need to have played here yet."]</p>
+                    <PasswordField Label="@Localizer["Password"]" AutoComplete="new-password" @bind-Value="password" />
+                    <p class="-mt-1 text-xs @Css.Muted">@Localizer["At least 8 characters."]</p>
+                    <PasswordField Label="@Localizer["Confirm password"]" AutoComplete="new-password" @bind-Value="confirm" />
+                    @if (confirm.Length > 0 && password != confirm)
+                    {
+                        <p class="text-sm text-red-600 dark:text-red-400">@Localizer["The passwords don't match."]</p>
+                    }
+                </div>
+                break;
+            case "games":
+                <h1 class="text-xl font-semibold">@Localizer["Which games do your cabinets run?"]</h1>
+                <p class="mt-1 text-sm @Css.Muted">@Localizer["Turn on each game a cabinet here will connect with. Players keep one account across all of them."]</p>
+                <ul class="mt-4 grid gap-2 sm:grid-cols-2">
+                    @foreach (var info in GameInfo.All)
+                    {
+                        var on = games.Contains(info.Name);
+                        <li>
+                            <label class="@($"flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2.5 {(on ? "border-primary-500 bg-primary-500/5" : "border-zinc-200 hover:border-zinc-300 dark:border-zinc-700")}")">
+                                <input type="checkbox" class="size-4 shrink-0 accent-primary-500" checked="@on" disabled="@busy" aria-label="@info.Name"
+                                       @onchange="e => { if (e.Value is true) games.Add(info.Name); else games.Remove(info.Name); }" />
+                                <GameDot Game="info" />
+                                <span class="min-w-0 flex-1">
+                                    <span class="block text-sm font-medium">@info.Name</span>
+                                    <span class="block text-xs @Css.Muted">@info.Japanese</span>
+                                </span>
+                            </label>
+                        </li>
+                    }
+                </ul>
+                @if (games.Count == 0)
+                {
+                    <p role="alert" class="mt-3 text-sm text-red-600 dark:text-red-400">@Localizer["Pick at least one game."]</p>
+                }
+                break;
+            case "files":
+                <h1 class="text-xl font-semibold">@Localizer["Add the game files"]</h1>
+                <p class="mt-1 mb-4 text-sm @Css.Muted">@Localizer["Song names, costumes and the data cabinets need come from your copies of the games. Pick each game's folder; nothing in it is changed."]</p>
+                <ExtractChecklist Bare OnFinished="LoadExtract" OffLabel="@Localizer["Not chosen in the last step:"]" />
+                @if (!FilesReady)
+                {
+                    <p class="mt-3 text-xs @Css.Muted">@Localizer["Nijiiro cabinets can't play until Nijiiro is extracted. You can skip this and do it later in Server Management › Games."]</p>
+                }
+                break;
+            case "signup":
+                <h1 class="text-xl font-semibold">@Localizer["Who can make an account?"]</h1>
+                <p class="mt-1 text-sm @Css.Muted">@Localizer["Players sign up with the card they play with. You can change this any time in Admin › Access."]</p>
+                <div class="mt-4 space-y-3" role="radiogroup">
+                    @RadioCard(signUp == SignUpMode.InviteOnly, () => signUp = SignUpMode.InviteOnly, "ticket", Localizer["Only people I invite"],
+                        Localizer["You make a 6-digit invite code in User Management for each player."])
+                    @RadioCard(signUp == SignUpMode.LastPlayTime, () => signUp = SignUpMode.LastPlayTime, "monitor", Localizer["Anyone who's played here"],
+                        Localizer["Any card that has played on one of your cabinets can sign up."])
+                    @RadioCard(signUp == SignUpMode.Open, () => signUp = SignUpMode.Open, "globe", Localizer["Anyone"],
+                        Localizer["Any access code can sign up, even one that's never played here."])
+                </div>
+                break;
+            default:
+                @Summary
+                break;
+        }
+    };
 
-    private void OnLoginChanged(object? sender, EventArgs e) => InvokeAsync(Resume);
+    private RenderFragment RadioCard(bool on, Action pick, string icon, string title, string description) => __builder =>
+    {
+        <button type="button" role="radio" aria-checked="@Css.Aria(on)" @onclick="pick"
+                class="@($"flex w-full gap-3 rounded-2xl border p-4 text-left transition-colors {(on ? "border-primary-500 bg-primary-500/5 ring-1 ring-primary-500" : "border-zinc-200 hover:border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-600")}")">
+            <span class="@($"grid size-10 shrink-0 place-items-center rounded-xl {(on ? "bg-primary-500 text-white" : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400")}")"><Icon Name="@icon" Class="size-6" /></span>
+            <span class="min-w-0 flex-1"><span class="block font-semibold">@title</span><span class="mt-0.5 block text-sm @Css.Muted">@description</span></span>
+        </button>
+    };
 
-    public void Dispose() => AuthService.LoginStatusChanged -= OnLoginChanged;
+    private RenderFragment Summary => __builder =>
+    {
+        var extracted = games.Count(Extracted);
+        <div class="text-center">
+            <span class="mx-auto grid size-12 place-items-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"><Icon Name="check" Class="size-6" /></span>
+            <h1 class="mt-3 text-xl font-semibold">@(finished ? Localizer["Your server is ready"] : Localizer["Ready to finish"])</h1>
+            <p class="mt-1 text-sm @Css.Muted">@(finished ? Localizer["Settings saved. Setup is finished."] : Localizer["Check everything, then finish. The server saves this to ServerSettings.json, and restarts if the mode changed, which takes a few seconds."])</p>
+        </div>
+        <dl class="mt-5 divide-y divide-zinc-100 rounded-xl border border-zinc-200 text-sm dark:divide-zinc-800 dark:border-zinc-700">
+            @Row(Localizer["How it's used"], mode == ServerMode.Local ? Localizer["Local · no sign-in"] : Localizer["Server · accounts and sign-in"], "mode")
+            @if (mode == ServerMode.Server)
+            {
+                @Row(Localizer["Admin"], string.Format(Localizer["card •••• {0}"], accessCode.Length >= 4 ? accessCode[^4..] : accessCode), "admin")
+            }
+            @Row(Localizer["Games"], string.Join(", ", GameInfo.All.Where(i => games.Contains(i.Name)).Select(i => i.Name)), "games")
+            @Row(Localizer["Game files"], extracted == games.Count ? string.Format(Localizer["All {0} extracted"], games.Count) : string.Format(Localizer["{0} of {1} extracted"], extracted, games.Count), "files")
+            @if (mode == ServerMode.Server)
+            {
+                @Row(Localizer["Sign-up"], signUp switch { SignUpMode.InviteOnly => Localizer["Invite code only"], SignUpMode.LastPlayTime => Localizer["Anyone who's played here"], _ => Localizer["Anyone"] }, "signup")
+            }
+        </dl>
+        @if (finished)
+        {
+            <div class="mt-5 grid gap-2 sm:grid-cols-2">
+                <button type="button" class="@Css.PrimaryButton" @onclick='() => Nav.NavigateTo("/Admin/Server", forceLoad: true)'>@Localizer["Server Management"]</button>
+                <button type="button" class="@Css.GhostButton border border-zinc-200 dark:border-zinc-700" @onclick='() => Nav.NavigateTo("/", forceLoad: true)'>@Localizer["Go to the Dashboard"]</button>
+            </div>
+        }
+    };
+
+    private RenderFragment Row(string label, string value, string goTo) => __builder =>
+    {
+        <div class="flex items-center justify-between gap-3 px-3 py-2.5">
+            <dt class="@Css.Muted">@label</dt>
+            <dd class="flex items-center gap-2 text-right">
+                @value
+                @if (!finished)
+                {
+                    <button type="button" class="text-xs font-medium text-primary-600 hover:underline dark:text-primary-400" @onclick="() => GoTo(goTo)">@Localizer["Change"]</button>
+                }
+            </dd>
+        </div>
+    };
 
     // Upper-case, and the dash goes in for you: XXXX-XXXX.
     private void OnCodeInput(ChangeEventArgs e)
     {
         var raw = new string((e.Value?.ToString() ?? "").ToUpperInvariant().Where(char.IsAsciiLetterOrDigit).Take(8).ToArray());
         setupCode = raw.Length > 4 ? $"{raw[..4]}-{raw[4..]}" : raw;
+        error = null;
+    }
+
+    private async Task CheckCode()
+    {
+        if (setupCode.Length != 9) return;
+        busy = true;
+        error = null;
+        try
+        {
+            var res = await Client.PostAsJsonAsync("api/Setup/Code", new SetupCodeRequest(setupCode));
+            if (!res.IsSuccessStatusCode)
+            {
+                error = await Message(res);
+                return;
+            }
+            // From here on the code opens the admin pages the wizard uses (extract, the folder picker).
+            Client.DefaultRequestHeaders.Remove(SetupHeader);
+            Client.DefaultRequestHeaders.Add(SetupHeader, setupCode);
+            step = 1;
+        }
+        catch (HttpRequestException e)
+        {
+            error = e.Message;
+        }
+        finally
+        {
+            busy = false;
+        }
     }
 
     private async Task Next()
     {
         error = null;
-        switch (step)
+        if (Current == "games")
         {
-            case 0:
-                step++;
-                return;
-            case 1:
-                error = code.Length != 20 ? Localizer["Access codes are 20 digits."]
-                    : password.Length < 8 ? Localizer["Use at least 8 characters."]
-                    : password != confirm ? Localizer["Register Different Confirm Password Error"]
-                    : null;
-                if (error is not null) return;
-                busy = true;
-                var result = await AuthService.Register(code, DateTime.Now, password, confirm, "", setupCode);
-                if (result == 1) result = await AuthService.Login(code, password) == 1 ? 1 : 6;
-                busy = false;
-                switch (result)
+            busy = true;
+            try
+            {
+                var res = await Client.PostAsJsonAsync("api/Setup/Games", new SetupGamesRequest(setupCode, games.ToList()));
+                if (!res.IsSuccessStatusCode)
                 {
-                    case 1:
-                        await Resume();
-                        return;
-                    case 4: error = Localizer["Register Already Registered Error"]; return;
-                    case 7:
-                        error = Localizer["That setup code isn't right. It changes every time the server starts: check the console again."];
-                        step = 0;
-                        return;
-                    default: error = Localizer["Unknown Error"]; return;
+                    error = await Message(res);
+                    return;
                 }
-            case 2:
-                step++;
+                if ((await res.Content.ReadFromJsonAsync<SetupResponse>())?.Restarting == true)
+                    await WaitForRestart(c => c.EnabledEras is { } eras && eras.ToHashSet().SetEquals(games));
+            }
+            catch (HttpRequestException e)
+            {
+                error = e.Message;
                 return;
+            }
+            finally
+            {
+                busy = false;
+            }
+        }
+        step = Math.Min(step + 1, Steps.Count - 1);
+        if (Current is "files" or "done") await LoadExtract();
+    }
+
+    private void Back() => step = Math.Max(1, step - 1);
+
+    private async Task GoTo(string s)
+    {
+        step = Steps.IndexOf(s);
+        if (Current is "files" or "done") await LoadExtract();
+    }
+
+    private async Task Finish()
+    {
+        busy = true;
+        error = null;
+        try
+        {
+            var server = mode == ServerMode.Server;
+            var res = await Client.PostAsJsonAsync("api/Setup/Finish",
+                new SetupFinishRequest(setupCode, mode!.Value, server ? accessCode : null, server ? password : null, signUp));
+            if (!res.IsSuccessStatusCode)
+            {
+                error = await Message(res);
+                return;
+            }
+            if ((await res.Content.ReadFromJsonAsync<SetupResponse>())?.Restarting == true)
+                await WaitForRestart(c => c.Mode == mode && !c.SetupPending);
+            Client.DefaultRequestHeaders.Remove(SetupHeader);
+            // Signed in as the new admin, for Server Management.
+            if (server && await AuthService.Login(accessCode, password) != 1)
+                error = Localizer["Setup is finished, but signing in didn't work. Sign in with your card and password."];
+            finished = true;
+        }
+        catch (HttpRequestException e)
+        {
+            error = e.Message;
+        }
+        finally
+        {
+            busy = false;
+            password = confirm = "";
         }
     }
 
-    private async Task CheckAssets()
+    // The server stops and starts again: wait for the new one (it has the new settings) to answer.
+    private async Task WaitForRestart(Func<ClientAuthConfigResponse, bool> ready)
     {
-        assetsMissing = await AssetStatus.IsMissingAsync(refresh: true);
+        restarting = true;
         StateHasChanged();
+        try
+        {
+            for (var tries = 0; tries < 120; tries++)
+            {
+                await Task.Delay(1000);
+                try
+                {
+                    if (await Client.GetFromJsonAsync<ClientAuthConfigResponse>("api/Auth/Config") is { } config && ready(config)) return;
+                }
+                catch (HttpRequestException)
+                {
+                    // Still restarting.
+                }
+            }
+            throw new HttpRequestException(Localizer["The server didn't come back after restarting. Check its console, then reload this page."]);
+        }
+        finally
+        {
+            restarting = false;
+        }
     }
 
-    private IEnumerable<(string, string)> Summary() =>
-    [
-        (Localizer["Mode"], Localizer["Server"]),
-        (Localizer["Admin"], code.Length > 4 ? $"•••• {code[^4..]}" : code),
-        .. AuthService.NijiiroOn
-            ? [(older.Total > 0 ? Localizer["Nijiiro files"] : Localizer["Game files"], assetsMissing == false ? Localizer["In place"] : Localizer["Not added yet"])]
-            : Array.Empty<(string, string)>(),
-        .. older.Total > 0 ? [(Localizer["Older games"], string.Format(Localizer["{0} of {1} ready"], older.Ready, older.Total))] : Array.Empty<(string, string)>(),
-        (Localizer["Sign-up"], AuthService.OnlyAdmin ? Localizer["Admins only"]
-            : AuthService.SignUpMode switch
+    // Just after a restart the first try can still fail: a few more, a second apart.
+    private async Task LoadExtract()
+    {
+        for (var tries = 0; tries < 5; tries++)
+        {
+            try
             {
-                SignUpMode.Open => Localizer["Anyone with a card"],
-                SignUpMode.LastPlayTime => Localizer["Last play time or invite code"],
-                SignUpMode.InviteOnly => Localizer["Invite code only"],
-                _ => Localizer["Closed"],
-            }),
-    ];
+                extract = await Client.GetFromJsonAsync<ExtractStatus>("api/Extract");
+                return;
+            }
+            catch (HttpRequestException)
+            {
+                await Task.Delay(1000);
+            }
+        }
+    }
+
+    private async Task<string> Message(HttpResponseMessage res)
+    {
+        try
+        {
+            return (await res.Content.ReadFromJsonAsync<Dictionary<string, string>>())?.GetValueOrDefault("message") ?? Localizer["Unknown Error"];
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            return Localizer["Unknown Error"];
+        }
+    }
 }

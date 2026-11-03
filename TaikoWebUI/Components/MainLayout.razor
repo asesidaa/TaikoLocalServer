@@ -23,6 +23,10 @@ else if ((AuthService.LoginRequired && !AuthService.IsLoggedIn) || OnSetup)
                 <DrumMark />
             }
             <span class="font-display text-[17px] tracking-wide">@AuthService.ServerName</span>
+            @if (OnSetup)
+            {
+                <span class="ml-2 rounded-full bg-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">@Localizer["Setup"]</span>
+            }
             <div class="ml-auto flex items-center gap-1"><TopControls /></div>
         </header>
         <main class="flex flex-1 flex-col items-center justify-center px-4 pb-24 pt-4 sm:pb-32">@Body</main>

@@ -159,8 +159,8 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
         }
     }
 
-    // Nijiiro's install has Data/x64/datatable; an older game's folder is (or holds) its USRDIR/data, which has fumen,
-    // or is a .zip of it: the places GameSource.Open looks.
+    // Nijiiro's install has Data/x64/datatable. An older game's folder is (or holds) its USRDIR/data, which has fumen
+    // (the places GameSource.Open looks), or is a .zip of it (not looked into).
     private static bool LooksLike(GameEra game, string path)
     {
         try
@@ -168,12 +168,31 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
             if (game == GameEra.Nijiiro) return Directory.Exists(Path.Combine(path, "Data", "x64", "datatable"));
             if (File.Exists(path)) return path.EndsWith(".zip", StringComparison.OrdinalIgnoreCase);
             return new[] { "", "data", "USRDIR/data", "dev_hdd0/game/SCEEXE000/USRDIR/data" }
-                .Any(rel => Directory.Exists(Path.Combine(path, rel, "fumen")));
+                .Select(rel => Path.Combine(path, rel))
+                .FirstOrDefault(data => Directory.Exists(Path.Combine(data, "fumen"))) is { } found && OlderGameOf(found) == game;
         }
         catch (Exception e) when (e is UnauthorizedAccessException or IOException)
         {
             return false;
         }
+    }
+
+    // Which older game a USRDIR/data is. Each keeps the older games' config folders too, so it's the newest config there
+    // (Red's dump has only ST8100-7, so any variant counts). Kimidori and Momoiro have none: their PARAM.SFO (next to
+    // USRDIR) is titled "…(ST51)" and "…(ST41)".
+    private static readonly (GameEra Game, string Config)[] ConfigsNewestFirst =
+        [(GameEra.Green, "S11100"), (GameEra.Blue, "S10100"), (GameEra.Yellow, "ST9100"), (GameEra.Red, "ST8100"), (GameEra.White, "ST7100"), (GameEra.Murasaki, "ST6100")];
+
+    public static GameEra? OlderGameOf(string data)
+    {
+        var config = Path.Combine(data, "config");
+        var names = Directory.Exists(config) ? Directory.EnumerateDirectories(config).Select(Path.GetFileName).ToList() : [];
+        foreach (var (game, id) in ConfigsNewestFirst)
+            if (names.Any(n => n!.StartsWith(id + "-", StringComparison.OrdinalIgnoreCase)))
+                return game;
+        var sfo = Path.Combine(data, "..", "..", "PARAM.SFO");
+        var title = File.Exists(sfo) ? Encoding.ASCII.GetString(File.ReadAllBytes(sfo)) : "";
+        return title.Contains("(ST51)") ? GameEra.Kimidori : title.Contains("(ST41)") ? GameEra.Momoiro : null;
     }
 
     public async Task<string?> SetGamePathAsync(GameEra game, string path, CancellationToken cancellationToken)

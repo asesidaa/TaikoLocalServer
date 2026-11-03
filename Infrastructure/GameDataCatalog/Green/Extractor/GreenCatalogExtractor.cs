@@ -143,6 +143,8 @@ public static partial class GreenCatalogExtractor
                 var directoryName = Path.GetFileName(Path.GetDirectoryName(path));
                 return directoryName is not null && names.Contains(directoryName);
             })
+            // extract leaves name-only packs (pack/*/title_name/…) as empty files, for the id scan: no entries to read.
+            .Where(path => new FileInfo(path).Length > 0)
             .Order(StringComparer.OrdinalIgnoreCase)
             .SelectMany(NdpReader.ReadFile)
             .GroupBy(entry => (entry.Id, entry.FileName))

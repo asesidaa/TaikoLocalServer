@@ -1,6 +1,6 @@
 @* Extract game files (Server Management › Games; Setup; one game's own card in Game data › Overview): tick the games
    that are on, press one Extract button, and they run one after another. Each is read from its install on the server
-   (Eras.<Game>.GamePath; Nijiiro's Eras.Nijiiro.GameDataPath) or picked in this browser (AllowRemoteGameDir).
+   (Eras.<Game>.GamePath; Nijiiro's Eras.Nijiiro.GameDataPath, picked with Browse…) or picked in this browser (AllowRemoteGameDir).
    Afterwards each says in plain words what came out and what the copy lacks (its extract.json's notes). *@
 @implements IAsyncDisposable
 @inject HttpClient Client
@@ -49,6 +49,8 @@ else
     [Parameter] public bool Bare { get; set; }
     /// <summary>A run finished (successfully or not): the games' data has been reloaded.</summary>
     [Parameter] public EventCallback OnFinished { get; set; }
+    /// <summary>What to call the games that aren't offered (setup: the ones not picked).</summary>
+    [Parameter] public string? OffLabel { get; set; }
 
     private sealed record Picked(int Files, long Bytes, string Folder);
     private sealed record PickResult(string? Error, int Files, long Bytes, string Folder);
@@ -59,7 +61,7 @@ else
     private readonly HashSet<string> ticked = [];
     private readonly Dictionary<string, Picked> picks = [];
     private readonly Dictionary<string, ElementReference> folderInputs = [];
-    private string? open, sending, error;
+    private string? open, sending, error, browsing;
     private double sent, total;
     private CancellationTokenSource? polling;
     private IJSObjectReference? module;
@@ -113,7 +115,7 @@ else
             if (off.Count > 0)
             {
                 <p class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs @Css.Muted">
-                    <span>@Localizer["Off, so not offered:"]</span>
+                    <span>@(OffLabel ?? Localizer["Off, so not offered:"])</span>
                     @foreach (var i in off)
                     {
                         <span class="inline-flex items-center gap-1.5"><GameDot Game="i" />@i.Name</span>
@@ -123,7 +125,7 @@ else
         }
         if (Shown.Any(g => g.Game == "Nijiiro"))
         {
-            <div class="mt-3"><Toggle Label="@Localizer["Include the game's mods folder"]" Description="@Localizer["Nijiiro: include files from Data_mods over vanilla ones"]" Icon="archive" @bind-Value="mods" /></div>
+            <div class="mt-3"><Toggle Label="@Localizer["Include Nijiiro's mods folder"]" Description="@Localizer["Files in Data_mods replace the game's own. Only Nijiiro has a mods folder."]" Icon="archive" @bind-Value="mods" /></div>
         }
         if (error is { } e)
         {
@@ -136,6 +138,10 @@ else
             }
             @RunButton
         </div>
+        if (browsing is { } game)
+        {
+            <FolderPicker Game="@game" Start="@status.Games.FirstOrDefault(g => g.Game == game)?.GamePath" OnClose="() => browsing = null" OnPicked="FolderPicked" />
+        }
         if (status.Run is { Output.Count: > 0 } run)
         {
             <details class="mt-3" open="@reportOpen" @ontoggle="() => reportOpen = !reportOpen">
@@ -179,24 +185,29 @@ else
         if (g.GamePathFound)
         {
             <span class="flex min-w-0 items-center gap-1.5 text-xs @Css.Muted">
-                <Icon Name="archive" Class="size-4 shrink-0" /><span class="truncate font-mono" title="@g.GamePath">@g.GamePath</span>
+                <Icon Name="folder" Class="size-4 shrink-0" /><span class="truncate font-mono" title="@g.GamePath">@g.GamePath</span>
             </span>
         }
         else if (g.GamePath.Length > 0)
         {
-            <span class="text-xs text-amber-700 dark:text-amber-300">@string.Format(Localizer["{0} isn't there. Check {1} in ServerSettings.json."], g.GamePath, g.Setting)</span>
+            <span class="text-xs text-amber-700 dark:text-amber-300">@string.Format(Localizer["{0} isn't there any more."], g.GamePath)</span>
         }
         else
         {
-            <span class="text-xs text-amber-700 dark:text-amber-300">
-                @((MarkupString)string.Format(Localizer["No game folder set. Add {0} to ServerSettings.json and restart."], $"<span class=\"font-mono\">{g.Setting}</span>"))
-                @if (status!.RemoteGameDir)
-                {
-                    @Localizer[" Or pick it in this browser."]
-                }
-            </span>
+            <span class="text-xs @Css.Muted">@string.Format(Localizer["Pick {0}'s folder on the server."], g.Game)</span>
         }
+        <button type="button" disabled="@Running" @onclick="() => browsing = g.Game"
+                class="@($"{Css.GhostButton} mt-1 border border-zinc-200 !px-2.5 !py-1 text-xs dark:border-zinc-700")">
+            <Icon Name="folder" />@(g.GamePathFound ? Localizer["Change…"] : Localizer["Browse…"])
+        </button>
     };
+
+    private void FolderPicked(ExtractStatus picked)
+    {
+        status = picked;
+        if (browsing is { } game) ticked.Add(game);
+        browsing = null;
+    }
 
     // none, sending, waiting, running, failed, gap, done.
     private string StateOf(ExtractGame g)
