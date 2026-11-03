@@ -605,7 +605,7 @@ else
         var name = string.IsNullOrEmpty(r.UserName) ? $"#{r.Baid}" : r.UserName;
         <li class="flex items-center gap-3 rounded-lg px-2 py-1.5 @(me ? "bg-primary-500/10" : "")">
             <span class="w-7 text-right text-xs tabular-nums @Css.Muted">@r.Rank</span>
-            <span class="grid size-8 shrink-0 place-items-center rounded-full bg-zinc-200 text-xs font-semibold text-zinc-700 dark:bg-zinc-700 dark:text-zinc-200">@name.EnumerateRunes().First().ToString()</span>
+            <Avatar Setting="@(new UserSetting { MyDonName = name, CardColor = r.CardColor, CardPattern = r.CardPattern })" Size="32" />
             <span class="min-w-0 flex-1 truncate text-sm @(me ? "font-medium" : "")">@name@(me ? " " + Localizer["(you)"] : "")</span>
             <img data-asset="@GameData.CrownIcon(r.BestCrown)" alt="@Localizer[GameData.CrownName(r.BestCrown)]" class="size-4" />
             <span class="font-mono text-sm tabular-nums">@r.BestScore.ToString("N0")</span>

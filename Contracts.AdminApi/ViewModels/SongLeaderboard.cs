@@ -25,4 +25,8 @@ public class SongLeaderboard
     public uint DrumrollCount { get; set; }
     
     public string? UserName { get; set; }
+
+    /// <summary>The player's card look, for their avatar.</summary>
+    public uint CardColor { get; set; }
+    public CardPattern CardPattern { get; set; }
 }

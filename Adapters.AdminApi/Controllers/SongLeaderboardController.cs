@@ -89,6 +89,10 @@ public partial class SongLeaderboardController(ITaikoDbContext context) : BaseAd
             .Where(u => pageBaids.Contains(u.Baid))
             .AsNoTracking()
             .ToDictionaryAsync(u => u.Baid, u => u.MyDonName, HttpContext.RequestAborted);
+        var cards = await context.UserWebProfiles
+            .Where(p => pageBaids.Contains(p.Baid) || p.Baid == baid)
+            .AsNoTracking()
+            .ToDictionaryAsync(p => p.Baid, HttpContext.RequestAborted);
 
         var pageScoreSet = orderedScores.Select(s => s.BestScore).ToHashSet();
         var rankByScore = new Dictionary<uint, int>();
@@ -119,6 +123,8 @@ public partial class SongLeaderboardController(ITaikoDbContext context) : BaseAd
                 Rank = rankByScore.GetValueOrDefault(s.BestScore, (page - 1) * limit + i + 1),
                 Baid = s.Baid,
                 UserName = userNames.GetValueOrDefault(s.Baid),
+                CardColor = cards.GetValueOrDefault(s.Baid)?.CardColor ?? 0,
+                CardPattern = cards.GetValueOrDefault(s.Baid)?.CardPattern ?? default,
                 BestScore = s.BestScore,
                 BestRate = s.BestRate,
                 BestCrown = s.BestCrown,
@@ -148,6 +154,8 @@ public partial class SongLeaderboardController(ITaikoDbContext context) : BaseAd
                     Position = ahead + 1,
                     Baid = score.Baid,
                     UserName = user?.MyDonName,
+                    CardColor = cards.GetValueOrDefault(baid)?.CardColor ?? 0,
+                    CardPattern = cards.GetValueOrDefault(baid)?.CardPattern ?? default,
                     BestScore = score.BestScore,
                     BestRate = score.BestRate,
                     BestCrown = score.BestCrown,
