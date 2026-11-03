@@ -1,171 +1,74 @@
 @page "/Users/{baid:int}/{Game}/Profile"
 @attribute [Authorize]
+@implements IDisposable
 @using System.Text.Json
 @using TaikoLocalServer.Contracts.AdminApi.Ac15ProfileSettings
 @using TaikoWebUI.Components.Profile
 @inject HttpClient Client
 @inject PageState Page
 @inject ToastService Toast
-@inject IJSRuntime Js
 @inject AuthService AuthService
 
 <PageTitle>@Localizer["Profile"]</PageTitle>
-@* An older game's profile as one form: name and title, costume (unlocked items only), colours and game options.
-   What the game doesn't have is hidden, and one line names it. The preview is the game's own 3D don-chan once its
-   models are extracted (Server Management › Games), else the player's initial. *@
-<div class="mx-auto max-w-3xl">
-    <h1 class="text-2xl font-semibold tracking-tight">@Localizer["Profile"]</h1>
-    <GameLine Game="@GameName" Class="mb-5" />
-    @if (settings is null || form is null)
-    {
-        <div class="@Css.Card p-5">@if (failed) { <p class="text-sm @Css.Muted">@string.Format(Localizer["No {0} profile yet: it's made the first time this card plays {0}."], GameName)</p> } else { <Skeleton /> }</div>
-    }
-    else
-    {
-        var caps = settings.Capabilities;
-        <div class="space-y-4">
-            @* Preview: don-chan as this game draws him (or the player's initial), and a plain nameplate. *@
-            <section class="@Css.Card flex items-center gap-4 p-5">
-                @if (has3D)
-                {
-                    <div @ref="donFrame" role="img" aria-label="@Localizer["3D preview"]" class="pointer-events-none relative size-32 shrink-0"></div>
-                }
-                else
-                {
-                    <span class="grid size-16 shrink-0 place-items-center rounded-full bg-primary-500 text-2xl font-semibold text-white" aria-hidden="true">@(form.Name.Length > 0 ? form.Name[..1].ToUpperInvariant() : "?")</span>
-                }
-                <div class="min-w-0 flex-1 rounded-xl bg-zinc-900 px-4 py-2 text-white">
-                    @if (caps.SupportsTitle)
-                    {
-                        <p class="truncate text-xs text-zinc-300">@form.TitleText</p>
-                    }
-                    <p class="truncate font-semibold">@form.Name</p>
-                </div>
-            </section>
+@* An older game's profile, laid out as Nijiiro's: the player card (this game's own 3D don-chan once its models are
+   extracted, Server Management › Games), then the sections. What the game doesn't have is hidden, and one line names
+   it. Autosave: a change saves after a short pause (the status shows in the top bar). *@
+<GameLine Game="@GameName" Class="mb-4" />
+@if (settings is null || form is null)
+{
+    <div class="@Css.Card p-5">@if (failed) { <p class="text-sm @Css.Muted">@string.Format(Localizer["No {0} profile yet: it's made the first time this card plays {0}."], GameName)</p> } else { <Skeleton /> }</div>
+}
+else
+{
+    var caps = settings.Capabilities;
+    <div class="lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-6">
+        <aside class="lg:sticky lg:top-24">
+            <PlayerCard Setting="CardSetting" Game="@GameName" />
             @if (!has3D)
             {
-                <p class="text-xs @Css.Muted">@string.Format(Localizer["{0}'s don-chan models aren't extracted, so the preview is your initial."], GameName)</p>
+                <p class="mt-2 text-xs @Css.Muted">@string.Format(Localizer["{0}'s don-chan models aren't extracted, so the card has no don-chan."], GameName)</p>
             }
-
-            <section class="@Css.Card space-y-4 p-5">
-                <h2 class="font-semibold">@Localizer["Name & title"]</h2>
-                <div class="grid gap-3 sm:grid-cols-2">
-                    <label class="text-xs @Css.Muted">@Localizer["Name"]
-                        <input class="@Css.Input mt-1" maxlength="10" value="@form.Name" @oninput="e => form.Name = e.Value?.ToString() ?? string.Empty" />
-                    </label>
-                    <SelectField Label="@Localizer["Language"]" Options="@GameData.NameLanguages.Select(l => (string)Localizer[l]).ToList()"
-                                 Value="form.Language" ValueChanged="v => form.Language = v" />
-                </div>
-                @if (caps.SupportsTitle && settings.Customization?.Title is { } title)
+        </aside>
+        <div class="min-w-0">
+            <Rail Role="tablist" Label="@Localizer["Profile"]" Class="mt-4 rounded-2xl bg-zinc-100 p-1 lg:mt-0 dark:bg-zinc-900" TrackClass="gap-1">
+                @Tab(Section.Profile, Localizer["Profile"], "id")
+                @if (settings.Customization is not null)
                 {
-                    <label class="block text-xs @Css.Muted">@Localizer["Title"]
-                        <select class="@Css.Input mt-1" value="@form.TitleId" @onchange="e => PickTitle(uint.Parse(e.Value!.ToString()!))">
-                            @foreach (var id in Choices(title.UnlockedTitleIds, title.TitleId, titles.Keys))
-                            {
-                                <option value="@id">@TitleName(id)</option>
-                            }
-                        </select>
-                    </label>
+                    @Tab(Section.Costume, Localizer["Costume"], "shirt")
                 }
-            </section>
-
-            @if (settings.Customization is { } custom)
-            {
-                <section class="@Css.Card space-y-3 p-5">
-                    <h2 class="font-semibold">@Localizer["Costume"]</h2>
-                    <div class="grid gap-3 sm:grid-cols-2">
-                        @foreach (var slot in custom.CostumeSlots)
-                        {
-                            <label class="text-xs @Css.Muted">@SlotLabel(slot.Slot)
-                                <select class="@Css.Input mt-1" value="@form.Slots[slot.Slot]" @onchange="e => form.Slots[slot.Slot] = uint.Parse(e.Value!.ToString()!)">
-                                    @foreach (var id in Choices(slot.UnlockedIds, slot.CurrentId, costumes.Where(c => c.CostumeType == slot.Slot).Select(c => c.CostumeId)))
-                                    {
-                                        <option value="@id">@CostumeName(slot.Slot, id)</option>
-                                    }
-                                </select>
-                            </label>
-                        }
-                        @if (caps.SupportsTone && custom.Tone is { } tone)
-                        {
-                            <label class="text-xs @Css.Muted">@Localizer["Drum sound"]
-                                <select class="@Css.Input mt-1" value="@form.ToneId" @onchange="e => form.ToneId = uint.Parse(e.Value!.ToString()!)">
-                                    @foreach (var id in Choices(tone.UnlockedToneIds, tone.ToneId, tones.Keys))
-                                    {
-                                        <option value="@id">@ToneName(id)</option>
-                                    }
-                                </select>
-                            </label>
-                        }
-                    </div>
-                    @if (costumes.Count == 0)
-                    {
-                        <p class="text-xs @Css.Muted">@string.Format(Localizer["{0}'s item names aren't on this server, so items show their number."], GameName)</p>
-                    }
-                </section>
-                @if (caps.SupportsColors && custom.Colors is not null)
+                @if (HasSongOptions(caps))
                 {
-                    <section class="@Css.Card space-y-2 p-5">
-                        <h2 class="font-semibold">@Localizer["Colours"]</h2>
-                        <ColorRow Label="@Localizer["Body"]" Value="form.Body" ValueChanged="v => form.Body = v" />
-                        <ColorRow Label="@Localizer["Face"]" Value="form.Face" ValueChanged="v => form.Face = v" />
-                        <ColorRow Label="@Localizer["Arms & legs"]" Value="form.Limb" ValueChanged="v => form.Limb = v" />
-                    </section>
+                    @Tab(Section.SongOptions, Localizer["Song Options"], "drum")
                 }
-            }
-
-            <section class="@Css.Card space-y-1 p-5">
-                <h2 class="mb-2 font-semibold">@Localizer["Game options"]</h2>
-                @if (caps.SupportsDisplayDanOnNamePlate)
+                @Tab(Section.Card, Localizer["Card"], "palette")
+            </Rail>
+            <section class="@Css.Card mt-4 p-5 sm:p-6" role="tabpanel">
+                @switch (section)
                 {
-                    <Toggle Label="@Localizer["Dan on nameplate"]" Icon="dani" Value="form.DanOnPlate" ValueChanged="v => form.DanOnPlate = v" />
+                    case Section.Costume: @CostumeSection break;
+                    case Section.SongOptions: @SongSection break;
+                    case Section.Card: <CardEditor Setting="look" Changed="CardChanged" /> break;
+                    default: @ProfileSection break;
                 }
-                @if (caps.SupportsFolderCloseButton)
-                {
-                    <Toggle Label="@Localizer["Folder close button"]" Icon="list" Value="form.FolderClose" ValueChanged="v => form.FolderClose = v" />
-                }
-                @if (caps.SupportsHowToPlayTutorialFlag)
-                {
-                    <Toggle Label="@Localizer["Skip \"how to play\""]" Icon="skip" Value="form.SkipHowTo" ValueChanged="v => form.SkipHowTo = v" />
-                }
-                @if (caps.SupportsAutoCostume)
-                {
-                    <Toggle Label="@Localizer["Wear new costume items"]" Icon="shirt" Value="form.AutoCostume" ValueChanged="v => form.AutoCostume = v"
-                            Description="@Localizer["A costume item won at the cabinet is put on straight away."]" />
-                }
-                <div class="grid gap-3 pt-2 sm:grid-cols-2">
-                    @if (caps.SupportsLocalRankingDifficulty)
-                    {
-                        <SelectField Label="@Localizer["Local ranking difficulty"]" Options="@DifficultyNames" Value="form.RankingDifficulty" ValueChanged="v => form.RankingDifficulty = v" />
-                    }
-                    @if (caps.SupportsDefaultSelectedSelfBestDifficulty)
-                    {
-                        <SelectField Label="@Localizer["Default difficulty"]" Options="@DifficultyNames" Value="form.DefaultDifficulty" ValueChanged="v => form.DefaultDifficulty = v" />
-                    }
-                    @if (caps.SupportsTaikojukuFolderDan && settings.Options.Taikojuku is { } juku)
-                    {
-                        <label class="text-xs @Css.Muted">@Localizer["Taikojuku folder dan"]
-                            <select class="@Css.Input mt-1" value="@form.FolderDan" @onchange="e => form.FolderDan = uint.Parse(e.Value!.ToString()!)">
-                                @foreach (var dan in juku.SelectableFolderDans.Append(juku.FolderDan).Distinct().Order())
-                                {
-                                    <option value="@dan">@dan</option>
-                                }
-                            </select>
-                        </label>
-                    }
-                </div>
             </section>
             @if (Missing(caps) is { Count: > 0 } missing)
             {
-                <p class="text-xs @Css.Muted">@string.Format(Localizer["{0} doesn't have {1}, so they aren't shown."], GameName, string.Join(", ", missing))</p>
+                <p class="mt-3 text-xs @Css.Muted">@string.Format(Localizer["{0} doesn't have {1}, so they aren't shown."], GameName, string.Join(", ", missing))</p>
             }
         </div>
-        <SaveBar Dirty="Dirty" Saving="saving" OnSave="Save" OnDiscard="Discard" />
+    </div>
+
+    @if (titlesOpen && settings.Customization?.Title is { } title)
+    {
+        <TitlePicker Setting="CardSetting" Titles="@TitleChoices(title)" OnPick="PickTitle" OnClose="() => titlesOpen = false" />
     }
-</div>
+}
 
 @code {
     [Parameter] public int Baid { get; set; }
     [Parameter] public string Game { get; set; } = "";
+
+    private enum Section { Profile, Costume, SongOptions, Card }
 
     private sealed class Form
     {
@@ -179,20 +82,25 @@
     private string GameName => EraPaths.Older(Game) ?? Game;
     private Ac15ProfileSettingsDto? settings;
     private Form? form;
-    private string original = "";
-    private bool saving, failed;
+    private Section section = Section.Profile;
+    private bool failed, titlesOpen, has3D;
     private List<Costume> costumes = [];
     private Dictionary<uint, Title> titles = [];
     private Dictionary<uint, Neiro> tones = [];
+    // The card's look is the player's, the same in every game (api/Users/{baid}/Card); CardEditor edits it here.
+    private UserSetting look = new() { CardFade = -1 };
+
+    // Autosave, as Nijiiro's profile: the profile and the card each save after a short pause, when they changed.
+    private CancellationTokenSource? saveDelay;
+    private string saved = "", savedCard = "";
 
     // The difficulty selects: 0 is "not set", then Easy … Ura Oni.
     private List<string> DifficultyNames => [Localizer["Not set"], .. GameData.Difficulties.Select(d => d.Name)];
 
-    private bool Dirty => form is not null && JsonSerializer.Serialize(Update()) != original;
-
     protected override async Task OnParametersSetAsync()
     {
         Page.Set(GameName, Localizer["Profile"]);
+        Page.SetSave(PageState.SaveStatus.Idle);
         (settings, form, failed) = (null, null, false);
         if (EraPaths.Older(Game) is null) return;
         try
@@ -208,26 +116,152 @@
         try { costumes = await Client.GetFromJsonAsync<List<Costume>>($"api/{GameName}/customization/costumes") ?? []; } catch (HttpRequestException) { }
         try { titles = await Client.GetFromJsonAsync<Dictionary<uint, Title>>($"api/{GameName}/customization/titles") ?? []; } catch (HttpRequestException) { }
         try { tones = await Client.GetFromJsonAsync<Dictionary<uint, Neiro>>($"api/{GameName}/customization/neiros") ?? []; } catch (HttpRequestException) { }
+        try
+        {
+            if (await Client.GetFromJsonAsync<CardLook>($"api/Users/{Baid}/Card") is { } card)
+                look = new UserSetting { CardColor = card.Color ?? 0, CardPattern = card.Pattern ?? default, CardFade = card.Fade ?? -1, CardAnimation = card.Animation ?? default };
+        }
+        catch (HttpRequestException) { }
         // The game's models are there when extract --era wrote its animations.
         try { has3D = (await Client.GetAsync($"api/Assets/{GameName.ToLowerInvariant()}/animation/facekeys.json")).IsSuccessStatusCode; } catch (HttpRequestException) { }
         Reset();
     }
 
-    private bool has3D;
-    private ElementReference donFrame;
-
-    // The preview follows the form (the viewer only reloads when a part changes).
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private RenderFragment Tab(Section s, string label, string icon) => __builder =>
     {
-        if (!has3D || form is null) return;
-        await Js.InvokeVoidAsync("ui.don", donFrame, null, new
+        var on = section == s;
+        <button role="tab" aria-selected="@Css.Aria(on)" @onclick="() => section = s"
+                class="flex min-w-max flex-1 shrink-0 snap-start items-center justify-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-sm font-medium transition-colors @(on ? "bg-white shadow-sm dark:bg-zinc-800" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">
+            <Icon Name="@icon" Class="hidden size-4 xl:block" />@label
+        </button>
+    };
+
+    private RenderFragment ProfileSection => __builder =>
+    {
+        var f = form!;
+        var caps = settings!.Capabilities;
+        <div class="grid gap-4 sm:grid-cols-2">
+            <label class="block">
+                <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Name"]</span>
+                <input maxlength="10" value="@f.Name" class="@Css.Input mt-1.5" @oninput="e => Set(x => x.Name = e.Value?.ToString() ?? string.Empty)" />
+            </label>
+            <SelectField Label="@Localizer["Language"]" Options="@GameData.NameLanguages.Select(l => (string)Localizer[l]).ToList()"
+                         Value="f.Language" ValueChanged="v => Set(x => x.Language = v)" />
+            @if (caps.SupportsTitle && settings.Customization?.Title is not null)
+            {
+                <label class="block sm:col-span-2">
+                    <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Title"]</span>
+                    <button class="@Css.Input mt-1.5 flex items-center justify-between text-left" @onclick="() => titlesOpen = true">
+                        <span class="font-display truncate">@(string.IsNullOrEmpty(f.TitleText) ? " " : f.TitleText)</span><Icon Name="chevDown" Class="size-4 text-zinc-400" />
+                    </button>
+                </label>
+            }
+        </div>
+        <div class="mt-4 grid gap-x-6 sm:grid-cols-2">
+            @if (caps.SupportsDisplayDanOnNamePlate)
+            {
+                <Toggle Label="@Localizer["Dan on nameplate"]" Icon="dani" Value="f.DanOnPlate" ValueChanged="v => Set(x => x.DanOnPlate = v)" />
+            }
+            @if (caps.SupportsFolderCloseButton)
+            {
+                <Toggle Label="@Localizer["Folder close button"]" Icon="list" Value="f.FolderClose" ValueChanged="v => Set(x => x.FolderClose = v)" />
+            }
+            @if (caps.SupportsHowToPlayTutorialFlag)
+            {
+                <Toggle Label="@Localizer["Skip \"how to play\""]" Icon="skip" Value="f.SkipHowTo" ValueChanged="v => Set(x => x.SkipHowTo = v)" />
+            }
+            @if (caps.SupportsAutoCostume)
+            {
+                <Toggle Label="@Localizer["Wear new costume items"]" Icon="shirt" Value="f.AutoCostume" ValueChanged="v => Set(x => x.AutoCostume = v)"
+                        Description="@Localizer["A costume item won at the cabinet is put on straight away."]" />
+            }
+        </div>
+    };
+
+    private RenderFragment CostumeSection => __builder =>
+    {
+        var f = form!;
+        var custom = settings!.Customization!;
+        // As Nijiiro: a kigurumi replaces head, body and face paint.
+        var kigurumi = f.Slots.GetValueOrDefault("kigurumi") != 0;
+        <div class="grid gap-4 xl:grid-cols-2">
+            @foreach (var slot in custom.CostumeSlots)
+            {
+                var name = slot.Slot;
+                <PartPicker Label="@SlotLabel(name)" Ids="@Choices(slot.UnlockedIds, slot.CurrentId, costumes.Where(c => c.CostumeType == name).Select(c => c.CostumeId))"
+                            NameOf="@(id => CostumeName(name, id))" Value="f.Slots[name]" ValueChanged="v => Set(x => x.Slots[name] = v)"
+                            Disabled="@(kigurumi && name is "head" or "body" or "face")">
+                    <Hint>
+                        @if (name == "kigurumi" && kigurumi)
+                        {
+                            <span class="flex items-baseline gap-2 text-xs @Css.Muted">
+                                @Localizer["Replaces head, body & face paint"]
+                                <button type="button" class="rounded @Css.Link" @onclick='() => Set(x => x.Slots["kigurumi"] = 0)'>@Localizer["Clear"]</button>
+                            </span>
+                        }
+                    </Hint>
+                </PartPicker>
+            }
+        </div>
+        @if (costumes.Count == 0)
         {
-            game = GameName,
-            body = form.Slots.GetValueOrDefault("body"), head = form.Slots.GetValueOrDefault("head"), kigurumi = form.Slots.GetValueOrDefault("kigurumi"),
-            face = form.Slots.GetValueOrDefault("face"), puchi = form.Slots.GetValueOrDefault("puchi"),
-            bodyColor = form.Body, faceColor = form.Face, limbColor = form.Limb,
-            zoom = 0.2, camY = 0.15,
-        });
+            <p class="mt-3 text-xs @Css.Muted">@string.Format(Localizer["{0}'s item names aren't on this server, so items show their number."], GameName)</p>
+        }
+        @if (settings.Capabilities.SupportsColors && custom.Colors is not null)
+        {
+            <div class="mt-6 space-y-2">
+                <ColorRow Label="@Localizer["Body Color"]" Value="f.Body" ValueChanged="v => Set(x => x.Body = v)" />
+                <ColorRow Label="@Localizer["Face Color"]" Value="f.Face" ValueChanged="v => Set(x => x.Face = v)" />
+                <ColorRow Label="@Localizer["Limb Color"]" Value="f.Limb" ValueChanged="v => Set(x => x.Limb = v)" />
+            </div>
+        }
+    };
+
+    private RenderFragment SongSection => __builder =>
+    {
+        var f = form!;
+        var caps = settings!.Capabilities;
+        <div class="grid gap-4 sm:grid-cols-2">
+            @if (caps.SupportsTone && settings.Customization?.Tone is { } tone)
+            {
+                <PartPicker Label="@Localizer["Drum sound"]" Ids="@Choices(tone.UnlockedToneIds, tone.ToneId, tones.Keys)" NameOf="ToneName"
+                            Value="f.ToneId" ValueChanged="v => Set(x => x.ToneId = v)" />
+            }
+            @if (caps.SupportsLocalRankingDifficulty)
+            {
+                <SelectField Label="@Localizer["Local ranking difficulty"]" Options="@DifficultyNames" Value="f.RankingDifficulty" ValueChanged="v => Set(x => x.RankingDifficulty = v)" />
+            }
+            @if (caps.SupportsDefaultSelectedSelfBestDifficulty)
+            {
+                <SelectField Label="@Localizer["Default difficulty"]" Options="@DifficultyNames" Value="f.DefaultDifficulty" ValueChanged="v => Set(x => x.DefaultDifficulty = v)" />
+            }
+            @if (caps.SupportsTaikojukuFolderDan && settings.Options.Taikojuku is { } juku)
+            {
+                var dans = juku.SelectableFolderDans.Append(juku.FolderDan).Distinct().Order().ToList();
+                <SelectField Label="@Localizer["Taikojuku folder dan"]" Options="@dans.Select(d => d.ToString()).ToList()"
+                             Value="(uint)dans.IndexOf(f.FolderDan)" ValueChanged="v => Set(x => x.FolderDan = dans[(int)v])" />
+            }
+        </div>
+    };
+
+    private static bool HasSongOptions(Ac15ProfileCapabilitiesDto c) =>
+        c.SupportsTone || c.SupportsLocalRankingDifficulty || c.SupportsDefaultSelectedSelfBestDifficulty || c.SupportsTaikojukuFolderDan;
+
+    // What the card shows: this game's profile on the player's card look.
+    private UserSetting CardSetting
+    {
+        get
+        {
+            var f = form!;
+            return new UserSetting
+            {
+                MyDonName = f.Name, MyDonNameLanguage = f.Language, Title = f.TitleText,
+                Kigurumi = f.Slots.GetValueOrDefault("kigurumi"), Head = f.Slots.GetValueOrDefault("head"), Body = f.Slots.GetValueOrDefault("body"),
+                Face = f.Slots.GetValueOrDefault("face"), Puchi = f.Slots.GetValueOrDefault("puchi"),
+                BodyColor = f.Body, FaceColor = f.Face, LimbColor = f.Limb,
+                CardColor = look.CardColor, CardPattern = look.CardPattern, CardFade = look.CardFade, CardAnimation = look.CardAnimation,
+            };
+        }
     }
 
     private void Reset()
@@ -245,12 +279,11 @@
             RankingDifficulty = s.Options.SongSelect?.LocalRankingDifficulty ?? 0, DefaultDifficulty = s.Options.SongSelect?.DefaultSelectedAndSelfBestDifficulty ?? 0,
             FolderDan = s.Options.Taikojuku?.FolderDan ?? 0,
         };
-        original = JsonSerializer.Serialize(Update());
+        saved = JsonSerializer.Serialize(Update());
+        savedCard = JsonSerializer.Serialize(Card());
     }
 
-    private void Discard() => Reset();
-
-    // Only what the game has is sent; unlock lists stay the server's.
+    // Only what the game has is sent. With free editing the unlocks go too, so the pick is unlocked in the game.
     private Ac15ProfileSettingsUpdateDto Update()
     {
         var s = settings!;
@@ -274,52 +307,93 @@
                 caps.SupportsAutoCostume ? new Ac15CustomizationBehaviorOptionsDto(f.AutoCostume) : null));
     }
 
-    private async Task Save()
+    private CardLook Card() => new() { Color = look.CardColor, Pattern = look.CardPattern, Fade = look.CardFade, Animation = look.CardAnimation };
+
+    private void Set(Action<Form> change)
     {
-        saving = true;
+        change(form!);
+        Changed();
+    }
+
+    private void CardChanged() => Changed();
+
+    private void Changed()
+    {
+        Page.SetSave(PageState.SaveStatus.Saving);
+        saveDelay?.Cancel();
+        saveDelay = new CancellationTokenSource();
+        _ = SaveSoon(saveDelay.Token);
+    }
+
+    private async Task SaveSoon(CancellationToken token)
+    {
+        try { await Task.Delay(700, token); }
+        catch (TaskCanceledException) { return; }
+        var error = await SaveChanges();
+        Page.SetSave(error is null ? PageState.SaveStatus.Saved : PageState.SaveStatus.Idle);
+        if (error is not null) Toast.Show(error, isError: true);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>Saves the profile and the card if they changed; null when all went, else the message to show.</summary>
+    private async Task<string?> SaveChanges()
+    {
         try
         {
-            var res = await Client.PutAsJsonAsync($"api/{GameName}/Ac15ProfileSettings/{Baid}", Update());
-            if (!res.IsSuccessStatusCode)
+            var update = Update();
+            if (JsonSerializer.Serialize(update) is var now && now != saved)
             {
-                Toast.Show(await res.Content.ReadAsStringAsync() is { Length: > 0 and < 200 } m ? m : Localizer["Save Failed"], true);
-                return;
+                var res = await Client.PutAsJsonAsync($"api/{GameName}/Ac15ProfileSettings/{Baid}", update, CancellationToken.None);
+                if (!res.IsSuccessStatusCode)
+                    return await res.Content.ReadAsStringAsync() is { Length: > 0 and < 200 } m ? m : Localizer["Couldn't save your changes."];
+                saved = now;
             }
-            settings = await Client.GetFromJsonAsync<Ac15ProfileSettingsDto>($"api/{GameName}/Ac15ProfileSettings/{Baid}") ?? settings;
-            Reset();
-            Toast.Show(string.Format(Localizer["Saved your {0} profile."], GameName));
+            var card = Card();
+            if (JsonSerializer.Serialize(card) is var nowCard && nowCard != savedCard)
+            {
+                var res = await Client.PutAsJsonAsync($"api/Users/{Baid}/Card", card, CancellationToken.None);
+                if (!res.IsSuccessStatusCode) return Localizer["Couldn't save your changes."];
+                savedCard = nowCard;
+            }
+            return null;
         }
         catch (HttpRequestException)
         {
-            Toast.Show(Localizer["Save Failed"], true);
+            return Localizer["Couldn't save your changes."];
         }
-        finally
-        {
-            saving = false;
-        }
+    }
+
+    // Leaving mid-debounce: save now rather than drop the last edit.
+    public void Dispose()
+    {
+        if (saveDelay is null || saveDelay.IsCancellationRequested || Page.Save != PageState.SaveStatus.Saving) return;
+        saveDelay.Cancel();
+        _ = SaveChanges();
     }
 
     // As Nijiiro's profile: Free profile editing (or an admin, or Local mode) offers every piece, not only those unlocked.
     private bool FreeEdit => AuthService.AllowFreeProfileEditing || AuthService.IsAdmin || !AuthService.LoginRequired;
 
-    private IEnumerable<uint> Choices(IEnumerable<uint> unlocked, uint current, IEnumerable<uint> all) =>
-        (FreeEdit ? unlocked.Concat(all) : unlocked).Append(current).Distinct().Order();
+    private List<uint> Choices(IEnumerable<uint> unlocked, uint current, IEnumerable<uint> all) =>
+        (FreeEdit ? unlocked.Concat(all) : unlocked).Append(current).Distinct().Order().ToList();
 
-    private void PickTitle(uint id)
+    // The title picker lists the game's titles that may be picked (every one with free editing, else the unlocked ones).
+    private List<Title> TitleChoices(Ac15TitleSelectionDto title) =>
+        Choices(title.UnlockedTitleIds, title.TitleId, titles.Keys).Select(id => titles.GetValueOrDefault(id)).OfType<Title>().ToList();
+
+    private void PickTitle((string Title, Title? Picked) pick)
     {
-        form!.TitleId = id;
-        form.TitleText = titles.TryGetValue(id, out var t) ? Name(t.TitleName, t.TitleNameEN) : form.TitleText;
+        titlesOpen = false;
+        if (pick.Picked is not { } t) return;
+        Set(f => (f.TitleId, f.TitleText) = (t.TitleId, pick.Title));
     }
 
     private static string Name(string jp, string en) => en.Length > 0 ? en : jp;
 
-    // An item with no name in the catalogue (title 0, say) shows its number.
-    private string TitleName(uint id) => titles.TryGetValue(id, out var t) && Name(t.TitleName, t.TitleNameEN) is { Length: > 0 } n ? n : string.Format(Localizer["Title {0}"], id);
-
     private string ToneName(uint id) => tones.TryGetValue(id, out var t) && Name(t.NeiroName, t.NeiroNameEN) is { Length: > 0 } n ? n : string.Format(Localizer["Drum sound {0}"], id);
 
-    private string CostumeName(string slot, uint id) =>
-        costumes.FirstOrDefault(c => c.CostumeType == slot && c.CostumeId == id) is { } c && Name(c.CostumeName, c.CostumeNameEN) is { Length: > 0 } n ? n : $"{SlotLabel(slot)} {id}";
+    private string CostumeName(string slot, uint id) => slot == "kigurumi" && id == 0 ? Localizer["None (use head & body)"]
+        : costumes.FirstOrDefault(c => c.CostumeType == slot && c.CostumeId == id) is { } c && Name(c.CostumeName, c.CostumeNameEN) is { Length: > 0 } n ? n : $"{SlotLabel(slot)} {id}";
 
     private string SlotLabel(string slot) => slot switch
     {

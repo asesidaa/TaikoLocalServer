@@ -4047,20 +4047,8 @@
   <data name="{0} doesn't have don-chan's 3D model here, so the preview is your initial." xml:space="preserve">
     <value>{0} 在這裡沒有咚醬的 3D 模型，所以預覽顯示你的首字母。</value>
   </data>
-  <data name="Name &amp; title" xml:space="preserve">
-    <value>名字和稱號</value>
-  </data>
   <data name="{0}'s item names aren't on this server, so items show their number." xml:space="preserve">
     <value>這台伺服器沒有 {0} 的物品名稱，所以顯示編號。</value>
-  </data>
-  <data name="Colours" xml:space="preserve">
-    <value>顏色</value>
-  </data>
-  <data name="Arms &amp; legs" xml:space="preserve">
-    <value>手腳</value>
-  </data>
-  <data name="Game options" xml:space="preserve">
-    <value>遊戲選項</value>
   </data>
   <data name="Dan on nameplate" xml:space="preserve">
     <value>名牌顯示段位</value>
@@ -4088,9 +4076,6 @@
   </data>
   <data name="{0} doesn't have {1}, so they aren't shown." xml:space="preserve">
     <value>{0} 沒有{1}，所以不顯示。</value>
-  </data>
-  <data name="Saved your {0} profile." xml:space="preserve">
-    <value>已儲存你的 {0} 個人資料。</value>
   </data>
   <data name="Drum sound {0}" xml:space="preserve">
     <value>音色 {0}</value>
@@ -4557,7 +4542,7 @@
   <data name="A game that isn't ready can be extracted later in Server Management › Games." xml:space="preserve">
     <value>未準備好的遊戲可以稍後在伺服器管理 › 遊戲中提取。</value>
   </data>
-  <data name="{0}'s don-chan models aren't extracted, so the preview is your initial." xml:space="preserve">
-    <value>{0} 的小咚模型尚未提取，所以預覽顯示你的首字母。</value>
+  <data name="{0}'s don-chan models aren't extracted, so the card has no don-chan." xml:space="preserve">
+    <value>{0} 的小咚模型尚未提取，所以卡片上沒有小咚。</value>
   </data>
 </root>

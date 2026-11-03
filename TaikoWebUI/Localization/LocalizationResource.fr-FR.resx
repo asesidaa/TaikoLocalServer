@@ -4047,20 +4047,8 @@
   <data name="{0} doesn't have don-chan's 3D model here, so the preview is your initial." xml:space="preserve">
     <value>{0} n'a pas le modèle 3D de don-chan ici : l'aperçu montre votre initiale.</value>
   </data>
-  <data name="Name &amp; title" xml:space="preserve">
-    <value>Nom et titre</value>
-  </data>
   <data name="{0}'s item names aren't on this server, so items show their number." xml:space="preserve">
     <value>Les noms d'objets de {0} ne sont pas sur ce serveur : les objets affichent leur numéro.</value>
-  </data>
-  <data name="Colours" xml:space="preserve">
-    <value>Couleurs</value>
-  </data>
-  <data name="Arms &amp; legs" xml:space="preserve">
-    <value>Bras et jambes</value>
-  </data>
-  <data name="Game options" xml:space="preserve">
-    <value>Options du jeu</value>
   </data>
   <data name="Dan on nameplate" xml:space="preserve">
     <value>Dan sur la plaque</value>
@@ -4088,9 +4076,6 @@
   </data>
   <data name="{0} doesn't have {1}, so they aren't shown." xml:space="preserve">
     <value>{0} n'a pas {1} : ils ne sont pas affichés.</value>
-  </data>
-  <data name="Saved your {0} profile." xml:space="preserve">
-    <value>Profil {0} enregistré.</value>
   </data>
   <data name="Drum sound {0}" xml:space="preserve">
     <value>Son de tambour {0}</value>
@@ -4557,7 +4542,7 @@
   <data name="A game that isn't ready can be extracted later in Server Management › Games." xml:space="preserve">
     <value>Un jeu qui n'est pas prêt peut être extrait plus tard dans Gestion du serveur › Jeux.</value>
   </data>
-  <data name="{0}'s don-chan models aren't extracted, so the preview is your initial." xml:space="preserve">
-    <value>Les modèles de don-chan de {0} ne sont pas extraits, donc l'aperçu montre votre initiale.</value>
+  <data name="{0}'s don-chan models aren't extracted, so the card has no don-chan." xml:space="preserve">
+    <value>Les modèles de don-chan de {0} ne sont pas extraits, donc la carte n'a pas de don-chan.</value>
   </data>
 </root>

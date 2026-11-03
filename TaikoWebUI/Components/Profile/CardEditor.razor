@@ -1,0 +1,40 @@
+@* The player card's look: background colour + fade, the don-chan animation, and the pattern (tiles preview it on
+   the chosen colour). Changes Setting in place, then raises Changed (the page saves). *@
+
+<ColorRow Label="@Localizer["Background"]" Value="Setting.CardColor" ValueChanged="v => Set(x => x.CardColor = v)" />
+<ColorRow Label="@Localizer["Fade"]" AllowNone="true" Value="@(Setting.CardFade < 0 ? ColorRow.None : (uint)Setting.CardFade)"
+          ValueChanged="v => Set(x => x.CardFade = v == ColorRow.None ? -1 : (int)v)" />
+<p class="mt-4 text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Animation"]</p>
+<div class="mt-2 grid grid-cols-3 gap-2" role="radiogroup" aria-label="@Localizer["Animation"]">
+    @foreach (var (value, name) in CardStyle.Animations)
+    {
+        var on = Setting.CardAnimation == value;
+        <button role="radio" aria-checked="@Css.Aria(on)" @onclick="() => Set(x => x.CardAnimation = value)"
+                class="h-10 rounded-xl border text-sm font-medium transition-colors @(on ? "border-primary-500 bg-primary-500/10 text-primary-700 dark:text-primary-300" : "border-zinc-200 text-zinc-600 hover:border-zinc-300 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700")">
+            @Localizer[name]
+        </button>
+    }
+</div>
+<p class="mt-4 text-sm font-medium text-zinc-700 dark:text-zinc-300">@Localizer["Pattern"]</p>
+<div class="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4 xl:grid-cols-6" role="radiogroup" aria-label="@Localizer["Pattern"]">
+    @foreach (var (value, name) in CardStyle.Patterns)
+    {
+        var on = Setting.CardPattern == value;
+        <button role="radio" aria-checked="@Css.Aria(on)" class="group text-center" @onclick="() => Set(x => x.CardPattern = value)">
+            <span class="block h-16 rounded-xl ring-2 ring-offset-2 ring-offset-white transition-shadow dark:ring-offset-zinc-900 @(on ? "ring-primary-500" : "ring-transparent group-hover:ring-zinc-300 dark:group-hover:ring-zinc-700")"
+                  style="@CardStyle.Background(Setting.CardColor, value)"></span>
+            <span class="mt-1.5 block text-xs @(on ? "font-medium" : Css.Muted)">@Localizer[name]</span>
+        </button>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public UserSetting Setting { get; set; } = new();
+    [Parameter] public EventCallback Changed { get; set; }
+
+    private void Set(Action<UserSetting> change)
+    {
+        change(Setting);
+        Changed.InvokeAsync();
+    }
+}

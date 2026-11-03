@@ -58,6 +58,8 @@
     /// <summary>The player's best result per dan, used for the nameplate badge and the Dani Dojo look.</summary>
     [Parameter] public IReadOnlyList<DanBestData> Dans { get; set; } = [];
     [Parameter] public bool DanView { get; set; }
+    /// <summary>An older game ("Green"…): don-chan in that game's own models. Empty: Nijiiro.</summary>
+    [Parameter] public string Game { get; set; } = "";
 
     private ElementReference frame, anchor;
 
@@ -86,7 +88,7 @@
         bodyColor = Setting.BodyColor, faceColor = Setting.FaceColor, limbColor = Setting.LimbColor,
         anim = DanView ? CardStyle.Clip(CardAnimation.Clear) : CardStyle.Clip(Setting.CardAnimation),
         cosFile = DanView ? DanCostume : "",
-        zoom, camY,
+        zoom, camY, game = Game,
     };
 
     // The large view (rendered by the layout; OpenBig draws don-chan into it), framed so the feet clear the bottom.

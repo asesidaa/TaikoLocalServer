@@ -141,13 +141,13 @@ public partial class Profile : IDisposable
         Changed();
     }
 
-    private void PickTitle((string Title, uint? Plate) pick)
+    private void PickTitle((string Title, Title? Picked) pick)
     {
         titlesOpen = false;
         Set(s =>
         {
             s.Title = pick.Title;
-            if (pick.Plate is { } plate) s.TitlePlateId = plate;
+            if (pick.Picked is { } picked) s.TitlePlateId = picked.TitleRarity;
         });
     }
 

@@ -49,7 +49,7 @@
             @foreach (var (title, name) in hits.Skip((page - 1) * PageSize).Take(PageSize))
             {
                 <button class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm hover:bg-zinc-100 focus-visible:bg-zinc-100 focus-visible:outline-none dark:hover:bg-zinc-800 dark:focus-visible:bg-zinc-800"
-                        @onclick="() => Pick(name, title.TitleRarity)">
+                        @onclick="() => Pick(name, title)">
                     <span class="font-display min-w-0 flex-1 truncate">@name</span>
                     <span class="text-xs tabular-nums text-zinc-400">#@title.TitleId</span>
                     @if (name == Setting.Title)
@@ -80,8 +80,8 @@
     [Parameter, EditorRequired] public UserSetting Setting { get; set; } = new();
     [Parameter, EditorRequired] public IReadOnlyList<Title> Titles { get; set; } = [];
     [Parameter] public bool AllowCustom { get; set; }
-    /// <summary>Chosen title text and its plate (null = custom title, keep the plate).</summary>
-    [Parameter] public EventCallback<(string Title, uint? Plate)> OnPick { get; set; }
+    /// <summary>Chosen title text and the game title it is (null = custom title).</summary>
+    [Parameter] public EventCallback<(string Title, Title? Picked)> OnPick { get; set; }
     [Parameter] public EventCallback OnClose { get; set; }
 
     private string query = "";
@@ -108,7 +108,7 @@
             : all.Where(x => x.Name.Contains(q, StringComparison.OrdinalIgnoreCase) || x.Title.TitleId.ToString() == q).ToList();
     }
 
-    private Task Pick(string title, uint? plate) => OnPick.InvokeAsync((title, plate));
+    private Task Pick(string title, Title? picked) => OnPick.InvokeAsync((title, picked));
     private Task Close() => OnClose.InvokeAsync();
 
     private Task OnKey(KeyboardEventArgs e) => e.Key == "Escape" ? Close() : Task.CompletedTask;

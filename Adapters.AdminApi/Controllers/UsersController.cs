@@ -38,6 +38,36 @@ public class UsersController(ITaikoDbContext context, IServerAccess access) : Ba
         };
     }
 
+    /// <summary>Their player card's look, which every game's profile shows.</summary>
+    [HttpGet("{baid}/Card")]
+    public async Task<ActionResult<CardLook>> GetCard(uint baid)
+    {
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
+        var profile = await context.UserWebProfiles.FindAsync([baid], HttpContext.RequestAborted) ?? new UserWebProfile();
+        return new CardLook { Color = profile.CardColor, Pattern = profile.CardPattern, Fade = profile.CardFade, Animation = profile.CardAnimation };
+    }
+
+    [HttpPut("{baid}/Card")]
+    public async Task<IActionResult> PutCard(uint baid, CardLook card)
+    {
+        if (this.AuthorizeOwnerOrAdmin(baid) is { } forbid)
+            return forbid;
+        if (card.Color is >= 63 || card.Fade is < -1 or >= 63)
+            return BadRequest(new { message = "Unknown colour." });
+        if ((card.Pattern is { } p && !Enum.IsDefined(p)) || (card.Animation is { } an && !Enum.IsDefined(an)))
+            return BadRequest(new { message = "Unknown card style." });
+        var profile = await context.UserWebProfiles.FindAsync([baid], HttpContext.RequestAborted);
+        if (profile is null) return NotFound();
+        profile.CardColor = card.Color ?? profile.CardColor;
+        profile.CardPattern = card.Pattern ?? profile.CardPattern;
+        profile.CardFade = card.Fade ?? profile.CardFade;
+        profile.CardAnimation = card.Animation ?? profile.CardAnimation;
+        this.LogIfSomeoneElse(context, "profile.edit", baid);
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return NoContent();
+    }
+
     /// <summary>The Web UI theme they last picked; nulls when they never did.</summary>
     [HttpGet("{baid}/Theme")]
     public async Task<ActionResult<UiTheme>> GetTheme(uint baid)
