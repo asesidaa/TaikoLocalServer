@@ -2661,8 +2661,8 @@
   <data name="The server still uses the previous contents. Saving here rewrites and fixes the file." xml:space="preserve">
     <value>服务器仍在使用之前的内容。在此保存会重写并修复该文件。</value>
   </data>
-  <data name="The ticker cabinets show. Cabinets pick changes up on their next startup." xml:space="preserve">
-    <value>机台上显示的滚动字幕。机台会在下次启动时应用。</value>
+  <data name="The ticker cabinets show: one message at a time, the one live now (the latest to start, if several are). Cabinets pick changes up on their next startup." xml:space="preserve">
+    <value>机台上显示的滚动字幕：一次只显示一条，即当前正在播出的那条（若有多条，取开始时间最晚的）。机台会在下次启动时应用。</value>
   </data>
   <data name="Theme colour" xml:space="preserve">
     <value>主题色</value>

@@ -2661,8 +2661,8 @@
   <data name="The server still uses the previous contents. Saving here rewrites and fixes the file." xml:space="preserve">
     <value>サーバーは以前の内容を使い続けています。ここで保存するとファイルが書き直され、修正されます。</value>
   </data>
-  <data name="The ticker cabinets show. Cabinets pick changes up on their next startup." xml:space="preserve">
-    <value>筐体に流れるテロップです。筐体は次回の起動時に反映します。</value>
+  <data name="The ticker cabinets show: one message at a time, the one live now (the latest to start, if several are). Cabinets pick changes up on their next startup." xml:space="preserve">
+    <value>筐体に流れるテロップです。表示されるのは今配信中の1件だけです（複数ある場合は開始がいちばん新しいもの）。筐体は次回の起動時に反映します。</value>
   </data>
   <data name="Theme colour" xml:space="preserve">
     <value>テーマカラー</value>

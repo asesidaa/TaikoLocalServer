@@ -66,7 +66,11 @@ public partial class GetInitialDataQueryHandler
 
         CommonInitialDataCheckResponse.VerupNoData2[] verupNo2List =
         [
-            GetVerupNoData2(DomainConstants.TelopVerupMasterType, telopDataDictionary),
+            new CommonInitialDataCheckResponse.VerupNoData2
+            {
+                MasterType = DomainConstants.TelopVerupMasterType,
+                AryInformationDatas = [new() { InfoId = NijiiroTelop.CabinetId, VerupNo = NijiiroTelop.Version(NijiiroTelop.Live(telopDataDictionary.Values, DateTime.Now)) }],
+            },
             GetVerupNoData2(DomainConstants.DanVerupMasterType, commonDanDataDictionary),
             GetVerupNoData2(DomainConstants.GaidenVerupMasterType, commonGaidenDataDictionary),
             GetVerupNoData2(DomainConstants.FolderVerupMasterType, eventFolderDictionary),

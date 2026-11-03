@@ -2661,8 +2661,8 @@
   <data name="The server still uses the previous contents. Saving here rewrites and fixes the file." xml:space="preserve">
     <value>Le serveur utilise toujours le contenu précédent. Enregistrer ici réécrit et corrige le fichier.</value>
   </data>
-  <data name="The ticker cabinets show. Cabinets pick changes up on their next startup." xml:space="preserve">
-    <value>Le bandeau défilant des bornes. Les bornes l'appliquent à leur prochain démarrage.</value>
+  <data name="The ticker cabinets show: one message at a time, the one live now (the latest to start, if several are). Cabinets pick changes up on their next startup." xml:space="preserve">
+    <value>Le bandeau défilant des bornes : un message à la fois, celui en cours (le plus récent à commencer, s'il y en a plusieurs). Les bornes l'appliquent à leur prochain démarrage.</value>
   </data>
   <data name="Theme colour" xml:space="preserve">
     <value>Couleur du thème</value>
