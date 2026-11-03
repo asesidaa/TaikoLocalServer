@@ -2,7 +2,7 @@
   "ServerSettings": {
     "Mode": "Local",
     "ServerName": "TaikoLocalServer",
-    "AllowRemoteGameDir": true,
+    "AllowRemoteGameDir": false,
     "ApiTokens": false,
     "RestrictChassisIds": false,
     "MuchaUrl": "v402-front.mucha-prd.nbgi-amnet.jp:10122",

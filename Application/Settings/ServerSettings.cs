@@ -13,10 +13,10 @@ public sealed class ServerSettings
 
     /// <summary>
     /// Let admins send the game files from their browser (Server Management › Game data: pick the game folder) when
-    /// the game isn't on this machine. On by default (still admins only, and only the files extract lists); off: only
-    /// the games' folders on this machine (Eras.*.GameDataPath / GamePath), or extract run by hand.
+    /// the game isn't on this machine (admins only, and only the files extract lists). Off by default: the games' folders
+    /// on this machine (Eras.*.GameDataPath / GamePath, picked with Browse…), or extract run by hand.
     /// </summary>
-    public bool AllowRemoteGameDir { get; set; } = true;
+    public bool AllowRemoteGameDir { get; set; }
 
     /// <summary>Allow admins' API tokens (Access › API tokens). Off: tls_ bearers are refused.</summary>
     public bool ApiTokens { get; set; }
