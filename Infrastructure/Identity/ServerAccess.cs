@@ -12,7 +12,7 @@ namespace TaikoLocalServer.Infrastructure.Identity;
 /// <summary>
 /// Singleton behind <see cref="IServerAccess"/>. <see cref="InitializeAsync"/> runs once at startup, after
 /// migrations: it creates the rules and secrets rows on first start (importing a legacy AuthSettings.json once),
-/// and in Server mode without an admin prints a one-time setup code.
+/// and until the setup wizard is finished (or while Server mode has no admin) prints a setup code.
 /// </summary>
 public sealed class ServerAccess(
     IServiceScopeFactory scopes,
@@ -22,6 +22,9 @@ public sealed class ServerAccess(
 {
     /// <summary>The key every install shipped with before keys were generated; never kept on import.</summary>
     private const string LegacyDefaultJwtKey = "SuperSecretKeyAndHeresItsPadding";
+
+    /// <summary>A restart the wizard asked for passes its setup code on, so the wizard carries on with the same one.</summary>
+    public const string SetupCodeVariable = "TAIKOLOCALSERVER_SETUP_CODE";
 
     private AccessRules rules = new();
     private ServerStatus status = new();
@@ -37,6 +40,11 @@ public sealed class ServerAccess(
     public byte[] SigningKey => signingKey.Length > 0 ? signingKey : throw new InvalidOperationException("ServerAccess isn't initialized.");
 
     public bool SetupPending => setupCode is not null;
+
+    public string? SetupCode => setupCode;
+
+    /// <summary>Where the web UI can be opened (set once the server listens), for the setup message.</summary>
+    public IReadOnlyList<string> SetupUrls { get; set; } = [];
 
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
@@ -83,11 +91,12 @@ public sealed class ServerAccess(
 
         await db.SaveChangesAsync(cancellationToken);
 
-        if (Mode == ServerMode.Server && !await db.UserData.AnyAsync(u => u.IsAdmin, cancellationToken))
+        if (secrets.SetupFinishedAt is null || (Mode == ServerMode.Server && !await db.UserData.AnyAsync(u => u.IsAdmin, cancellationToken)))
         {
-            setupCode = NewSetupCode();
-            LogSetupCode();
+            var carried = Environment.GetEnvironmentVariable(SetupCodeVariable)?.Trim().ToUpperInvariant();
+            setupCode = carried is { Length: 9 } && carried[4] == '-' ? carried : NewSetupCode();
         }
+        Environment.SetEnvironmentVariable(SetupCodeVariable, null);
         logger.LogInformation("Mode: {Mode}", Mode);
     }
 
@@ -123,21 +132,40 @@ public sealed class ServerAccess(
 
     public void LogSetupCode()
     {
-        if (setupCode is { } code)
-            logger.LogWarning("No admin account yet. Setup code: {SetupCode} (enter it on the WebUI's setup page, or run: " +
-                              "TaikoLocalServer admin promote <access code>). The code changes on every start until an admin exists.", code);
+        if (setupCode is not { } code)
+            return;
+        var urls = SetupUrls.Count > 0 ? SetupUrls : ["http://localhost:5000/setup"];
+        logger.LogWarning("Setup isn't finished. Open the setup wizard in a browser:{Urls:l}", string.Concat(urls.Select(u => "\n    " + u)));
+        logger.LogWarning("Setup code: {SetupCode:l}", code);
     }
 
-    public bool TryUseSetupCode(string code)
+    public bool IsSetupCode(string? code)
     {
         var expected = setupCode;
         if (expected is null || string.IsNullOrWhiteSpace(code))
             return false;
-        var given = Encoding.UTF8.GetBytes(code.Trim().ToUpperInvariant());
-        if (!CryptographicOperations.FixedTimeEquals(given, Encoding.UTF8.GetBytes(expected)))
+        return CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(code.Trim().ToUpperInvariant()), Encoding.UTF8.GetBytes(expected));
+    }
+
+    public bool TryUseSetupCode(string code)
+    {
+        if (!IsSetupCode(code))
             return false;
         setupCode = null;
         return true;
+    }
+
+    public async Task FinishSetupAsync(CancellationToken cancellationToken)
+    {
+        using var scope = scopes.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ITaikoDbContext>();
+        var row = await db.ServerSecrets.FindAsync([1], cancellationToken);
+        if (row is not null && row.SetupFinishedAt is null)
+        {
+            row.SetupFinishedAt = DateTime.UtcNow;
+            await db.SaveChangesAsync(cancellationToken);
+        }
+        setupCode = null;
     }
 
     // XXXX-XXXX from letters and digits that can't be confused with each other (no 0/O, 1/I/L).

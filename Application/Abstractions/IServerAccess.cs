@@ -24,11 +24,23 @@ public interface IServerAccess
     /// <summary>The key that signs login tokens and derives invite codes.</summary>
     byte[] SigningKey { get; }
 
-    /// <summary>Server mode with no admin yet: a one-time setup code was printed in the console at startup.</summary>
+    /// <summary>
+    /// The setup wizard isn't finished (or Server mode has no admin): a setup code was printed in the console at
+    /// startup, and it unlocks the admin pages the wizard uses.
+    /// </summary>
     bool SetupPending { get; }
+
+    /// <summary>The setup code while setup is pending (carried over a restart the wizard asks for); null after.</summary>
+    string? SetupCode { get; }
+
+    /// <summary>Whether <paramref name="code"/> is the setup code. Doesn't use it up.</summary>
+    bool IsSetupCode(string? code);
 
     /// <summary>True (once) when <paramref name="code"/> is the setup code; the caller then makes that account admin.</summary>
     bool TryUseSetupCode(string code);
+
+    /// <summary>The wizard is done: saved in the database, and the setup code stops working.</summary>
+    Task FinishSetupAsync(CancellationToken cancellationToken);
 
     /// <summary>Logs the setup code again (if one is pending), so it's the newest console line when someone opens the WebUI.</summary>
     void LogSetupCode();

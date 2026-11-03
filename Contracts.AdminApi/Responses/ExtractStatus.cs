@@ -48,3 +48,13 @@ public record ExtractNote(string Kind, string Code, string? Detail);
 /// names matter, so empty files are sent. <see cref="Mods"/> is the same for Data_mods (Nijiiro).
 /// </summary>
 public record ExtractInputs(IReadOnlyList<string> Files, IReadOnlyList<string> Names, ExtractInputs? Mods);
+
+/// <summary>
+/// A folder on the server, for picking a game's install (Server Management › Games, setup). <see cref="Path"/> null:
+/// the drives (or <c>/</c>). <see cref="Parent"/> null at a drive's top. <see cref="IsGame"/>: it looks like the game's
+/// install, so it can be picked.
+/// </summary>
+public record FolderListing(string? Path, string? Parent, bool IsGame, IReadOnlyList<FolderEntry> Entries, string? Error = null);
+
+/// <summary>A folder (or an older game's .zip, <see cref="IsFile"/>) in a <see cref="FolderListing"/>.</summary>
+public record FolderEntry(string Name, string Path, bool IsGame, bool IsFile = false);

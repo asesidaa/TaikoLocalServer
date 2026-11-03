@@ -10,6 +10,9 @@ public sealed class TestServerAccess(ServerMode mode = ServerMode.Local, AccessR
     public ServerStatus Status { get; } = new();
     public byte[] SigningKey { get; } = new byte[32];
     public bool SetupPending => false;
+    public string? SetupCode => null;
+    public bool IsSetupCode(string? code) => false;
+    public Task FinishSetupAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
     public Task UpdateRulesAsync(AccessRules rules, CancellationToken cancellationToken) => Task.CompletedTask;
     public Task UpdateStatusAsync(ServerStatus status, CancellationToken cancellationToken) => Task.CompletedTask;

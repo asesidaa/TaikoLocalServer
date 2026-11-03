@@ -312,6 +312,7 @@ public class AuthController(
         credential.Password = hashedPassword;
         credential.Salt = salt;
         await context.SaveChangesAsync(HttpContext.RequestAborted);
+        if (withSetupCode) await access.FinishSetupAsync(HttpContext.RequestAborted);
         return Ok();
     }
 

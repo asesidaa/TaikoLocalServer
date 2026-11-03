@@ -6,9 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- StressSeed is its own runnable project (see its Program.cs), not part of the test run. -->
-    <Compile Remove="StressSeed/**" />
-    <None Remove="StressSeed/**" />
+    <!-- StressSeed is its own runnable project (see its Program.cs), not part of the test run; so is an operator's own
+         local SelfChecks project, if one was left in this folder from before the tests were committed. -->
+    <Compile Remove="StressSeed/**;SelfChecks/**" />
+    <None Remove="StressSeed/**;SelfChecks/**" />
   </ItemGroup>
 
   <ItemGroup>

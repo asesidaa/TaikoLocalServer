@@ -42,6 +42,26 @@ public class ExtractController(IExtractRunner extract, ITaikoDbContext context) 
         return Accepted(extract.Status);
     }
 
+    /// <summary>The folders on the server, to pick a game's install (null <paramref name="path"/>: the drives).</summary>
+    [HttpGet("Folders")]
+    public IActionResult Folders([FromQuery] string game = nameof(GameEra.Nijiiro), [FromQuery] string? path = null)
+    {
+        if (!EraRoute.TryParse(game, out var era)) return EraRoute.BadEra(game);
+        return Ok(extract.Browse(era, path));
+    }
+
+    /// <summary>Reads a game from this folder on the server from now on (saved in ServerSettings.json).</summary>
+    [HttpPut("Path")]
+    public async Task<IActionResult> SetPath([FromBody] ExtractPathRequest request)
+    {
+        if (!EraRoute.TryParse(request.Game, out var era)) return EraRoute.BadEra(request.Game);
+        if (await extract.SetGamePathAsync(era, request.Path, HttpContext.RequestAborted) is { } error)
+            return BadRequest(new { message = error });
+        this.LogActivity(context, "gamedata.path", null, $"{era}: {request.Path}");
+        await context.SaveChangesAsync(HttpContext.RequestAborted);
+        return Ok(extract.Status);
+    }
+
     /// <summary>The game files to send for a game: only these are accepted.</summary>
     [HttpGet("Inputs")]
     public async Task<IActionResult> Inputs([FromQuery] string game = nameof(GameEra.Nijiiro))

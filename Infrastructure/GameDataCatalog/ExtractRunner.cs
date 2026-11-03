@@ -21,7 +21,7 @@ namespace TaikoLocalServer.Infrastructure.GameDataCatalog;
 /// time. With AllowRemoteGameDir, a game's folder can instead be the files an admin sent from their browser (only the
 /// ones <c>extract --inputs</c> lists), kept in a temp folder in the install's layout until its run.
 /// </summary>
-public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGameDataCatalog catalog, ILogger<ExtractRunner> logger) : IExtractRunner
+public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGameDataCatalog catalog, IServerControl server, ILogger<ExtractRunner> logger) : IExtractRunner
 {
     private const int MaxLines = 2000;
 
@@ -130,6 +130,74 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
             return json.Deserialize<ExtractInputs>(JsonSerializerOptions.Web)!;
         });
         return Task.FromResult<(ExtractInputs?, string?)>((list, null));
+    }
+
+    public FolderListing Browse(GameEra game, string? path)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                // The drives on Windows; elsewhere the file system's top.
+                if (!OperatingSystem.IsWindows()) return Browse(game, "/");
+                var drives = DriveInfo.GetDrives().Where(d => d.IsReady).Select(d => new FolderEntry(d.Name, d.Name, false)).ToList();
+                return new FolderListing(null, null, false, drives);
+            }
+            var full = Path.GetFullPath(path);
+            if (!Directory.Exists(full)) return new FolderListing(full, null, false, [], "That folder isn't there.");
+            var entries = new DirectoryInfo(full).EnumerateDirectories()
+                .Where(d => (d.Attributes & (FileAttributes.Hidden | FileAttributes.System)) == 0)
+                .Select(d => new FolderEntry(d.Name, d.FullName, LooksLike(game, d.FullName)))
+                .Concat(game == GameEra.Nijiiro ? [] : new DirectoryInfo(full).EnumerateFiles("*.zip").Select(f => new FolderEntry(f.Name, f.FullName, true, true)))
+                .OrderBy(e => e.IsFile).ThenBy(e => e.Name, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+            return new FolderListing(full, Directory.GetParent(full)?.FullName, LooksLike(game, full), entries);
+        }
+        catch (Exception e) when (e is UnauthorizedAccessException or IOException)
+        {
+            return new FolderListing(path, path is null ? null : Directory.GetParent(path)?.FullName, false, [], e.Message);
+        }
+    }
+
+    // Nijiiro's install has Data/x64/datatable; an older game's folder is (or holds) its USRDIR/data, which has fumen,
+    // or is a .zip of it: the places GameSource.Open looks.
+    private static bool LooksLike(GameEra game, string path)
+    {
+        try
+        {
+            if (game == GameEra.Nijiiro) return Directory.Exists(Path.Combine(path, "Data", "x64", "datatable"));
+            if (File.Exists(path)) return path.EndsWith(".zip", StringComparison.OrdinalIgnoreCase);
+            return new[] { "", "data", "USRDIR/data", "dev_hdd0/game/SCEEXE000/USRDIR/data" }
+                .Any(rel => Directory.Exists(Path.Combine(path, rel, "fumen")));
+        }
+        catch (Exception e) when (e is UnauthorizedAccessException or IOException)
+        {
+            return false;
+        }
+    }
+
+    public async Task<string?> SetGamePathAsync(GameEra game, string path, CancellationToken cancellationToken)
+    {
+        if (!Enabled.Contains(game)) return $"{game} is off in ServerSettings.json.";
+        var full = Path.GetFullPath(path);
+        if (!LooksLike(game, full))
+            return game == GameEra.Nijiiro
+                ? "That folder isn't Nijiiro's install: it has no Data/x64/datatable."
+                : $"That folder doesn't have {game} in it: no USRDIR/data folder with fumen.";
+        lock (gate)
+            if (running) return "extract is running.";
+
+        // Now, for the next extract; and in the file, for the next start.
+        var era = settings.Value.Eras.TryGetValue(game.ToString(), out var e) ? e : settings.Value.Eras[game.ToString()] = new EraSettings { Enabled = true };
+        if (game == GameEra.Nijiiro) era.GameDataPath = full; else era.GamePath = full;
+        await server.UpdateSettingsAsync(s =>
+        {
+            if (s["Eras"] is not System.Text.Json.Nodes.JsonObject eras) s["Eras"] = eras = [];
+            if (eras[game.ToString()] is not System.Text.Json.Nodes.JsonObject one) eras[game.ToString()] = one = new System.Text.Json.Nodes.JsonObject { ["Enabled"] = true };
+            one[game == GameEra.Nijiiro ? "GameDataPath" : "GamePath"] = full;
+        }, cancellationToken);
+        logger.LogInformation("{Game} is read from {Path} now ({Setting})", game, full, SettingOf(game));
+        return null;
     }
 
     private static Era EraOf(GameEra game) =>

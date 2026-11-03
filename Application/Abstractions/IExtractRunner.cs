@@ -23,4 +23,10 @@ public interface IExtractRunner
 
     /// <summary>Stores one uploaded file under its path in the game's folder. Returns why not (a path extract doesn't read…), or null.</summary>
     Task<string?> SaveUploadAsync(GameEra game, string path, Stream content, CancellationToken cancellationToken);
+
+    /// <summary>The folders in <paramref name="path"/> on the server (null: the drives), each marked when it looks like <paramref name="game"/>'s install.</summary>
+    FolderListing Browse(GameEra game, string? path);
+
+    /// <summary>Reads <paramref name="game"/> from <paramref name="path"/> from now on, and saves it in ServerSettings.json. Returns why not, or null.</summary>
+    Task<string?> SetGamePathAsync(GameEra game, string path, CancellationToken cancellationToken);
 }

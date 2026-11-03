@@ -1790,6 +1790,9 @@ namespace TaikoLocalServer.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("SetupFinishedAt")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("ServerSecrets");

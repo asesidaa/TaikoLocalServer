@@ -322,6 +322,14 @@ try
 
     app.UseAllnetMucha();
 
+    // Until setup is finished: where to open the setup wizard, and the code it asks for.
+    app.Lifetime.ApplicationStarted.Register(() =>
+    {
+        var access = app.Services.GetRequiredService<ServerAccess>();
+        access.SetupUrls = SetupUrls(app.Configuration["Kestrel:Endpoints:BaseServer:Url"] ?? app.Urls.FirstOrDefault() ?? "http://localhost:5000");
+        access.LogSetupCode();
+    });
+
     app.Run();
     return 0;
 }
@@ -334,4 +342,22 @@ finally
 {
     Log.Information("Shut down complete");
     Log.CloseAndFlush();
+}
+
+// The web UI's address with /setup: when it listens on every address, this PC's own (localhost, then its network
+// addresses, for a browser on another device).
+static IReadOnlyList<string> SetupUrls(string listen)
+{
+    if (!Uri.TryCreate(listen.Replace("://*", "://0.0.0.0").Replace("://+", "://0.0.0.0"), UriKind.Absolute, out var uri))
+        return ["http://localhost:5000/setup"];
+    var hosts = uri.Host is "0.0.0.0" or "[::]" or "::"
+        ? ["localhost", .. System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces()
+            .Where(n => n.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up
+                        && n.NetworkInterfaceType != System.Net.NetworkInformation.NetworkInterfaceType.Loopback)
+            .SelectMany(n => n.GetIPProperties().UnicastAddresses)
+            .Where(a => a.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            .Select(a => a.Address.ToString())]
+        : new List<string> { uri.Host };
+    var port = uri.IsDefaultPort ? "" : $":{uri.Port}";
+    return hosts.Distinct().Select(h => $"{uri.Scheme}://{h}{port}/setup").ToList();
 }
