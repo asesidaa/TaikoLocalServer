@@ -3,7 +3,8 @@
    a plain plate shows instead. Geometry: the nameplate set is 352×110 stage units (x −172…180, y −62…48). *@
 @inject IJSRuntime Js
 
-<div @ref="el" class="group relative mx-auto aspect-[352/110] w-full max-w-[352px] select-none" role="img" aria-label="@($"{Title} · {Name}")">
+@* Hidden until ui.nameplate has it built (data-ready), then faded in, so its layers don't appear one by one. *@
+<div @ref="el" class="group relative mx-auto aspect-[352/110] w-full max-w-[352px] select-none opacity-0 transition-opacity duration-300 motion-reduce:transition-none data-[ready]:opacity-100" role="img" aria-label="@($"{Title} · {Name}")">
     @* Static fallback: a CSS frame plus extract's plate and dan PNGs at their places in the game's layout
        (plate sprite at (0, −20), its bounds −167.55…172 × −42…46; dan badge at (−62, 16), bounds ±32 × ±16). *@
     <div class="absolute inset-0 group-data-[live]:hidden">

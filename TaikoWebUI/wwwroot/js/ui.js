@@ -122,9 +122,20 @@
     onResize(el, renderNameplate, [el, o]);
     hydrateAssets();   // the static fallback's plate / dan PNGs
     const unit = el.clientWidth / NP_W;
-    el.querySelectorAll("canvas[data-gt]").forEach(cv => gameText(cv, cv.dataset.gt === "title"
+    const texts = [...el.querySelectorAll("canvas[data-gt]")].map(cv => gameText(cv, cv.dataset.gt === "title"
       ? { text: o.title, lang: o.lang, size: 22, fill: "#000", unit }
       : { text: o.name, lang: o.lang, size: 24, fill: "#fff", outline: 3, unit }));
+    try {
+      await buildNameplate(el, o);
+      await Promise.allSettled(texts);
+    } finally {
+      // Built (or fallen back to the plain plate): fade it in, once; a later render leaves it shown. A timer, not a
+      // frame: frames stop in a hidden tab, and the fade covers the player's first frame.
+      if (!el.dataset.ready) setTimeout(() => { el.dataset.ready = "1"; }, 50);
+    }
+  }
+
+  async function buildNameplate(el, o) {
     const scene = await loadScene(), slot = el.querySelector("[data-plate-slot]");
     if (!scene || !slot?.clientWidth) return;
     const scale = slot.clientWidth / NP_W, key = JSON.stringify(o.children);
