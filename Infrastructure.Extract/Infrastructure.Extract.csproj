@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RootNamespace>TaikoLocalServer.Infrastructure.Extract</RootNamespace>
+        <AssemblyName>TaikoLocalServer.Infrastructure.Extract</AssemblyName>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BCnEncoder.Net" />
+        <PackageReference Include="System.IO.Hashing" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="TaikoLocalServer.Tests" />
+    </ItemGroup>
+
+</Project>

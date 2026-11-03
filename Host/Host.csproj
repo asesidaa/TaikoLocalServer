@@ -61,6 +61,7 @@
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\Infrastructure.Extract\Infrastructure.Extract.csproj" />
     <ProjectReference Include="..\TaikoWebUI\TaikoWebUI.csproj" />
   </ItemGroup>
 

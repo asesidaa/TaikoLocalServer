@@ -55,6 +55,10 @@
     <PackageVersion Include="JsonSchema.Net" Version="9.2.2" />
     <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
 
+    <!-- Infrastructure.Extract (game files to wwwroot: textures, models) -->
+    <PackageVersion Include="BCnEncoder.Net" Version="2.3.0" />
+    <PackageVersion Include="System.IO.Hashing" Version="10.0.14" />
+
     <!-- Tests -->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="xunit" Version="2.9.3" />
