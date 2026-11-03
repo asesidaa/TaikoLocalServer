@@ -2,8 +2,8 @@ using TaikoLocalServer.Application.ServerData;
 
 namespace TaikoLocalServer.Tests.Nijiiro;
 
-// The 39.06 cabinet's ticker: it shows only text tagged "/key " (keys S, Cp, C, Mp, M; any other key crashes the game,
-// seen with "/J" on opening the test menu), so the announcement live now is served once per key, always tagged. Its
+// The 39.06 cabinet's ticker: it shows only text tagged with a key, and slot S ("/S Hello world!" showed on a cabinet;
+// "/C" didn't, and "/J" crashed it on opening the test menu). So the live announcement is telop 1, tagged "/S". Its
 // version must change when the live message changes, or cabinets keep the old one.
 public sealed class TelopTests
 {
@@ -29,14 +29,14 @@ public sealed class TelopTests
     }
 
     [Fact]
-    public void EachTelop_IsTheMessageTaggedWithASafeKey_EvenWhenTheTextStartsWithASlash()
+    public void Telop1_IsTheMessageTaggedS_EvenWhenTheTextStartsWithASlash()
     {
-        Assert.Equal(["/S Hello", "/Cp Hello", "/C Hello", "/Mp Hello", "/M Hello"], NijiiroTelop.Ids.Select(id => NijiiroTelop.Text(id, "Hello")));
+        Assert.Equal("/S Hello", NijiiroTelop.Text(1, "Hello"));
         // A typed tag stays text after the safe one (an unknown key would crash the cabinet).
         Assert.Equal("/S /J Hello", NijiiroTelop.Text(1, "/J Hello"));
         // One line: the cabinet reads to the end of the line.
         Assert.Equal("/S A B", NijiiroTelop.Text(1, "A\r\n B\n"));
-        Assert.Null(NijiiroTelop.Text(6, "Hello"));
+        Assert.Null(NijiiroTelop.Text(2, "Hello"));
     }
 
     [Fact]
