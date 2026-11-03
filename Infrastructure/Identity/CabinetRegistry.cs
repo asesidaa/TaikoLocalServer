@@ -18,6 +18,8 @@ public sealed class CabinetRegistry(IServiceScopeFactory scopes, IOptions<Server
 {
     private static readonly TimeSpan SeenGranularity = TimeSpan.FromMinutes(1);
     private readonly ConcurrentDictionary<string, Cabinet> cabinets = new();
+    // Names reported before the cabinet's first game request.
+    private readonly ConcurrentDictionary<string, string> names = new();
     private readonly SemaphoreSlim writes = new(1, 1);
 
     public bool Restricted => settings.Value.RestrictChassisIds;
@@ -41,8 +43,9 @@ public sealed class CabinetRegistry(IServiceScopeFactory scopes, IOptions<Server
             return new Cabinet { ChassisId = id, FirstSeen = now, Access = Restricted ? CabinetAccess.Pending : CabinetAccess.Allowed };
         });
 
+        if (names.TryRemove(chassisId, out var name)) cabinet.LocationName = name;
         var allowed = cabinet.Access == CabinetAccess.Allowed;
-        var write = isNew || !allowed || cabinet.LastSeen is null || now - cabinet.LastSeen > SeenGranularity
+        var write = isNew || !allowed || name is not null || cabinet.LastSeen is null || now - cabinet.LastSeen > SeenGranularity
                     || cabinet.ShopId != shopId || (version.Length > 0 && cabinet.Version != version);
         cabinet.FirstSeen ??= now;
         cabinet.LastSeen = now;
@@ -54,6 +57,21 @@ public sealed class CabinetRegistry(IServiceScopeFactory scopes, IOptions<Server
             allowed ? "" : ": waiting for approval");
         if (write) _ = SaveAsync(chassisId, CancellationToken.None);
         return allowed;
+    }
+
+    public void Located(string chassisId, string locationName)
+    {
+        if (string.IsNullOrWhiteSpace(chassisId) || string.IsNullOrWhiteSpace(locationName)) return;
+        locationName = locationName.Trim();
+        if (locationName.Length > 64) locationName = locationName[..64];
+        if (!cabinets.TryGetValue(chassisId, out var cabinet))
+        {
+            names[chassisId] = locationName;
+            return;
+        }
+        if (cabinet.LocationName == locationName) return;
+        cabinet.LocationName = locationName;
+        _ = SaveAsync(chassisId, CancellationToken.None);
     }
 
     public IReadOnlyList<Cabinet> List() => cabinets.Values.OrderByDescending(c => c.LastSeen).ToList();
@@ -95,6 +113,7 @@ public sealed class CabinetRegistry(IServiceScopeFactory scopes, IOptions<Server
             var row = await db.Cabinets.FindAsync([chassisId], cancellationToken);
             if (row is null) db.Cabinets.Add(row = new Cabinet { ChassisId = chassisId });
             row.ShopId = cabinet.ShopId;
+            row.LocationName = cabinet.LocationName;
             row.Version = cabinet.Version;
             row.FirstSeen = cabinet.FirstSeen;
             row.LastSeen = cabinet.LastSeen;

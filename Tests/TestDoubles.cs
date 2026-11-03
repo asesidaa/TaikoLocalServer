@@ -26,6 +26,7 @@ public sealed class NullCabinetRegistry : ICabinetRegistry
     public bool Restricted => false;
     public Task InitializeAsync() => Task.CompletedTask;
     public bool Seen(string chassisId, string shopId, string version) => true;
+    public void Located(string chassisId, string locationName) { }
     public IReadOnlyList<Cabinet> List() => [];
     public Cabinet? Find(string chassisId) => null;
     public Task UpdateAsync(string chassisId, Action<Cabinet> change, CancellationToken cancellationToken) => Task.CompletedTask;

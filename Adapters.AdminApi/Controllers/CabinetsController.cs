@@ -63,7 +63,7 @@ public class CabinetsController(ICabinetRegistry cabinets, IGameDataCatalog cata
 
     private static CabinetItem Item(Cabinet c) => new(c.ChassisId, c.ShopId, c.Version, Utc(c.FirstSeen), Utc(c.LastSeen),
         c.LastSeen is { } seen && DateTime.UtcNow - seen < OnlineWindow, c.Access, c.RefusedCount, c.OwnSettings, c.DanSet,
-        c.Movies.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(uint.Parse).ToList());
+        c.Movies.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(uint.Parse).ToList(), c.LocationName);
 
     private static DateTime? Utc(DateTime? t) => t is { } v ? DateTime.SpecifyKind(v, DateTimeKind.Utc) : null;
 

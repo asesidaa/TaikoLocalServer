@@ -135,7 +135,8 @@
         var q = query.Trim();
         var shown = list!.Cabinets.Where(c => gameFilter is null || GameOf(c) == gameFilter)
             .Where(c => q.Length == 0 || c.ChassisId.Contains(q, StringComparison.OrdinalIgnoreCase)
-                                                             || c.ShopId.Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
+                                                             || c.ShopId.Contains(q, StringComparison.OrdinalIgnoreCase)
+                                                             || c.LocationName.Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
         var groups = list.Restricted
             ? new[] { (Localizer["Waiting for approval"].Value, CabinetAccess.Pending), (Localizer["Allowed"].Value, CabinetAccess.Allowed), (Localizer["Blocked"].Value, CabinetAccess.Blocked) }
             : new[] { (Localizer["Seen by this server"].Value, CabinetAccess.Allowed), (Localizer["Blocked"].Value, CabinetAccess.Blocked) };
@@ -181,7 +182,7 @@
                         {
                             <GameDot Game="GameInfo.Of(GameOf(c))" />@GameOf(c)<span>·</span>
                         }
-                        @(c.ShopId.Length > 0 ? c.ShopId : "–") · @(summary ? Localizer["tap to switch cabinet"] : GameOf(c) != "Nijiiro" ? Localizer["Game data"] : c.OwnSettings ? Localizer["Own settings"] : Localizer["Defaults"])
+                        @(c.LocationName.Length > 0 ? c.LocationName : c.ShopId.Length > 0 ? c.ShopId : "–") · @(summary ? Localizer["tap to switch cabinet"] : GameOf(c) != "Nijiiro" ? Localizer["Game data"] : c.OwnSettings ? Localizer["Own settings"] : Localizer["Defaults"])
                     </span>
                 </span>
             }
@@ -449,6 +450,10 @@
                     <p class="flex flex-wrap items-center gap-x-1.5 text-sm @Css.Muted">@if (ManyGames || GameOf(c) != "Nijiiro")
                         {
                             <GameDot Game="GameInfo.Of(GameOf(c))" />@GameOf(c)<span>·</span>
+                        }
+                        @if (c.LocationName.Length > 0)
+                        {
+                            <span class="font-medium text-zinc-700 dark:text-zinc-300">@c.LocationName</span><span>·</span>
                         }
                         @(c.ShopId.Length > 0 ? $"{Localizer["Shop"]} {c.ShopId}" : Localizer["No shop ID yet"]) · @(c.Version.Length > 0 ? c.Version : "–")</p>
                     <p class="text-xs @Css.Muted">@(c.Online ? Localizer["Online now"] : c.LastSeen is { } seen ? string.Format(Localizer["Last seen {0}"], seen.ToLocalTime().ToString("g")) : Localizer["Never connected (pre-approved)"])</p>

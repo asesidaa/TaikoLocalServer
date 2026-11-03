@@ -537,6 +537,10 @@ namespace TaikoLocalServer.Migrations
                     b.Property<DateTime?>("LastSeen")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("LocationName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Movies")
                         .IsRequired()
                         .HasColumnType("TEXT");

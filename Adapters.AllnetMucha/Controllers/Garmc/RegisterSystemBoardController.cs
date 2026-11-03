@@ -8,12 +8,14 @@ public class RegisterSystemBoardController : BaseProtocolController<RegisterSyst
 {
     [HttpPost]
     [Produces("application/protobuf")]
-    public async Task<RegisterSystemBoardResponse> RegisterSystemBoard()
+    public async Task<RegisterSystemBoardResponse> RegisterSystemBoard([FromServices] ICabinetRegistry cabinets)
     {
         HttpContext.Request.EnableBuffering();
         var body = await HttpContext.Request.BodyReader.ReadAsync();
         var request = Serializer.Deserialize<RegisterSystemBoardRequest>(body.Buffer);
         Logger.LogInformation("RegisterSystemBoard request: {@Request}", request);
+        // DeviceId is the chassis id its game requests carry.
+        if (request.Data is { } board) cabinets.Located(board.DeviceId, request.LocationName);
         var response = new RegisterSystemBoardResponse
         {
             Token = "114514"

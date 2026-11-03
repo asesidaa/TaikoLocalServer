@@ -10,6 +10,10 @@ public interface ICabinetRegistry
     /// <summary>Records a request from <paramref name="chassisId"/>; false when it must be refused (blocked, or not approved).</summary>
     bool Seen(string chassisId, string shopId, string version);
 
+    /// <summary>Records the location name a cabinet reports at start-up. A cabinet not seen yet gets it on its first
+    /// game request (this never adds one, so it can't bypass approval).</summary>
+    void Located(string chassisId, string locationName);
+
     IReadOnlyList<Cabinet> List();
 
     Cabinet? Find(string chassisId);

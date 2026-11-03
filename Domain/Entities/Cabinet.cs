@@ -7,6 +7,8 @@ public class Cabinet
 {
     public string ChassisId { get; set; } = string.Empty;
     public string ShopId { get; set; } = string.Empty;
+    /// <summary>The location name it reports at start-up (Garm RegisterSystemBoard), e.g. its loader's shop name.</summary>
+    public string LocationName { get; set; } = string.Empty;
     /// <summary>The game version it last spoke: "WW 39.06" or "CHN".</summary>
     public string Version { get; set; } = string.Empty;
     public DateTime? FirstSeen { get; set; }
