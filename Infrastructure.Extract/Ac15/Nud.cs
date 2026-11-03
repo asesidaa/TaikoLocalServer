@@ -9,7 +9,7 @@ namespace TaikoLocalServer.Infrastructure.Extract.Ac15;
 
 /// <summary>
 /// The older games' 3D don-chan parts: NUD (<c>NDP3</c>, PS3, big-endian) meshes with their <c>.nut</c> textures beside
-/// them, converted to binary glTF. The layout follows Smash Forge's <c>NUD.cs</c> (MIT); tools/extract's README has what
+/// them, converted to binary glTF. The layout follows Smash Forge's <c>NUD.cs</c> (MIT); this project's README has what
 /// the files use.
 /// </summary>
 public static class Nud

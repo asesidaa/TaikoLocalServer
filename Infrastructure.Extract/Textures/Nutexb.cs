@@ -50,6 +50,15 @@ public static class Nutexb
                         (image.Pixels[p], image.Pixels[p + 2]) = (image.Pixels[p + 2], image.Pixels[p]);
                 return image;
             }
+            // R8: grey, opaque (as image_dds decodes it).
+            case 0x0100:
+            {
+                if (data.Length < width * height) throw new InvalidDataException("short R8 data");
+                var image = new RgbaImage(width, height);
+                for (var p = 0; p < width * height; p++)
+                    (image.Pixels[p * 4], image.Pixels[p * 4 + 1], image.Pixels[p * 4 + 2], image.Pixels[p * 4 + 3]) = (data[p], data[p], data[p], 255);
+                return image;
+            }
             case 0x0480 or 0x0485: return Bcn.Decode(data, width, height, 1);
             case 0x0490 or 0x0495: return Bcn.Decode(data, width, height, 2);
             case 0x04A0 or 0x04A5: return Bcn.Decode(data, width, height, 3);

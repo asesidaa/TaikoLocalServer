@@ -5,7 +5,7 @@ using TaikoLocalServer.Infrastructure.Extract.Textures;
 
 namespace TaikoLocalServer.Tests.Extract;
 
-// The older games' file formats as Infrastructure.Extract reads them (tools/extract's README documents each).
+// The older games' file formats as Infrastructure.Extract reads them (Infrastructure.Extract/README.md documents each).
 public sealed class Ac15ExtractTests
 {
     [Fact]

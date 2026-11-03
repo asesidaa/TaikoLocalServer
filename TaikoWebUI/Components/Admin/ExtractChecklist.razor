@@ -72,15 +72,6 @@ else
 
     private RenderFragment Body => __builder =>
     {
-        if (!status!.ExtractFound)
-        {
-            <div class="space-y-2 text-sm">
-                <p class="@Css.Muted">@Localizer["extract.exe isn't next to TaikoLocalServer.exe, so run it yourself:"]</p>
-                <code class="block overflow-x-auto whitespace-nowrap rounded-lg bg-zinc-900 px-3 py-2 font-mono text-xs text-zinc-100">@Command(Only ?? "Nijiiro")</code>
-                <button class="@Css.GhostButton !px-0" @onclick="Refresh"><Icon Name="rotate" />@Localizer["Check again"]</button>
-            </div>
-            return;
-        }
         if (Bare)
         {
             <div class="mb-3 flex justify-end">@SourceToggle</div>
@@ -157,7 +148,7 @@ else
     // Where the games are read from: their folders on the server, or picked in this browser (AllowRemoteGameDir).
     private RenderFragment SourceToggle => __builder =>
     {
-        if (status is not { RemoteGameDir: true, ExtractFound: true }) return;
+        if (status is not { RemoteGameDir: true }) return;
         <span class="inline-flex rounded-xl bg-zinc-100 p-1 text-xs dark:bg-zinc-800" role="group" aria-label="@Localizer["Read the games from"]">
             @foreach (var (fromBrowser, label) in new[] { (false, Localizer["On the server"].Value), (true, Localizer["From this browser"].Value) })
             {
@@ -378,10 +369,6 @@ else
             : n == 0 ? Localizer["Pick a game"].Value : n == 1 ? Localizer["Extract 1 game"].Value : string.Format(Localizer["Extract {0} games"], n);
         <button class="@Css.PrimaryButton" disabled="@(n == 0 || starting)" @onclick="Start"><Icon Name="@(Only is not null && Shown.FirstOrDefault()?.Last is not null ? "rotate" : "drum")" />@label</button>
     };
-
-    private string Command(string game) => game == "Nijiiro"
-        ? "extract --game \"<Nijiiro game folder>\" --mods"
-        : $"extract --era {game.ToLowerInvariant()} --game \"<{game} RPCS3 folder>\" --out wwwroot";
 
     protected override async Task OnInitializedAsync()
     {

@@ -6,7 +6,7 @@ namespace TaikoLocalServer.Infrastructure.Extract.Textures;
 public sealed record Texture(uint Id, RgbaImage Image);
 
 /// <summary>
-/// The older games' textures: <c>NTP3</c> (<c>.nut</c>, PS3 NUT, big-endian). See tools/extract's README for the layout.
+/// The older games' textures: <c>NTP3</c> (<c>.nut</c>, PS3 NUT, big-endian). The README beside this project has the layout.
 /// </summary>
 public static class Ntp3
 {

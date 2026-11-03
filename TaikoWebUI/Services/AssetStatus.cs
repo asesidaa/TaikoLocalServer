@@ -3,7 +3,7 @@ using System.Net;
 namespace TaikoWebUI.Services;
 
 /// <summary>
-/// Whether the operator has run tools/extract: checks the index files it writes next to the UI art.
+/// Whether the game files have been extracted: checks the index files it writes next to the UI art.
 /// Only a 404 counts as missing (a 401 just means the user isn't logged in yet).
 /// </summary>
 public sealed class AssetStatus(HttpClient client)

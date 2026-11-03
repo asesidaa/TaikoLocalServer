@@ -14,7 +14,7 @@ public sealed record Bone(string Name, int? Parent, int? T, int? R, int? S);
 public readonly record struct BonePose(Vector3 T, Quaternion R, Vector3 S);
 
 /// <summary>
-/// The older games' don-chan rig and animations (<c>don3d/ani/*.bin</c>, reverse-engineered; see tools/extract's README).
+/// The older games' don-chan rig and animations (<c>don3d/ani/*.bin</c>, reverse-engineered; see this project's README).
 /// A file is a big-endian f32 frame count, then that many frames of 98 vec3s (1,176 bytes). Every model shares one
 /// 39-bone rig, so the slots are fixed: bone 0 (translation, rotation), bone 1 the body (translation, rotation, scale),
 /// four limbs of nine bones from slot 5 (23 slots each), and slot 97, whose x is the face expression. Rotations are

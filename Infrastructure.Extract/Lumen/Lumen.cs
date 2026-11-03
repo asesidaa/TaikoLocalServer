@@ -8,7 +8,7 @@ namespace TaikoLocalServer.Infrastructure.Extract.Lumen;
 /// <summary>
 /// Lumen (<c>LMB\0</c>) UI files: the Flash-like format the games' 2D UI uses. Parses shapes and sprite timelines and
 /// rasterizes a sprite at a frame label from its texture atlases. Layout: a 0x40-byte header, then tags
-/// <c>u32 type, u32 size_in_words, payload</c> until <c>0xFF00</c> (tools/extract's README has the tag table).
+/// <c>u32 type, u32 size_in_words, payload</c> until <c>0xFF00</c> (docs/webui-refactor-plan.md §3d has the tag table).
 /// </summary>
 public sealed class LumenFile
 {

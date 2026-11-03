@@ -4,7 +4,7 @@ using TaikoLocalServer.Infrastructure.Extract.Textures;
 
 namespace TaikoLocalServer.Tests.Extract;
 
-// Nijiiro's file formats as Infrastructure.Extract reads them (tools/extract's README documents each).
+// Nijiiro's file formats as Infrastructure.Extract reads them (Infrastructure.Extract/README.md documents each).
 public sealed class NijiiroExtractTests
 {
     // A minimal linear (PC-style) R8G8B8A8 nutexb with Nijiiro's "46XT" footer magic.

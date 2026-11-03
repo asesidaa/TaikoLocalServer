@@ -4,7 +4,7 @@ namespace TaikoLocalServer.Infrastructure.GameDataCatalog;
 
 public static class PathHelper
 {
-    /// <summary>What tools/extract writes besides the datatables (models, textures, UI art, fonts, tones), under wwwroot.</summary>
+    /// <summary>What the extractor writes besides the datatables (models, textures, UI art, fonts, tones), under wwwroot.</summary>
     public const string GameDataFolder = "game_data";
 
     /// <summary>The folder used to be called don-model: rename an existing one so it needn't be extracted again.</summary>

@@ -2943,9 +2943,6 @@
   <data name="by {0}" xml:space="preserve">
     <value>{0}による</value>
   </data>
-  <data name="extract.exe isn't next to TaikoLocalServer.exe, so run it yourself:" xml:space="preserve">
-    <value>extract.exeがTaikoLocalServer.exeと同じ場所にありません。自分で実行してください：</value>
-  </data>
   <data name="for 1 day" xml:space="preserve">
     <value>1日間</value>
   </data>

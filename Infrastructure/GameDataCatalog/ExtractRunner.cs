@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
@@ -8,15 +8,18 @@ using TaikoLocalServer.Application.Abstractions;
 using TaikoLocalServer.Application.Settings;
 using TaikoLocalServer.Domain.Enums;
 using TaikoLocalServer.Contracts.AdminApi.Responses;
+using TaikoLocalServer.Infrastructure.Extract;
+using TaikoLocalServer.Infrastructure.Extract.Ac15;
+using TaikoLocalServer.Infrastructure.Extract.Nijiiro;
 
 namespace TaikoLocalServer.Infrastructure.GameDataCatalog;
 
 /// <summary>
-/// Runs <c>extract(.exe)</c> from next to the server exe for each game asked for, one after another: Nijiiro with
-/// <c>--game GamePath --out wwwroot</c>, an older game with <c>--era &lt;game&gt;</c> as well. Captures its report
-/// (each step's counts as it goes) and reloads that game's data when it's done. One run at a time. With
-/// AllowRemoteGameDir, a game's folder can instead be the files an admin sent from their browser (only the ones
-/// <c>extract --inputs</c> lists), kept in a temp folder in the install's layout until its run.
+/// Runs the extractor (Infrastructure.Extract, the same code as <c>TaikoLocalServer extract</c>) for each game asked for,
+/// one after another: Nijiiro with <c>--game GamePath --out wwwroot</c>, an older game with <c>--era &lt;game&gt;</c> as
+/// well. Captures its report (each step's counts as it goes) and reloads that game's data when it's done. One run at a
+/// time. With AllowRemoteGameDir, a game's folder can instead be the files an admin sent from their browser (only the
+/// ones <c>extract --inputs</c> lists), kept in a temp folder in the install's layout until its run.
 /// </summary>
 public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGameDataCatalog catalog, ILogger<ExtractRunner> logger) : IExtractRunner
 {
@@ -32,10 +35,9 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
     private bool running, mods;
     private DateTime? startedAt, finishedAt;
 
-    private static string ExePath => Path.Combine(AppContext.BaseDirectory, OperatingSystem.IsWindows() ? "extract.exe" : "extract");
     private static readonly string UploadRoot = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "TaikoLocalServer-game-upload"));
     private static string UploadPath(GameEra game) => Path.Combine(UploadRoot, game.ToString().ToLowerInvariant());
-    private bool RemoteAllowed => settings.Value.AllowRemoteGameDir && File.Exists(ExePath);
+    private bool RemoteAllowed => settings.Value.AllowRemoteGameDir;
 
     // The games that are on, in GameEra's order (Nijiiro first).
     private IReadOnlyList<GameEra> Enabled => catalog.LoadResults.Keys.Order().ToList();
@@ -86,14 +88,13 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
                     ? new ExtractRun(runGames.Select(g => g.ToString()).ToList(), current?.ToString(), running, mods, started, finishedAt,
                         steps.ToList(), new Dictionary<string, int>(exitCodes), output.ToList())
                     : null;
-                return new ExtractStatus(File.Exists(ExePath), RemoteAllowed, games, run);
+                return new ExtractStatus(RemoteAllowed, games, run);
             }
         }
     }
 
     public string? Start(IReadOnlyList<GameEra> games, bool withMods, IReadOnlySet<GameEra> uploaded)
     {
-        if (!File.Exists(ExePath)) return "extract isn't next to the server exe.";
         if (games.Count == 0) return "Pick a game to extract.";
         if (uploaded.Count > 0 && !RemoteAllowed) return "Sending game folders from the browser is off (AllowRemoteGameDir).";
         foreach (var game in games)
@@ -120,25 +121,19 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
         return null;
     }
 
-    public async Task<(ExtractInputs? Inputs, string? Error)> InputsAsync(GameEra game, CancellationToken cancellationToken)
+    public Task<(ExtractInputs? Inputs, string? Error)> InputsAsync(GameEra game, CancellationToken cancellationToken)
     {
-        if (!RemoteAllowed) return (null, "Sending game folders from the browser is off (AllowRemoteGameDir).");
-        if (inputs.TryGetValue(game, out var cached)) return (cached, null);
-        var info = new ProcessStartInfo(ExePath) { RedirectStandardOutput = true, UseShellExecute = false, CreateNoWindow = true };
-        info.ArgumentList.Add("--inputs");
-        if (game != GameEra.Nijiiro)
+        if (!RemoteAllowed) return Task.FromResult<(ExtractInputs?, string?)>((null, "Sending game folders from the browser is off (AllowRemoteGameDir)."));
+        var list = inputs.GetOrAdd(game, g =>
         {
-            info.ArgumentList.Add("--era");
-            info.ArgumentList.Add(game.ToString().ToLowerInvariant());
-        }
-        using var process = Process.Start(info)!;
-        var json = await process.StandardOutput.ReadToEndAsync(cancellationToken);
-        await process.WaitForExitAsync(cancellationToken);
-        if (process.ExitCode != 0) return (null, "This extract is too old to list its inputs; update it.");
-        var list = JsonSerializer.Deserialize<ExtractInputs>(json, JsonSerializerOptions.Web)!;
-        inputs[game] = list;
-        return (list, null);
+            var json = g == GameEra.Nijiiro ? NijiiroExtractor.Inputs() : Ac15Extractor.Inputs(EraOf(g));
+            return json.Deserialize<ExtractInputs>(JsonSerializerOptions.Web)!;
+        });
+        return Task.FromResult<(ExtractInputs?, string?)>((list, null));
     }
+
+    private static Era EraOf(GameEra game) =>
+        EraInfo.TryParse(game.ToString().ToLowerInvariant(), out var era) ? era : throw new ArgumentOutOfRangeException(nameof(game), game, null);
 
     public string? ClearUpload(GameEra game)
     {
@@ -244,42 +239,23 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
 
     private async Task<int> RunOneAsync(GameEra game, bool withMods, bool uploaded)
     {
-        var info = new ProcessStartInfo(ExePath)
-        {
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-        };
-        if (game != GameEra.Nijiiro)
-        {
-            info.ArgumentList.Add("--era");
-            info.ArgumentList.Add(game.ToString().ToLowerInvariant());
-        }
-        info.ArgumentList.Add("--game");
-        info.ArgumentList.Add(uploaded ? UploadPath(game) : GamePath(game));
-        info.ArgumentList.Add("--out");
-        info.ArgumentList.Add(PathHelper.GetRootPath());
-        if (withMods && game == GameEra.Nijiiro) info.ArgumentList.Add("--mods");
+        var args = new List<string>();
+        if (game != GameEra.Nijiiro) args.AddRange(["--era", game.ToString().ToLowerInvariant()]);
+        args.AddRange(["--game", uploaded ? UploadPath(game) : GamePath(game)]);
+        if (withMods && game == GameEra.Nijiiro) args.Add("--mods");
 
         var code = -1;
         try
         {
-            using var process = new Process { StartInfo = info };
-            process.OutputDataReceived += (_, e) => Add(e.Data, game);
-            process.ErrorDataReceived += (_, e) => Add(e.Data, game);
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-            await process.WaitForExitAsync();
-            code = process.ExitCode;
+            using var report = new LineWriter(line => Add(line, game));
+            code = await Task.Run(() => ExtractCli.Run([.. args], PathHelper.GetRootPath(), report, report));
             logger.LogInformation("extract {Game} finished with exit code {ExitCode}", game, code);
             await catalog.ReloadAsync(game);
         }
         catch (Exception e)
         {
             Add($"error: {e.Message}", game);
-            logger.LogError(e, "extract {Game} failed to run", game);
+            logger.LogError(e, "extract {Game} failed", game);
         }
         finally
         {
@@ -287,6 +263,33 @@ public sealed partial class ExtractRunner(IOptions<ServerSettings> settings, IGa
             if (uploaded) DeleteUpload(game);
         }
         return code;
+    }
+
+    /// <summary>Hands each line written to it to <paramref name="onLine"/>, as the report goes.</summary>
+    private sealed class LineWriter(Action<string> onLine) : TextWriter
+    {
+        private readonly StringBuilder line = new();
+        public override Encoding Encoding => Encoding.UTF8;
+
+        public override void Write(char value)
+        {
+            if (value == '\n')
+            {
+                onLine(line.ToString().TrimEnd('\r'));
+                line.Clear();
+            }
+            else
+            {
+                line.Append(value);
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (line.Length > 0) onLine(line.ToString());
+            line.Clear();
+            base.Dispose(disposing);
+        }
     }
 
     private void DeleteUpload(GameEra game)

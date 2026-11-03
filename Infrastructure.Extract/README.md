@@ -1,18 +1,18 @@
-# extract
+# Infrastructure.Extract
 
-Copies and converts the files TaikoLocalServer needs from a Taiko no Tatsujin Nijiiro install, or with `--era` from one of the older PS3-based games (see Older games below).
+Copies and converts the files TaikoLocalServer needs from a Taiko no Tatsujin Nijiiro install, or with `--era` from one of the older PS3-based games (see Older games below). Server Management › Games runs it inside the server (`ExtractRunner`); the same code runs from the command line as `TaikoLocalServer extract`, without starting the server:
 
 ```bash
-extract --game "G:\Games\Taiko no Tatsujin Nijiiro Version (SBWY 39.06)"
+TaikoLocalServer extract --game "G:\Games\Taiko no Tatsujin Nijiiro Version (SBWY 39.06)"
 ```
 
 | Option | |
 | --- | --- |
 | `--game` | The game install folder, the one containing `Data/x64`. Passing `Data/x64` itself also works. `Data_mods` is read only with `--mods`. |
-| `--out` | The server's `wwwroot` folder. Defaults to `wwwroot` next to `extract.exe`, which is right when it sits beside `TaikoLocalServer.exe`. |
+| `--out` | The server's `wwwroot` folder. Defaults to the `wwwroot` next to `TaikoLocalServer.exe`. |
 | `--mods` | Layer the install's LayeredFS `Data_mods` folder over `Data`, as the game sees it with the plugin. A file in `Data_mods/x64/<path>` replaces `Data/x64/<path>` (fonts, models, UI), and folders gain the mods' extra entries. Datatables (e.g. new songs) come from `Data_mods/x64_enc/datatable`, the re-encrypted ones; the JSON in `Data_mods/x64/datatable` is ignored. Switching `--mods` on or off rebuilds every output once. |
 | `--era` | An older game instead: `green`, `blue`, `yellow`, `red`, `white`, `murasaki`, `kimidori` or `momoiro`. `--game` is then its RPCS3 install (or its `USRDIR/data`), or a `.zip` of it. |
-| `--inputs` | Print the game files extract reads, as JSON, and exit (for the WebUI's "Choose game folder"). With `--era`, that game's, relative to `USRDIR`. |
+| `--inputs` | Print the game files extract reads, as JSON, and exit (the WebUI's "Choose game folder" sends only these). With `--era`, that game's, relative to `USRDIR`. |
 
 It is safe to re-run, for example after a game update. Outputs that are already up to date (not older than the game's file; datatables must also match in size) are skipped. It exits with code `2` when a required file is missing or a texture fails to convert, and `1` on any other error. One bad texture doesn't stop the rest.
 
@@ -57,14 +57,14 @@ Each step prints `<label>: N written, M already up to date, X missing, Y failed`
 | `movie/<8-digit id>.wmv` | `game_data/movies.json` | The ids of the attract movies (not the videos), so Server Management › Cabinets offers them instead of asking for numbers |
 | `lumen/000_default/common/player_board.{nulm,nutexb}` | `game_data/scoreboard/panel_<difficulty>.png`, `digit_ns_0N.png`, `scoreboard.json` | The Profile achievement panel ("scoreboard") per difficulty, plus the game's counter digit glyphs |
 
-## Older games (`--era`, `src/ac15.rs`, `src/source.rs`)
+## Older games (`--era`, `Ac15/Ac15Extractor.cs`, `Ac15/ServerFiles.cs`, `GameSource.cs`)
 
 ```bash
-extract --era green --game "D:\RPCS3\Taiko no Tatsujin Green Version (SBWY 13.02)"
-extract --era yellow --game "D:\Taiko no Tatsujin - Yellow Version.zip"
+TaikoLocalServer extract --era green --game "D:\RPCS3\Taiko no Tatsujin Green Version (SBWY 13.02)"
+TaikoLocalServer extract --era yellow --game "D:\Taiko no Tatsujin - Yellow Version.zip"
 ```
 
-`--era` is one of `green`, `blue`, `yellow`, `red`, `white`, `murasaki`, `kimidori`, `momoiro`. `--game` is the RPCS3 install (or anything down to its `dev_hdd0/game/SCEEXE000/USRDIR/data`, also one folder deeper, like Blue's `[ARCADE SYSTEM 357] … ReadyToPlay.7z` folder), or a `.zip` of it. Zips are read in place, without unpacking: stored and deflate members, zip64, every member CRC-checked. `--inputs --era <era>` lists what it reads, relative to `USRDIR` (paths start with `data/`).
+`--era` is one of `green`, `blue`, `yellow`, `red`, `white`, `murasaki`, `kimidori`, `momoiro`. `--game` is the RPCS3 install (or anything down to its `dev_hdd0/game/SCEEXE000/USRDIR/data`, also one folder deeper, like Blue's `[ARCADE SYSTEM 357] … ReadyToPlay.7z` folder), or a `.zip` of it. Zips are read in place, without unpacking (.NET's `ZipArchive`: stored and deflate members, zip64, CRC-checked). `--inputs --era <era>` lists what it reads, relative to `USRDIR` (paths start with `data/`).
 
 | From `USRDIR/data/` | To `<out>/data/<era>/data/` | |
 | --- | --- | --- |
@@ -83,7 +83,7 @@ An icon comes from a one-texture pack entry of the same name (`icon_neiro_001.nu
 
 The title, drum-sound and costume names are images in the game too (`nutdata/**/{title_name,tone_name,cos_name}`), but they aren't converted: the server has them as text in `data/shared`, under the same ids.
 
-### NTP3 textures (`.nut`, `src/nut.rs`)
+### NTP3 textures (`.nut`, `Textures/Ntp3.cs`, `Ac15/Icons.cs`)
 
 The PS3 NUT, big-endian. Header: `NTP3`, u16 version (`0x0100` or `0x0200`), u16 texture count, 8 bytes of padding. Then per texture, at 0x10:
 
@@ -100,7 +100,7 @@ The PS3 NUT, big-endian. Header: `NTP3`, u16 version (`0x0100` or `0x0200`), u16
 
 Version `0x0100` lays them out header, data, header, data (data right after its header, the next header after `total`). `0x0200` puts every header first (the next one `header size` later) and the data where +0x20 says. The base mip comes first.
 
-### NUT packs (`.ndp`)
+### NUT packs (`.ndp`, `Textures/NutPack.cs`)
 
 `NUT_PACK_TYPE1` is a boost `binary_oarchive` (big-endian, 32-bit PS3 sizes): the magic padded to 16 bytes, u32 22 + `serialization::archive`, the archive's header and class info, then at 0x3E the u32 entry count. From 0x4B each entry is a u32 name length, the name (`cos_icon_000.nut`), a u32 offset and a u32 size. The first entry has a 5-byte class header between its name and offset. The data starts 4 bytes after the last entry (a u32 blob size), and offsets count from there. Every entry is a whole NTP3, usually of one texture; a range pack (`nutdatapack_<A>_<B>.ndp`) holds one `image.nut` with a texture per item. All 347 packs in Green and all 13 in Momoiro parse this way.
 
@@ -114,19 +114,17 @@ Version `0x0100` lays them out header, data, header, data (data right after its 
 
 Every label of a set is drawn on one shared canvas, so they line up. Green, Blue, Yellow and Red: 47 images; Murasaki 39, Kimidori 36, Momoiro 32.
 
-### PS3 Lumen packs (`LM_NUT_TYPE1`, `src/lmpack.rs`)
+### PS3 Lumen packs (`LM_NUT_TYPE1`, `Lumen/LmPack.cs`, `Ac15/UiSets.cs`)
 
 `lumendata/packed/<scene>/packeddata.ddp` holds a scene's `.lm` files and their atlases; `packlist.txt` beside it lists the same names (it isn't needed). It's a boost binary archive like the NUT packs: the `.lm` count at 0x3E, then from 0x4B per `.lm` its name (u32 length + bytes; the first one adds a 5-byte class header), u32 offset, u32 size and the `[from, to)` range of its textures in the texture list. Then 5 bytes, the u32 texture count, 9 bytes, and a u32 (offset, size) per texture. The data starts 16 bytes after the last pair: first the `.lm` files, then the textures, whose offsets count from the end of the last `.lm`. Each texture is a whole NTP3, and a `.lm`'s textures are its atlases in id order. All 230 packs in Green (765 `.lm`, 20,668 textures) and all 106 in Momoiro parse. `lm_data/output.ddp` and the loose `lm_data/don/` aren't used.
 
-### PS3 Lumen (`.lm`, `src/lumen.rs`)
+### PS3 Lumen (`.lm`, `Lumen/Lumen.cs`)
 
 The same `LMB` tag stream as Nijiiro's `.nulm`, big-endian (the header's second word reads `0x10` either way, which tells them apart). The differences:
 
 - Graphics are tag `0xF023`, always 18 words: one quad, `x y u v` × 4 (floats), then u32 atlas id and u16 fill (`0x41` or `0x40` textured, `0` solid colour with the colour index in the atlas field). Triangles `0 1 2`, `0 2 3`. No `0xF024`.
-- `0xF007` lists one entry per atlas (id, name symbol, width, height), and each atlas is its own `.nut` at its own size (400×400, 64×64…), not layers of one texture. `Lumen::render_layers` samples them separately, and only the atlases a set uses are decoded (song select has 788).
+- `0xF007` lists one entry per atlas (id, name symbol, width, height), and each atlas is its own `.nut` at its own size (400×400, 64×64…), not layers of one texture. `LumenFile.RenderLayers` samples them separately, and only the atlases a set uses are decoded (song select has 788).
 - u16 fields (place mode, depth, clip depth, colours) sit at the same byte offsets, so they read as-is in big-endian.
-
-To find a sprite in another scene, `LM_PACK=<packeddata.ddp> [LM_NAME=<lm>] [LM_SPRITE=<id> LM_OUT=<dir>] cargo test --release lm_ls -- --ignored --nocapture` lists every sprite's labels and the instance names it places, and renders a sprite's labels.
 
 | From `USRDIR/data/don3d/` | To `<out>/game_data/<era>/` | |
 | --- | --- | --- |
@@ -136,9 +134,9 @@ To find a sprite in another scene, `LM_PACK=<packeddata.ddp> [LM_NAME=<lm>] [LM_
 | `full/face/*.nut` | `face/face_NNNNNN.png` | Expressions: the file's 12 textures stacked top to bottom, like Nijiiro's face atlases |
 | `ani/*.bin` | `animation/don.glb` + `facekeys.json` | The rig and one clip per file (60 fps), and each clip's face expression over time, in the shapes Nijiiro's `animation/` uses |
 
-Green: 156 bodies, 140 heads, 176 kigurumi, 121 puchi, 60 paints, 22 faces, 81 clips; Momoiro: 33, 23, 93, none, 39, 13, 79. Every model in Green, Blue, Yellow, Red, Kimidori, Murasaki and Momoiro converts (Green in 3 seconds). The models are in the game's units, about 115 times Nijiiro's (a puchi sits at (−15, 14, 10) where Nijiiro's is at (−0.135, 0.115, 0.06)), and `don3d/cos` (smaller copies of the kigurumi) isn't converted. The WebUI's `don-viewer.js` is written for Nijiiro's parts (material-name flags, `normalize.ts`), so showing these needs its own path there.
+Green: 156 bodies, 140 heads, 176 kigurumi, 121 puchi, 60 paints, 22 faces, 81 clips; Momoiro: 33, 23, 93, none, 39, 13, 79. Every model in Green, Blue, Yellow, Red, Kimidori, Murasaki and Momoiro converts. The models are in the game's units, about 115 times Nijiiro's (a puchi sits at (−15, 14, 10) where Nijiiro's is at (−0.135, 0.115, 0.06)), and `don3d/cos` (smaller copies of the kigurumi) isn't converted. The WebUI's `don-viewer.js` is written for Nijiiro's parts (material-name flags, `normalize.ts`), so showing these needs its own path there.
 
-### NUD models (`.nud`, `src/nud.rs`)
+### NUD models (`.nud`, `Ac15/Nud.cs`)
 
 NDP3 as in Smash Forge's `NUD.cs` (MIT), big-endian, version `0x0200`. Header: `NDP3`, u32 file size, u16 version, u16 object count, u16 type, u16 highest bone index, then u32 sizes of the index clump (it starts at the first value + 0x30), the vertex clump and the vertex-add clump, which follow each other; the names follow them. A bounding sphere, then 0x30-byte objects from 0x30: 8 floats of bounds, u32 name offset, u32 flags, s16 single-bind bone (−1 none), u16 polygon count, u32 offset of its 0x30-byte polygon headers:
 
@@ -169,7 +167,7 @@ The game's shaders are `NSP3` files: compiled RSX vertex and fragment programs w
 
 `black_line` outputs exactly `(0, 0, 0)` with the texture's alpha and a `KIL` on a condition from the normal; its width is the run-time `param` (default `1,1,1,0`). `outline_post` is a full-screen pass over the frame (a `transform` matrix, `texture0`, `thickness`) whose nine taps read only the frame's alpha (each writes `.w`), with inline constants 0.7 and 40.0 and a black result: an edge filter on frame alpha. The thin black rim lines aren't in the textures. If `color_change` writes the B rim mask as the frame's alpha (above), this filter would draw them where it changes, and silhouettes against the background; that's inferred, not checked. The WebUI draws them with its own line pass. No width, depth state or draw order is in the NUD.
 
-### The don rig and animations (`don3d/ani/*.bin`, `src/ani.rs`)
+### The don rig and animations (`don3d/ani/*.bin`, `Ac15/DonRig.cs`)
 
 Namco's own format, worked out from the data. A file is a big-endian f32 frame count, then that many frames of 98 vec3s (1,176 bytes); `don_bind.bin` is a 2-frame file whose first frame is the bind pose. Every model uses one 39-bone rig, so the slots are fixed (t translation, r rotation, s scale):
 
@@ -184,21 +182,21 @@ Rotations are Euler angles in radians, applied Rz·Ry·Rx (as Smash Forge reads 
 
 A puchi's `_bind.bin` and `_loop.bin` are the same format with 5 slots, the rig's first two bones. `_info.bin` (92 bytes of small integers) isn't decoded.
 
-### Drum sounds (`sound/se/*.nub`, `src/nub.rs`)
+### Drum sounds (`sound/se/*.nub`, `Ac15/Tones.cs`)
 
 | From `USRDIR/data/sound/se/` | To `<out>/game_data/<era>/tone/` | |
 | --- | --- | --- |
 | `SE_GAME_NEIRO_<id>_C.nub` | `<id>_{don,ka}.wav` | Each drum sound's don and ka hits, 16-bit mono WAV, like Nijiiro's `tone/NN_{don,ka}.wav`. Green: 72 (000–070 and `AIDON`), Momoiro 16 |
 
-The banks are NUB v2.1 and the drum sounds are Sony VAG (PS-ADPCM), not ATRAC3, so no decoder dependency is needed. Header: u32 `0x00020100`, u32, u32 bank id, u32 stream count, u32 data offset (0x800), u32 data size, u32 offset of a table of stream-header offsets. A stream header starts with its codec (`vag\0`); +0x14 is its size, +0x18 its offset in the data and +0xBC its sample rate (44,100, 22,050 or 16,000). The data is 16-byte frames: a filter/shift byte, a flags byte (7 ends the stream) and 28 4-bit samples, low nibble first, with the usual five PS-ADPCM filters.
+The banks are NUB v2.1 and the drum sounds are Sony VAG (PS-ADPCM), not ATRAC3, so no decoder package is needed. Header: u32 `0x00020100`, u32, u32 bank id, u32 stream count, u32 data offset (0x800), u32 data size, u32 offset of a table of stream-header offsets. A stream header starts with its codec (`vag\0`); +0x14 is its size, +0x18 its offset in the data and +0xBC its sample rate (44,100, 22,050 or 16,000). The data is 16-byte frames: a filter/shift byte, a flags byte (7 ends the stream) and 28 4-bit samples, low nibble first, with the usual five PS-ADPCM filters.
 
 A bank holds three streams. Stream 0 is the don and stream 1 the ka: on the plain drum sounds the don crosses zero about 550 times a second and the ka 4,000–7,000 (measured, not listened to). Stream 2 is the same sound in every bank and isn't written. `_L` and `_R` banks are the same sounds for the left and right drum, and the `SE_SELECT_NEIRO_*` banks the song-select previews; neither is used.
 
 In `--inputs` rules a `*` segment matches any one folder name (`data/config/*/musicinfo.xml`, `data/nutdata/*/*/title_name/`); `ExtractRunner.Match` and the WebUI's `gamefolder.js` match the same way.
 
-## Game UI art (`src/lumen.rs`, `src/ui.rs`)
+## Game UI art (`Lumen/Lumen.cs`, `Nijiiro/NijiiroUi.cs`)
 
-The game's 2D UI, including the nameplates and the player board, uses Lumen files (`.nulm`, magic `LMB\0`), the Flash-like format the game's 2D UI uses, with its texture atlas in the matching `.nutexb`. `lumen.rs` parses the shapes (textured or solid-colour triangles) and the sprite timelines. It renders a sprite at a frame label by playing its display list up to that frame: depth order, place/move/remove, matrix or position transforms, colour multiply/add, nested sprites at frame 0, and **clip masks** (a placement's clip depth hides deeper objects outside its shape). The tag layout is documented in `docs/webui-refactor-plan.md` §3d.
+The game's 2D UI, including the nameplates and the player board, uses Lumen files (`.nulm`, magic `LMB\0`), the Flash-like format the game's 2D UI uses, with its texture atlas in the matching `.nutexb`. `Lumen.cs` parses the shapes (textured or solid-colour triangles) and the sprite timelines. It renders a sprite at a frame label by playing its display list up to that frame: depth order, place/move/remove, matrix or position transforms, colour multiply/add, nested sprites at frame 0, and **clip masks** (a placement's clip depth hides deeper objects outside its shape). The tag layout is documented in `docs/webui-refactor-plan.md` §3d.
 
 - Sprites are found **by frame labels or instance names**, never by id, because ids change between builds:
   - `wood` → title plates
@@ -210,23 +208,13 @@ The game's 2D UI, including the nameplates and the player board, uses Lumen file
 - Animated plates (shimmer, sparkles) are rendered at their first frame in the PNGs. `nameplate.scene.json` keeps the full timelines (format `lumen-scene` v1: shapes, sprites with instance names, colour and matrix tables, and the sets with their canvas bounds), and the WebUI plays them with WebGL.
 - A placement on an occupied depth keeps the transform and colours it doesn't set (Toho Y22 3–5 swap their character that way). Ops after a keyframe tag belong to the keyframe, not to the last frame.
 
-## Animation export (`src/anims.rs`, `src/v12/`)
+## Animation export (`Nijiiro/NijiiroAnims.cs`, `Nijiiro/Curve.cs`)
 
-Ported from `don-chan-previewer/scripts/nuanmb_to_glb`, which this replaces. The ANIM v1.2 curve decoder in `src/v12/` is copied from it unchanged; see that tool's README for the format notes. The changes:
-
-- The rig comes from the game's `body_000000` `.nusktb` instead of a pre-made `--skeleton-glb`, so nothing outside the game install is needed.
-- Only ANIM v1.2 is handled (every Nijiiro file). The `ssbh_data` v2 fallback is gone.
-- Output is deterministic (bones in SKEL order), and output accessors drop the optional min/max, making the GLB about 11% smaller.
+Started as `don-chan-previewer/scripts/nuanmb_to_glb`. `Curve.cs` is the game's ANIM v1.2 curve decoder (`nu::DecompressCurve::Decompress`, 0x140619040): its header bits, time tables, and the linear, stepped, constant and DCT codecs are described there. The rig comes from the game's `body_000000` `.nusktb`, so nothing outside the game install is needed. Only ANIM v1.2 is read (every Nijiiro file). Output is deterministic (bones in SKEL order) and the output accessors drop the optional min/max.
 
 Checked against the previewer's `Don_3D_Nij.glb`: all 54 clips have the same channels, translation and scale are bit-identical, and rotations are within 2e-7 (float noise). `facekeys.json` is byte-identical. The library is rebuilt when any `.nuanmb` or the rig is newer than the output.
 
-To check the decoder against a game install:
-
-```bash
-NUANMB_DIR="<game>/Data/x64/animation" cargo test --release --manifest-path tools/extract/Cargo.toml -- --nocapture
-```
-
-## Model export (`src/models.rs`)
+## Model export (`Nijiiro/NijiiroModels.cs`)
 
 The output reproduces `numd-exporter` plus the `shaderType` extras that `don-chan-previewer`'s `normalize.ts` was written against. It was checked against all 482 previewer GLBs that exist in 39.06, and 478 match field-for-field: nodes, TRS, skin, inverse binds, every vertex attribute, indices, material names, alpha mode, extras, image names and decoded pixels. The other 4 differ deliberately:
 
@@ -247,22 +235,29 @@ Remaining `gltf-validator` errors all come from the game data and are identical 
 
 Re-running skips a model whose `.glb` is newer than its `.numdlb`. Delete the output to force a rebuild after changing textures by hand.
 
+## SSBH files (`Nijiiro/Ssbh.cs`, `Nijiiro/SsbhFormats.cs`)
+
+Nijiiro's models and animations are Smash Ultimate's SSBH formats, read by hand from the layouts in [ssbh_lib](https://github.com/ultimate-research/ssbh_lib) (MIT), only the versions and fields used here. Little-endian. A file is `HBSS`, u64 64, u32 0, then at 0x10 the format's magic and u16 major, u16 minor; the format's fields start at 0x18. Every pointer is a u64 offset from where the pointer itself is (0 is null); an array is that and a u64 count; a string is a pointer to NUL-terminated UTF-8.
+
+| Format | Magic, version | Fields read (offsets from 0x18) |
+| --- | --- | --- |
+| `.numdlb` | `LDOM` 1.7 | +8 skeleton file, +16 material files (strings), +40 mesh file, +48 entries (24 bytes: object name, u64 subindex, material label) |
+| `.nusktb` | `LEKS` 1.0 | +0 bones (16 bytes: name, u16 index, i16 parent, flags), +48 local transforms (column-major 4×4) |
+| `.numatb` | `LTAM` 1.5 | +0 entries (32 bytes: label, attributes, shader label); an attribute is u64 param id, a pointer to its value and u64 value type. `DiffuseMap` is id 30, a string (type 11) |
+| `.numshb` | `HSEM` 1.9 | +112 objects (208 bytes), +152 vertex buffers, +168 index buffer, +184 rigging groups (40 bytes: object name, subindex, flags, bone buffers of u32 vertex + f32 weight) |
+| `.nuanmb` | `MINA` 1.2 | +16 the last frame (keys run 0 to it), +24 tracks (32 bytes: name, u64 type, 0 is a transform; properties of name + u64 buffer index), +40 buffers |
+
+A mesh object is its name, u64 subindex, parent bone, u32 vertex count and index count, four vertex buffer offsets and four strides (+36, +52), the index buffer offset (+68), the index type (+76: 0 u16, 1 u32), bounds, and its attributes at +192 (48 bytes: u32 usage, u32 data type, u32 buffer, u32 offset). Usages: 0 position, 1 normal, 4 UV, 5 colour; data types: 820 float3, 1076 float4, 1077 half4, 1079 float2, 1024 byte4 (/255). The first attribute of each usage is used.
+
 ## Nijiiro `.nutexb` notes
 
-The PC build uses the Smash Ultimate `.nutexb` layout with two differences, both handled in `src/textures.rs`:
+The PC build uses the Smash Ultimate `.nutexb` layout with two differences, both handled in `Textures/Nutexb.cs`:
 
 - The footer starts with `46XT` instead of ` XNT`.
 - Image data is **linear**, not Tegra-swizzled (footer `unk3 = 0`), so it is the raw DDS payload. Array layers and mips are stored one after another.
 
-Model textures are BC3 (`0x04A0`), R8 (`0x0100`) or RGBA8 (`0x0400`). UI textures elsewhere in the game use BC7. Every format the `image_dds` crate decodes works. Output was checked pixel-for-pixel against `don-chan-previewer`'s PNGs: all 229 are identical.
+Model textures are BC3 (`0x04A0`) or RGBA8 (`0x0400`), fonts and UI BC7 (`0x04E0`). R8, BGRA8 and BC1–3 are read too; BC1–3 and BC7 round exactly as bcdec does (`Textures/Bcn.cs`). Swizzled (Switch) textures aren't read. Output was checked pixel-for-pixel against `don-chan-previewer`'s PNGs: all 229 are identical.
 
-## Building
+## Checking it
 
-Needs a Rust toolchain ([rustup](https://rustup.rs), stable).
-
-```bash
-cargo build --release --manifest-path tools/extract/Cargo.toml
-cargo test --release --manifest-path tools/extract/Cargo.toml
-```
-
-The binary ends up at `tools/extract/target/release/extract.exe`.
+`dotnet test Tests/Tests.csproj --filter "FullyQualifiedName~Tests.Extract"` covers the parsing rules. The outputs were checked file for file against the Rust tool this replaced (tools/extract, removed): all eight older games and Nijiiro with and without `--mods` gave the same files, PNGs pixel for pixel, GLBs field for field with floats within 1e-4, and JSON value for value.

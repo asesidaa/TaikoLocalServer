@@ -4,7 +4,7 @@ using TaikoLocalServer.Domain.Enums;
 namespace TaikoLocalServer.Application.Abstractions;
 
 /// <summary>
-/// Runs tools/extract for one or more games, one after another, then reloads each game's data. Each game is read from
+/// Runs the extractor (Infrastructure.Extract) for one or more games, one after another, then reloads each game's data. Each game is read from
 /// its install on the server (Nijiiro: Eras.Nijiiro.GameDataPath; the older games: Eras.&lt;Game&gt;.GamePath), or
 /// from the files an admin sent from their browser (ServerSettings.AllowRemoteGameDir). One run at a time.
 /// </summary>

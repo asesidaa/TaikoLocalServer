@@ -1,11 +1,11 @@
 namespace TaikoLocalServer.Contracts.AdminApi.Responses;
 
 /// <summary>
-/// Extract (Server Management › Games, Game data, setup): whether the server can run tools/extract itself
-/// (<see cref="ExtractFound"/> next to the exe), whether the admin may send games' folders from their browser instead
-/// (<see cref="RemoteGameDir"/>, ServerSettings.AllowRemoteGameDir), every game that's on, and the current or last run.
+/// Extract (Server Management › Games, Game data, setup): whether the admin may send games' folders from their browser
+/// instead of the server reading them from disk (<see cref="RemoteGameDir"/>, ServerSettings.AllowRemoteGameDir), every
+/// game that's on, and the current or last run.
 /// </summary>
-public record ExtractStatus(bool ExtractFound, bool RemoteGameDir, IReadOnlyList<ExtractGame> Games, ExtractRun? Run);
+public record ExtractStatus(bool RemoteGameDir, IReadOnlyList<ExtractGame> Games, ExtractRun? Run);
 
 /// <summary>
 /// One game that's on: where the server reads it from (<see cref="GamePath"/>, from the <see cref="Setting"/> named
@@ -43,7 +43,7 @@ public record ExtractStep(string Label, int Written, int UpToDate, int Missing, 
 public record ExtractNote(string Kind, string Code, string? Detail);
 
 /// <summary>
-/// The game files extract reads (<c>extract --inputs</c>), relative to the game folder with <c>/</c> (an older
+/// The game files extract reads (<c>TaikoLocalServer extract --inputs</c>), relative to the game folder with <c>/</c> (an older
 /// game's to its USRDIR). A path ending in <c>/</c> is a whole folder. In <see cref="Names"/> folders only the file
 /// names matter, so empty files are sent. <see cref="Mods"/> is the same for Data_mods (Nijiiro).
 /// </summary>

@@ -2,8 +2,8 @@ using System.Buffers.Binary;
 
 namespace TaikoLocalServer.Infrastructure.Extract.Textures;
 
-/// <summary>BC1–BC3 (DXT1/3/5) and BC7 decoding, rounding exactly as bcdec does (tools/extract's decoder), so both
-/// extractors write the same pixels.</summary>
+/// <summary>BC1–BC3 (DXT1/3/5) and BC7 decoding, rounding exactly as bcdec does (what the Rust
+/// extractor this replaced used), so outputs didn't change.</summary>
 public static class Bcn
 {
     /// <param name="bc">1, 2, 3 or 7.</param>

@@ -73,7 +73,7 @@ public static class GameData
 
     public static readonly string[] Speeds = ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "2.0", "2.5", "3.0", "3.5", "4.0"];
 
-    // ---- Game icons, extracted by tools/extract into game_data/ui (served by api/Assets; see ui.js hydrateAssets) ----
+    // ---- Game icons, extracted into game_data/ui (served by api/Assets; see ui.js hydrateAssets) ----
 
     /// <summary>A song option icon: doron, abekobe (inverse), kimagure / detarame (random), note_pos.</summary>
     public static string OptionIcon(string label) => $"ui/option_{label}.png";
