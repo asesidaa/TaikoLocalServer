@@ -94,3 +94,8 @@ html[data-brand-icon] .brand-svg { display: none; }
 
 .blazor-error-boundary { padding: 1rem; border-radius: 1rem; background: #b92a13; color: #fff; }
 .blazor-error-boundary::after { content: "An error has occurred."; }
+
+/* Phones zoom into a focused field whose text is under 16px: text fields are 16px there (unlayered, so it beats text-sm). */
+@media (max-width: 639px) {
+  input:not([type=checkbox]):not([type=radio]):not([type=range]), select, textarea { font-size: 16px; }
+}

@@ -64,12 +64,12 @@
         </div>
 
         @* Sort once to start; any manual move clears the pressed chip. Clear empties the draft (Save confirms it). *@
-        <div class="-mx-4 flex snap-x gap-1.5 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0" role="group" aria-label="@Localizer["Sort by, then drag to fine-tune"]">
+        <div class="flex flex-wrap gap-1.5" role="group" aria-label="@Localizer["Sort by, then drag to fine-tune"]">
             <span class="shrink-0 self-center text-sm @Css.Muted">@Localizer["Sort by"]</span>
             @foreach (var (key, label) in Sorts)
             {
                 <button aria-pressed="@Css.Aria(sort == key)" @onclick="() => SortBy(key)"
-                        class="shrink-0 snap-start rounded-full border px-3 py-1 text-sm @(sort == key ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900" : "border-zinc-200 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800")">@label</button>
+                        class="shrink-0 rounded-full border px-3 py-1 text-sm @(sort == key ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900" : "border-zinc-200 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800")">@label</button>
             }
             @if (order.Count > 0)
             {
