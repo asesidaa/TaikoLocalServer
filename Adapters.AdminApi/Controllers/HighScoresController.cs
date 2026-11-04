@@ -36,10 +36,15 @@ public class HighScoresController(ITaikoDbContext context, IGameDataCatalog cata
         var battles = !ai ? [] : await context.AiScoreDataNijiiro.Where(a => a.Baid == baid).Include(a => a.AiSectionScoreData).ToListAsync(HttpContext.RequestAborted);
         var theirs = vs == 0 ? [] : (await context.SongBestDataNijiiro.Where(b => b.Baid == vs && b.Difficulty == d).ToListAsync(HttpContext.RequestAborted))
             .ToDictionary(b => b.SongId);
-        // When each best was set: the play with that score.
-        var setOn = (await context.SongPlayDataNijiiro.Where(p => p.Baid == baid && p.Difficulty == d && !p.Skipped)
-                .Select(p => new { p.SongId, p.Score, p.PlayTime }).ToListAsync(HttpContext.RequestAborted))
-            .GroupBy(p => p.SongId).ToDictionary(g => g.Key, g => g.MaxBy(p => p.Score)!.PlayTime);
+        // The play that set each best: when, and its accuracy (a Good counts 1, an OK ½, over all its notes), as the
+        // song page and Stats count it. The game's own rate goes past 100%.
+        var bestPlays = (await context.SongPlayDataNijiiro.Where(p => p.Baid == baid && p.Difficulty == d && !p.Skipped)
+                .Select(p => new { p.SongId, p.Score, p.PlayTime, p.GoodCount, p.OkCount, p.MissCount }).ToListAsync(HttpContext.RequestAborted))
+            .GroupBy(p => p.SongId).ToDictionary(g => g.Key, g => g.MaxBy(p => p.Score)!);
+        double AccuracyOf(SongBestDatumNijiiro b) =>
+            bestPlays.TryGetValue(b.SongId, out var p) && p.GoodCount + p.OkCount + p.MissCount is var notes and > 0
+                ? (p.GoodCount + p.OkCount / 2.0) / notes * 100
+                : Math.Min(b.BestRate / 100.0, 100);   // no play recorded (an imported best): the game's rate, capped
 
         var query = q?.Trim() ?? "";
         var language = await SongLanguage.ForAsync(context, User, baid, HttpContext.RequestAborted);
@@ -50,8 +55,8 @@ public class HighScoresController(ITaikoDbContext context, IGameDataCatalog cata
             return new HighScoreRow
             {
                 SongId = b.SongId, Name = s.Title(language), NameEn = s.Subtitle(language), Genre = s.Genre, Stars = Stars(s, d),
-                Score = b.BestScore, Crown = b.BestCrown, Rank = b.BestScoreRank, Accuracy = b.BestRate / 100.0,
-                SetOn = setOn.TryGetValue(b.SongId, out var at) ? at : null,
+                Score = b.BestScore, Crown = b.BestCrown, Rank = b.BestScoreRank, Accuracy = AccuracyOf(b),
+                SetOn = bestPlays.TryGetValue(b.SongId, out var at) ? at.PlayTime : null,
                 VsScore = other?.BestScore, VsCrown = other?.BestCrown,
             };
         }).Concat(battles.Where(a => a.Difficulty == d && songs.ContainsKey(a.SongId)).Select(a =>
