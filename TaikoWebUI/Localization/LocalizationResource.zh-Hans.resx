@@ -4644,4 +4644,25 @@
   <data name="Combo" xml:space="preserve">
     <value>连击</value>
   </data>
+  <data name="Dan set" xml:space="preserve">
+    <value>段位组</value>
+  </data>
+  <data name="default" xml:space="preserve">
+    <value>默认</value>
+  </data>
+  <data name="{0} · gold" xml:space="preserve">
+    <value>{0} · 金</value>
+  </data>
+  <data name="{0} · red" xml:space="preserve">
+    <value>{0} · 红</value>
+  </data>
+  <data name="Played, none passed" xml:space="preserve">
+    <value>已挑战，未合格</value>
+  </data>
+  <data name="You haven't played {0} yet" xml:space="preserve">
+    <value>尚未挑战{0}</value>
+  </data>
+  <data name="Each cabinet runs one dan set, and its results are kept here." xml:space="preserve">
+    <value>每台机台使用一个段位组，其记录保存在这里。</value>
+  </data>
 </root>

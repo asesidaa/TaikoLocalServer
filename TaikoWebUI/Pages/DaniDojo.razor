@@ -1,13 +1,15 @@
 @page "/Users/{baid:int}/PlayData/DaniDojo"
+@page "/Users/{baid:int}/PlayData/DaniDojo/{set}"
 @attribute [Authorize]
+@using TaikoWebUI.Components.Profile
 @inject HttpClient Client
 @inject IJSRuntime Js
 @inject PageState Page
 
 <PageTitle>@Localizer["Dani Dojo"]</PageTitle>
 
-<PlayDataPage Setting="setting" Dans="dans" DanView="true">
-    @if (setting is null)
+<PlayDataPage Setting="setting" Dans="dans" DanView="true" DanSetName="@(view?.Several == true ? current?.Name : null)">
+    @if (setting is null || view is null || current is null)
     {
         <Skeleton />
     }
@@ -15,6 +17,18 @@
     {
         var top = Top;
         <div class="space-y-6">
+            @if (view.Several)
+            {
+                <DanSetMenu Baid="Baid" View="view" Current="current" />
+            }
+            @if (dans.Count == 0 && view.Several)
+            {
+                @* A set not played yet: said before the grid, which then shows every rank as Not yet. *@
+                <p class="rounded-xl border border-dashed border-zinc-300 px-4 py-3 text-sm dark:border-zinc-700">
+                    <span class="font-medium">@string.Format(Localizer["You haven't played {0} yet"], current.Name)</span>
+                    <span class="block text-xs @Css.Muted">@Localizer["Each cabinet runs one dan set, and its results are kept here."]</span>
+                </p>
+            }
             <div class="grid grid-cols-3 gap-3">
                 @Tile(Localizer["Highest rank"], top is null ? "–" : Localizer[GameData.Dans[top.DanId - 1].Key])
                 @Tile(Localizer["Ranks passed"], $"{Passed.Count} / {GameData.Dans.Length}")
@@ -35,7 +49,7 @@
                         var cellTitle = $"{name}: {(passed ? $"{(gold ? Localizer["Gold pass"] : Localizer["Passed"])}, {Localizer[clear!]}" : Localizer["Not passed yet"])}";
                         var cellClass = $"relative isolate flex flex-col items-center gap-1 overflow-hidden rounded-xl border border-zinc-900/10 bg-zinc-900 px-2 py-3 text-center dark:border-zinc-700 dark:bg-zinc-950 {(best == top && top is not null ? "ring-2 ring-primary-500" : "")}";
                         @* A passed rank opens its page (that run); the others stay plain. *@
-                        <MaybeLink Href="@(passed ? $"{PlayDataPaths.Of(Baid, PlayDataPaths.DaniDojo)}/{i + 1}" : null)" Title="@cellTitle"
+                        <MaybeLink Href="@(passed ? view.Path(Baid, current, i + 1) : null)" Title="@cellTitle"
                                      Label="@(passed ? string.Format(Localizer["{0}: see your best run"], name) : null)" Class="@cellClass">
                             @if (passed)
                             {
@@ -64,10 +78,14 @@
 
 @code {
     [Parameter] public int Baid { get; set; }
+    /// <summary>The dan set (its id); none is the default set.</summary>
+    [Parameter] public string? Set { get; set; }
 
     private static readonly string[] ClearTypes = ["Clear", "Full combo", "Donderful"];
 
     private UserSetting? setting;
+    private DanSetView? view;
+    private DanSetInfo? current;
     private List<DanBestData> dans = [];
 
     private List<DanBestData> Passed => dans.Where(d => d.ClearState != DanClearState.NotClear && d.DanId is >= 1 and <= 19).ToList();
@@ -86,9 +104,19 @@
     {
         Page.SetPlayData(Localizer["Play Data"], Baid, Localizer["Dani Dojo"]);
         var settingTask = Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
-        var dansTask = Client.GetFromJsonAsync<DanBestDataResponse>($"api/DanBestData/{Baid}");
+        view = await DanSetView.LoadAsync(Client, Baid);
         setting = await settingTask;
-        dans = (await dansTask)?.DanBestDataList ?? [];
+        Pick();
+    }
+
+    // The picker reuses this page for another set.
+    protected override void OnParametersSet() => Pick();
+
+    private void Pick()
+    {
+        if (view is null) return;
+        current = view.Find(Set);
+        dans = view.ResultsOf(current);
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();

@@ -39,13 +39,13 @@
                         <div class="min-w-0 flex-1">
                             <p class="text-xs text-zinc-400">@Localizer["Dani Dojo"]</p>
                             <p class="font-display text-xl">@Localizer[GameData.Dans[top.DanId - 1].Key]</p>
-                            <p class="text-xs text-zinc-300">@(GameData.IsGold(top.ClearState) ? Localizer["Gold pass"] : Localizer["Passed"])</p>
+                            <p class="text-xs text-zinc-300">@(GameData.IsGold(top.ClearState) ? Localizer["Gold pass"] : Localizer["Passed"])@(DanSetName is { } set ? $" · {set}" : "")</p>
                         </div>
                         <img data-asset="@GameData.DanStamp(top.ClearState)" alt="" class="size-12 object-contain" />
                     }
                     else
                     {
-                        <p class="flex-1 text-center text-sm">@Localizer["No Dani Dojo pass yet"]</p>
+                        <p class="flex-1 text-center text-sm">@Localizer["No Dani Dojo pass yet"]@(DanSetName is { } set ? $" · {set}" : "")</p>
                     }
                 </div>
             }
@@ -58,6 +58,8 @@
     /// <summary>The player's best result per dan, used for the nameplate badge and the Dani Dojo look.</summary>
     [Parameter] public IReadOnlyList<DanBestData> Dans { get; set; } = [];
     [Parameter] public bool DanView { get; set; }
+    /// <summary>The dan set <see cref="Dans"/> are from, named on the Dani Dojo panel (null: don't name it).</summary>
+    [Parameter] public string? DanSetName { get; set; }
     /// <summary>An older game ("Green"…): don-chan in that game's own models. Empty: Nijiiro.</summary>
     [Parameter] public string Game { get; set; } = "";
 

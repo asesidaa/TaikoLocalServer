@@ -1,0 +1,63 @@
+@* Dani Dojo's dan set picker, at the top of the page's card: the set shown (name, a Default chip), opening a list of every set
+   with your progress in it ("Chojin · red", "Played, none passed", "Not played"). Each entry opens that set's Dani Dojo
+   page, or the same rank in it on a rank page. A click outside or Escape closes it. *@
+<div class="relative" @onkeydown="Key">
+    <button type="button" aria-haspopup="listbox" aria-expanded="@Css.Aria(open)" @onclick="() => open = !open"
+            class="flex w-full items-center gap-3 rounded-2xl border border-zinc-200 bg-white px-3 py-2.5 text-left shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+        <span class="min-w-0 flex-1">
+            <span class="block text-xs @Css.Muted">@Localizer["Dan set"]</span>
+            <span class="flex items-center gap-2 font-medium"><span class="truncate">@Current.Name</span>@DefaultChip(Current)</span>
+        </span>
+        <span class="chev @(open ? "rotate-180" : "")"><Icon Name="chevDown" Class="size-4 text-zinc-400" /></span>
+    </button>
+    @if (open)
+    {
+        <div class="fixed inset-0 z-20" @onclick="() => open = false"></div>
+        <ul role="listbox" aria-label="@Localizer["Dan set"]" style="--origin:top center"
+            class="pop absolute inset-x-0 top-full z-30 mt-1 max-h-80 space-y-0.5 overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-1.5 shadow-xl dark:border-zinc-700 dark:bg-zinc-900">
+            @foreach (var set in View.Sets)
+            {
+                var on = set.Id == Current.Id;
+                <li>
+                    <a href="@View.Path(Baid, set, DanId)" role="option" aria-selected="@Css.Aria(on)" aria-current="@(on ? "page" : null)" @onclick="() => open = false"
+                       class="block rounded-xl px-3 py-2 @(on ? "bg-primary-500/10" : "hover:bg-zinc-100 dark:hover:bg-zinc-800/60")">
+                        <span class="flex items-center gap-2 text-sm font-medium"><span class="truncate">@set.Name</span>@DefaultChip(set)</span>
+                        <span class="block text-xs @Css.Muted">@Progress(set)</span>
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public long Baid { get; set; }
+    [Parameter, EditorRequired] public DanSetView View { get; set; } = null!;
+    [Parameter, EditorRequired] public DanSetInfo Current { get; set; } = null!;
+    /// <summary>On a rank page: the entries open that rank in each set.</summary>
+    [Parameter] public int? DanId { get; set; }
+
+    private bool open;
+
+    private void Key(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") open = false;
+    }
+
+    private string Progress(DanSetInfo set)
+    {
+        var results = View.ResultsOf(set);
+        var top = results.Where(d => d.ClearState != DanClearState.NotClear && d.DanId is >= 1 and <= 19).MaxBy(d => d.DanId);
+        if (top is not null)
+            return string.Format(Localizer[GameData.IsGold(top.ClearState) ? "{0} · gold" : "{0} · red"], Localizer[GameData.Dans[top.DanId - 1].Key]);
+        return results.Count > 0 ? Localizer["Played, none passed"] : Localizer["Not played"];
+    }
+
+    private RenderFragment DefaultChip(DanSetInfo set) => __builder =>
+    {
+        if (set.IsDefault)
+        {
+            <span class="shrink-0 rounded-full bg-zinc-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide @Css.Muted dark:bg-zinc-800">@Localizer["Default"]</span>
+        }
+    };
+}

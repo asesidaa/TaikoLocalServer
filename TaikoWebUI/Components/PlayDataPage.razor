@@ -5,7 +5,7 @@
     <aside class="lg:sticky lg:top-24">
         @if (Setting is not null)
         {
-            <PlayerCard Setting="Setting" Dans="Dans" DanView="DanView" />
+            <PlayerCard Setting="Setting" Dans="Dans" DanView="DanView" DanSetName="@DanSetName" />
         }
     </aside>
     <div class="min-w-0">
@@ -18,4 +18,6 @@
     [Parameter] public IReadOnlyList<DanBestData> Dans { get; set; } = [];
     [Parameter] public bool DanView { get; set; }
     [Parameter] public RenderFragment? ChildContent { get; set; }
+    /// <summary>Dani Dojo: the dan set the card's pass is from, named on its panel when there's more than one.</summary>
+    [Parameter] public string? DanSetName { get; set; }
 }
