@@ -21,7 +21,7 @@
         @Card(PlayDataPaths.PlayHistory, "playHistory", Localizer["Play History"], Localizer["A calendar of your sessions and every song you played."],
             (summary is null ? Dash : summary.Days.Count == 0 ? Dash : Ago(summary.Days.Max(d => d.Day)), Localizer["last played"]),
             (summary is null ? Dash : summary.Days.Count(d => d.Plays > 0).ToString("N0"), Localizer["days played this year"]))
-        @Card(PlayDataPaths.DaniDojo, "dani", Localizer["Dani Dojo"], Localizer["Your best run in each dan, with every exam's result."],
+        @Card(PlayDataPaths.DaniDojo, "dani", Localizer["Dani Dojo"], Localizer["Your best run in each dan, with every condition's result."],
             (dans is null ? Dash : TopDan is { } top ? Localizer[GameData.Dans[top.DanId - 1].Key] : Dash,
              TopDan is { } t && GameData.IsGold(t.ClearState) ? Localizer["top dan, gold pass"] : Localizer["top dan"]))
     </div>

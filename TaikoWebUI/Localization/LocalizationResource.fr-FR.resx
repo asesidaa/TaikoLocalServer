@@ -3600,8 +3600,8 @@
   <data name="A calendar of your sessions and every song you played." xml:space="preserve">
     <value>Un calendrier de vos sessions et de chaque chanson jouée.</value>
   </data>
-  <data name="Your best run in each dan, with every exam's result." xml:space="preserve">
-    <value>Votre meilleur passage dans chaque dan, avec le résultat de chaque épreuve.</value>
+  <data name="Your best run in each dan, with every condition's result." xml:space="preserve">
+    <value>Votre meilleur passage dans chaque dan, avec le résultat de chaque condition.</value>
   </data>
   <data name="clears" xml:space="preserve">
     <value>réussites</value>
