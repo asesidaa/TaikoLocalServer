@@ -370,7 +370,6 @@ public partial class NijiiroEraGameDataCatalog : INijiiroCatalog
                 InitializeMusicInfos(musicInfo);
                 InitializeMusicDetails(musicInfo, musicOrder, wordlist);
                 MarkSongAttributes(dir);
-                KeepListedSongs(musicOrder);
                 InitializeCostumes(donCos, wordlist);
                 InitializeTitles(shougou, wordlist);
                 InitializeToneFlagArraySize(neiro);
@@ -470,23 +469,17 @@ public partial class NijiiroEraGameDataCatalog : INijiiroCatalog
             });
         }
 
+        var ordered = new HashSet<uint>();
         for (var index = 0; index < musicOrderData.Order.Count; index++)
         {
             if (details.TryGetValue(musicOrderData.Order[index].SongId, out var musicDetail))
             {
                 musicDetail.Index = index;
+                ordered.Add(musicDetail.SongId);
             }
         }
-        musicDetailDictionary = details;
-    }
-
-    // Only the web UI reads this: it shows the songs the game lists (music_order), not unused musicinfo entries. Sou-uchi
-    // charts stay, since music_order often leaves them out and the Song List shows them to players who turned them on.
-    // Runs after MarkSongAttributes, which sets IsSouUchi.
-    private void KeepListedSongs(MusicOrder musicOrderData)
-    {
-        var ordered = musicOrderData.Order.Select(o => o.SongId).ToHashSet();
-        musicDetailDictionary = musicDetailDictionary.Where(d => ordered.Contains(d.Key) || d.Value.IsSouUchi).ToDictionary();
+        // Only the web UI reads this: it shows the songs the game lists (music_order), not unused musicinfo entries.
+        musicDetailDictionary = details.Where(d => ordered.Contains(d.Key)).ToDictionary();
     }
 
     private void InitializeCostumes(DonCosRewards donCosRewardData, WordList wordlistData)
