@@ -6,14 +6,15 @@ namespace TaikoLocalServer.Adapters.AdminApi.Controllers;
 [Route("api/[controller]")]
 [Authorize]
 [ApiScope(ApiScopes.ReadScores, ApiScopes.AdminUsers)]
-public partial class DanBestDataController(ITaikoDbContext context) : BaseAdminController<DanBestDataController>
+public partial class DanBestDataController(ITaikoDbContext context, IGameDataCatalog? catalog = null) : BaseAdminController<DanBestDataController>
 {
+    /// <param name="set">Nijiiro: the dan set (an unknown or missing id, a deleted set's too: the default set).</param>
     [HttpGet("{baid}")]
-    public Task<IActionResult> GetDanBestData(uint baid)
-        => GetDanBestData(nameof(GameEra.Nijiiro), baid);
+    public Task<IActionResult> GetDanBestData(uint baid, [FromQuery] string? set = null)
+        => GetDanBestData(nameof(GameEra.Nijiiro), baid, set);
 
     [HttpGet("/api/{era}/[controller]/{baid}")]
-    public async Task<IActionResult> GetDanBestData(string era, uint baid)
+    public async Task<IActionResult> GetDanBestData(string era, uint baid, [FromQuery] string? set = null)
     {
         if (!EraRoute.TryParse(era, out var gameEra))
             return EraRoute.BadEra(era);
@@ -23,7 +24,7 @@ public partial class DanBestDataController(ITaikoDbContext context) : BaseAdminC
 
         return gameEra switch
         {
-            GameEra.Nijiiro => Ok(await BuildNijiiroDanBestData(baid)),
+            GameEra.Nijiiro => Ok(await BuildNijiiroDanBestData(baid, catalog!.Nijiiro().ResolveDanSet(set))),
             GameEra.Green => Ok(await BuildGreenDanBestData(baid)),
             GameEra.Blue => Ok(await BuildBlueDanBestData(baid)),
             GameEra.Yellow => Ok(await BuildYellowDanBestData(baid)),
@@ -36,11 +37,11 @@ public partial class DanBestDataController(ITaikoDbContext context) : BaseAdminC
         };
     }
 
-    private async Task<DanBestDataResponse> BuildNijiiroDanBestData(uint baid)
+    private async Task<DanBestDataResponse> BuildNijiiroDanBestData(uint baid, string set)
     {
         // FIXME: Handle gaiden in here and web ui
         var danScores = await context.DanScoreDataNijiiro
-            .Where(d => d.Baid == baid && d.DanType == DanType.Normal)
+            .Where(d => d.Baid == baid && d.DanType == DanType.Normal && d.DanSet == set)
             .Include(d => d.DanStageScoreData)
             .AsNoTracking()
             .AsSplitQuery()

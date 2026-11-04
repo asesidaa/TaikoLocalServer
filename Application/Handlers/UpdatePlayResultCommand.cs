@@ -4,13 +4,15 @@ using TaikoLocalServer.Application.Settings;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct UpdatePlayResultCommand(uint Baid, GameEra Era, CommonPlayResultData PlayResultData) : IRequest<uint>;
+/// <param name="ChassisId">The cabinet that sent it: its dan set is where a Dani Dojo run is kept.</param>
+public readonly record struct UpdatePlayResultCommand(uint Baid, GameEra Era, CommonPlayResultData PlayResultData, string ChassisId = "") : IRequest<uint>;
 
 public partial class UpdatePlayResultCommandHandler(
     ITaikoDbContext context,
     IGameDataCatalog gameDataService,
     ILogger<UpdatePlayResultCommandHandler> logger,
-    IOptions<ServerSettings>? settings = null)
+    IOptions<ServerSettings>? settings = null,
+    ICabinetRegistry? cabinets = null)
     : IRequestHandler<UpdatePlayResultCommand, uint>,
       IRequestHandler<UpdateAc15PlayResultCommand, uint>
 {

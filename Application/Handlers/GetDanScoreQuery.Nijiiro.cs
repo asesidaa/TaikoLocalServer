@@ -10,9 +10,11 @@ public partial class GetDanScoreQueryHandler
         danType.Throw().IfOutOfRange();
 
         var idList = request.DanIds.ToList();
-        // Select the dan score data from the database where baid and type matches and danid is in the list of danids
+        // This cabinet's set only (Gaiden isn't in sets), so a new set starts fresh.
+        var danSet = danType == DanType.Gaiden ? ""
+            : gameDataService.Nijiiro().ResolveDanSet(cabinets?.Find(request.ChassisId) is { OwnSettings: true } cabinet ? cabinet.DanSet : null);
         var danScoreData = await context.DanScoreDataNijiiro
-            .Where(d => d.Baid == request.Baid && d.DanType == danType &&idList.Contains(d.DanId))
+            .Where(d => d.Baid == request.Baid && d.DanType == danType && d.DanSet == danSet && idList.Contains(d.DanId))
             .Include(d => d.DanStageScoreData)
             .ToListAsync(cancellationToken);
         var response = new CommonDanScoreDataResponse

@@ -26,6 +26,9 @@ public interface INijiiroCatalog : IEraGameDataCatalog
     /// <summary>A course set's courses; null or an unknown id gives the default set.</summary>
     ImmutableDictionary<uint, DanData> GetDanSet(string? id);
 
+    /// <summary>The set id <see cref="GetDanSet"/> would serve for <paramref name="id"/>: it, or the default set.</summary>
+    string ResolveDanSet(string? id);
+
     /// <summary>A new set, a copy of <paramref name="copyFrom"/>; returns its id.</summary>
     Task<string> CreateDanSetAsync(string name, string copyFrom);
 

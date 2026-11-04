@@ -9,7 +9,7 @@ public class GetDanScoreController : BaseProtocolController<GetDanScoreControlle
     {
         Logger.LogInformation("GetDanScoreCN00 request : {@Request}", request);
 
-        var commonResponse = await Mediator.Send(new GetDanScoreQuery((uint)request.Baid, GameEra.Nijiiro, request.Type, request.DanIds), HttpContext.RequestAborted);
+        var commonResponse = await Mediator.Send(new GetDanScoreQuery((uint)request.Baid, GameEra.Nijiiro, request.Type, request.DanIds, request.ChassisId), HttpContext.RequestAborted);
         var response = DanScoreMappers.MapToCN00(commonResponse);
 
         return Ok(response);

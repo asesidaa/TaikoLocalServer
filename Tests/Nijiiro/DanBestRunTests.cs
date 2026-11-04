@@ -18,7 +18,7 @@ public sealed class DanBestRunTests
         await using var fixture = await GreenHandlerFixture.CreateAsync();
         fixture.Context.UserData.Add(new UserDatum { Baid = 1, MyDonName = "DON" });
         await fixture.Context.SaveChangesAsync();
-        var handler = new UpdatePlayResultCommandHandler(fixture.Context, fixture.Catalog, NullLogger<UpdatePlayResultCommandHandler>.Instance);
+        var handler = new UpdatePlayResultCommandHandler(fixture.Context, DanSetResultsTests.Catalog(), NullLogger<UpdatePlayResultCommandHandler>.Instance);
         async Task<DanScoreDatumNijiiro> After(DanClearState result, uint score)
         {
             await handler.Handle(Run(result, score), CancellationToken.None);

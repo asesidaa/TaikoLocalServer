@@ -5,6 +5,9 @@ namespace TaikoLocalServer.Domain.Entities;
 public class DanScoreDatumNijiiro
 {
     public uint Baid { get; set; }
+    /// <summary>The dan set (Server Management › Dani Dojo) the run was played on; empty for Gaiden, and for results from
+    /// before sets were recorded until the server's first start with them (they go to the default set then).</summary>
+    public string DanSet { get; set; } = string.Empty;
     public uint DanId { get; set; }
     public DanType DanType { get; set; }
     public uint ArrivalSongCount { get; set; }

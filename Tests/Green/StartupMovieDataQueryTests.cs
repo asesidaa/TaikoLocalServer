@@ -144,6 +144,7 @@ public sealed class StartupMovieDataQueryTests
         public Task<string?> SaveDataFileAsync(string name, string json) => throw new NotSupportedException();
         public IReadOnlyList<DanSetInfo> GetDanSets() => [];
         public ImmutableDictionary<uint, DanData> GetDanSet(string? id) => ImmutableDictionary<uint, DanData>.Empty;
+        public string ResolveDanSet(string? id) => id ?? "dan_data";
         public Task<string> CreateDanSetAsync(string name, string copyFrom) => throw new NotSupportedException();
         public Task<bool> RenameDanSetAsync(string id, string name) => throw new NotSupportedException();
         public Task<bool> SetDefaultDanSetAsync(string id) => throw new NotSupportedException();

@@ -230,6 +230,23 @@ try
     gameDataCatalog.ThrowIfNull();
     await gameDataCatalog.InitializeAsync();
 
+    // Dani results from before dan sets were recorded (migration AddDanSetToDanScores leaves them empty) go to the
+    // default set as it is now, once. Gaiden isn't in sets and stays empty.
+    if (gameDataCatalog.LoadResults.ContainsKey(GameEra.Nijiiro))
+    {
+        using var scope = app.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<TaikoDbContext>();
+        var set = TaikoLocalServer.Application.Common.CatalogExtensions.Nijiiro(gameDataCatalog).ResolveDanSet(null);
+        await using var tx = await db.Database.BeginTransactionAsync();
+        await db.Database.ExecuteSqlRawAsync("PRAGMA defer_foreign_keys = ON");   // the per-song rows' key follows in the same step
+        var moved = await db.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE DanScoreDatum_Nijiiro SET DanSet = {set} WHERE DanSet = '' AND DanType = {(int)DanType.Normal}");
+        await db.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE DanStageScoreDatum_Nijiiro SET DanSet = {set} WHERE DanSet = '' AND DanType = {(int)DanType.Normal}");
+        await tx.CommitAsync();
+        if (moved > 0) Log.Information("Dani Dojo: {Count} older results filed under the default set, {Set}", moved, set);
+    }
+
     // Use response compression
     app.UseResponseCompression();
 

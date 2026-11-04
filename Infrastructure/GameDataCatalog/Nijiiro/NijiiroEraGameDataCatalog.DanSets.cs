@@ -36,6 +36,8 @@ public partial class NijiiroEraGameDataCatalog
     public ImmutableDictionary<uint, DanData> GetDanSet(string? id) =>
         id is not null && danSets.TryGetValue(id, out var set) ? set : GetCommonDanDataDictionary();
 
+    public string ResolveDanSet(string? id) => id is not null && danSets.ContainsKey(id) ? id : danIndex.DefaultSet;
+
     public IReadOnlyList<DanSetInfo> GetDanSets() =>
         danIndex.Sets.Select(x => new DanSetInfo(x.Id, x.Name, DanSetFile(x.Id), x.Id == danIndex.DefaultSet,
             danSets.GetValueOrDefault(x.Id)?.Count ?? 0)).ToList();

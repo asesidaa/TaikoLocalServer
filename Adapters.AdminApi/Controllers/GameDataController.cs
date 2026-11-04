@@ -35,18 +35,23 @@ public class GameDataController(IGameDataCatalog catalog, ITaikoDbContext contex
         };
     }
 
+    /// <summary>Nijiiro's dan sets, in the admin's order (Server Management › Dani Dojo); a deleted set isn't listed.</summary>
+    [HttpGet("DanSets")]
+    public IReadOnlyList<DanSetInfo> GetDanSets() => catalog.Nijiiro().GetDanSets();
+
+    /// <param name="set">Nijiiro: the dan set's courses (an unknown or missing id: the default set).</param>
     [HttpGet("DanData")]
-    public IActionResult GetDanData() => GetDanData(nameof(GameEra.Nijiiro));
+    public IActionResult GetNijiiroDanData([FromQuery] string? set = null) => GetDanData(nameof(GameEra.Nijiiro), set);
 
     [HttpGet("/api/{era}/[controller]/DanData")]
-    public IActionResult GetDanData(string era)
+    public IActionResult GetDanData(string era, [FromQuery] string? set = null)
     {
         if (!EraRoute.TryParse(era, out var gameEra))
             return EraRoute.BadEra(era);
 
         return gameEra switch
         {
-            GameEra.Nijiiro => Ok(catalog.Nijiiro().GetCommonDanDataDictionary().Values.ToList()),
+            GameEra.Nijiiro => Ok(catalog.Nijiiro().GetDanSet(set).Values.ToList()),
             GameEra.Green => Ok(BuildGreenDanData()),
             GameEra.Blue => Ok(BuildBlueDanData()),
             GameEra.Yellow => Ok(BuildYellowDanData()),

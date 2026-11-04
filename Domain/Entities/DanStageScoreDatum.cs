@@ -6,6 +6,8 @@ public class DanStageScoreDatumNijiiro
 {
     public uint Baid { get; set; }
 
+    public string DanSet { get; set; } = string.Empty;
+
     public uint DanId { get; set; }
 
     public DanType DanType { get; set; }

@@ -88,7 +88,8 @@ public partial class TaikoDbContext
         modelBuilder.Entity<DanScoreDatumNijiiro>(entity =>
         {
             entity.ToTable("DanScoreDatum_Nijiiro");
-            entity.HasKey(e => new { e.Baid, e.DanId, e.DanType });
+            entity.HasKey(e => new { e.Baid, e.DanSet, e.DanId, e.DanType });
+            entity.Property(e => e.DanSet).HasDefaultValue("");
 
             entity.HasOne(d => d.Ba)
                 .WithMany()
@@ -103,11 +104,12 @@ public partial class TaikoDbContext
         modelBuilder.Entity<DanStageScoreDatumNijiiro>(entity =>
         {
             entity.ToTable("DanStageScoreDatum_Nijiiro");
-            entity.HasKey(e => new { e.Baid, e.DanId, e.DanType, e.SongNumber });
+            entity.HasKey(e => new { e.Baid, e.DanSet, e.DanId, e.DanType, e.SongNumber });
+            entity.Property(e => e.DanSet).HasDefaultValue("");
 
             entity.HasOne(d => d.Parent)
                 .WithMany(p => p.DanStageScoreData)
-                .HasForeignKey(d => new { d.Baid, d.DanId, d.DanType })
+                .HasForeignKey(d => new { d.Baid, d.DanSet, d.DanId, d.DanType })
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.Property(e => e.DanType).HasConversion<int>().HasDefaultValue(DanType.Normal).HasSentinel((DanType)0);

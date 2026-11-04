@@ -92,7 +92,9 @@ public partial class BaidQueryHandler
             .Include(datum => datum.DanStageScoreData)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
-        var danData = allDans.Where(datum => datum.DanType == DanType.Normal).ToList();
+        // The card scan doesn't say which cabinet (39.06), so the default set: the courses compared below.
+        var defaultSet = gameDataService.Nijiiro().ResolveDanSet(null);
+        var danData = allDans.Where(datum => datum.DanType == DanType.Normal && datum.DanSet == defaultSet).ToList();
         var gaidenData = allDans.Where(datum => datum.DanType == DanType.Gaiden).ToList();
         
         var maxDan = danData.Where(datum => datum.ClearState != DanClearState.NotClear)

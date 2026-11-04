@@ -2,23 +2,27 @@ using Throw;
 
 namespace TaikoLocalServer.Application.Handlers;
 
-public readonly record struct GetDanScoreQuery(uint Baid, GameEra Era, uint Type, uint[] DanIds) : IRequest<CommonDanScoreDataResponse>;
+/// <param name="ChassisId">The asking cabinet: Nijiiro reads back its dan set's results only.</param>
+public readonly record struct GetDanScoreQuery(uint Baid, GameEra Era, uint Type, uint[] DanIds, string ChassisId = "") : IRequest<CommonDanScoreDataResponse>;
 
 public partial class GetDanScoreQueryHandler : IRequestHandler<GetDanScoreQuery, CommonDanScoreDataResponse>
 {
     private readonly ILogger<GetDanScoreQueryHandler> logger;
     private readonly ITaikoDbContext                   context;
     private readonly IGameDataCatalog gameDataService;
+    private readonly ICabinetRegistry? cabinets;
 
 
     public GetDanScoreQueryHandler(
         ILogger<GetDanScoreQueryHandler> logger,
         ITaikoDbContext context,
-        IGameDataCatalog gameDataService)
+        IGameDataCatalog gameDataService,
+        ICabinetRegistry? cabinets = null)
     {
         this.logger = logger;
         this.context = context;
         this.gameDataService = gameDataService;
+        this.cabinets = cabinets;
     }
 
     public ValueTask<CommonDanScoreDataResponse> Handle(GetDanScoreQuery request, CancellationToken cancellationToken) => request.Era switch

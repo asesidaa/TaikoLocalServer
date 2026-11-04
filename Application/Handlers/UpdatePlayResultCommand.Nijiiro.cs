@@ -32,9 +32,14 @@ public partial class UpdatePlayResultCommandHandler
             }
             
             var danType = playMode == PlayMode.DanMode ? DanType.Normal : DanType.Gaiden;
+            // The set this cabinet serves (GetDanOdaiQuery): its own when it has its own settings, else the default.
+            // Gaiden courses aren't in sets.
+            var danSet = danType == DanType.Gaiden ? ""
+                : gameDataService.Nijiiro().ResolveDanSet(cabinets?.Find(request.ChassisId) is { OwnSettings: true } cabinet ? cabinet.DanSet : null);
             var danPlayData = await context.DanScoreDataNijiiro
                 .Include(datum => datum.DanStageScoreData)
                 .FirstOrDefaultAsync(datum => datum.Baid == request.Baid &&
+                                              datum.DanSet == danSet &&
                                               datum.DanId == playResultData.DanId &&
                                               datum.DanType == danType, cancellationToken);
             if (danPlayData is null)
@@ -42,6 +47,7 @@ public partial class UpdatePlayResultCommandHandler
                 danPlayData = new DanScoreDatumNijiiro
                 {
                     Baid = request.Baid,
+                    DanSet = danSet,
                     DanId = playResultData.DanId,
                     DanType = danType
                 };
@@ -212,6 +218,7 @@ public partial class UpdatePlayResultCommandHandler
                 new DanStageScoreDatumNijiiro
                 {
                     Baid = danPlayData.Baid,
+                    DanSet = danPlayData.DanSet,
                     DanId = danPlayData.DanId,
                     DanType = danPlayData.DanType,
                     SongNumber = (uint)songNumber,

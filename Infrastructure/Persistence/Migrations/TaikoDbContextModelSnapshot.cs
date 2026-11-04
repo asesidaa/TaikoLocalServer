@@ -792,6 +792,11 @@ namespace TaikoLocalServer.Migrations
                     b.Property<uint>("Baid")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("DanSet")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValue("");
+
                     b.Property<uint>("DanId")
                         .HasColumnType("INTEGER");
 
@@ -820,7 +825,7 @@ namespace TaikoLocalServer.Migrations
                     b.Property<uint>("SoulGaugeTotal")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("Baid", "DanId", "DanType");
+                    b.HasKey("Baid", "DanSet", "DanId", "DanType");
 
                     b.ToTable("DanScoreDatum_Nijiiro", (string)null);
                 });
@@ -1165,6 +1170,11 @@ namespace TaikoLocalServer.Migrations
                     b.Property<uint>("Baid")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("DanSet")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValue("");
+
                     b.Property<uint>("DanId")
                         .HasColumnType("INTEGER");
 
@@ -1200,7 +1210,7 @@ namespace TaikoLocalServer.Migrations
                     b.Property<uint>("TotalHitCount")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("Baid", "DanId", "DanType", "SongNumber");
+                    b.HasKey("Baid", "DanSet", "DanId", "DanType", "SongNumber");
 
                     b.ToTable("DanStageScoreDatum_Nijiiro", (string)null);
                 });
@@ -5541,7 +5551,7 @@ namespace TaikoLocalServer.Migrations
                 {
                     b.HasOne("TaikoLocalServer.Domain.Entities.DanScoreDatumNijiiro", "Parent")
                         .WithMany("DanStageScoreData")
-                        .HasForeignKey("Baid", "DanId", "DanType")
+                        .HasForeignKey("Baid", "DanSet", "DanId", "DanType")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
