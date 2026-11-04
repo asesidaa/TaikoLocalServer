@@ -469,14 +469,17 @@ public partial class NijiiroEraGameDataCatalog : INijiiroCatalog
             });
         }
 
+        var ordered = new HashSet<uint>();
         for (var index = 0; index < musicOrderData.Order.Count; index++)
         {
             if (details.TryGetValue(musicOrderData.Order[index].SongId, out var musicDetail))
             {
                 musicDetail.Index = index;
+                ordered.Add(musicDetail.SongId);
             }
         }
-        musicDetailDictionary = details;
+        // Only the web UI reads this: it shows the songs the game lists (music_order), not unused musicinfo entries.
+        musicDetailDictionary = details.Where(d => ordered.Contains(d.Key)).ToDictionary();
     }
 
     private void InitializeCostumes(DonCosRewards donCosRewardData, WordList wordlistData)
