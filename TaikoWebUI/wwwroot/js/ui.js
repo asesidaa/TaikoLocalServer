@@ -147,8 +147,9 @@
         if (JSON.stringify(player.children) !== key) player.setChildren(o.children);
       }
     } catch (err) { console.info("No WebGL, using the plain nameplate:", err.message); scenePromise = Promise.resolve(null); return; }
-    // The layout is anchored at (−172, −62); a build whose nameplate starts elsewhere (ASB61: y −67) shifts the canvas.
-    const [bx, by] = scene.data.sets.nameplate.bounds;
+    // The layout is anchored at (−172, −62); a build whose nameplate starts elsewhere (ASB61: y −67), or a plate that
+    // animates outside it (the player's measured bounds), shifts the canvas.
+    const [bx, by] = player.bounds;
     plateCanvas.style.left = `${(bx + 172) * scale}px`;
     plateCanvas.style.top = `${(by + 62) * scale}px`;
     slot.replaceChildren(plateCanvas);

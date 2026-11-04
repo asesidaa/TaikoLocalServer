@@ -202,13 +202,80 @@ export class LumenPlayer {
   }
 
   #projection() {
-    const [x0, y0, x1, y1] = this.scene.data.sets[this.setName].bounds;
+    const [x0, y0, x1, y1] = this.bounds;
     const sx = 2 / (x1 - x0), sy = -2 / (y1 - y0); // stage y grows down
     return [sx, 0, 0, sy, -1 - x0 * sx, 1 - y0 * sy];
   }
 
+  /** The canvas's stage-space box: the set's bounds, grown to what the label actually draws over its animation. */
+  get bounds() {
+    const key = `${this.label}|${JSON.stringify(this.children)}`;
+    if (this.measuredKey !== key) { this.measuredKey = key; this.measured = this.#measure(); }
+    return this.measured;
+  }
+
+  // The set's bounds come from each label's resting pose, so a part that animates outside them (ASB61's twso25_r
+  // plates: a medal and sparkle above the plate) was cut off. Walk the same display tree renderFrame draws, without
+  // drawing, over the longest loop in it, and take the union of every visible shape (clipped by its masks).
+  #measure() {
+    const set = this.scene.data.sets[this.setName];
+    const root = this.scene.data.sprites[set.sprite];
+    let box = [...set.bounds];
+    const grow = b => { if (b) box = [Math.min(box[0], b[0]), Math.min(box[1], b[1]), Math.max(box[2], b[2]), Math.max(box[3], b[3])]; };
+    const frames = Math.min(this.#longestLoop(set.sprite, new Set()), 1200);
+    for (let t = 0; t < frames; t += 2) grow(this.#extent(set.sprite, root.labels[this.label], t, true, [1, 0, 0, 1, 0, 0], 1));
+    return box;
+  }
+
+  #longestLoop(id, seen) {
+    if (seen.has(id)) return 1;
+    seen.add(id);
+    const sprite = this.scene.data.sprites[id];
+    if (!sprite) return 1;
+    let n = sprite.frameCount;
+    for (let f = 0; f < sprite.frameCount; f++)
+      for (const obj of this.scene.displayList(id, f)) if (this.scene.data.sprites[obj.char]) n = Math.max(n, this.#longestLoop(obj.char, seen));
+    return n;
+  }
+
+  // What #drawSprite would draw: stage-space box of its visible shapes, or null.
+  #extent(id, frame, time, held, m, alpha) {
+    const sprite = this.scene.data.sprites[id];
+    const local = held ? frame : time % sprite.frameCount;
+    let box = null, clip = null, until = -1;
+    const union = (a, b) => !a ? b : !b ? a : [Math.min(a[0], b[0]), Math.min(a[1], b[1]), Math.max(a[2], b[2]), Math.max(a[3], b[3])];
+    for (const obj of this.scene.displayList(id, local)) {
+      if (obj.depth > until) clip = null;
+      const childM = mul(m, obj.m);
+      const childTime = held ? time : this.#survivesLoop(id, obj) ? time - obj.placedAt : Math.max(0, local - obj.placedAt);
+      if (obj.clip > 0) { clip = this.#objExtent(obj, childTime, childM, 1); until = obj.clip; continue; }
+      const a = alpha * obj.mult[3] + obj.add[3];
+      if (a <= 0) continue;
+      let b = this.#objExtent(obj, childTime, childM, a);
+      if (b && clip) b = b[0] < clip[2] && clip[0] < b[2] && b[1] < clip[3] && clip[1] < b[3]
+        ? [Math.max(b[0], clip[0]), Math.max(b[1], clip[1]), Math.min(b[2], clip[2]), Math.min(b[3], clip[3])] : null;
+      box = union(box, b);
+    }
+    return box;
+  }
+
+  #objExtent({ char, name }, time, m, alpha) {
+    const shape = this.scene.data.shapes[char], sprite = this.scene.data.sprites[char];
+    if (shape) {
+      let b = null;
+      for (const g of shape) for (let i = 0; i < g.verts.length; i += 4) {
+        const x = m[0] * g.verts[i] + m[2] * g.verts[i + 1] + m[4], y = m[1] * g.verts[i] + m[3] * g.verts[i + 1] + m[5];
+        b = b ? [Math.min(b[0], x), Math.min(b[1], y), Math.max(b[2], x), Math.max(b[3], y)] : [x, y, x, y];
+      }
+      return b;
+    }
+    if (!sprite) return null;
+    const heldAt = sprite.labels[this.children[name]] ?? (Object.keys(sprite.labels).length > 1 ? 0 : undefined);
+    return this.#extent(char, heldAt ?? 0, time, heldAt !== undefined, m, alpha);
+  }
+
   #resize() {
-    const [x0, y0, x1, y1] = this.scene.data.sets[this.setName].bounds;
+    const [x0, y0, x1, y1] = this.bounds;
     const k = this.scale * (window.devicePixelRatio || 1);
     this.canvas.width = Math.ceil((x1 - x0) * k);
     this.canvas.height = Math.ceil((y1 - y0) * k);
