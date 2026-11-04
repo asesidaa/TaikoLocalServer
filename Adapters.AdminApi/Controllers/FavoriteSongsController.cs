@@ -171,9 +171,12 @@ public partial class FavoriteSongsController(ITaikoDbContext context, IGameDataC
         if (songs.Distinct().Count() != songs.Count)
             return BadRequest(new { message = "A song is in the list twice." });
         var known = catalog.Nijiiro().GetMusicDetailDictionary();
+        // Songs already in the list may stay though the Web UI no longer lists them (left out of music_order since).
+        var had = (await context.UserSaveDataNijiiro.AsNoTracking().FirstOrDefaultAsync(s => s.Baid == baid, HttpContext.RequestAborted))
+            ?.FavoriteSongsArray.ToHashSet() ?? [];
         foreach (var id in songs)
         {
-            if (!known.ContainsKey(id))
+            if (!known.ContainsKey(id) && !had.Contains(id))
                 return BadRequest(new { message = $"Song {id} isn't on this server." });
         }
 

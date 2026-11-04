@@ -71,7 +71,8 @@ public sealed class EventFolderLookupSharedTests
     internal sealed class TestNijiiroCatalog(
         ImmutableDictionary<uint, EventFolderData> eventFolders,
         uint shopFolderVerup = 1,
-        Dictionary<string, int>? tokenData = null) : INijiiroCatalog
+        Dictionary<string, int>? tokenData = null,
+        Dictionary<uint, MusicDetail>? musicDetails = null) : INijiiroCatalog
     {
         public GameEra Era => GameEra.Nijiiro;
 
@@ -108,7 +109,7 @@ public sealed class EventFolderLookupSharedTests
 
         public List<uint> GetLockedUraSongsList() => [];
 
-        public Dictionary<uint, MusicDetail> GetMusicDetailDictionary() => [];
+        public Dictionary<uint, MusicDetail> GetMusicDetailDictionary() => musicDetails ?? [];
 
         public List<Costume> GetCostumeList() => [];
 
