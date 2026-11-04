@@ -1,5 +1,8 @@
 // A large, realistic database for load testing, built through the real EF model and migrations (README.md).
-//   dotnet run --project Tests/StressSeed -- [--players 5000] [--plays 500000] [--whales 10] [--seed 1] [--out <file>] [--data <wwwroot>]
+//   dotnet run --project Tests/StressSeed -- [--players 5000] [--plays 500000] [--whales 10] [--top 100000] [--seed 1] [--out <file>] [--data <wwwroot>]
+// Or one demo player added to an existing database (stop the server first; delete them later in User Management):
+//   dotnet run --project Tests/StressSeed -- --into <taiko.db3> --name keifun [--plays 3000] [--password <pw>] [--data <wwwroot>]
+//   They're an admin, registered, with a new access code; both are printed. No password given: a random one.
 // Same seed, same database. Song ids, star levels, note counts and max scores come from the extracted
 // datatables (data/datatable/musicinfo.json etc.), so charts, scores and crowns are believable.
 using System.Diagnostics;
@@ -17,6 +20,8 @@ var outPath = Path.GetFullPath(opt.GetValueOrDefault("out") ?? Path.Combine(root
 var playerCount = int.Parse(opt.GetValueOrDefault("players") ?? "5000");
 var playTarget = int.Parse(opt.GetValueOrDefault("plays") ?? "500000");
 var rng = new Random(int.Parse(opt.GetValueOrDefault("seed") ?? "1"));
+var into = opt.GetValueOrDefault("into") is { } intoArg ? Path.GetFullPath(intoArg) : null;
+if (into is not null && !File.Exists(into)) { Console.Error.WriteLine($"No database at {into}."); return 1; }
 var clock = Stopwatch.StartNew();
 
 // ---- Game data ----
@@ -36,28 +41,41 @@ var chartsBySong = charts.GroupBy(c => c.SongId).ToDictionary(g => g.Key, g => g
 // Built as <this exe>/wwwroot/taiko.db3 and moved to --out at the end: an early migration (SeparateTokens) opens its
 // own context on that default path, so migrating any other file fails.
 var work = Path.Combine(PathHelper.GetRootPath(), "taiko.db3");
-Directory.CreateDirectory(Path.GetDirectoryName(work)!);
-if (File.Exists(work)) File.Delete(work);
-await using (var setup = new TaikoDbContext(work)) await setup.Database.MigrateAsync();
-Console.WriteLine($"Migrated ({clock.Elapsed.TotalSeconds:0.0}s)");
-Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();   // the migrations' pooled connections would block the PRAGMAs
-var db = new TaikoDbContext(work);
+TaikoDbContext db;
+if (into is null)
+{
+    Directory.CreateDirectory(Path.GetDirectoryName(work)!);
+    if (File.Exists(work)) File.Delete(work);
+    await using (var setup = new TaikoDbContext(work)) await setup.Database.MigrateAsync();
+    Console.WriteLine($"Migrated ({clock.Elapsed.TotalSeconds:0.0}s)");
+    Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();   // the migrations' pooled connections would block the PRAGMAs
+    db = new TaikoDbContext(work);
+    await db.Database.ExecuteSqlRawAsync("PRAGMA journal_mode=OFF; PRAGMA synchronous=OFF;");
+}
+else
+{
+    // A real server's database: written normally (journaled), and only the new player's rows.
+    db = new TaikoDbContext(into);
+    if ((await db.Database.GetPendingMigrationsAsync()).Any()) { Console.Error.WriteLine("Start the server once first: this database needs migrating."); return 1; }
+}
 db.ChangeTracker.AutoDetectChangesEnabled = false;
-await db.Database.ExecuteSqlRawAsync("PRAGMA journal_mode=OFF; PRAGMA synchronous=OFF;");
 
 // One password for every registered player: hashing thousands with BCrypt would take minutes.
-const string Password = "stresstest";
+var Password = into is null ? "stresstest" : opt.GetValueOrDefault("password") ?? Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(6)).ToLowerInvariant();
 var salt = BCrypt.Net.BCrypt.GenerateSalt(10);
 var hash = BCrypt.Net.BCrypt.HashPassword(Password, salt);
 
 var now = DateTime.Now;
 var start = now.AddYears(-2);
-var accessCodes = new HashSet<string>();
+var accessCodes = into is null ? new HashSet<string>() : (await db.Cards.Select(c => c.AccessCode).ToListAsync()).ToHashSet();
 string Digits(int n) => string.Concat(Enumerable.Range(0, n).Select(_ => (char)('0' + rng.Next(10))));
 string NewCode(HashSet<string> taken, int n) { string c; do c = Digits(n); while (!taken.Add(c)); return c; }
 
 var players = new List<(uint Baid, double Skill, int Plays, DateTime From, DateTime To)>();
-for (uint baid = 1; baid <= playerCount; baid++)
+// --into: one strong player, active the whole two years, after the database's last player.
+if (into is not null)
+    players.Add(((await db.UserData.MaxAsync(u => (uint?)u.Baid) ?? 0) + 1, 0.75, int.Parse(opt.GetValueOrDefault("plays") ?? "3000"), start, now));
+for (uint baid = 1; into is null && baid <= playerCount; baid++)
 {
     // Plays per player: a long tail (most play a little, a few play thousands), scaled to the target total.
     var plays = Math.Max(1, (int)Math.Round(Math.Exp(Normal(3.8, 1.3))));
@@ -66,33 +84,38 @@ for (uint baid = 1; baid <= playerCount; baid++)
     var to = from.AddDays(Math.Min((now - from).TotalDays, 7 + plays * (0.3 + rng.NextDouble())));
     players.Add((baid, skill, plays, from, to));
 }
-var scale = (double)playTarget / players.Sum(p => p.Plays);
+var scale = into is null ? (double)playTarget / players.Sum(p => p.Plays) : 1;
 players = players.Select(p => p with { Plays = Math.Max(1, (int)Math.Round(p.Plays * scale)) }).ToList();
 
-// Heavy players, on top of the target: players 2…whales+1, from 100,000 plays down to 10,000 (evenly spaced on a log
+// Heavy players, on top of the target: players 2…whales+1, from --top plays (100,000) down to a tenth of it (evenly spaced on a log
 // scale), strong, active the whole two years, and registered, with access codes 00…010001, 00…010002, ….
-var whales = Math.Min(int.Parse(opt.GetValueOrDefault("whales") ?? "10"), playerCount - 1);
+var whales = into is not null ? 0 : Math.Min(int.Parse(opt.GetValueOrDefault("whales") ?? "10"), playerCount - 1);
 bool IsWhale(uint baid) => baid >= 2 && baid <= whales + 1;
 string WhaleCode(uint baid) => (10_000 + baid - 1).ToString("D20");
+var top = int.Parse(opt.GetValueOrDefault("top") ?? "100000");
 for (var i = 0; i < whales; i++)
 {
-    var plays = (int)Math.Round(10_000 * Math.Pow(10, whales == 1 ? 1 : (double)(whales - 1 - i) / (whales - 1)));
+    var plays = (int)Math.Round(top / 10.0 * Math.Pow(10, whales == 1 ? 1 : (double)(whales - 1 - i) / (whales - 1)));
     players[i + 1] = players[i + 1] with { Plays = plays, Skill = 0.55 + 0.4 * rng.NextDouble(), From = start, To = now };
 }
 
 var names = new[] { "どん", "かっ", "Don", "Katsu", "たいこ", "Taiko", "ばち", "Bachi", "りずむ", "Rhythm", "みこし", "Mikoshi", "ドンちゃん", "Kaks", "Raccoon", "Haru", "Mika", "Daichi", "りまう", "Sora" };
 foreach (var (baid, skill, playCount, _, to) in players)
 {
-    var admin = baid == 1;
+    var admin = into is not null || baid == 1;
     db.UserData.Add(new UserDatum
     {
-        Baid = baid, MyDonName = admin ? "admin" : IsWhale(baid) ? $"Heavy{baid - 1}" : $"{names[rng.Next(names.Length)]}{rng.Next(1, 1000)}",
-        MyDonNameLanguage = (uint)rng.Next(2), DisplayDan = true, DisplayAchievement = true, AchievementDisplayDifficulty = Difficulty.None,
+        Baid = baid, MyDonName = into is not null ? opt.GetValueOrDefault("name") ?? "keifun" : admin ? "admin" : IsWhale(baid) ? $"Heavy{baid - 1}" : $"{names[rng.Next(names.Length)]}{rng.Next(1, 1000)}",
+        MyDonNameLanguage = into is not null ? 1 : (uint)rng.Next(2), IsAdmin = admin,
+    });
+    db.UserSaveDataNijiiro.Add(new UserSaveDataNijiiro
+    {
+        Baid = baid, DisplayDan = true, DisplayAchievement = true, AchievementDisplayDifficulty = Difficulty.None,
         ColorBody = (uint)rng.Next(63), ColorFace = (uint)rng.Next(63), ColorLimb = (uint)rng.Next(63),
         CurrentKigurumi = rng.Next(6) == 0 ? Pick(cos["kigurumi"]) : 0, CurrentHead = Pick(cos["head"]), CurrentBody = Pick(cos["body"]),
         CurrentFace = Pick(cos["face"]), CurrentPuchi = Pick(cos["puchi"]),
         FavoriteSongsArray = Enumerable.Range(0, rng.Next(12)).Select(_ => songIds[rng.Next(songIds.Length)]).Distinct().ToList(),
-        LastPlayDatetime = to, IsAdmin = admin, DisplaySouUchi = rng.Next(10) == 0,
+        LastPlayDatetime = to, DisplaySouUchi = rng.Next(10) == 0,
     });
     db.UserWebProfiles.Add(new UserWebProfile
     {
@@ -101,7 +124,7 @@ foreach (var (baid, skill, playCount, _, to) in players)
     });
     var cards = admin || IsWhale(baid) ? 1 : rng.Next(10) < 8 ? 1 : rng.Next(2, 4);
     for (var i = 0; i < cards; i++)
-        db.Cards.Add(new Card { AccessCode = admin ? "00000000000000000001" : IsWhale(baid) ? WhaleCode(baid) : NewCode(accessCodes, 20), Baid = baid, LastScanAt = to });
+        db.Cards.Add(new Card { AccessCode = into is not null ? NewCode(accessCodes, 20) : admin ? "00000000000000000001" : IsWhale(baid) ? WhaleCode(baid) : NewCode(accessCodes, 20), Baid = baid, LastScanAt = to });
     var registered = admin || IsWhale(baid) || rng.Next(10) < 3;
     db.Credentials.Add(new Credential { Baid = baid, Password = registered ? hash : "", Salt = registered ? salt : "" });
 }
@@ -174,6 +197,16 @@ foreach (var (baid, skill, playCount, _, _) in players.Where(p => p.Plays > 30))
     }
 }
 await Save($"{danRows:N0} dan results");
+
+if (into is not null)
+{
+    var (newBaid, _, newPlays, _, _) = players[0];
+    var code = await db.Cards.Where(c => c.Baid == newBaid).Select(c => c.AccessCode).FirstAsync();
+    await db.DisposeAsync();
+    Console.WriteLine($"Done in {clock.Elapsed.TotalSeconds:0.0}s: added player {newBaid} to {into}, an admin, with {newPlays:N0} plays.");
+    Console.WriteLine($"Sign in with access code {code}, password \"{Password}\". Remove them in User Management when you're done.");
+    return 0;
+}
 
 // ---- The admin activity log and sign-ins, so the Access pages have history to page through ----
 var actions = new[] { "user.login", "user.password", "user.theme", "user.costume", "server.avatars", "card.bind" };
