@@ -4593,4 +4593,55 @@
   <data name="My profile's language" xml:space="preserve">
     <value>我的个人资料语言</value>
   </data>
+  <data name="Previous rank" xml:space="preserve">
+    <value>上一个段位</value>
+  </data>
+  <data name="Next rank" xml:space="preserve">
+    <value>下一个段位</value>
+  </data>
+  <data name="Red pass" xml:space="preserve">
+    <value>红合格</value>
+  </data>
+  <data name="Not passed" xml:space="preserve">
+    <value>未合格</value>
+  </data>
+  <data name="Course songs" xml:space="preserve">
+    <value>课题曲</value>
+  </data>
+  <data name="on each song" xml:space="preserve">
+    <value>每首歌</value>
+  </data>
+  <data name="Hidden until you reach it" xml:space="preserve">
+    <value>到达前隐藏</value>
+  </data>
+  <data name="OKs and Bads pass at or below the marks; everything else at or above." xml:space="preserve">
+    <value>“可”和“不可”在标准以下即合格，其他项目在标准以上即合格。</value>
+  </data>
+  <data name="at least" xml:space="preserve">
+    <value>至少</value>
+  </data>
+  <data name="at most" xml:space="preserve">
+    <value>至多</value>
+  </data>
+  <data name="Best run {0}" xml:space="preserve">
+    <value>最佳挑战 {0}</value>
+  </data>
+  <data name="played once" xml:space="preserve">
+    <value>玩过 1 次</value>
+  </data>
+  <data name="played {0} times" xml:space="preserve">
+    <value>玩过 {0} 次</value>
+  </data>
+  <data name="{0}: see your best run" xml:space="preserve">
+    <value>{0}：查看最佳挑战</value>
+  </data>
+  <data name="Pick a rank you've passed to see that run." xml:space="preserve">
+    <value>选择已合格的段位即可查看该次挑战。</value>
+  </data>
+  <data name="This server has no course for this rank." xml:space="preserve">
+    <value>此服务器没有这个段位的课题。</value>
+  </data>
+  <data name="Combo" xml:space="preserve">
+    <value>连击</value>
+  </data>
 </root>

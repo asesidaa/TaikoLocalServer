@@ -4593,4 +4593,55 @@
   <data name="My profile's language" xml:space="preserve">
     <value>La langue de mon profil</value>
   </data>
+  <data name="Previous rank" xml:space="preserve">
+    <value>Rang précédent</value>
+  </data>
+  <data name="Next rank" xml:space="preserve">
+    <value>Rang suivant</value>
+  </data>
+  <data name="Red pass" xml:space="preserve">
+    <value>Réussite rouge</value>
+  </data>
+  <data name="Not passed" xml:space="preserve">
+    <value>Non réussi</value>
+  </data>
+  <data name="Course songs" xml:space="preserve">
+    <value>Morceaux du parcours</value>
+  </data>
+  <data name="on each song" xml:space="preserve">
+    <value>sur chaque morceau</value>
+  </data>
+  <data name="Hidden until you reach it" xml:space="preserve">
+    <value>Caché jusqu'à ce que vous l'atteigniez</value>
+  </data>
+  <data name="OKs and Bads pass at or below the marks; everything else at or above." xml:space="preserve">
+    <value>Les OK et les Mauvais passent sous les seuils ou à égalité ; tout le reste au-dessus ou à égalité.</value>
+  </data>
+  <data name="at least" xml:space="preserve">
+    <value>au moins</value>
+  </data>
+  <data name="at most" xml:space="preserve">
+    <value>au plus</value>
+  </data>
+  <data name="Best run {0}" xml:space="preserve">
+    <value>Meilleur passage le {0}</value>
+  </data>
+  <data name="played once" xml:space="preserve">
+    <value>joué une fois</value>
+  </data>
+  <data name="played {0} times" xml:space="preserve">
+    <value>joué {0} fois</value>
+  </data>
+  <data name="{0}: see your best run" xml:space="preserve">
+    <value>{0} : voir votre meilleur passage</value>
+  </data>
+  <data name="Pick a rank you've passed to see that run." xml:space="preserve">
+    <value>Choisissez un rang réussi pour voir ce passage.</value>
+  </data>
+  <data name="This server has no course for this rank." xml:space="preserve">
+    <value>Ce serveur n'a pas de parcours pour ce rang.</value>
+  </data>
+  <data name="Combo" xml:space="preserve">
+    <value>Combo</value>
+  </data>
 </root>

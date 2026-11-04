@@ -803,12 +803,18 @@ namespace TaikoLocalServer.Migrations
                     b.Property<uint>("ArrivalSongCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime?>("BestRunAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<uint>("ClearState")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(0u);
 
                     b.Property<uint>("ComboCountTotal")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("PlayCount")
                         .HasColumnType("INTEGER");
 
                     b.Property<uint>("SoulGaugeTotal")

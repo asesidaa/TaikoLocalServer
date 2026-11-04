@@ -45,12 +45,12 @@ public partial class UpdatePlayResultCommandHandler
                     DanId = playResultData.DanId,
                     DanType = danType
                 };
-                UpdateDanPlayData(danPlayData, playResultData);
+                UpdateDanPlayData(danPlayData, playResultData, lastPlayDateTime);
                 context.DanScoreDataNijiiro.Add(danPlayData);
             }
             else
             {
-                UpdateDanPlayData(danPlayData, playResultData);
+                UpdateDanPlayData(danPlayData, playResultData, lastPlayDateTime);
             }
 
             await context.SaveChangesAsync(cancellationToken);
@@ -185,8 +185,17 @@ public partial class UpdatePlayResultCommandHandler
         }
     }
     
-    private void UpdateDanPlayData(DanScoreDatumNijiiro danPlayData, CommonPlayResultData playResultData)
+    private void UpdateDanPlayData(DanScoreDatumNijiiro danPlayData, CommonPlayResultData playResultData, DateTime playedAt)
     {
+        // The best run: a higher pass, or the same pass with a higher total score (the stored stages are per-field bests).
+        var runState = (DanClearState)playResultData.DanResult;
+        var runTotal = playResultData.AryStageInfoes.Sum(s => (long)s.PlayScore);
+        var bestTotal = danPlayData.DanStageScoreData.Sum(s => (long)s.HighScore);
+        if (danPlayData.PlayCount == 0 && danPlayData.DanStageScoreData.Count == 0 || runState > danPlayData.ClearState ||
+            runState == danPlayData.ClearState && runTotal > bestTotal)
+            danPlayData.BestRunAt = playedAt;
+        danPlayData.PlayCount++;
+
         danPlayData.ClearState =
             (DanClearState)Math.Max(playResultData.DanResult, (uint)danPlayData.ClearState);
         danPlayData.ArrivalSongCount =

@@ -1,0 +1,332 @@
+@page "/Users/{baid:int}/PlayData/DaniDojo/{danId:int}"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject IJSRuntime Js
+@inject PageState Page
+@inject GameDataService GameDataService
+@inject NavigationManager Nav
+
+@* One Dani Dojo rank: your best run (stamp, totals), the course's songs with your result on each, and every pass
+   condition against its red and gold marks. Opened from a passed rank on the Dani Dojo page; ‹ › step between ranks. *@
+<PageTitle>@($"{Name} · {Localizer["Dani Dojo"]}")</PageTitle>
+
+<PlayDataPage Setting="setting" Dans="dans" DanView="true">
+    @if (setting is null || !loaded)
+    {
+        <Skeleton />
+    }
+    else
+    {
+        var dan = GameData.Dans[DanId - 1];
+        var gold = best is not null && GameData.IsGold(best.ClearState);
+        var passed = best is not null && best.ClearState != DanClearState.NotClear;
+        <div class="space-y-6">
+            <a href="@PlayDataPaths.Of(Baid, PlayDataPaths.DaniDojo)" class="inline-flex items-center gap-1 text-sm font-medium lg:hidden @Css.Muted hover:text-zinc-900 dark:hover:text-zinc-100">
+                <Icon Name="chevLeft" Class="size-4" />@Localizer["Dani Dojo"]
+            </a>
+
+            @* Rank header: kept small, a 24px badge and the name between the arrows. *@
+            <div class="flex items-center justify-between gap-3">
+                @RankStep(DanId - 1, "chevLeft", Localizer["Previous rank"])
+                <h2 class="flex min-w-0 items-center gap-2">
+                    <span class="grid h-6 w-12 shrink-0 place-items-center">
+                        <img data-asset="@($"nameplate/dan_{dan.Badge}_{(gold ? "gold" : "red")}.png")" alt="" class="peer h-6 w-12 object-contain" />
+                        <span class="font-display hidden text-base peer-[[hidden]]:block @(gold ? "text-amber-500" : "")">@dan.Kanji</span>
+                    </span>
+                    <span class="truncate text-lg font-semibold">@Name</span>
+                </h2>
+                @RankStep(DanId + 1, "chevRight", Localizer["Next rank"])
+            </div>
+
+            @* Result card. *@
+            <section class="flex flex-wrap items-center gap-4 rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
+                <img data-asset="@(GameData.DanStamp(best?.ClearState ?? DanClearState.NotClear) ?? "ui/dani_none.png")" alt=""
+                     class="size-16 shrink-0 object-contain @(passed ? "" : "opacity-40 grayscale")" />
+                <div class="min-w-0 flex-1">
+                    <p class="font-semibold">
+                        @if (best is null)
+                        {
+                            @Localizer["Not played yet"]
+                        }
+                        else if (!passed)
+                        {
+                            @Localizer["Not passed yet"]
+                        }
+                        else
+                        {
+                            @($"{(gold ? Localizer["Gold pass"] : Localizer["Red pass"])} · {Localizer[ClearTypes[GameData.ClearType(best.ClearState)]]}")
+                        }
+                    </p>
+                    @if (RunLine is { Length: > 0 } line)
+                    {
+                        <p class="text-xs @Css.Muted">@line</p>
+                    }
+                </div>
+                @if (best is not null)
+                {
+                    <div class="text-right">
+                        <p class="text-xs @Css.Muted">@Localizer["Score"]</p>
+                        <p class="font-mono text-2xl font-semibold tabular-nums">@TotalScore.ToString("N0")</p>
+                    </div>
+                    <dl class="grid w-full grid-cols-3 gap-2 text-center sm:grid-cols-6">
+                        @Stat(Localizer["Good"], Sum(s => s.GoodCount))
+                        @Stat(Localizer["OK"], Sum(s => s.OkCount))
+                        @Stat(Localizer["Bad"], Sum(s => s.BadCount))
+                        @Stat(Localizer["Drumroll"], Sum(s => s.DrumrollCount))
+                        @Stat(Localizer["Max combo"], best.ComboCountTotal)
+                        @Stat(Localizer["Total Hits"], Sum(s => s.TotalHitCount))
+                    </dl>
+                }
+            </section>
+
+            @if (course is null)
+            {
+                <p class="text-sm @Css.Muted">@Localizer["This server has no course for this rank."]</p>
+            }
+            else
+            {
+                <section class="space-y-2">
+                    <h3 class="text-sm font-semibold">@Localizer["Course songs"]</h3>
+                    <ol class="divide-y divide-zinc-100 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+                        @for (var i = 0; i < course.OdaiSongList.Count; i++)
+                        {
+                            var odai = course.OdaiSongList[i];
+                            var diff = (Difficulty)odai.Level;
+                            var song = music.GetValueOrDefault(odai.SongNo);
+                            var stage = Stage(i);
+                            var hidden = odai.IsHiddenSongName && best is null;
+                            <li class="flex flex-wrap items-center gap-3 px-3 py-3">
+                                <span class="w-4 text-right text-xs tabular-nums @Css.Muted">@(i + 1)</span>
+                                <img data-asset="@GameData.DifficultyIcon(diff)" alt="@GameData.DifficultyName(diff)" class="size-8 shrink-0 object-contain" />
+                                <span class="min-w-0 flex-1">
+                                    @if (hidden)
+                                    {
+                                        <span class="block font-medium">？？？</span>
+                                        <span class="block text-xs @Css.Muted">@Localizer["Hidden until you reach it"]</span>
+                                    }
+                                    else
+                                    {
+                                        <a href="@PlayDataPaths.Song(Baid, odai.SongNo, (int)diff)" class="block truncate font-medium hover:underline">@(song is null ? $"#{odai.SongNo}" : GameDataService.SongTitle(song))</a>
+                                        <span class="flex flex-wrap items-center gap-1.5 text-xs @Css.Muted">
+                                            @GameData.DifficultyName(diff)
+                                            @if (song is not null && Stars(song, diff) > 0)
+                                            {
+                                                <StarPill Difficulty="diff" Stars="Stars(song, diff)" />
+                                            }
+                                            @if (song is not null && GameDataService.SongSubtitle(song) is { Length: > 0 } sub)
+                                            {
+                                                <span class="truncate">@sub</span>
+                                            }
+                                        </span>
+                                    }
+                                </span>
+                                @if (stage is not null)
+                                {
+                                    <dl class="grid w-full grid-cols-6 gap-1 text-center text-xs sm:w-auto sm:gap-3">
+                                        @Mini(Localizer["Good"], stage.GoodCount)
+                                        @Mini(Localizer["OK"], stage.OkCount)
+                                        @Mini(Localizer["Bad"], stage.BadCount)
+                                        @Mini(Localizer["Drumroll"], stage.DrumrollCount)
+                                        @Mini(Localizer["Combo"], stage.ComboCount)
+                                        @Mini(Localizer["Hits"], stage.TotalHitCount)
+                                    </dl>
+                                }
+                            </li>
+                        }
+                    </ol>
+                </section>
+
+                <section class="space-y-2">
+                    <h3 class="text-sm font-semibold">@Localizer["Conditions"]</h3>
+                    <ul class="space-y-3">
+                        @foreach (var border in course.OdaiBorderList)
+                        {
+                            var type = (DanConditionType)border.OdaiType;
+                            <li class="rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
+                                @if ((DanBorderType)border.BorderType == DanBorderType.PerSong)
+                                {
+                                    <p class="text-sm font-medium">@ConditionName(type) <span class="font-normal @Css.Muted">· @Localizer["on each song"]</span></p>
+                                    <div class="mt-2 space-y-2">
+                                        @for (var i = 0; i < course.OdaiSongList.Count; i++)
+                                        {
+                                            var song = i;
+                                            @Condition(type, string.Format(Localizer["Song {0}"], i + 1), Mark(border, song, false), Mark(border, song, true), best is null ? null : SongValue(type, song))
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    @Condition(type, ConditionName(type), border.RedBorderTotal, border.GoldBorderTotal, best is null ? null : TotalValue(type))
+                                }
+                            </li>
+                        }
+                    </ul>
+                    <p class="text-xs @Css.Muted">@Localizer["OKs and Bads pass at or below the marks; everything else at or above."]</p>
+                </section>
+            }
+        </div>
+    }
+</PlayDataPage>
+
+@code {
+    [Parameter] public int Baid { get; set; }
+    [Parameter] public int DanId { get; set; }
+
+    private static readonly string[] ClearTypes = ["Clear", "Full combo", "Donderful"];
+
+    private UserSetting? setting;
+    private List<DanBestData> dans = [];
+    private List<DanData> courses = [];
+    private Dictionary<uint, MusicDetail> music = [];
+    private bool loaded;
+
+    private DanBestData? best => dans.FirstOrDefault(d => d.DanId == DanId);
+    private DanData? course => courses.FirstOrDefault(c => c.DanId == DanId);
+
+    private string Name => DanId is >= 1 and <= 19 ? Localizer[GameData.Dans[DanId - 1].Key] : $"#{DanId}";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var settingTask = Client.GetFromJsonAsync<UserSetting>($"api/UserSettings/{Baid}");
+        var dansTask = Client.GetFromJsonAsync<DanBestDataResponse>($"api/DanBestData/{Baid}");
+        var coursesTask = Client.GetFromJsonAsync<List<DanData>>("api/GameData/DanData");
+        music = await GameDataService.GetMusicDetailDictionary();
+        setting = await settingTask;
+        dans = (await dansTask)?.DanBestDataList ?? [];
+        courses = await coursesTask ?? [];
+        loaded = true;
+    }
+
+    // ‹ › reuse this page for another rank: say where we are.
+    protected override void OnParametersSet()
+    {
+        if (DanId is < 1 or > 19) { Nav.NavigateTo(PlayDataPaths.Of(Baid, PlayDataPaths.DaniDojo), replace: true); return; }
+        Page.Set(new PageState.Crumb(Localizer["Play Data"], PlayDataPaths.Index(Baid)),
+            new PageState.Crumb(Localizer["Dani Dojo"], PlayDataPaths.Of(Baid, PlayDataPaths.DaniDojo)), new PageState.Crumb(Name));
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender) => Js.InvokeVoidAsync("ui.hydrateAssets").AsTask();
+
+    private string RunLine
+    {
+        get
+        {
+            if (best is null) return "";
+            var parts = new List<string>();
+            if (best.BestRunAt is { } at) parts.Add(string.Format(Localizer["Best run {0}"], at.ToString("d MMM")));
+            if (best.PlayCount > 0) parts.Add(best.PlayCount == 1 ? Localizer["played once"] : string.Format(Localizer["played {0} times"], best.PlayCount));
+            return string.Join(" · ", parts);
+        }
+    }
+
+    private DanBestStageData? Stage(int i) => best?.DanBestStageDataList.FirstOrDefault(s => s.SongNumber == i);
+    private long Sum(Func<DanBestStageData, uint> f) => best?.DanBestStageDataList.Sum(s => (long)f(s)) ?? 0;
+    private long TotalScore => Sum(s => s.HighScore);
+
+    private static int Stars(MusicDetail s, Difficulty d) => d switch
+    {
+        Difficulty.Easy => s.StarEasy, Difficulty.Normal => s.StarNormal, Difficulty.Hard => s.StarHard, Difficulty.Oni => s.StarOni, _ => s.StarUra,
+    };
+
+    private string ConditionName(DanConditionType t) => t switch
+    {
+        DanConditionType.SoulGauge => Localizer["Soul Gauge"], DanConditionType.GoodCount => Localizer["Good"], DanConditionType.OkCount => Localizer["OK"],
+        DanConditionType.BadCount => Localizer["Bad"], DanConditionType.ComboCount => Localizer["Max combo"], DanConditionType.DrumrollCount => Localizer["Drumroll"],
+        DanConditionType.Score => Localizer["Score"], _ => Localizer["Total Hits"],
+    };
+
+    private static bool LowerWins(DanConditionType t) => t is DanConditionType.OkCount or DanConditionType.BadCount;
+
+    // The best run's value for a whole-course condition, and for one song's.
+    private long TotalValue(DanConditionType t) => t switch
+    {
+        DanConditionType.SoulGauge => best!.SoulGaugeTotal, DanConditionType.GoodCount => Sum(s => s.GoodCount), DanConditionType.OkCount => Sum(s => s.OkCount),
+        DanConditionType.BadCount => Sum(s => s.BadCount), DanConditionType.ComboCount => best!.ComboCountTotal, DanConditionType.DrumrollCount => Sum(s => s.DrumrollCount),
+        DanConditionType.Score => TotalScore, _ => Sum(s => s.TotalHitCount),
+    };
+
+    private long? SongValue(DanConditionType t, int i) => Stage(i) is not { } s ? null : t switch
+    {
+        DanConditionType.GoodCount => s.GoodCount, DanConditionType.OkCount => s.OkCount, DanConditionType.BadCount => s.BadCount,
+        DanConditionType.ComboCount => s.ComboCount, DanConditionType.DrumrollCount => s.DrumrollCount, DanConditionType.Score => s.HighScore,
+        _ => s.TotalHitCount,
+    };
+
+    private static uint Mark(DanData.OdaiBorder b, int song, bool gold) => (song, gold) switch
+    {
+        (0, false) => b.RedBorder1, (1, false) => b.RedBorder2, (2, false) => b.RedBorder3,
+        (0, true) => b.GoldBorder1, (1, true) => b.GoldBorder2, _ => b.GoldBorder3,
+    };
+
+    // 2 gold, 1 red, 0 not passed.
+    private static int State(DanConditionType t, long value, long red, long gold) => LowerWins(t)
+        ? value <= gold ? 2 : value <= red ? 1 : 0
+        : value >= gold ? 2 : value >= red ? 1 : 0;
+
+    // One condition row: name, "at least / at most red · gold", your value and its state, and (higher wins) a bar
+    // with thin red and gold mark lines.
+    private RenderFragment Condition(DanConditionType type, string label, long red, long gold, long? value) => __builder =>
+    {
+        var lower = LowerWins(type);
+        var unit = type == DanConditionType.SoulGauge ? "%" : "";
+        var state = value is { } v ? State(type, v, red, gold) : -1;
+        <div>
+            <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-sm">
+                <span>
+                    <span class="font-medium">@label</span>
+                    <span class="text-xs @Css.Muted">@Localizer[lower ? "at most" : "at least"] <b class="text-red-600 dark:text-red-400">@red.ToString("N0")@unit</b> · <b class="text-amber-600 dark:text-amber-400">@gold.ToString("N0")@unit</b></span>
+                </span>
+                @if (value is { } got)
+                {
+                    <span class="flex items-center gap-2">
+                        <span class="font-mono tabular-nums">@got.ToString("N0")@unit</span>
+                        <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium @(state == 2 ? "bg-amber-500/15 text-amber-700 dark:text-amber-300" : state == 1 ? "bg-red-500/15 text-red-700 dark:text-red-300" : "bg-zinc-500/15 text-zinc-600 dark:text-zinc-300")">
+                            <Icon Name="@(state > 0 ? "check" : "x")" Class="size-3.5" />@Localizer[state == 2 ? "Gold" : state == 1 ? "Red pass" : "Not passed"]
+                        </span>
+                    </span>
+                }
+            </div>
+            @if (!lower)
+            {
+                var max = type == DanConditionType.SoulGauge ? 100.0 : Math.Max(Math.Max(gold, value ?? 0), 1) * 1.1;
+                string Pct(double x) => (Math.Clamp(x / max, 0, 1) * 100).ToString("0.##", CultureInfo.InvariantCulture) + "%";
+                <div class="relative mt-2 h-2 rounded-full bg-zinc-200 dark:bg-zinc-800">
+                    @if (value is { } fill)
+                    {
+                        <div class="h-2 rounded-full @(state == 2 ? "bg-amber-500" : state == 1 ? "bg-red-500" : "bg-zinc-400")" style="width:@Pct(fill)"></div>
+                    }
+                    <span class="absolute -top-1 h-4 w-0.5 bg-red-600" style="left:@Pct(red)" title="@red.ToString("N0")"></span>
+                    <span class="absolute -top-1 h-4 w-0.5 bg-amber-500" style="left:@Pct(gold)" title="@gold.ToString("N0")"></span>
+                </div>
+            }
+        </div>
+    };
+
+    private RenderFragment RankStep(int id, string icon, string label) => __builder =>
+    {
+        if (id is >= 1 and <= 19)
+        {
+            <a href="@($"{PlayDataPaths.Of(Baid, PlayDataPaths.DaniDojo)}/{id}")" class="@Css.IconButton" aria-label="@($"{label}: {Localizer[GameData.Dans[id - 1].Key]}")"><Icon Name="@icon" /></a>
+        }
+        else
+        {
+            <span class="size-9"></span>
+        }
+    };
+
+    private static RenderFragment Stat(string label, long value) => __builder =>
+    {
+        <div class="rounded-lg bg-zinc-100 px-2 py-1.5 dark:bg-zinc-800/60">
+            <dt class="text-[11px] @Css.Muted">@label</dt>
+            <dd class="font-mono text-sm font-semibold tabular-nums">@value.ToString("N0")</dd>
+        </div>
+    };
+
+    private static RenderFragment Mini(string label, uint value) => __builder =>
+    {
+        <div>
+            <dt class="text-[10px] @Css.Muted">@label</dt>
+            <dd class="font-mono tabular-nums">@value.ToString("N0")</dd>
+        </div>
+    };
+}

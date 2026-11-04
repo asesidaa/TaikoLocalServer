@@ -1,0 +1,17 @@
+@* A box that's a link when it has somewhere to go (hover brightens it, a focus ring), else a plain div. *@
+@if (Href is not null)
+{
+    <a href="@Href" title="@Title" aria-label="@Label" class="@Class outline-none transition hover:brightness-125 focus-visible:ring-2 focus-visible:ring-primary-500">@ChildContent</a>
+}
+else
+{
+    <div title="@Title" class="@Class">@ChildContent</div>
+}
+
+@code {
+    [Parameter] public string? Href { get; set; }
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string Class { get; set; } = "";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

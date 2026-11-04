@@ -32,8 +32,11 @@
                         var clear = passed ? ClearTypes[GameData.ClearType(best!.ClearState)] : null;
                         var name = (string)Localizer[key];
                         @* Badge = the game's rendered dan badge (extract), with the kanji as a fallback until extract has run. *@
-                        <div title="@($"{name}: {(passed ? $"{(gold ? Localizer["Gold pass"] : Localizer["Passed"])}, {Localizer[clear!]}" : Localizer["Not passed yet"])}")"
-                             class="relative isolate flex flex-col items-center gap-1 overflow-hidden rounded-xl border border-zinc-900/10 bg-zinc-900 px-2 py-3 text-center dark:border-zinc-700 dark:bg-zinc-950 @(best == top && top is not null ? "ring-2 ring-primary-500" : "")">
+                        var cellTitle = $"{name}: {(passed ? $"{(gold ? Localizer["Gold pass"] : Localizer["Passed"])}, {Localizer[clear!]}" : Localizer["Not passed yet"])}";
+                        var cellClass = $"relative isolate flex flex-col items-center gap-1 overflow-hidden rounded-xl border border-zinc-900/10 bg-zinc-900 px-2 py-3 text-center dark:border-zinc-700 dark:bg-zinc-950 {(best == top && top is not null ? "ring-2 ring-primary-500" : "")}";
+                        @* A passed rank opens its page (that run); the others stay plain. *@
+                        <MaybeLink Href="@(passed ? $"{PlayDataPaths.Of(Baid, PlayDataPaths.DaniDojo)}/{i + 1}" : null)" Title="@cellTitle"
+                                     Label="@(passed ? string.Format(Localizer["{0}: see your best run"], name) : null)" Class="@cellClass">
                             @if (passed)
                             {
                                 <img data-asset="@GameData.DanStamp(best!.ClearState)" alt="" class="pointer-events-none absolute -bottom-3 -right-3 -z-10 size-20 object-contain opacity-25" />
@@ -50,10 +53,10 @@
                                     <span class="sr-only">, @(gold ? Localizer["Gold pass"] : Localizer["Passed"])</span>
                                 }
                             </span>
-                        </div>
+                        </MaybeLink>
                     }
                 </div>
-                <p class="text-xs @Css.Muted">@Localizer["Your highest pass (outlined) is the badge on your nameplate. On this page the card shows your Dani Dojo outfit."]</p>
+                <p class="text-xs @Css.Muted">@Localizer["Pick a rank you've passed to see that run."] @Localizer["Your highest pass (outlined) is the badge on your nameplate. On this page the card shows your Dani Dojo outfit."]</p>
             </section>
         </div>
     }
