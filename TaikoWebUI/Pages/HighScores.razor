@@ -19,6 +19,14 @@
     </div>
 
     <div class="space-y-3">
+        <div class="inline-flex gap-0.5 rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800" role="radiogroup" aria-label="@Localizer["Results to show"]">
+            @foreach (var (isAi, label) in new[] { (false, Localizer["Taiko Mode"].Value), (true, Localizer["AI Battle"].Value) })
+            {
+                var on = ai == isAi;
+                <button role="radio" aria-checked="@Css.Aria(on)" @onclick="() => SetAi(isAi)"
+                        class="rounded-lg px-3 py-1 text-xs font-medium @(on ? "bg-white shadow-sm dark:bg-zinc-900" : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200")">@label</button>
+            }
+        </div>
         <Rail Role="tablist" Label="@Localizer["Difficulty"]" Class="rounded-2xl bg-zinc-100 p-1 dark:bg-zinc-900" TrackClass="gap-1">
             @foreach (var (d, name) in GameData.Difficulties)
             {
@@ -47,20 +55,23 @@
                     <option value="@((int)g)">@GameData.Genre(g).Name</option>
                 }
             </select>
-            <select aria-label="@Localizer["Crown"]" class="@Css.Input !w-auto !py-2" value="@crown" @onchange='e => Change(() => crown = int.Parse(e.Value?.ToString() ?? "-1"))'>
-                <option value="-1">@Localizer["Any crown"]</option>
-                @for (var c = 0; c < 4; c++)
+            <select aria-label="@Localizer[ai ? "Result" : "Crown"]" class="@Css.Input !w-auto !py-2" value="@crown" @onchange='e => Change(() => crown = int.Parse(e.Value?.ToString() ?? "-1"))'>
+                <option value="-1">@Localizer[ai ? "Any result" : "Any crown"]</option>
+                @for (var c = 0; c < (ai ? 2 : 4); c++)
                 {
-                    <option value="@c">@Localizer[CrownLabels[c]]</option>
+                    <option value="@c">@Localizer[ai ? AiLabels[c] : CrownLabels[c]]</option>
                 }
             </select>
             <select aria-label="@Localizer["Sort"]" class="@Css.Input !w-auto !py-2" value="@sort" @onchange='e => Change(() => sort = e.Value?.ToString() ?? "stars")'>
                 <option value="stars">@Localizer["Stars (high first)"]</option>
                 <option value="score">@Localizer["Score"]</option>
-                <option value="date">@Localizer["Recently set"]</option>
+                @if (!ai)
+                {
+                    <option value="date">@Localizer["Recently set"]</option>
+                }
                 <option value="title">@Localizer["Song title"]</option>
             </select>
-            @if (CanCompare)
+            @if (CanCompare && !ai)
             {
                 <span class="flex items-center gap-2 sm:ml-auto">
                     @* A search, not a list of everyone: a server can have thousands of players. Suggestions end in "#id". *@
@@ -88,14 +99,14 @@
     @if (data is not null)
     {
         <div class="grid grid-cols-2 gap-2 lg:grid-cols-4">
-            @for (var c = 0; c < 4; c++)
+            @for (var c = 0; c < (ai ? 2 : 4); c++)
             {
                 var k = c;
                 var on = crown == k;
                 <button aria-pressed="@Css.Aria(on)" @onclick="() => Change(() => crown = crown == k ? -1 : k)"
                         class="flex items-center gap-3 rounded-xl border p-3 text-left @(on ? "border-primary-500 bg-primary-500/5 ring-1 ring-primary-500" : "border-zinc-200 hover:border-zinc-300 dark:border-zinc-800")">
-                    <img data-asset="@GameData.CrownIcon((CrownType)k)" alt="" class="size-8 object-contain" />
-                    <span><span class="block text-lg font-semibold tabular-nums">@data.Crowns[k]</span><span class="block text-xs @Css.Muted">@Localizer[CrownTiles[k]]</span></span>
+                    <img data-asset="@(ai ? GameData.AiResultIcon(k == 1) : GameData.CrownIcon((CrownType)k))" alt="" class="size-8 object-contain" />
+                    <span><span class="block text-lg font-semibold tabular-nums">@data.Crowns[k]</span><span class="block text-xs @Css.Muted">@Localizer[ai ? AiLabels[k] : CrownTiles[k]]</span></span>
                 </button>
             }
         </div>
@@ -133,8 +144,15 @@
                                 <span class="mt-1 flex items-center gap-2">
                                     <StarPill Difficulty="(Difficulty)diff" Stars="r.Stars" />
                                     <span class="font-mono text-sm tabular-nums">@r.Score.ToString("N0")</span>
-                                    <img data-asset="@GameData.CrownIcon(r.Crown)" alt="@Localizer[GameData.CrownName(r.Crown)]" class="size-4" />
-                                    <span class="ml-auto">@(vs != 0 ? Delta(r) : Accuracy(r))</span>
+                                    @if (ai)
+                                    {
+                                        <span class="ml-auto"><AiEmblem Result="r.Ai" /></span>
+                                    }
+                                    else
+                                    {
+                                        <img data-asset="@GameData.CrownIcon(r.Crown)" alt="@Localizer[GameData.CrownName(r.Crown)]" class="size-4" />
+                                        <span class="ml-auto">@(vs != 0 ? Delta(r) : Accuracy(r))</span>
+                                    }
                                 </span>
                             </span>
                         </button>
@@ -148,14 +166,21 @@
                             <th class="py-2.5 pl-4 pr-2 font-medium">@Localizer["Song"]</th>
                             <th class="px-2 py-2.5 text-center font-medium">@Localizer["Stars"]</th>
                             <th class="px-2 py-2.5 text-right font-medium">@Localizer["Score"]</th>
-                            <th class="w-8 px-2 py-2.5"></th>
-                            <th class="hidden px-2 py-2.5 font-medium lg:table-cell">@Localizer["Rank"]</th>
+                            @if (ai)
+                            {
+                                <th class="py-2.5 pl-2 pr-4 font-medium">@Localizer["Result"]</th>
+                            }
+                            else
+                            {
+                                <th class="w-8 px-2 py-2.5"></th>
+                                <th class="hidden px-2 py-2.5 font-medium lg:table-cell">@Localizer["Rank"]</th>
+                            }
                             @if (vs != 0)
                             {
                                 <th class="px-2 py-2.5 text-right font-medium">@VsName</th>
                                 <th class="py-2.5 pl-2 pr-4 text-right font-medium">±</th>
                             }
-                            else
+                            else if (!ai)
                             {
                                 <th class="hidden px-2 py-2.5 text-right font-medium lg:table-cell">@Localizer["Accuracy"]</th>
                                 <th class="hidden py-2.5 pl-2 pr-4 text-right font-medium xl:table-cell">@Localizer["Set on"]</th>
@@ -180,13 +205,20 @@
                                 </td>
                                 <td class="px-2 text-center"><StarPill Difficulty="(Difficulty)diff" Stars="r.Stars" /></td>
                                 <td class="px-2 text-right font-mono tabular-nums">@r.Score.ToString("N0")</td>
-                                <td class="px-2"><img data-asset="@GameData.CrownIcon(r.Crown)" alt="@Localizer[GameData.CrownName(r.Crown)]" title="@Localizer[GameData.CrownName(r.Crown)]" class="size-5" /></td>
-                                <td class="hidden px-2 lg:table-cell">
-                                    @if (GameData.RankIcon(r.Rank) is { } rank)
-                                    {
-                                        <img data-asset="@rank" alt="@string.Format(Localizer["Rank {0}"], r.Rank)" class="h-5 w-auto" />
-                                    }
-                                </td>
+                                @if (ai)
+                                {
+                                    <td class="py-2 pl-2 pr-4"><AiEmblem Result="r.Ai" /></td>
+                                }
+                                else
+                                {
+                                    <td class="px-2"><img data-asset="@GameData.CrownIcon(r.Crown)" alt="@Localizer[GameData.CrownName(r.Crown)]" title="@Localizer[GameData.CrownName(r.Crown)]" class="size-5" /></td>
+                                    <td class="hidden px-2 lg:table-cell">
+                                        @if (GameData.RankIcon(r.Rank) is { } rank)
+                                        {
+                                            <img data-asset="@rank" alt="@string.Format(Localizer["Rank {0}"], r.Rank)" class="h-5 w-auto" />
+                                        }
+                                    </td>
+                                }
                                 @if (vs != 0)
                                 {
                                     <td class="whitespace-nowrap px-2 text-right">
@@ -201,7 +233,7 @@
                                     </td>
                                     <td class="whitespace-nowrap py-2 pl-2 pr-4 text-right">@Delta(r)</td>
                                 }
-                                else
+                                else if (!ai)
                                 {
                                     <td class="hidden px-2 text-right tabular-nums lg:table-cell">@r.Accuracy.ToString("0.0")%</td>
                                     <td class="hidden whitespace-nowrap pr-4 text-right text-xs xl:table-cell @Css.Muted">@(r.SetOn?.ToString("d MMM") ?? "–")</td>
@@ -223,6 +255,7 @@
     private const int PageSize = 50;
     private static readonly string[] CrownLabels = ["Not cleared", "Cleared", "Full combo", "Donderful combo"];
     private static readonly string[] CrownTiles = ["Not cleared", "Cleared", "Full combo", "Donderful"];
+    private static readonly string[] AiLabels = ["Lost to AI-DON", "Beat AI-DON"];
 
     [Parameter] public int Baid { get; set; }
     /// <summary>Opens already comparing with this player (?vs=).</summary>
@@ -231,7 +264,7 @@
     private HighScoresPage? data;
     private int diff = 4, genre = -1, crown = -1, page = 1, request;
     private string query = "", sort = "stars";
-    private bool behind;
+    private bool behind, ai;
     private uint vs;
     private List<User> vsMatches = [];
     private string vsText = "";
@@ -257,7 +290,7 @@
     {
         var mine = ++request;
         var result = await Client.GetFromJsonAsync<HighScoresPage>(
-            $"api/HighScores/{Baid}?diff={diff}&q={Uri.EscapeDataString(query)}&genre={genre}&crown={crown}&sort={sort}&vs={vs}&behind={(behind ? "true" : "false")}&page={page}&limit={PageSize}");
+            $"api/HighScores/{Baid}?diff={diff}&q={Uri.EscapeDataString(query)}&genre={genre}&crown={crown}&sort={sort}&vs={vs}&behind={(behind ? "true" : "false")}&page={page}&limit={PageSize}&ai={(ai ? "true" : "false")}");
         if (mine != request) return;
         data = result;
         if (data is not null) page = data.Page;
@@ -269,6 +302,14 @@
         page = 1;
         await Load();
     }
+
+    // AI Battle has no crowns, comparing or dates: those reset.
+    private Task SetAi(bool on) => Change(() =>
+    {
+        ai = on;
+        crown = -1;
+        if (on) { vs = 0; behind = false; vsText = ""; if (sort == "date") sort = "stars"; }
+    });
 
     private Task Compare(uint baid) => Change(() =>
     {

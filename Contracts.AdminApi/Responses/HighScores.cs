@@ -11,7 +11,8 @@ public class HighScoresPage
     public int[] PlayedPerDifficulty { get; set; } = new int[5];
     /// <summary>Charts of this difficulty on the server.</summary>
     public int Charts { get; set; }
-    /// <summary>Not cleared, cleared, full combo, donderful: over the search and genre, whatever the crown filter.</summary>
+    /// <summary>Not cleared, cleared, full combo, donderful: over the search and genre, whatever the crown filter. AI
+    /// Battle: lost, won.</summary>
     public int[] Crowns { get; set; } = new int[4];
     /// <summary>When comparing: the other player's name and how you stand on the charts you've both played.</summary>
     public string? VsName { get; set; }
@@ -35,4 +36,6 @@ public class HighScoreRow
     public DateTime? SetOn { get; set; }
     public uint? VsScore { get; set; }
     public CrownType? VsCrown { get; set; }
+    /// <summary>AI Battle: whether they beat AI-DON, and on how many of its sections.</summary>
+    public AiResult? Ai { get; set; }
 }
