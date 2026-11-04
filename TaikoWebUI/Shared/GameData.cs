@@ -46,8 +46,7 @@ public static class GameData
 
     /// <summary>Title plates in TitlePlateId order: display name and the Lumen / extract label. The extracted
     /// plates.json replaces these (UsePlateLabels) with the game's own list; these are the names for the ones it knows.</summary>
-    public static (string Name, string Label)[] TitlePlates { get; private set; } = KnownPlates;
-
+    // Declared before TitlePlates: static initializers run in order, and TitlePlates starts as this list.
     private static readonly (string Name, string Label)[] KnownPlates =
     [
         ("Wood", "wood"), ("Rainbow", "rainbow"), ("Gold", "gold"), ("Purple", "purple"),
@@ -56,6 +55,8 @@ public static class GameData
         ("Toho Y22 4", "toho_y22_4"), ("Toho Y22 5", "toho_y22_5"), ("AprilFool 1", "aprilfool_1"), ("AprilFool 2", "aprilfool_2"),
         ("AprilFool 3", "aprilfool_3"), ("AprilFool 4", "aprilfool_4"), ("AprilFool 5", "aprilfool_5"), ("AprilFool 6", "aprilfool_6"),
     ];
+
+    public static (string Name, string Label)[] TitlePlates { get; private set; } = KnownPlates;
 
     public static string PlateLabel(uint id) => id < TitlePlates.Length ? TitlePlates[id].Label : "wood";
 
