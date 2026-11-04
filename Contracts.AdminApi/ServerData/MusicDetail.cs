@@ -15,6 +15,9 @@ public class MusicDetail
     public string ArtistNameEN { get; set; } = string.Empty;
     public string ArtistNameCN { get; set; } = string.Empty;
     public string ArtistNameKO { get; set; } = string.Empty;
+    /// <summary>For search only: the song's other word list text (Simplified Chinese title and subtitle, and its detail
+    /// line in every language), one per line.</summary>
+    public string OtherText { get; set; } = string.Empty;
 
     public SongGenre Genre { get; set; }
     public int StarEasy { get; set; }
@@ -36,6 +39,12 @@ public class MusicDetail
     /// </summary>
     public string Title(uint language) =>
         (language switch { 1 => SongNameEN, 2 or 4 => SongNameCN, 3 => SongNameKO, _ => "" }) is { Length: > 0 } t ? t : SongName;
+
+    /// <summary>A search: its ID, or any of its word list text (title, subtitle, detail) in any language.</summary>
+    public bool Matches(string query) =>
+        query.Length == 0 || SongId.ToString() == query ||
+        new[] { SongName, SongNameEN, SongNameCN, SongNameKO, ArtistName, ArtistNameEN, ArtistNameCN, ArtistNameKO, OtherText }
+            .Any(t => t.Contains(query, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>The line under the title: the word list's subtitle (song_sub, loaded as ArtistName) in the same language,
     /// else the Japanese one; empty when the song has none.</summary>

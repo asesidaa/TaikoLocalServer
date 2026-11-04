@@ -53,9 +53,7 @@ public class SongsController(ITaikoDbContext context, IGameDataCatalog catalog) 
             (save.DisplaySouUchi || !s.IsSouUchi) &&
             // The picked difficulty also filters: only songs with that chart (in practice Ura Oni).
             Stars(s)[diff - 1] > 0 &&
-            (query.Length == 0 || s.SongId.ToString() == query ||
-             s.SongName.Contains(query, StringComparison.OrdinalIgnoreCase) || s.SongNameEN.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-             s.SongNameCN.Contains(query, StringComparison.OrdinalIgnoreCase) || s.SongNameKO.Contains(query, StringComparison.OrdinalIgnoreCase)));
+            s.Matches(query));
         // Your result on that chart: any of the ones picked (none picked: every song).
         var wanted = (results ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToHashSet();
         if (wanted.Count > 0)

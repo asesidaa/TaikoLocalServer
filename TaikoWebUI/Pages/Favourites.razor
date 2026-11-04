@@ -154,16 +154,13 @@
     private (string Key, string Label)[] Sorts =>
         [("genre", Localizer["Genre"]), ("title", Localizer["Title"]), ("oni", Localizer["Oni level"]), ("recent", Localizer["Recently added"])];
 
-    private bool Matches(MusicDetail s, string q) =>
-        s.SongId.ToString() == q || s.SongName.Contains(q, StringComparison.OrdinalIgnoreCase) || s.SongNameEN.Contains(q, StringComparison.OrdinalIgnoreCase)
-        || s.SongNameCN.Contains(q, StringComparison.OrdinalIgnoreCase) || s.SongNameKO.Contains(q, StringComparison.OrdinalIgnoreCase);
 
     // Up to 8 songs that aren't favourites yet; null while the box is empty.
     private List<MusicDetail>? Hits => query.Trim() is { Length: > 0 } q && songs is not null
-        ? songs.Values.Where(s => !order.Contains(s.SongId) && Matches(s, q)).OrderBy(s => s.SongId).Take(8).ToList()
+        ? songs.Values.Where(s => !order.Contains(s.SongId) && s.Matches(q)).OrderBy(s => s.SongId).Take(8).ToList()
         : null;
 
-    private bool AlreadyFavourite => order.Any(id => Song(id) is { } s && Matches(s, query.Trim()));
+    private bool AlreadyFavourite => order.Any(id => Song(id) is { } s && s.Matches(query.Trim()));
 
     protected override async Task OnParametersSetAsync()
     {

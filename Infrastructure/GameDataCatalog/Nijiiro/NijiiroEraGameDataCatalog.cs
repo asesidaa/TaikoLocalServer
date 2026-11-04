@@ -449,6 +449,7 @@ public partial class NijiiroEraGameDataCatalog : INijiiroCatalog
             // Missing song_sub entries are common, so names default to empty rather than failing.
             var name = words.GetValueOrDefault($"song_{musicInfo.Id}");
             var artist = words.GetValueOrDefault($"song_sub_{musicInfo.Id}");
+            var detail = words.GetValueOrDefault($"song_detail_{musicInfo.Id}");
             details.TryAdd(musicUniqueId, new MusicDetail
             {
                 SongId = musicUniqueId,
@@ -460,6 +461,8 @@ public partial class NijiiroEraGameDataCatalog : INijiiroCatalog
                 ArtistNameEN = artist?.EnglishUsText ?? "",
                 ArtistNameCN = artist?.ChineseTText ?? "",
                 ArtistNameKO = artist?.KoreanText ?? "",
+                OtherText = string.Join('\n', new[] { name?.ChineseSText, artist?.ChineseSText, detail?.JapaneseText, detail?.EnglishUsText,
+                    detail?.ChineseTText, detail?.KoreanText, detail?.ChineseSText }.Where(t => !string.IsNullOrEmpty(t)).Distinct()),
                 Genre = musicInfo.Genre,
                 StarEasy = musicInfo.StarEasy,
                 StarNormal = musicInfo.StarNormal,

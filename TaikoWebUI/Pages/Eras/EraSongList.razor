@@ -87,9 +87,7 @@
     private List<MusicDetail> Matches()
     {
         var q = query.Trim();
-        return scores!.Songs.Values.Where(s => q.Length == 0 || s.SongId.ToString() == q
-                || s.SongName.Contains(q, StringComparison.OrdinalIgnoreCase) || s.SongNameEN.Contains(q, StringComparison.OrdinalIgnoreCase))
-            .OrderBy(s => s.SongId).ToList();
+        return scores!.Songs.Values.Where(s => s.Matches(q)).OrderBy(s => s.SongId).ToList();
     }
 
     protected override async Task OnParametersSetAsync()

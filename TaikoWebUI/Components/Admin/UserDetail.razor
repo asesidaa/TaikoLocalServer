@@ -261,7 +261,7 @@
 @if (scores is not null)
 {
     var q = scoreQuery.Trim();
-    var hits = scores.Where(x => q.Length == 0 || x.MusicName.Contains(q, StringComparison.OrdinalIgnoreCase) || x.SongId.ToString() == q).ToList();
+    var hits = scores.Where(x => q.Length == 0 || (scoreSongs.TryGetValue(x.SongId, out var song) ? song.Matches(q) : x.MusicName.Contains(q, StringComparison.OrdinalIgnoreCase) || x.SongId.ToString() == q)).ToList();
     <Dialog Title="@(scoresGame == EraPaths.Nijiiro && AuthService.EnabledGames.Count == 1 ? Localizer["Remove a score"] : string.Format(Localizer["Remove a score · {0}"], scoresGame))" Width="max-w-lg" OnClose="() => scores = null">
         <p>@Localizer["Remove Score Hint"]</p>
         <input type="search" autofocus class="@Css.Input mt-3" placeholder="@Localizer["Song name or ID"]" value="@scoreQuery" @oninput="e => scoreQuery = e.Value?.ToString() ?? string.Empty" />
@@ -315,6 +315,7 @@
     private List<SongBestData>? scores;
     private string scoresGame = EraPaths.Nijiiro;
     private string scoreQuery = "";
+    private Dictionary<uint, MusicDetail> scoreSongs = [];
     private (uint, Difficulty)? removing;
     private uint shownBaid;
     private List<SessionItem>? sessions;
@@ -592,7 +593,7 @@
         scoreQuery = "";
         removing = null;
         scoresGame = game;
-        var music = await GameDataService.GetMusicDetailDictionary(game);
+        var music = scoreSongs = await GameDataService.GetMusicDetailDictionary(game);
         var list = (await Client.GetFromJsonAsync<SongBestResponse>($"api/{game}/PlayData/{User.Baid}"))?.SongBestData ?? [];
         foreach (var x in list)
         {

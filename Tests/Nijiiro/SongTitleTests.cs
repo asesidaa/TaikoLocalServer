@@ -31,4 +31,18 @@ public sealed class SongTitleTests
         Assert.Equal("黒うさP feat.初音ミク", Song.Subtitle(2)); // no Chinese subtitle: the Japanese one
         Assert.Equal("", new MusicDetail { SongName = "No subtitle" }.Subtitle(1));
     }
+
+    // Song searches look at every word list text of the song, whatever language its title shows in.
+    [Fact]
+    public void Search_MatchesTheIdAndEveryWordListText()
+    {
+        var song = new MusicDetail { SongId = 40, SongName = "千本桜", ArtistNameEN = "Kurousa-P feat. Hatsune Miku", OtherText = "千本樱\nVocaloid classic" };
+        Assert.True(song.Matches(""));
+        Assert.True(song.Matches("40"));
+        Assert.True(song.Matches("hatsune"));          // subtitle
+        Assert.True(song.Matches("千本樱"));            // Simplified Chinese title
+        Assert.True(song.Matches("vocaloid classic")); // detail line
+        Assert.False(song.Matches("4"));
+        Assert.False(song.Matches("Senbonzakura"));
+    }
 }

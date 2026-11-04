@@ -18,4 +18,7 @@ public class WordListEntry
 
     [JsonPropertyName("koreanText")]
     public string KoreanText { get; set; } = string.Empty;
+
+    [JsonPropertyName("chineseSText")]
+    public string ChineseSText { get; set; } = string.Empty;
 }

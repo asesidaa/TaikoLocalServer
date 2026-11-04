@@ -64,8 +64,7 @@ public class HighScoresController(ITaikoDbContext context, IGameDataCatalog cata
                 Ai = new AiResult { Win = a.IsWin, Sections = a.AiSectionScoreData.Count, SectionsWon = a.AiSectionScoreData.Count(x => x.IsWin) },
             };
         })).Where(r => (genre < 0 || (int)r.Genre == genre) &&
-                      (query.Length == 0 || r.SongId.ToString() == query ||
-                       r.Name.Contains(query, StringComparison.OrdinalIgnoreCase) || r.NameEn.Contains(query, StringComparison.OrdinalIgnoreCase)))
+                      songs[r.SongId].Matches(query))
             .ToList();
 
         var both = rows.Where(r => r.VsScore is not null).ToList();
