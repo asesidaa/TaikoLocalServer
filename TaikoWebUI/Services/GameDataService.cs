@@ -66,6 +66,23 @@ public class GameDataService(HttpClient client)
         catch (Exception e) when (e is HttpRequestException or System.Text.Json.JsonException) { }
     }
 
+    /// <summary>The game's title plates (extract's nameplate/plates.json) into GameData.TitlePlates, once; the fixed
+    /// list stays when it isn't extracted yet.</summary>
+    public async Task LoadTitlePlatesAsync()
+    {
+        if (platesLoaded) return;
+        try
+        {
+            using var doc = System.Text.Json.JsonDocument.Parse(await client.GetStringAsync("api/Assets/nameplate/plates.json"));
+            if (doc.RootElement.TryGetProperty("plates", out var plates) && plates.TryGetProperty("labels", out var labels))
+                GameData.UsePlateLabels(labels.EnumerateArray().Select(l => l.GetString() ?? "").ToList());
+            platesLoaded = true;
+        }
+        catch (Exception e) when (e is HttpRequestException or System.Text.Json.JsonException) { }
+    }
+
+    private bool platesLoaded;
+
     public string SongTitle(MusicDetail song) => song.Title(SongLanguage);
 
     public string SongSubtitle(MusicDetail song) => song.Subtitle(SongLanguage);

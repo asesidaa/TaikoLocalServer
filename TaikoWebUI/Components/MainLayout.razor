@@ -246,6 +246,7 @@ else
         Nav.LocationChanged += OnLocationChanged;
         Players.Changed += OnPlayerChanged;
         await LoadSongLanguage();
+        await GameDataService.LoadTitlePlatesAsync();
         await CheckAssets();
         await LoadServerState();
     }
@@ -274,6 +275,7 @@ else
     private async void OnChanged(object? sender, EventArgs e)
     {
         await LoadSongLanguage();
+        await GameDataService.LoadTitlePlatesAsync();
         await CheckAssets();
         Refresh();
     }

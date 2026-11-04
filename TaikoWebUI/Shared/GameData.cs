@@ -44,8 +44,11 @@ public static class GameData
 
     public static string Color(uint i) => i < Colors.Length ? Colors[i] : Colors[0];
 
-    /// <summary>Title plates in TitlePlateId order: display name and the Lumen / extract label.</summary>
-    public static readonly (string Name, string Label)[] TitlePlates =
+    /// <summary>Title plates in TitlePlateId order: display name and the Lumen / extract label. The extracted
+    /// plates.json replaces these (UsePlateLabels) with the game's own list; these are the names for the ones it knows.</summary>
+    public static (string Name, string Label)[] TitlePlates { get; private set; } = KnownPlates;
+
+    private static readonly (string Name, string Label)[] KnownPlates =
     [
         ("Wood", "wood"), ("Rainbow", "rainbow"), ("Gold", "gold"), ("Purple", "purple"),
         ("AI 1", "ai_1"), ("AI 2", "ai_2"), ("AI 3", "ai_3"), ("AI 4", "ai_4"), ("Onp 1", "onp_1"),
@@ -55,6 +58,18 @@ public static class GameData
     ];
 
     public static string PlateLabel(uint id) => id < TitlePlates.Length ? TitlePlates[id].Label : "wood";
+
+    /// <summary>The game's plates from plates.json: known labels keep their names, others get one from the label
+    /// ("toho_y23_1" → "Toho Y23 1").</summary>
+    public static void UsePlateLabels(IReadOnlyList<string> labels)
+    {
+        if (labels.Count == 0) return;
+        var known = KnownPlates.ToDictionary(p => p.Label, p => p.Name);
+        TitlePlates = labels.Select(l => (known.TryGetValue(l, out var name) ? name : PlateName(l), l)).ToArray();
+    }
+
+    private static string PlateName(string label) =>
+        string.Join(' ', label.Split('_', StringSplitOptions.RemoveEmptyEntries).Select(w => char.ToUpperInvariant(w[0]) + w[1..]));
 
     /// <summary>Dani Dojo ranks by DanId (1-based): badge id (extract's dan_&lt;id&gt;_{red,gold}), kanji, localisation key.</summary>
     public static readonly (string Badge, string Kanji, string Key)[] Dans =
