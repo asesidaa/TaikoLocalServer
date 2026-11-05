@@ -138,6 +138,7 @@ export class LumenPlayer {
   setChildren(children) {
     this.children = children;
     this.frame = 0;
+    this.#resize();   // the canvas fits what the new children draw (bounds), or the drawing is squashed into the old size
     this.renderFrame(0);
   }
 
