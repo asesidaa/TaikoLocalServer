@@ -48,6 +48,21 @@
 
 <SaveBar Dirty="Dirty" Saving="saving" BlockReason="@BlockReason" OnSave="Save" OnDiscard="Discard" />
 
+@if (eventQrSerial is not null)
+{
+    <Dialog Title="@Localizer["Event QR code"]" OnClose="() => eventQrSerial = null">
+        <div class="flex flex-col items-center gap-3 text-center">
+            @if (eventQrImage is not null)
+            {
+                <img src="@eventQrImage" alt="@Localizer["Event QR code"]" class="size-64 rounded-xl bg-white p-3 [image-rendering:pixelated]" />
+            }
+            else if (eventQrError is not null) { <p role="alert">@eventQrError</p> }
+            else { <p>@Localizer["Loading..."]</p> }
+            <p class="break-all font-mono text-xs">@eventQrSerial</p>
+        </div>
+    </Dialog>
+}
+
 @code {
     [Parameter, EditorRequired] public string Name { get; set; } = "";
     [Parameter, EditorRequired] public string Title { get; set; } = "";
@@ -67,6 +82,25 @@
             .FirstOrDefault(k => Name.EndsWith(k, StringComparison.Ordinal)) ?? Name;
 
     private string? jsonText, jsonError;
+    private string? eventQrSerial, eventQrImage, eventQrError;
+    private sealed record EventQrResponse(string QrCode);
+
+    private async Task ShowEventQr(string serial)
+    {
+        eventQrSerial = serial;
+        eventQrImage = null;
+        eventQrError = null;
+        try
+        {
+            using var response = await Client.GetAsync($"api/GameData/EventQr?serial={Uri.EscapeDataString(serial)}");
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                eventQrError = Localizer["Save this QR code before displaying it."];
+            else if (response.IsSuccessStatusCode)
+                eventQrImage = (await response.Content.ReadFromJsonAsync<EventQrResponse>())?.QrCode;
+            else eventQrError = Localizer["Could not display this QR code."];
+        }
+        catch (HttpRequestException) { eventQrError = Localizer["Could not display this QR code."]; }
+    }
 
     private async Task JsonEdited(ChangeEventArgs e)
     {
@@ -444,6 +478,7 @@
                         <span class="rounded-full bg-red-500/10 px-2 py-0.5 text-[11px] font-medium text-red-700 dark:text-red-400">@Localizer["Duplicate"]</span>
                     }
                     <span class="font-mono text-xs tabular-nums @Css.Muted">@row["id"]</span>
+                    <button type="button" class="grid size-7 place-items-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="@Localizer["Show QR code"]" @onclick="() => ShowEventQr(serial)"><Icon Name="qr" /></button>
                     <button class="grid size-7 place-items-center rounded-lg text-zinc-400 hover:bg-red-500/10 hover:text-red-600" aria-label="@Localizer["Remove"]"
                             @onclick="async () => { rows.Remove(row); await Changed(); }"><Icon Name="x" /></button>
                 </li>

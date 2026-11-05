@@ -11,6 +11,16 @@ public class GameDataController(IGameDataCatalog catalog, ITaikoDbContext contex
 {
     private const int MaxFileBytes = 4 * 1024 * 1024;
 
+    [HttpGet("EventQr")]
+    [ApiScope(ApiScopes.AdminServer, ApiScopes.AdminServer)]
+    [Authorize(Policy = AuthPolicies.Admin)]
+    public IActionResult EventQr([FromQuery] string serial)
+    {
+        if (string.IsNullOrEmpty(serial) || serial.Length > 255 || serial.Any(c => c < 0x20 || c > 0x7e)) return BadRequest();
+        if (!catalog.Nijiiro().GetQRCodeDataDictionary().ContainsKey(serial)) return NotFound();
+        return Ok(new { qrCode = QrImage.DataUri(QrImage.EventPayload(serial), QRCoder.QRCodeGenerator.ECCLevel.Q, 10) });
+    }
+
     [HttpGet("MusicDetails")]
     public IActionResult GetMusicDetails() => GetMusicDetails(nameof(GameEra.Nijiiro));
 
